@@ -16,19 +16,18 @@ const firebaseConfig = {
   appId: "%%REACT_APP_FIREBASE_APP_ID%%",
   measurementId: "%%REACT_APP_FIREBASE_MEASUREMENT_ID%%",
 };
+
 // Initialize Firebase
 const FBapp = firebase.initializeApp(firebaseConfig);
 const messaging = FBapp.messaging();
 
-messaging.onBackgroundMessage((payload) => {
-  // console.log("[firebase-messaging-sw.js] Received background message ", payload);
-  // const notificationTitle = "백그라운드 메세지 제목입니다";
-  // const notificationOptions = {
-  //   body: payload.notification.body, // 'payload'의 'notification.body'를 사용
-  //   icon: "/firebase-logo.png"
-  // };
-  // //알림 표시
-  // self.registration.showNotification(notificationTitle, notificationOptions);
+messaging.onBackgroundMessage(messaging, (payload) => {
+  const notificationTitle = "백그라운드 메세지 제목입니다";
+  const notificationOptions = {
+    body: payload.notification.body, // 'payload'의 'notification.body'를 사용
+  };
+  //알림 표시
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
 self.addEventListener("notificationclick", function (event) {
