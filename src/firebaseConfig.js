@@ -44,23 +44,18 @@ export const onGetToken = async () => {
 // });
 
 //포그라운드 메시지 수신
-// onMessage(messaging, (payload) => {
-//   console.log("Message received. ", payload);
-//   // ...
-
-// });
-
 onMessage(messaging, (payload) => {
   console.log("Message received. ", payload);
   // 알림 권한이 허용되었다면, 사용자에게 알림 표시
-  // if (Notification.permission === "granted") {
-  //   const notificationTitle = payload.notification.title; // 메시지에서 제목 추출
-  //   const notificationOptions = {
-  //     body: payload.notification.body, // 메시지에서 본문 추출
-  //     icon: payload.notification.icon, // 메시지에서 아이콘 URL 추출 (선택 사항)
-  //     // 필요에 따라 여기에 더 많은 옵션을 추가할 수 있습니다.
-  //   };
+  if (Notification.permission === "granted") {
+    console.log("Hi");
+    const notificationTitle = payload.notification.title; // 메시지에서 제목 추출
+    const notificationOptions = {
+      body: payload.notification.body, // 메시지에서 본문 추출
+      // icon: payload.notification.icon, // 메시지에서 아이콘 URL 추출 (선택 사항)
+      // 필요에 따라 여기에 더 많은 옵션을 추가할 수 있습니다.
+    };
 
-  //   new Notification(notificationTitle, notificationOptions);
-  // }
+    new Notification(notificationTitle, notificationOptions);
+  }
 });
