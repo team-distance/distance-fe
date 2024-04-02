@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { DISTANCE } from "../constants/location";
 import { calculateDistanceInMeter } from "../utils/calculateDistanceInMeter";
 
+/**
+ * GPS를 사용하여 현재 위치를 반환하는 hook
+ * @returns {Object} curLocation 현재 위치 정보
+ */
 const useGPS = () => {
   const [curLocation, setCurLocation] = useState({
     lat: 0,
