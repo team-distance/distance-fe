@@ -10,7 +10,7 @@ export const login = async (value) => {
   const response = await defaultInstance.post("/login", {
     loginId: value.id,
     password: value.password,
-    clientToken: localStorage.getItem('clientToken'),
+    clientToken: localStorage.getItem("clientToken"),
   });
 
   const { token } = response.data;

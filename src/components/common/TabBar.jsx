@@ -13,7 +13,7 @@ const BottomNavBar = () => {
   const menus = [
     {
       name: "홈",
-      path: "/home",
+      path: "/",
       icon: "/assets/home.svg",
       iconActive: "/assets/home-fill.svg",
     },
