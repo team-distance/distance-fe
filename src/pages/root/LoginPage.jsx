@@ -62,7 +62,7 @@ const LoginPage = () => {
       await onGetToken();
       await login(loginValue);
       setIsLoggedIn(true);
-      navigate("/home");
+      navigate("/");
     } catch (err) {
       setShowWarning(true);
       setLoginResult(err.response?.status || "Login failed");

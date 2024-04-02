@@ -6,6 +6,9 @@ import { authInstance } from "../../api/instance";
 import { parseTime } from "../../utils/parseTime";
 import Characters from "../../constants/character";
 import ClipLoader from "react-spinners/ClipLoader";
+import { useRecoilValue } from "recoil";
+import { isLoggedInState } from "../../store/auth";
+
 /**
  * @todo LINE 61: localStorage에 저장된 대화 내역 삭제
  */
@@ -14,6 +17,7 @@ const ChatIndexPage = () => {
   const [chatList, setChatList] = useState([]);
   const memberId = localStorage.getItem("memberId");
   const [loading, setLoading] = useState(false);
+  const isLoggedIn = useRecoilValue(isLoggedInState);
 
   const fetchChatList = async () => {
     try {
@@ -39,16 +43,6 @@ const ChatIndexPage = () => {
   useEffect(() => {
     fetchChatList();
   }, []);
-
-
-
-
-  // useEffect(() => {
-  //   console.log("chatList", chatList);
-  // }, [chatlist])
-
-
-
 
   const formatTime = (time) => {
     const today = new Date();
@@ -76,79 +70,79 @@ const ChatIndexPage = () => {
   return (
     <PagePadding>
       <Header />
-      {loading ? (
-        <LoaderContainer>
-          <ClipLoader color={"#FF625D"} loading={loading} size={50} />
-        </LoaderContainer>
-      ) : (
-        <>
-          <WrapInboxButton>
-            <InboxButton
-              onClick={() => {
-                navigate("/inbox");
-              }}>
-              <div>요청함</div>
-              <img src="/assets/arrow-pink-right.svg" alt="화살표 아이콘" />
-            </InboxButton>
-          </WrapInboxButton>
-          <Spacer>
-            {chatList.length !== 0 ? (
-              chatList.map((chat) => {
-                return (
-                  <ChatRoomContainer
-                    key={chat.chatRoomId}
-                    to={`/chat/${chat.chatRoomId}`}
-                    state={{
-                      myId: memberId,
-                      opponentId: chat.opponentMemberId,
-                      roomId: chat.chatRoomId,
-                    }}>
-                    <div className="left-section">
-                      <ImageContainer>
-                        {/* characer에 따라 src 변경 */}
-                        <img
-                          src={Characters[chat.memberCharacter]}
-                          alt="캐릭터"
-                        />
-                      </ImageContainer>
 
-                      <div className="profile-section">
-                        <Profile>{chat.roomName}</Profile>
+      {isLoggedIn ? (
+        loading ? (
+          <LoaderContainer>
+            <ClipLoader color={"#FF625D"} loading={loading} size={50} />
+          </LoaderContainer>
+        ) : (
+          <>
+            <WrapInboxButton>
+              <InboxButton
+                onClick={() => {
+                  navigate("/inbox");
+                }}>
+                <div>요청함</div>
+                <img src="/assets/arrow-pink-right.svg" alt="화살표 아이콘" />
+              </InboxButton>
+            </WrapInboxButton>
+            <Spacer>
+              {chatList.length !== 0 ? (
+                chatList.map((chat) => {
+                  return (
+                    <ChatRoomContainer
+                      key={chat.chatRoomId}
+                      to={`/chat/${chat.chatRoomId}`}
+                      state={{
+                        myId: memberId,
+                        opponentId: chat.opponentMemberId,
+                        roomId: chat.chatRoomId,
+                      }}>
+                      <div className="left-section">
+                        <ImageContainer>
+                          {/* characer에 따라 src 변경 */}
+                          <img
+                            src={Characters[chat.memberCharacter]}
+                            alt="캐릭터"
+                          />
+                        </ImageContainer>
 
-
-
-
-
-
-
-
-
-                        
-                        <Message>{chat.lastMessage}</Message>
+                        <div className="profile-section">
+                          <Profile>{chat.roomName}</Profile>
+                          <Message>{chat.lastMessage}</Message>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="right-section">
-                      <Time>{formatTime(chat.modifyDt)}</Time>
-                      {chat.askedCount !== 0 ? (
-                        <UnreadCount>{chat.askedCount}</UnreadCount>
-                      ) : (
-                        <br />
-                      )}
-                    </div>
-                  </ChatRoomContainer>
-                );
-              })
-            ) : (
-              <EmptyContainer>
-                <div className="wrap">
-                  <img src={"/assets/empty-icon.png"} alt="empty icon" />
-                  <div>채팅을 시작해보세요!</div>
-                </div>
-              </EmptyContainer>
-            )}
-          </Spacer>
-        </>
+                      <div className="right-section">
+                        <Time>{formatTime(chat.modifyDt)}</Time>
+                        {chat.askedCount !== 0 ? (
+                          <UnreadCount>{chat.askedCount}</UnreadCount>
+                        ) : (
+                          <br />
+                        )}
+                      </div>
+                    </ChatRoomContainer>
+                  );
+                })
+              ) : (
+                <EmptyContainer>
+                  <div className="wrap">
+                    <img src={"/assets/empty-icon.png"} alt="empty icon" />
+                    <div>채팅을 시작해보세요!</div>
+                  </div>
+                </EmptyContainer>
+              )}
+            </Spacer>
+          </>
+        )
+      ) : (
+        <EmptyContainer>
+          <div className="wrap">
+            <img src={"/assets/empty-icon.png"} alt="empty icon" />
+            <div>로그인 후 채팅을 시작해보세요!</div>
+          </div>
+        </EmptyContainer>
       )}
     </PagePadding>
   );
@@ -268,7 +262,7 @@ const EmptyContainer = styled.div`
 
   > .wrap {
     text-align: center; // 텍스트를 중앙 정렬합니다.
-    
+
     > img {
       margin-bottom: 1rem; // 아이콘과 텍스트 사이의 간격을 조정합니다.
     }
@@ -279,8 +273,6 @@ const EmptyContainer = styled.div`
       line-height: 22px;
     }
   }
-
-
 `;
 
 export default ChatIndexPage;
