@@ -9,6 +9,7 @@ import { authInstance } from "../../api/instance";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { registerDataState } from "../../store/registerDataState";
+import ProgressBar from "../../components/register/ProgressBar";
 
 /**
  * @todo 코드 분리
@@ -111,6 +112,11 @@ const ProfileRegisterPage = () => {
 
   return (
     <div>
+      <WrapHeader>
+        <ProgressBar progress={3} />
+        <p>전화번호를 인증해주세요</p>
+      </WrapHeader>
+
       <WrapContent>
         <h2>프로필을 등록해주세요</h2>
       </WrapContent>
@@ -212,6 +218,16 @@ const ProfileRegisterPage = () => {
     </div>
   );
 };
+
+const WrapHeader = styled.div`
+  display: grid;
+  padding: 4rem 2rem 0 2rem;
+  
+  p {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+`;
 
 const Badge = styled.div`
   height: fit-content;

@@ -9,6 +9,7 @@ import Button from "../../components/common/Button";
 import { useNavigate } from "react-router-dom";
 import { defaultInstance } from "../../api/instance";
 import HeaderPrev from "../../components/common/HeaderPrev";
+import ProgressBar from "../../components/register/ProgressBar";
 
 const UnivRegisterPage = () => {
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
@@ -138,83 +139,95 @@ const UnivRegisterPage = () => {
   // }
 
   return (
-    <WrapContent>
-      <HeaderPrev
-        title={"학교를 인증해주세요 🏫"}
-        navigateTo="/register/user"
-      />
+    <>
+      <WrapHeader>
+        <ProgressBar progress={2} />
+        <p>전화번호를 인증해주세요</p>
+      </WrapHeader>
 
-      <Dropdown
-        label="학교"
-        placeholder={UNIV_PLACEHOLDER}
-        types={UNIV_TYPES}
-        setState={setSchool}
+      <WrapContent>
+        <Dropdown
+          label="학교"
+          placeholder={UNIV_PLACEHOLDER}
+          types={UNIV_TYPES}
+          setState={setSchool}
         // onClick={handleGetEmailDomain}
-      />
+        />
 
-      <Dropdown
-        label="단과대학"
-        placeholder={COLLEGE_PLACEHOLDER}
-        types={COLLEGE_TYPES}
-        setState={setCollege}
-      />
+        <Dropdown
+          label="단과대학"
+          placeholder={COLLEGE_PLACEHOLDER}
+          types={COLLEGE_TYPES}
+          setState={setCollege}
+        />
 
-      <Dropdown
-        label="학과"
-        placeholder={DEPARTMENT_PLACEHOLDER}
-        types={DEPARTMENT_TYPES}
-        setState={setDepartment}
-      />
+        <Dropdown
+          label="학과"
+          placeholder={DEPARTMENT_PLACEHOLDER}
+          types={DEPARTMENT_TYPES}
+          setState={setDepartment}
+        />
 
-      <TextInput
-        label="학생메일 인증하기"
-        name="schoolEmail"
-        type="email"
-        buttonLabel={emailButtonLabel}
-        buttonDisabled={emailIsDisabled}
-        value={registerData.schoolEmail}
-        onChange={handleChange}
-        buttonClickHandler={getButtonClickHandler}
-      />
-      {emailCertify && (
         <TextInput
-          label="인증번호"
-          name="emailCertification"
-          type="text"
-          buttonLabel="인증하기"
-          onChange={handleChangeCertification}
-          buttonClickHandler={getCertificationHandler}
-          timerState={300}
-          onTimerEnd={() => setEmailCertify(false)}
+          label="학생메일 인증하기"
+          name="schoolEmail"
+          type="email"
+          buttonLabel={emailButtonLabel}
+          buttonDisabled={emailIsDisabled}
+          value={registerData.schoolEmail}
+          onChange={handleChange}
+          buttonClickHandler={getButtonClickHandler}
         />
-      )}
+        {emailCertify && (
+          <TextInput
+            label="인증번호"
+            name="emailCertification"
+            type="text"
+            buttonLabel="인증하기"
+            onChange={handleChangeCertification}
+            buttonClickHandler={getCertificationHandler}
+            timerState={300}
+            onTimerEnd={() => setEmailCertify(false)}
+          />
+        )}
 
-      <WrapCheckbox>
-        <Checkbox
-          label="(필수) 이용약관 동의"
-          name="agreeTerms"
-          onChange={handleChecked}
-          checked={registerData.agreeTerms}
-        />
-        <Checkbox
-          label="(필수) 개인정보 수집 및 활용 동의"
-          name="agreePrivacy"
-          onChange={handleChecked}
-          checked={registerData.agreePrivacy}
-        />
-      </WrapCheckbox>
+        <WrapCheckbox>
+          <Checkbox
+            label="(필수) 이용약관 동의"
+            name="agreeTerms"
+            onChange={handleChecked}
+            checked={registerData.agreeTerms}
+          />
+          <Checkbox
+            label="(필수) 개인정보 수집 및 활용 동의"
+            name="agreePrivacy"
+            onChange={handleChecked}
+            checked={registerData.agreePrivacy}
+          />
+        </WrapCheckbox>
 
-      <Button
-        size="large"
-        disabled={isDisabled}
-        onClick={() => {
-          navigate("/register/profile");
-        }}>
-        프로필 등록하기
-      </Button>
-    </WrapContent>
+        <Button
+          size="large"
+          disabled={isDisabled}
+          onClick={() => {
+            navigate("/register/profile");
+          }}>
+          프로필 등록하기
+        </Button>
+      </WrapContent>
+    </>
   );
 };
+
+const WrapHeader = styled.div`
+  display: grid;
+  padding: 4rem 2rem 0 2rem;
+  
+  p {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+`;
 
 const WrapContent = styled.div`
   display: grid;

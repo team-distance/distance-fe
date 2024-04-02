@@ -39,8 +39,8 @@ function App() {
 
         <Route path="/register/user" element={<UserRegisterPage />} />
         <Route path="/register/univ" element={<UnivRegisterPage />} />
-        <Route path="/register/done" element={<DonePage />} />
         <Route path="/register/profile" element={<ProfileRegisterPage />} />
+        <Route path="/register/done" element={<DonePage />} />
 
         <Route element={<NavLayout />}>
           <Route path="/home" element={<HomeIndexPage />} />

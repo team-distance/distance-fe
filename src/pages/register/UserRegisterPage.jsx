@@ -6,10 +6,11 @@ import { useRecoilState } from "recoil";
 import { registerDataState } from "../../store/registerDataState";
 import Button from "../../components/common/Button";
 import { useNavigate } from "react-router-dom";
-import HeaderPrev from "../../components/common/HeaderPrev";
 import { defaultInstance } from "../../api/instance";
+import ProgressBar from "../../components/register/ProgressBar";
 
 const UserRegisterPage = () => {
+
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
   const [idTestFlag, setIdTestFlag] = useState(false);
   const [pwTestFlag, setPwTestFlag] = useState(false);
@@ -95,90 +96,61 @@ const UserRegisterPage = () => {
   }, [toggleState]);
 
   return (
-    <WrapContent>
-      <HeaderPrev
-        title={
-          <>
-            처음 오셨나요?
-            <br />
-            학생메일로 가입해보세요!
-          </>
-        }
-        navigateTo="/"
-      />
+    <>
+      <WrapHeader>
+        <ProgressBar progress={1} />
+        <p>전화번호를 인증해주세요</p>
+      </WrapHeader>
 
-      <div>
-        <TextInput
-          label="아이디"
-          name="loginId"
-          type="text"
-          buttonLabel={"중복 확인"}
-          buttonClickHandler={checkId}
-          buttonDisabled={idTestFlag}
-          value={registerData.loginId}
-          onChange={handleChange}
-        />
-        {idTestFlag && (
-          <Tip>영어, 숫자 조합 5자 이상 20자 이하로 작성해야 해요.</Tip>
-        )}
-      </div>
-
-      <div>
-        <TextInput
-          label="비밀번호"
-          name="password"
-          type="password"
-          value={registerData.password}
-          onChange={handleChange}
-        />
-        {pwTestFlag && (
-          <Tip>
-            영어, 숫자, 특수문자 조합 8자 이상 16자 이하로 작성해야 해요.
-          </Tip>
-        )}
-      </div>
-
-      <div>
-        <TextInput
-          label="비밀번호 확인"
-          name="checkPassword"
-          type="password"
-          value={registerData.checkPassword}
-          onChange={handleChange}
-        />
-        {checkPwTestFlag && <Tip>비밀번호가 일치하지 않아요.</Tip>}
-      </div>
-
-      <Toggle
-        label="성별"
-        setState={setToggleState}
-        registerData={registerData}
-        setRegisterData={setRegisterData}
-      />
-
-      <div>
-        <TextInput
-          label="전화번호"
-          name="telNum"
-          type="number"
-          placeholder="예시) 01012345678"
-          value={registerData.telNum}
-          onChange={handleChange}
-        />
-        {checkPhone && <Tip>비밀번호가 일치하지 않아요.</Tip>}
-      </div>
-
-      <Button
-        size="large"
-        disabled={isDisabled}
-        onClick={() => {
-          navigate("/register/univ");
-        }}>
-        학교 선택하기
-      </Button>
-    </WrapContent>
+      <WrapContent>
+        <div>
+          <TextInput
+            label="전화번호"
+            name="loginId"
+            type="text"
+            buttonLabel={"중복 확인"}
+            buttonClickHandler={checkId}
+            buttonDisabled={idTestFlag}
+            value={registerData.loginId}
+            onChange={handleChange}
+          />
+          {idTestFlag && (
+            <Tip>영어, 숫자 조합 5자 이상 20자 이하로 작성해야 해요.</Tip>
+          )}
+        </div>
+        <div>
+          <TextInput
+            label="전화번호"
+            name="telNum"
+            type="number"
+            placeholder="예시) 01012345678"
+            value={registerData.telNum}
+            onChange={handleChange}
+          />
+          {checkPhone && <Tip>비밀번호가 일치하지 않아요.</Tip>}
+        </div>
+        <Button
+          size="large"
+          disabled={isDisabled}
+          onClick={() => {
+            navigate("/register/univ");
+          }}>
+          학교 선택하기
+        </Button>
+      </WrapContent>
+    </>
   );
 };
+
+const WrapHeader = styled.div`
+  display: grid;
+  padding: 4rem 2rem 0 2rem;
+  
+  p {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+`;
 
 const WrapContent = styled.div`
   display: grid;
