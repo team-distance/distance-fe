@@ -25,6 +25,10 @@ const Input = styled.input`
   &:focus {
     outline: none;
   }
+  &::placeholder {
+  color: #D9D9D9;
+  opacity: 1;
+}
 `;
 
 const InputWrapper = styled.div`

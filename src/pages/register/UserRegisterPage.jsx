@@ -70,7 +70,7 @@ const UserRegisterPage = () => {
     }
   };
 
-  const checkId = async () => {
+  const checkTellNum = async () => {
     try {
       const res = await defaultInstance.post("/member/check/id", {
         loginId: registerData.loginId,
@@ -106,10 +106,11 @@ const UserRegisterPage = () => {
         <div>
           <TextInput
             label="전화번호"
-            name="loginId"
+            name="telNum"
             type="text"
-            buttonLabel={"중복 확인"}
-            buttonClickHandler={checkId}
+            placeholder="'-' 없이 입력"
+            buttonLabel={"인증번호 전송"}
+            buttonClickHandler={checkTellNum}
             buttonDisabled={idTestFlag}
             value={registerData.loginId}
             onChange={handleChange}
@@ -120,14 +121,30 @@ const UserRegisterPage = () => {
         </div>
         <div>
           <TextInput
-            label="전화번호"
+            label="인증번호"
+            name="telNum"
+            type="text"
+            placeholder="인증번호 입력"
+            buttonLabel={"인증하기"}
+            buttonClickHandler={checkTellNum}
+            buttonDisabled={idTestFlag}
+            value={registerData.loginId}
+            onChange={handleChange}
+          />
+          {idTestFlag && (
+            <Tip>인증번호를 재입력해주세요.</Tip>
+          )}
+        </div>
+        <div>
+          <TextInput
+            label="비밀번호"
             name="telNum"
             type="number"
-            placeholder="예시) 01012345678"
+            placeholder="6자리 이상"
             value={registerData.telNum}
             onChange={handleChange}
           />
-          {checkPhone && <Tip>비밀번호가 일치하지 않아요.</Tip>}
+          {checkPhone && <Tip>인증번호를 재입력해주세요.</Tip>}
         </div>
         <Button
           size="large"
