@@ -16,8 +16,8 @@ export const registerDataState = atom({
     school: "",
     college: "",
     schoolEmail: "",
-    
-    agreeTerms: false,
-    agreePrivacy: false,
+
+    // agreeTerms: false,
+    // agreePrivacy: false,
   },
 });

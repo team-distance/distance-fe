@@ -8,9 +8,11 @@ const Label = styled.label`
 
   .time-remaining {
     display: inline-block;
-    padding-left: 1rem;
-    font-weight: bold;
-    color: #989898;
+    padding-left: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 0.9rem;
+    font-weight: 400;
+    color: #D3D3D3;
   }
 `;
 
@@ -78,7 +80,7 @@ const TextInput = ({
           {label}
           {timerState && (
             <div className="time-remaining">
-              {`${minutes}:${seconds.toString().padStart(2, "0")}`}
+              {`${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`}
             </div>
           )}
         </Label>

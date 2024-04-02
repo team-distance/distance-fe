@@ -1,99 +1,97 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import TextInput from "../../components/register/TextInput";
-import Toggle from "../../components/register/Toggle";
 import { useRecoilState } from "recoil";
 import { registerDataState } from "../../store/registerDataState";
 import Button from "../../components/common/Button";
 import { useNavigate } from "react-router-dom";
-import { defaultInstance } from "../../api/instance";
 import ProgressBar from "../../components/register/ProgressBar";
 
 const UserRegisterPage = () => {
 
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
-  const [idTestFlag, setIdTestFlag] = useState(false);
-  const [pwTestFlag, setPwTestFlag] = useState(false);
-  const [checkPwTestFlag, setCheckPwTestFlag] = useState(false);
-  const [checkPhone, setCheckPhone] = useState(false);
-  const [toggleState, setToggleState] = useState("");
+  const [checkPhoneFlag, setCheckPhoneFlag] = useState(true);
+  const [verifyNumFlag, setVerifyNumFlag] = useState(true);
+  const [pwFlag, setPwFlag] = useState(true);
 
-  const PW_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\W_]).{8,16}$/;
+  const [isSendMessage, setIsSendMessage] = useState(false);
+  const [verifyButtonLabel, setVerifyButtonLabel] = useState('인증번호 전송');
+  const [verifyNum, setVerifyNum] = useState("");
+  const [verify, setVerify] = useState(false);
 
   const navigate = useNavigate();
-
-  const isDisabled =
-    idTestFlag ||
-    pwTestFlag ||
-    checkPwTestFlag ||
-    !toggleState ||
-    !registerData.telNum;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setRegisterData({ ...registerData, [name]: value });
 
-    if (name === "loginId") {
-      const isLengthValid = value.length >= 5 && value.length <= 20;
-      const containsLetters = /[a-zA-Z]/.test(value);
-      const containsNumbers = /\d/.test(value);
-
-      if (isLengthValid && containsLetters && containsNumbers) {
-        setIdTestFlag(false);
+    if (name === "telNum") {
+      if (value.length === 11) {
+        setCheckPhoneFlag(false);
       } else {
-        setIdTestFlag(true);
+        setCheckPhoneFlag(true);
+      }
+    }
+
+    if (name === "verifyNum") {
+      setVerifyNum(e.target.value);
+      if (value.length !== 0) {
+        setVerifyNumFlag(false)
+      } else {
+        setVerifyNumFlag(true);
       }
     }
 
     if (name === "password") {
-      if (PW_REGEX.test(value)) {
-        setPwTestFlag(false);
+      if (value.length >= 6) {
+        setPwFlag(false);
       } else {
-        setPwTestFlag(true);
+        setPwFlag(true);
       }
     }
 
-    if (name === "checkPassword") {
-      if (value === registerData.password) {
-        setCheckPwTestFlag(false);
-      } else {
-        setCheckPwTestFlag(true);
-      }
-    }
-
-    if (name === "telNum") {
-      if (value.length === 11) {
-        setCheckPhone(false);
-      } else {
-        setCheckPhone(true);
-      }
-    }
   };
 
-  const checkTellNum = async () => {
+  const sendMessage = async () => {
+
+    if (verifyButtonLabel === "재전송") {
+      setVerifyNumFlag(false);
+      setVerify(false);
+      setVerifyNum("");
+    }
+
     try {
-      const res = await defaultInstance.post("/member/check/id", {
-        loginId: registerData.loginId,
-      });
-      if (res.data) {
-        alert("사용 가능한 아이디 입니다.");
-      }
+      // const res = await defaultInstance.post("/member/check/id", {
+      //   loginId: registerData.loginId,
+      // })
+      setIsSendMessage(true);
+      // setRegisterData(prevState => ({ ...prevState, tellNum: "" }));
+      setVerifyButtonLabel("재전송");
     } catch (error) {
-      alert("중복된 아이디 입니다.");
+      alert("인증을 재시도해주세요");
       console.log(error);
+
+      //테스트용
+      setIsSendMessage(true);
     }
   };
 
-  useEffect(() => {
-    console.log(registerData);
-  }, [registerData]);
+  const verifyTellNum = async () => {
+    try {
+      // const res = await defaultInstance.post("/member/check/id", {
+      //   loginId: registerData.loginId,
+      // })
+      setVerify(true);
+      setVerifyNumFlag(true);
+    } catch (error) {
+      alert("인증을 재시도해주세요");
+      console.log(error);
 
-  useEffect(() => {
-    setRegisterData((prev) => ({
-      ...prev,
-      gender: toggleState,
-    }));
-  }, [toggleState]);
+      //테스트용
+      setVerify(true);
+      setVerifyNumFlag(true);
+    }
+  };
 
   return (
     <>
@@ -109,51 +107,54 @@ const UserRegisterPage = () => {
             name="telNum"
             type="text"
             placeholder="'-' 없이 입력"
-            buttonLabel={"인증번호 전송"}
-            buttonClickHandler={checkTellNum}
-            buttonDisabled={idTestFlag}
-            value={registerData.loginId}
+            buttonLabel={verifyButtonLabel}
+            buttonClickHandler={sendMessage}
+            buttonDisabled={checkPhoneFlag}
+            value={registerData.tellNum}
             onChange={handleChange}
           />
-          {idTestFlag && (
-            <Tip>영어, 숫자 조합 5자 이상 20자 이하로 작성해야 해요.</Tip>
-          )}
         </div>
-        <div>
+
+        <WrapVerifyPhone $visible={isSendMessage}>
           <TextInput
             label="인증번호"
-            name="telNum"
+            name="verifyNum"
             type="text"
+            timerState={180}
             placeholder="인증번호 입력"
             buttonLabel={"인증하기"}
-            buttonClickHandler={checkTellNum}
-            buttonDisabled={idTestFlag}
-            value={registerData.loginId}
+            buttonClickHandler={verifyTellNum}
+            buttonDisabled={verifyNumFlag}
+            value={verifyNum}
             onChange={handleChange}
           />
-          {idTestFlag && (
-            <Tip>인증번호를 재입력해주세요.</Tip>
+          {verify && (
+            <Tip>인증되었습니다!</Tip>
           )}
-        </div>
-        <div>
+        </WrapVerifyPhone>
+
+        <WrapPassword $visible={verify}>
           <TextInput
             label="비밀번호"
-            name="telNum"
+            name="password"
             type="number"
             placeholder="6자리 이상"
-            value={registerData.telNum}
+            value={registerData.password}
             onChange={handleChange}
           />
-          {checkPhone && <Tip>인증번호를 재입력해주세요.</Tip>}
-        </div>
-        <Button
-          size="large"
-          disabled={isDisabled}
-          onClick={() => {
-            navigate("/register/univ");
-          }}>
-          학교 선택하기
-        </Button>
+        </WrapPassword>
+
+        <WrapButton>
+          <Button
+            size="large"
+            disabled={pwFlag}
+            onClick={() => {
+              navigate("/register/univ");
+            }}>
+            학교 선택하기
+          </Button>
+        </WrapButton>
+
       </WrapContent>
     </>
   );
@@ -171,10 +172,20 @@ const WrapHeader = styled.div`
 
 const WrapContent = styled.div`
   display: grid;
-  gap: 2rem;
+  gap: 2.5rem;
   padding: 2rem;
 `;
 
+const WrapVerifyPhone = styled.div`
+  visibility: ${({ $visible }) => $visible ? 'visible' : 'hidden'};
+`;
+const WrapPassword = styled.div`
+  visibility: ${({ $visible }) => $visible ? 'visible' : 'hidden'};
+`;
+
+const WrapButton = styled.div`
+  margin-top: 5rem;
+`;
 const Tip = styled.small`
   font-size: 12px;
   color: #90949b;
