@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import LandingPage from "./pages/root/LandingPage";
 import HomeIndexPage from "./pages/home/HomeIndexPage";
 import ChatIndexPage from "./pages/chat/ChatIndexPage";
 import FestivalIndexPage from "./pages/festival/FestivalIndexPage";
