@@ -14,6 +14,8 @@ const NavLayout = () => {
   const setMyData = useSetRecoilState(myDataState);
   const currentLocation = useGPS();
   const navigate = useNavigate();
+  const userAgent = navigator.userAgent.toLowerCase();
+  const isIphone = userAgent.includes("iphone");
 
   const getMemberId = async () => {
     await authInstance.get("/member/id").then((res) => {
@@ -59,7 +61,7 @@ const NavLayout = () => {
 
   return (
     <>
-      <Padding>
+      <Padding $isIphone={isIphone}>
         <Outlet />
       </Padding>
       <TabBar />
@@ -69,7 +71,7 @@ const NavLayout = () => {
 };
 
 const Padding = styled.div`
-  padding-bottom: 96px;
+  padding-bottom: ${(props) => (props.$isIphone ? "96px" : "74px")};
 `;
 
 export default NavLayout;
