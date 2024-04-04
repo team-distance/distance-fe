@@ -37,35 +37,6 @@ const ChatIndexPage = () => {
     }
   };
 
-  const chatListMock = [
-    {
-      chatRoomId: 1,
-      memberCharacter: "MONKEY",
-      roomName: "전기공학과INFJ#1",
-      lastMessage: "안녕하세요",
-      modifyDt: "2021-09-21T15:00:00",
-      askedCount: 23,
-    },
-
-    {
-      chatRoomId: 2,
-      memberCharacter: "DOG",
-      roomName: "간호학과ENFP#2",
-      lastMessage: "안녕하세요",
-      modifyDt: "2021-09-20T15:00:00",
-      askedCount: 1,
-    },
-
-    {
-      chatRoomId: 3,
-      memberCharacter: "CAT",
-      roomName: "전기공학과ISTJ#3",
-      lastMessage: "안녕하세요",
-      modifyDt: "2021-09-19T15:00:00",
-      askedCount: 0,
-    },
-  ];
-
   const fetchChatList = async () => {
     try {
       setLoading(true);
