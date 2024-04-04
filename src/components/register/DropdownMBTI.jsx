@@ -13,7 +13,7 @@ const DropdownMBTI = ({ setState }) => {
 
   return (
     <DropdownContainer ref={dropdownRef}>
-      <DropdownButton onClick={() => setIsOpen(!isOpen)}>
+      <DropdownButton $selected={selected} onClick={() => setIsOpen(!isOpen)}>
         {selected || "MBTI를 선택해주세요."}
       </DropdownButton>
       {isOpen && (
@@ -42,8 +42,10 @@ const DropdownContainer = styled.div`
 const DropdownButton = styled.div`
   padding: 0.75rem 1.25rem;
   background-color: #ffffff;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
+  border: 2px solid #d9d9d9;
+  border-radius: 20px;
+  color: ${({$selected}) => $selected ? '#000' : '#D3D3D3'};
+
 `;
 
 const fadeIn = keyframes`

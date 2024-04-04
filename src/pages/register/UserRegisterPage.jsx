@@ -5,6 +5,7 @@ import { useRecoilState } from "recoil";
 import { registerDataState } from "../../store/registerDataState";
 import Button from "../../components/common/Button";
 import { useNavigate } from "react-router-dom";
+import { defaultInstance } from "../../api/instance";
 import ProgressBar from "../../components/register/ProgressBar";
 
 const UserRegisterPage = () => {
@@ -61,35 +62,29 @@ const UserRegisterPage = () => {
     }
 
     try {
-      // const res = await defaultInstance.post("/member/check/id", {
-      //   loginId: registerData.loginId,
-      // })
+      console.log(typeof registerData.telNum, registerData.telNum);
+      const res = await defaultInstance.post("/member/send/sms", {
+        telNum: registerData.telNum,
+      })
       setIsSendMessage(true);
       // setRegisterData(prevState => ({ ...prevState, tellNum: "" }));
       setVerifyButtonLabel("재전송");
     } catch (error) {
       alert("인증을 재시도해주세요");
       console.log(error);
-
-      //테스트용
-      setIsSendMessage(true);
     }
   };
 
-  const verifyTellNum = async () => {
+  const verifyTelNum = async () => {
     try {
-      // const res = await defaultInstance.post("/member/check/id", {
-      //   loginId: registerData.loginId,
-      // })
+      const res = await defaultInstance.post("/member/authenticate", {
+        authenticateNum: verifyNum,
+      })
       setVerify(true);
       setVerifyNumFlag(true);
     } catch (error) {
       alert("인증을 재시도해주세요");
       console.log(error);
-
-      //테스트용
-      setVerify(true);
-      setVerifyNumFlag(true);
     }
   };
 
@@ -110,7 +105,7 @@ const UserRegisterPage = () => {
             buttonLabel={verifyButtonLabel}
             buttonClickHandler={sendMessage}
             buttonDisabled={checkPhoneFlag}
-            value={registerData.tellNum}
+            value={registerData.telNum}
             onChange={handleChange}
           />
         </div>
@@ -121,9 +116,10 @@ const UserRegisterPage = () => {
             name="verifyNum"
             type="text"
             timerState={180}
+            onTimerEnd={() => isSendMessage(false)}
             placeholder="인증번호 입력"
             buttonLabel={"인증하기"}
-            buttonClickHandler={verifyTellNum}
+            buttonClickHandler={verifyTelNum}
             buttonDisabled={verifyNumFlag}
             value={verifyNum}
             onChange={handleChange}
@@ -162,11 +158,13 @@ const UserRegisterPage = () => {
 
 const WrapHeader = styled.div`
   display: grid;
-  padding: 4rem 2rem 0 2rem;
+  padding: 2rem 2rem 3rem 2rem;
   
   p {
     font-size: 1.5rem;
     font-weight: 700;
+    padding: 0;
+    margin: 0;
   }
 `;
 

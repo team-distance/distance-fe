@@ -89,11 +89,13 @@ return (
 
 const WrapHeader = styled.div`
   display: grid;
-  padding: 4rem 2rem 0 2rem;
+  padding: 2rem 2rem 3rem 2rem;
   
   p {
     font-size: 1.5rem;
     font-weight: 700;
+    padding: 0;
+    margin: 0;
   }
 `;
 
