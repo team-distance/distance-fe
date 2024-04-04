@@ -110,10 +110,6 @@ const ProfileRegisterPage = () => {
     });
   };
 
-  const handleAnimalClick = (e) => {
-    setSelectedAnimal(e.target.value);
-  };
-
   const isDisabled =
     !selectedAnimal || !selectedMBTI || hashtagCount < 3 || !toggleState || hashtagCount > 5;
 
