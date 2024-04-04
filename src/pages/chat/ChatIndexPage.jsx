@@ -122,7 +122,7 @@ const ChatIndexPage = () => {
                       <CharacterBackground $character={chat.memberCharacter}>
                         <img
                           src={CHARACTERS[chat.memberCharacter]}
-                          alt="캐릭터"
+                          alt={chat.memberCharacter}
                         />
                       </CharacterBackground>
 
