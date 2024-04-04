@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/common/Header";
-import Characters from "../../constants/character";
+import { CHARACTERS } from "../../constants/character";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { isLoggedInState } from "../../store/auth";
 import { myDataState } from "../../store/myData";
@@ -28,7 +28,7 @@ const MyIndexPage = () => {
           <WrapMenu>
             <div className="title">마이페이지</div>
             <WarpProfile>
-              <img src={Characters[myData.memberCharacter]} alt="festival" />
+              <img src={CHARACTERS[myData.memberCharacter]} alt="festival" />
               <TextDiv>
                 <div className="title">
                   {myData.department}, {myData.mbti}

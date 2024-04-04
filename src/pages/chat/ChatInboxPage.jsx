@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Header from "../../components/common/Header";
 import { authInstance } from "../../api/instance";
 import { useNavigate } from "react-router-dom";
-import Characters from "../../constants/character";
+import { CHARACTERS } from "../../constants/character";
 
 const ChatInboxPage = () => {
   const [inboxList, setInboxList] = useState([]);
@@ -77,7 +77,7 @@ const ChatInboxPage = () => {
             return (
               <InboxContainer key={inbox.waitindRoomId}>
                 <ImageContainer>
-                  <img src={Characters[inbox.memberCharacter]} alt="캐릭터" />
+                  <img src={CHARACTERS[inbox.memberCharacter]} alt="캐릭터" />
                 </ImageContainer>
 
                 <div className="right-section">
@@ -122,7 +122,6 @@ const ChatInboxPage = () => {
               <div>요청함이 비어있어요!</div>
             </div>
           </EmptyContainer>
-
         )}
       </Spacer>
     </PagePadding>
@@ -222,7 +221,7 @@ const EmptyContainer = styled.div`
 
   > .wrap {
     text-align: center; // 텍스트를 중앙 정렬합니다.
-    
+
     > img {
       margin-bottom: 1rem; // 아이콘과 텍스트 사이의 간격을 조정합니다.
     }
@@ -233,6 +232,4 @@ const EmptyContainer = styled.div`
       line-height: 22px;
     }
   }
-
-
 `;

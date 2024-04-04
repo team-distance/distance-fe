@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { authInstance, defaultInstance } from "../../api/instance";
 import ClipLoader from "react-spinners/ClipLoader";
 
-import Characters from "../../constants/character";
+import { CHARACTERS } from "../../constants/character";
 import Header from "../../components/common/Header";
 import Profile from "../../components/home/Profile";
 import Modal from "../../components/common/Modal";
@@ -137,7 +137,6 @@ const HomeIndexPage = () => {
               <Profile
                 key={index}
                 id={profile.memberId}
-                side={index % 2 === 0 ? "left" : "right"}
                 profile={profile}
                 onClick={() => handleSelectProfile(profile)}
               />
@@ -162,8 +161,8 @@ const HomeIndexPage = () => {
           <WrapContent>
             <CharacterDiv>
               <StyledImage
-                src={Characters[selectedProfile.memberInfoDto.memberCharacter]}
-                alt={Characters[selectedProfile.memberInfoDto.memberCharacter]}
+                src={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
+                alt={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
               />
             </CharacterDiv>
             <TextDiv>
@@ -204,7 +203,7 @@ const ProfileContainer = styled.div`
 const ReloadButton = styled.button`
   position: fixed;
   right: 1.5rem;
-  bottom: 5rem;
+  bottom: 7rem;
   width: 50px;
   height: 50px;
   border-radius: 50%;

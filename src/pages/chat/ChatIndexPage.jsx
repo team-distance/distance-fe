@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { authInstance } from "../../api/instance";
 import { parseTime } from "../../utils/parseTime";
-import Characters from "../../constants/character";
+import { CHARACTERS } from "../../constants/character";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useRecoilValue } from "recoil";
 import { isLoggedInState } from "../../store/auth";
@@ -103,7 +103,7 @@ const ChatIndexPage = () => {
                         <ImageContainer>
                           {/* characer에 따라 src 변경 */}
                           <img
-                            src={Characters[chat.memberCharacter]}
+                            src={CHARACTERS[chat.memberCharacter]}
                             alt="캐릭터"
                           />
                         </ImageContainer>

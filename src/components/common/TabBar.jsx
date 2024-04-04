@@ -29,7 +29,7 @@ const BottomNavBar = () => {
       iconActive: "/assets/icon/icon-chat-filled.svg",
     },
     {
-      name: "축제정보",
+      name: "페스티벌",
       path: "/festival/program",
       icon: "/assets/icon/icon-festival-stroked.svg",
       iconActive: "/assets/icon/icon-festival-filled.svg",
