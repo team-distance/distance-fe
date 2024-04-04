@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { authInstance, defaultInstance } from "../../api/instance";
 import ClipLoader from "react-spinners/ClipLoader";
 
-import { CHARACTERS } from "../../constants/character";
+import { CHARACTERS, COLORS } from "../../constants/character";
 import Header from "../../components/common/Header";
 import Profile from "../../components/home/Profile";
 import Modal from "../../components/common/Modal";
@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { isLoggedInState } from "../../store/auth";
 import toast from "react-hot-toast";
+import Badge from "../../components/common/Badge";
 
 const HomeIndexPage = () => {
   const profileModal = useRef();
@@ -158,31 +159,49 @@ const HomeIndexPage = () => {
           handleCreateChatRoom(selectedProfile.memberId);
         }}>
         {selectedProfile && (
+          // <WrapContent>
+          //   <CharacterDiv>
+          //     <StyledImage
+          //       src={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
+          //       alt={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
+          //     />
+          //   </CharacterDiv>
+          //   <TextDiv>
+          //     <div className="text-major">{selectedProfile.department}</div>
+          //     <div className="text-mbti">
+          //       {selectedProfile.memberInfoDto.mbti}
+          //     </div>
+          //     <div className="text-tags">
+          //       {selectedProfile.memberInfoDto.memberHobbyDto.map(
+          //         (hobby, index) => (
+          //           <div key={index}>#{hobby.hobby} </div>
+          //         )
+          //       )}
+          //       {selectedProfile.memberInfoDto.memberTagDto.map(
+          //         (tag, index) => (
+          //           <div key={index}>#{tag.tag} </div>
+          //         )
+          //       )}
+          //     </div>
+          //   </TextDiv>
+          // </WrapContent>
           <WrapContent>
-            <CharacterDiv>
+            <CharacterBackground $character={"MONKEY"}>
               <StyledImage
-                src={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
-                alt={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
+                src={CHARACTERS["MONKEY"]}
+                alt={selectedProfile.memberInfoDto.memberCharacter}
               />
-            </CharacterDiv>
+            </CharacterBackground>
             <TextDiv>
-              <div className="text-major">{selectedProfile.department}</div>
-              <div className="text-mbti">
-                {selectedProfile.memberInfoDto.mbti}
-              </div>
-              <div className="text-tags">
-                {selectedProfile.memberInfoDto.memberHobbyDto.map(
-                  (hobby, index) => (
-                    <div key={index}>#{hobby.hobby} </div>
-                  )
-                )}
-                {selectedProfile.memberInfoDto.memberTagDto.map(
-                  (tag, index) => (
-                    <div key={index}>#{tag.tag} </div>
-                  )
-                )}
-              </div>
+              <MBTI>INFP</MBTI>
+              <Major>미디어커뮤니케이션학과</Major>
             </TextDiv>
+            <TagContainer>
+              <Badge>#여행</Badge>
+              <Badge>#감성적인</Badge>
+              <Badge>#공감능력</Badge>
+              <Badge>#노래</Badge>
+            </TagContainer>
           </WrapContent>
         )}
       </Modal>
@@ -210,6 +229,7 @@ const ReloadButton = styled.button`
   border: none;
   background-color: #ffffff;
   box-shadow: 0px 4px 10px 0px #0000001a;
+  transition: 0.3s;
 
   > .time-remaining {
     position: absolute;
@@ -229,49 +249,51 @@ const ReloadButton = styled.button`
   }
 
   &:disabled {
-    filter: brightness(0.4);
+    filter: brightness(0.6);
   }
 `;
 
 const WrapContent = styled.div`
-  width: 100%;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 32px 0;
+  gap: 12px;
 `;
 
-const CharacterDiv = styled.div`
-  width: 50%;
-  display: flex;
-  margin: 0 auto;
-  padding-bottom: 1rem;
+const CharacterBackground = styled.div`
+  position: relative;
+  width: 60%;
+  height: 0;
+  padding-bottom: 60%;
+  border-radius: 50%;
+  background-color: ${(props) => COLORS[props.$character]};
 `;
 
 const StyledImage = styled.img`
-  width: 100%;
+  position: absolute;
+  width: 60%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const TextDiv = styled.div`
   width: 100%;
   text-align: center;
   color: #333333;
+`;
 
-  .text-major {
-    font-size: 1.4rem;
-    font-weight: 700;
-    white-space: nowrap;
-  }
-  .text-mbti {
-    font-size: 1.2rem;
-    font-weight: 400;
-  }
-  .text-tags {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 0.2rem;
-    font-size: 1rem;
-    font-weight: 400;
-    margin: 1.5rem auto;
-  }
+const Major = styled.div`
+  font-size: 24px;
+  font-weight: 700;
+  white-space: nowrap;
+`;
+
+const MBTI = styled.div`
+  color: #000000;
+  font-size: 14px;
 `;
 
 const LoaderContainer = styled.div`
@@ -284,6 +306,14 @@ const LoaderContainer = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 999;
+`;
+
+const TagContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
 `;
 
 export default HomeIndexPage;

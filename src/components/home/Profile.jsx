@@ -23,11 +23,12 @@ const Profile = ({ id, profile, onClick }) => {
   }, [id]);
 
   return (
-    <WrapPofile onClick={onClick}>
+    <WrapProfile onClick={onClick}>
       <Wrapper>
         <CharacterBackground $character={profile.memberInfoDto.memberCharacter}>
           <StyledImage
             src={CHARACTERS[profile.memberInfoDto.memberCharacter]}
+            alt={profile.memberInfoDto.memberCharacter}
           />
         </CharacterBackground>
         <TextDiv>
@@ -45,12 +46,12 @@ const Profile = ({ id, profile, onClick }) => {
           ))}
         </TagContainer>
       </Wrapper>
-    </WrapPofile>
+    </WrapProfile>
   );
 };
 export default Profile;
 
-const WrapPofile = styled.article`
+const WrapProfile = styled.article`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -60,11 +61,6 @@ const WrapPofile = styled.article`
   border-radius: 12px;
   background: #ffffff;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.05);
-
-  &:active {
-    filter: brightness(0.6);
-    transition: 0.1s;
-  }
 `;
 
 const Wrapper = styled.div`
