@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/common/Header";
-import { CHARACTERS } from "../../constants/character";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { isLoggedInState } from "../../store/auth";
 import { myDataState } from "../../store/myData";
@@ -105,45 +104,6 @@ const WrapButton = styled.div`
   .border {
     border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   }
-`;
-
-const WarpProfile = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  height: 130px;
-  border-radius: 1rem;
-  box-shadow: 0px 5px 20px 0px #00000014;
-  margin-bottom: 2rem;
-  padding: 0 1rem;
-
-  img {
-    width: 35%;
-  }
-`;
-
-const TextDiv = styled.div`
-  width: 100%;
-  align-items: center;
-
-  .title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    line-height: 1.5rem;
-  }
-  .tag {
-    display: flex;
-    font-size: 0.7rem;
-    font-weight: 600;
-    line-height: 1rem;
-    color: #333333;
-    white-space: nowrap;
-  }
-`;
-
-const WrapTag = styled.div`
-  display: flex;
-  gap: 0.3rem;
 `;
 
 const EmptyContainer = styled.div`
