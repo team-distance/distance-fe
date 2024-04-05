@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/common/Header";
-import Characters from "../../constants/character";
+import { CHARACTERS } from "../../constants/character";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { isLoggedInState } from "../../store/auth";
 import { myDataState } from "../../store/myData";
@@ -27,30 +27,6 @@ const MyIndexPage = () => {
         <>
           <WrapMenu>
             <div className="title">마이페이지</div>
-            <WarpProfile>
-              <img src={Characters[myData.memberCharacter]} alt="festival" />
-              <TextDiv>
-                <div className="title">
-                  {myData.department}, {myData.mbti}
-                </div>
-                <WrapTag>
-                  {myData.memberHobbyDto &&
-                    myData.memberHobbyDto.map((hobby, index) => (
-                      <div key={index} className="tag">
-                        # {hobby.hobby}
-                      </div>
-                    ))}
-                </WrapTag>
-                <WrapTag>
-                  {myData.memberTagDto &&
-                    myData.memberTagDto.map((tag, index) => (
-                      <div key={index} className="tag">
-                        # {tag.tag}
-                      </div>
-                    ))}
-                </WrapTag>
-              </TextDiv>
-            </WarpProfile>
             <WrapButton>
               <div
                 className="menu"
@@ -63,14 +39,23 @@ const MyIndexPage = () => {
                   alt="Edit Profile"
                 />
               </div>
+              <div
+                className="menu"
+                onClick={() =>
+                  navigate("/mypage/profile", { state: myData.contents })
+                }>
+                <div>계정 관리</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="Edit Profile"
+                />
+              </div>
               <div className="menu">
                 <div>버전</div>
                 <div className="version">1.0.0</div>
               </div>
-              <div className="menu" onClick={handleLogout}>
-                <div>로그아웃</div>
-              </div>
             </WrapButton>
+            <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
           </WrapMenu>
         </>
       ) : (
@@ -166,7 +151,7 @@ const EmptyContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding-top: 50%;
+  height: 72vh;
 
   > .wrap {
     text-align: center; // 텍스트를 중앙 정렬합니다.
@@ -176,9 +161,20 @@ const EmptyContainer = styled.div`
     }
 
     > div {
-      font-size: 1rem;
-      font-weight: 600;
-      line-height: 22px;
+      color: #333333;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
     }
   }
+`;
+
+const LogoutButton = styled.div`
+  position: absolute;
+  left: 50%;
+  bottom: 7rem;
+  transform: translateX(-50%);
+  color: #767676;
+  font-size: 12px;
+  font-weight: 500;
 `;
