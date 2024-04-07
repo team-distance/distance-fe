@@ -9,13 +9,13 @@ import { onGetToken } from "../../firebaseConfig";
 const DonePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const loginId = location.state.loginId;
+  const telNum = location.state.telNum;
   const password = location.state.password;
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
 
   useEffect(() => {
     const instantLogin = async () => {
-      login({ id: loginId, password })
+      login({ id: telNum, password })
         .then(() => {
           setIsLoggedIn(true);
           onGetToken();

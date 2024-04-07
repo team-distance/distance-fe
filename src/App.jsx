@@ -17,6 +17,11 @@ import Program from "./components/festival/Program";
 import FestivalDetailPage1 from "./pages/festival/FestivalDetailPage1";
 import FestivalDetailPage2 from "./pages/festival/FestivalDetailPage2";
 import FestivalDetailPage3 from "./pages/festival/FestivalDetailPage3";
+import VerifyMobileIdPage from "./pages/verify/VerifyMobileIdPage";
+import VerifyOptionsPage from "./pages/verify/VerifyOptionsPage";
+import VerifyEmailPage from "./pages/verify/VerifyEmailPage";
+import VerifyIdPage from "./pages/verify/VerifyIdPage";
+
 import NotificationAnnouncementPage from "./pages/root/NotificationAnnouncementPage";
 import FoodTruck from "./components/festival/FoodTruck";
 import FoodTruckPage0 from "./pages/festival/FoodTruckPage0";
@@ -37,8 +42,13 @@ function App() {
 
         <Route path="/register/user" element={<UserRegisterPage />} />
         <Route path="/register/univ" element={<UnivRegisterPage />} />
-        <Route path="/register/done" element={<DonePage />} />
         <Route path="/register/profile" element={<ProfileRegisterPage />} />
+        <Route path="/register/done" element={<DonePage />} />
+
+        <Route path="/verify/univ" element={<VerifyOptionsPage/>}/>
+        <Route path="/verify/univ/mobileid" element={<VerifyMobileIdPage/>}/>
+        <Route path="/verify/univ/email" element={<VerifyEmailPage/>}/>
+        <Route path="/verify/univ/id" element={<VerifyIdPage/>}/>
 
         <Route element={<NavLayout />}>
           <Route path="/" element={<HomeIndexPage />} />

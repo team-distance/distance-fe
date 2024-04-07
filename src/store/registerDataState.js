@@ -3,20 +3,21 @@ import { atom } from "recoil";
 export const registerDataState = atom({
   key: "registerDataState",
   default: {
-    loginId: "",
+    telNum: "",
     password: "",
     checkPassword: "",
-    gender: "M",
-    telNum: "",
-    school: "",
-    college: "",
+    gender: "",
     department: "",
-    schoolEmail: "",
-    agreeTerms: false,
-    agreePrivacy: false,
     mbti: "",
     memberCharacter: "",
-    memberHobbyDto: [],
     memberTagDto: [],
+    memberHobbyDto: [],
+
+    school: "",
+    college: "",
+    schoolEmail: "",
+
+    // agreeTerms: false,
+    // agreePrivacy: false,
   },
 });
