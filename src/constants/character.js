@@ -1,4 +1,4 @@
-const Characters = [
+export const CHARACTERS = [
   {key : 'CHICK ', src : "/assets/home/profile-chick.png"},
   {key : 'PENGUIN', src : "/assets/home/profile-penguin.png"},
   {key : 'KOALA', src : "/assets/home/profile-koala.png"},
@@ -15,17 +15,24 @@ const Characters = [
   {key : 'PANDA', src : "/assets/home/profile-panda.png"},
   {key : 'LION', src : "/assets/home/profile-lion.png"},
   {key : 'FOX', src : "/assets/home/profile-fox.png"},
-
-]
-export default Characters;
+];
 
 export const COLORS = {
-  DOG: "#EFE2D1",
-  CAT: "#FDF2D5",
+  CHICK: '#FFF1E4',
+  PENGUIN: '#E4E4E3',
+  KOALA: '#C6C6C6',
+  COW: '#F5F5F5',
+  TIGER: '#FFECCF',
   RABBIT: "#D9EAD3",
-  RAT: "#D9EAD3",
-  FOX: "#FCEDDC",
+  CAT: "#FDF2D5",
   MONKEY: "#D9EAD3",
+  DOG: "#EFE2D1",
+  PIG: '#FAD5FD',
+  RAT: "#D9EAD3",
   BEAR: "#D2C6BB",
+  POLARBEAR: "#EBD5FD",
   PANDA: "#D9EAD3",
+  LION: "#FFDFD2",
+  FOX: "#FCEDDC",
+
 };

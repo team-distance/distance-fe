@@ -17,21 +17,17 @@ import Program from "./components/festival/Program";
 import FestivalDetailPage1 from "./pages/festival/FestivalDetailPage1";
 import FestivalDetailPage2 from "./pages/festival/FestivalDetailPage2";
 import FestivalDetailPage3 from "./pages/festival/FestivalDetailPage3";
-<<<<<<< HEAD
-import NotificationAnnouncementPage from "./pages/root/NotificationAnnouncementPage"
 import VerifyMobileIdPage from "./pages/verify/VerifyMobileIdPage";
 import VerifyOptionsPage from "./pages/verify/VerifyOptionsPage";
 import VerifyEmailPage from "./pages/verify/VerifyEmailPage";
 import VerifyIdPage from "./pages/verify/VerifyIdPage";
 
-=======
 import NotificationAnnouncementPage from "./pages/root/NotificationAnnouncementPage";
 import FoodTruck from "./components/festival/FoodTruck";
 import FoodTruckPage0 from "./pages/festival/FoodTruckPage0";
 import FoodTruckPage1 from "./pages/festival/FoodTruckPage1";
 import FoodTruckPage2 from "./pages/festival/FoodTruckPage2";
 import FoodTruckPage3 from "./pages/festival/FoodTruckPage3";
->>>>>>> main
 
 function App() {
   return (

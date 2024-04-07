@@ -10,8 +10,8 @@ const VerifyMobileIdPage = () => {
 
   const onChangeImage = e => {
     const file = e.target.files[0];
-    // const imageUrl = URL.createObjectURL(file);
-    setUploadedImage(file);
+    const imageUrl = URL.createObjectURL(file);
+    setUploadedImage(imageUrl);
   };
 
   const handleButtonClick = () => {
@@ -25,11 +25,13 @@ const VerifyMobileIdPage = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('studentCard', uploadedImage);
+    // const formData = new FormData();
+    // formData.append('studentCard', uploadedImage);
 
     try {
-      const res = await authInstance.post(`/studentcard/send?name=${"name"}`, formData);
+      const res = await authInstance.post('/studentcard/send', {
+        studentCard: uploadedImage,
+      });
       console.log(res);
     } catch (error) {
       console.log(error);

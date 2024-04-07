@@ -5,7 +5,7 @@ import Toggle from "../../components/register/Toggle";
 import BlankModal from "../../components/common/BlankModal";
 import Button from "../../components/common/Button";
 import { ATTRACTIVENESS, HOBBY } from "../../constants/profile";
-import Characters from "../../constants/character";
+import { CHARACTERS } from "../../constants/character";
 import { defaultInstance } from "../../api/instance";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -131,7 +131,7 @@ const ProfileRegisterPage = () => {
                 src="/assets/profile-register-plusbutton.png"
                 alt="profile register button" /> :
               <img
-                src={(Characters.find(character => character.key === selectedAnimal)).src}
+                src={(CHARACTERS.find(character => character.key === selectedAnimal)).src}
                 alt="selected profile" />
             }
             <img
@@ -151,7 +151,7 @@ const ProfileRegisterPage = () => {
               />
             </ModalTitle>
             <AnimalListContainer>
-              {Characters.map((value) => (
+              {CHARACTERS.map((value) => (
                 <AnimalListItem
                   key={value.key}
                   onClick={() => {

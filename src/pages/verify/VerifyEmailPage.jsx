@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { defaultInstance } from '../../api/instance';
+import { authInstance } from '../../api/instance';
 import Button from '../../components/common/Button';
 import TextInput from '../../components/register/TextInput';
 
@@ -13,10 +13,8 @@ const VerifyEmailPage = () => {
   const [verifyNum, setVerifyNum] = useState("");
   const [emailDisabled, setEmailDisabled] = useState(true);
   const [verifyDisabled, setVerifyDisabled] = useState(true);
+  const [verifiedFlag, setVerifiedFlag] = useState(true);
   const [isSendEmail, setIsSendEmail] = useState(false);
-
-  const isDisabled = emailDisabled || verifyDisabled;
-  
 
   const handleChangeEmail = (e) => {
     setSchoolEmail(e.target.value);
@@ -37,14 +35,14 @@ const VerifyEmailPage = () => {
   }
 
   const sendEmail = async () => {
-    try {
-      const res = await defaultInstance.post("/univ/send/email", {
+    try { 
+      setIsSendEmail(true);
+      const res = await authInstance.post("/univ/send/email", {
         schoolEmail: schoolEmail,
       });
       if (res.data) {
         alert("이메일로 인증 번호를 보냈습니다.");
       }
-      setIsSendEmail(true);
     } catch (error) {
       alert("인증을 다시 시도해주세요.");
       console.log(error);
@@ -53,9 +51,11 @@ const VerifyEmailPage = () => {
 
   const verifyEmail = async() => {
     try {
-      await defaultInstance.post("/univ/certificate/email", {
+      await authInstance.post("/univ/certificate/email", {
         number: verifyNum,
       });
+      alert("인증에 성공했습니다.");
+      setVerifiedFlag(false);
     } catch (error) {
       alert("인증에 실패했습니다. 다시 시도해주세요.");
       console.log(error);
@@ -93,19 +93,20 @@ const VerifyEmailPage = () => {
             name="emailVerify"
             type="text"
             buttonLabel="인증하기"
+            buttonDisabled={verifyDisabled}
             onChange={handleChangeVerifyNum}
             buttonClickHandler={verifyEmail}
             timerState={180}
-            onTimerEnd={() => setVerifyDisabled(true)}
+            onTimerEnd={() => setIsSendEmail(false)}
           />
         </div>
       )}
 
       <Button
         size="large"
-        disabled={isDisabled}
+        disabled={verifiedFlag}
         onClick={() => {
-          navigate("/home");
+          navigate("/");
         }}>
         인증완료
       </Button>
