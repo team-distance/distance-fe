@@ -2,15 +2,20 @@ import styled from 'styled-components';
 import { useRef, useState } from 'react';
 import Button from '../../components/common/Button';
 import { authInstance } from '../../api/instance';
+import { useNavigate } from 'react-router-dom';
 
 const VerifyMobileIdPage = () => {
 
+  const navigate = useNavigate();
+
   const fileInputRef = useRef();
-  const [uploadedImage, setUploadedImage] = useState(null);
+  const [uploadedImage, setUploadedImage] = useState(null);const [file, setFile] = useState(null);
+
 
   const onChangeImage = e => {
     const file = e.target.files[0];
     const imageUrl = URL.createObjectURL(file);
+    setFile(file);
     setUploadedImage(imageUrl);
   };
 
@@ -20,19 +25,18 @@ const VerifyMobileIdPage = () => {
 
   const sendStudentId = async () => {
 
-    if (!uploadedImage) {
+    if (!file) {
       alert('이미지를 먼저 업로드해주세요.');
       return;
     }
+    const formData = new FormData();
+    formData.append('studentcard', file);
 
-    // const formData = new FormData();
-    // formData.append('studentCard', uploadedImage);
+    console.log(formData);
 
     try {
-      const res = await authInstance.post('/studentcard/send', {
-        studentCard: uploadedImage,
-      });
-      console.log(res);
+      await authInstance.post('/studentcard/send',formData);
+      navigate('/verify/univ/loading');
     } catch (error) {
       console.log(error);
     }

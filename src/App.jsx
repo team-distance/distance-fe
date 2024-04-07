@@ -21,7 +21,7 @@ import VerifyMobileIdPage from "./pages/verify/VerifyMobileIdPage";
 import VerifyOptionsPage from "./pages/verify/VerifyOptionsPage";
 import VerifyEmailPage from "./pages/verify/VerifyEmailPage";
 import VerifyIdPage from "./pages/verify/VerifyIdPage";
-
+import VerifyLoadingPage from "./pages/verify/VerifyLoadingPage";
 import NotificationAnnouncementPage from "./pages/root/NotificationAnnouncementPage";
 import FoodTruck from "./components/festival/FoodTruck";
 import FoodTruckPage0 from "./pages/festival/FoodTruckPage0";
@@ -49,6 +49,7 @@ function App() {
         <Route path="/verify/univ/mobileid" element={<VerifyMobileIdPage/>}/>
         <Route path="/verify/univ/email" element={<VerifyEmailPage/>}/>
         <Route path="/verify/univ/id" element={<VerifyIdPage/>}/>
+        <Route path="/verify/univ/loading" element={<VerifyLoadingPage/>}/>
 
         <Route element={<NavLayout />}>
           <Route path="/" element={<HomeIndexPage />} />

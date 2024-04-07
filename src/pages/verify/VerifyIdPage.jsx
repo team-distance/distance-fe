@@ -1,21 +1,44 @@
 import styled from 'styled-components';
 import { useRef, useState } from 'react';
 import Button from '../../components/common/Button';
+import { useNavigate } from 'react-router-dom';
+import { authInstance } from '../../api/instance';
 
 const VerifyMobileIdPage = () => {
 
+  const navigate = useNavigate();
+
   const fileInputRef = useRef();
   const [uploadedImage, setUploadedImage] = useState(null);
+  const [file, setFile] = useState(null);
 
   const onChangeImage = e => {
     const file = e.target.files[0];
     const imageUrl = URL.createObjectURL(file);
+    setFile(file);
     setUploadedImage(imageUrl);
   };
 
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
+
+  const sendStudentId = async () => {
+
+    if (!file) {
+      alert('이미지를 먼저 업로드해주세요.');
+      return;
+    }
+    const formData = new FormData();
+    formData.append('studentcard', file);
+
+    try {
+      await authInstance.post('/studentcard/send',formData);
+      navigate('/verify/univ/loading');
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <WrapContent>
@@ -44,7 +67,12 @@ const VerifyMobileIdPage = () => {
             hidden />
         </UploadDiv>
       )}
-      <Button size={"medium"}>이미지 전송하기</Button>
+      <Button
+        size={"medium"}
+        onClick={sendStudentId}>
+        이미지 전송하기
+      </Button>
+
       <NoticeDiv>
         <h3>흔들린 사진은 심사가 어려워요!</h3>
         <hr />
