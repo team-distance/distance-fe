@@ -9,8 +9,8 @@ const VerifyMobileIdPage = () => {
   const navigate = useNavigate();
 
   const fileInputRef = useRef();
-  const [uploadedImage, setUploadedImage] = useState(null);const [file, setFile] = useState(null);
-
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [file, setFile] = useState(null);
 
   const onChangeImage = e => {
     const file = e.target.files[0];
@@ -31,8 +31,6 @@ const VerifyMobileIdPage = () => {
     }
     const formData = new FormData();
     formData.append('studentcard', file);
-
-    console.log(formData);
 
     try {
       await authInstance.post('/studentcard/send',formData);
