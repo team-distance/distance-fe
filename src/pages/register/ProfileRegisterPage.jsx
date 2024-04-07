@@ -6,7 +6,7 @@ import BlankModal from "../../components/common/BlankModal";
 import Button from "../../components/common/Button";
 import { ATTRACTIVENESS, HOBBY } from "../../constants/profile";
 import Characters from "../../constants/character";
-import { authInstance } from "../../api/instance";
+import { defaultInstance } from "../../api/instance";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { registerDataState } from "../../store/registerDataState";
@@ -31,36 +31,30 @@ const ProfileRegisterPage = () => {
       ...prev,
       memberCharacter: selectedAnimal,
       mbti: selectedMBTI,
+      gender: toggleState,
       memberHobbyDto: hobby.map((value) => ({ hobby: value })),
       memberTagDto: attractiveness.map((value) => ({ tag: value })),
     }));
-  }, [selectedAnimal, selectedMBTI, attractiveness, hobby]);
+  }, [selectedAnimal, selectedMBTI, toggleState, attractiveness, hobby]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await authInstance
+    await defaultInstance
       .post("/member/signup", {
-        loginId: registerData.loginId,
-        password: registerData.password,
-        checkPassword: registerData.checkPassword,
-        gender: registerData.gender,
-        telNum: registerData.telNum,
-        school: registerData.school,
-        college: registerData.college,
         department: registerData.department,
-        schoolEmail: registerData.schoolEmail,
-        agreeTerms: registerData.agreeTerms,
-        agreePrivacy: registerData.agreePrivacy,
+        gender: registerData.gender,
         mbti: selectedMBTI,
         memberCharacter: selectedAnimal,
         memberHobbyDto: registerData.memberHobbyDto,
         memberTagDto: registerData.memberTagDto,
+        password: registerData.password,
+        telNum: registerData.telNum,
       })
       .then(() => {
         navigate("/register/done", {
           state: {
-            loginId: registerData.loginId,
+            telNum: registerData.telNum,
             password: registerData.password,
           },
         });
@@ -128,7 +122,22 @@ const ProfileRegisterPage = () => {
         <div>
           <Label>캐릭터 선택하기</Label>
           <ProfileContainer onClick={openCharacterModal}>
-            <img src="/assets/profile-register.png" alt="profile register button image" />
+            <img 
+              className="side-image-left" 
+              src="/assets/profile-register-leftimg.png"
+              alt="profile register button" />
+            {selectedAnimal === "" ?
+              <img
+                src="/assets/profile-register-plusbutton.png"
+                alt="profile register button" /> :
+              <img
+                src={(Characters.find(character => character.key === selectedAnimal)).src}
+                alt="selected profile" />
+            }
+            <img
+              className="side-image-right" 
+              src="/assets/profile-register-rightimg.png" 
+              alt="profile register button" />
           </ProfileContainer>
         </div>
 
@@ -274,9 +283,24 @@ const ProfileContainer = styled.div`
   align-items: baseline;
   justify-content: center;
   padding-top: 1rem;
+  position: relative;
+  width: 100%;
 
   img {
-    width: 60%;
+    width: 30%;
+  }
+
+  .side-image-left {
+    position: absolute;
+    bottom: -10%;
+    left: 12%;
+    z-index: 1;
+  }
+  .side-image-right {
+    position: absolute;
+    bottom: -10%;
+    right: 12%;
+    z-index: 1;
   }
 `;
 

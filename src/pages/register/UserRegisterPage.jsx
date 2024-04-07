@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import TextInput from "../../components/register/TextInput";
 import { useRecoilState } from "recoil";
@@ -63,7 +63,7 @@ const UserRegisterPage = () => {
 
     try {
       console.log(typeof registerData.telNum, registerData.telNum);
-      const res = await defaultInstance.post("/member/send/sms", {
+      await defaultInstance.post("/member/send/sms", {
         telNum: registerData.telNum,
       })
       setIsSendMessage(true);
@@ -77,7 +77,7 @@ const UserRegisterPage = () => {
 
   const verifyTelNum = async () => {
     try {
-      const res = await defaultInstance.post("/member/authenticate", {
+      await defaultInstance.post("/member/authenticate", {
         authenticateNum: verifyNum,
       })
       setVerify(true);
@@ -116,7 +116,7 @@ const UserRegisterPage = () => {
             name="verifyNum"
             type="text"
             timerState={180}
-            onTimerEnd={() => isSendMessage(false)}
+            onTimerEnd={() => setIsSendMessage(false)}
             placeholder="인증번호 입력"
             buttonLabel={"인증하기"}
             buttonClickHandler={verifyTelNum}

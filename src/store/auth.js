@@ -8,7 +8,7 @@ export const isLoggedInState = atom({
 
 export const login = async (value) => {
   const response = await defaultInstance.post("/login", {
-    loginId: value.id,
+    telNum: value.telNum,
     password: value.password,
     clientToken: localStorage.getItem('clientToken'),
   });
