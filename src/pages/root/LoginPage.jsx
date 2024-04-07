@@ -4,7 +4,6 @@ import { isLoggedInState, login } from "../../store/auth";
 import { useSetRecoilState } from "recoil";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
-import HeaderPrev from "../../components/common/HeaderPrev";
 import TextInput from "../../components/register/TextInput";
 import Button from "../../components/common/Button";
 import ClipLoader from "react-spinners/ClipLoader";
