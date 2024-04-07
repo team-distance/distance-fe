@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import LandingPage from "./pages/root/LandingPage";
 import HomeIndexPage from "./pages/home/HomeIndexPage";
 import ChatIndexPage from "./pages/chat/ChatIndexPage";
 import FestivalIndexPage from "./pages/festival/FestivalIndexPage";
@@ -14,26 +13,30 @@ import LoginPage from "./pages/root/LoginPage";
 import ProfileEditPage from "./pages/mypage/ProfileEditPage";
 import ChatInboxPage from "./pages/chat/ChatInboxPage";
 import FestivalDetailPage0 from "./pages/festival/FestivalDetailPage0";
-import Information from "./components/festival/Information";
-import Schedule from "./components/festival/Schedule";
 import Program from "./components/festival/Program";
 import FestivalDetailPage1 from "./pages/festival/FestivalDetailPage1";
 import FestivalDetailPage2 from "./pages/festival/FestivalDetailPage2";
 import FestivalDetailPage3 from "./pages/festival/FestivalDetailPage3";
+<<<<<<< HEAD
 import NotificationAnnouncementPage from "./pages/root/NotificationAnnouncementPage"
 import VerifyMobileIdPage from "./pages/verify/VerifyMobileIdPage";
 import VerifyOptionsPage from "./pages/verify/VerifyOptionsPage";
 import VerifyEmailPage from "./pages/verify/VerifyEmailPage";
 import VerifyIdPage from "./pages/verify/VerifyIdPage";
 
+=======
+import NotificationAnnouncementPage from "./pages/root/NotificationAnnouncementPage";
+import FoodTruck from "./components/festival/FoodTruck";
+import FoodTruckPage0 from "./pages/festival/FoodTruckPage0";
+import FoodTruckPage1 from "./pages/festival/FoodTruckPage1";
+import FoodTruckPage2 from "./pages/festival/FoodTruckPage2";
+import FoodTruckPage3 from "./pages/festival/FoodTruckPage3";
+>>>>>>> main
 
 function App() {
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-
         <Route path="/login" element={<LoginPage />} />
 
         <Route
@@ -52,15 +55,14 @@ function App() {
         <Route path="/verify/univ/id" element={<VerifyIdPage/>}/>
 
         <Route element={<NavLayout />}>
-          <Route path="/home" element={<HomeIndexPage />} />
+          <Route path="/" element={<HomeIndexPage />} />
 
           <Route path="/chat" element={<ChatIndexPage />} />
           <Route path="/inbox" element={<ChatInboxPage />} />
 
           <Route element={<FestivalIndexPage />}>
             <Route path="/festival/program" element={<Program />} />
-            <Route path="/festival/schedule" element={<Schedule />} />
-            <Route path="/festival/information" element={<Information />} />
+            <Route path="/festival/foodtruck" element={<FoodTruck />} />
           </Route>
 
           <Route path="/mypage" element={<MyIndexPage />} />
@@ -71,6 +73,11 @@ function App() {
         <Route path="/festival/detail/1" element={<FestivalDetailPage1 />} />
         <Route path="/festival/detail/2" element={<FestivalDetailPage2 />} />
         <Route path="/festival/detail/3" element={<FestivalDetailPage3 />} />
+
+        <Route path="/festival/foodtruck/0" element={<FoodTruckPage0 />} />
+        <Route path="/festival/foodtruck/1" element={<FoodTruckPage1 />} />
+        <Route path="/festival/foodtruck/2" element={<FoodTruckPage2 />} />
+        <Route path="/festival/foodtruck/3" element={<FoodTruckPage3 />} />
 
         <Route path="/chat/:chatRoomId" element={<ChatPage />} />
       </Routes>

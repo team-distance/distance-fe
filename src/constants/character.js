@@ -19,3 +19,13 @@ const Characters = [
 ]
 export default Characters;
 
+export const COLORS = {
+  DOG: "#EFE2D1",
+  CAT: "#FDF2D5",
+  RABBIT: "#D9EAD3",
+  RAT: "#D9EAD3",
+  FOX: "#FCEDDC",
+  MONKEY: "#D9EAD3",
+  BEAR: "#D2C6BB",
+  PANDA: "#D9EAD3",
+};

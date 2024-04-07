@@ -4,24 +4,25 @@ import Button from "./Button";
 
 const StyledDialog = styled.dialog`
   width: 60%;
-  border: none;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0px 4px 10px 10px #3333334d;
+  padding: 32px;
   position: relative;
+  border: none;
+  border-radius: 30px;
+  background: #ffffff;
+  box-shadow: 0px 0px 20px 0px rgba(255, 255, 255, 0.08);
 `;
 
 const CloseButton = styled.img`
   flex: 1;
   position: absolute;
-  top: 0;
-  right: 0;
-  padding: 10px;
+  top: 20px;
+  right: 20px;
 `;
 
 const Modal = forwardRef(
-  ({ content, buttonLabel, onCreateRoom, closeButton = true, title = "" }, ref) => {
+  ({ children, buttonLabel, buttonClickHandler }, ref) => {
     const dialog = useRef();
+
     const handleCloseModal = () => {
       dialog.current.close();
     };
@@ -37,22 +38,22 @@ const Modal = forwardRef(
       };
     });
 
-  return (
-    <>
-      <StyledDialog ref={dialog}>
-        <CloseButton
-          onClick={handleCloseModal}
-          src={'/assets/cancel-button.png'}
-          alt="Close" />
-        {content}
-        <Button
-          size={"medium"}
-          onClick={onCreateRoom}>
-          {buttonLabel}
-        </Button>
-      </StyledDialog>
-    </>
-  )
-});
+    return (
+      <>
+        <StyledDialog ref={dialog}>
+          <CloseButton
+            onClick={handleCloseModal}
+            src={"/assets/cancel-button-gray.svg"}
+            alt="Close"
+          />
+          {children}
+          <Button size={"medium"} onClick={buttonClickHandler}>
+            {buttonLabel}
+          </Button>
+        </StyledDialog>
+      </>
+    );
+  }
+);
 
 export default Modal;

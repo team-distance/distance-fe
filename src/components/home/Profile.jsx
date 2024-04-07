@@ -1,56 +1,15 @@
 import styled from "styled-components";
-import Characters from "../../constants/character";
+import { CHARACTERS } from "../../constants/character";
+import { COLORS } from "../../constants/character";
 import { useEffect } from "react";
+import Badge from "../common/Badge";
 
-const WrapPofile = styled.article`
-  width: 100%;
-  border-radius: 12px;
-  background: #fcfcfc;
-  box-shadow: 0px 4px 10px 2px #33333366;
-  overflow: hidden;
-`;
-
-const CharacterDiv = styled.div`
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-`;
-const StyledImage = styled.img`
-  width: 100%;
-  position: relative;
-  ${({ $side }) => ($side === "left" ? "right: 15%;" : "left: 15%;")}
-`;
-
-const TextDiv = styled.div`
-  padding: 10px;
-
-  .text-major {
-    white-space: nowrap;
-    font-size: 1.4rem;
-    font-weight: 700;
-  }
-  .text-mbti {
-    font-size: 1rem;
-    font-weight: 700;
-  }
-  .text-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.2rem;
-    font-size: 0.8rem;
-    font-weight: 600;
-    margin-top: 0.8rem;
-  }
-`;
-
-const Profile = ({ id, side, profile, ...props }) => {
+const Profile = ({ id, profile, onClick }) => {
   // 글씨 크기 동적으로 조절
   useEffect(() => {
     const textMajorElement = document.querySelector(`.text-major-${id}`);
 
-    const aLetter = 22.4; // 대략적인 1.4rem
+    const aLetter = 24;
     const innerTextLength = textMajorElement.innerText.length;
     const parentWidth = textMajorElement.closest("article").offsetWidth;
 
@@ -64,28 +23,97 @@ const Profile = ({ id, side, profile, ...props }) => {
   }, [id]);
 
   return (
-    <WrapPofile {...props}>
-      <CharacterDiv>
-        <StyledImage
-          $side={side}
-          src={Characters[profile.memberInfoDto.memberCharacter]}
-        />
-      </CharacterDiv>
-      <TextDiv>
-        <div className={`text-major text-major-${id}`}>
-          {profile.department}
-        </div>
-        <div className="text-mbti">{profile.memberInfoDto.mbti}</div>
-        <div className="text-tags">
+    <WrapProfile onClick={onClick}>
+      <Wrapper>
+        <CharacterBackground $character={profile.memberInfoDto.memberCharacter}>
+          <StyledImage
+            src={CHARACTERS[profile.memberInfoDto.memberCharacter]}
+            alt={profile.memberInfoDto.memberCharacter}
+          />
+        </CharacterBackground>
+        <TextDiv>
+          <MBTI>{profile.memberInfoDto.mbti}</MBTI>
+          <div className={`text-major text-major-${id}`}>
+            {profile.department}
+          </div>
+        </TextDiv>
+        <TagContainer>
           {profile.memberInfoDto.memberHobbyDto.map((tag, index) => (
-            <div key={index}>#{tag.hobby} </div>
+            <Badge key={index}>#{tag.hobby}</Badge>
           ))}
           {profile.memberInfoDto.memberTagDto.map((tag, index) => (
-            <div key={index}>#{tag.tag} </div>
+            <Badge key={index}>#{tag.tag}</Badge>
           ))}
-        </div>
-      </TextDiv>
-    </WrapPofile>
+        </TagContainer>
+      </Wrapper>
+    </WrapProfile>
   );
 };
 export default Profile;
+
+const WrapProfile = styled.article`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 33vh;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.05);
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const CharacterBackground = styled.div`
+  position: relative;
+  width: 60%;
+  height: 0;
+  padding-bottom: 60%;
+  border-radius: 50%;
+  background-color: ${(props) => COLORS[props.$character]};
+`;
+
+const StyledImage = styled.img`
+  position: absolute;
+  width: 60%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const TextDiv = styled.div`
+  .text-major {
+    white-space: nowrap;
+    font-weight: 700;
+    color: #000000;
+    text-align: center;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+`;
+const MBTI = styled.div`
+  color: #000000;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+`;
+
+const TagContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+`;

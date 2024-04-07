@@ -1,19 +1,23 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useRef, useState } from "react";
-import { authInstance } from "../../api/instance";
+import { authInstance, defaultInstance } from "../../api/instance";
 import ClipLoader from "react-spinners/ClipLoader";
 
-import Characters from "../../constants/character";
+import { CHARACTERS, COLORS } from "../../constants/character";
 import Header from "../../components/common/Header";
 import Profile from "../../components/home/Profile";
 import Modal from "../../components/common/Modal";
 import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { isLoggedInState } from "../../store/auth";
+import toast from "react-hot-toast";
+import Badge from "../../components/common/Badge";
 
 const HomeIndexPage = () => {
-  
   const profileModal = useRef();
   const [selectedProfile, setSelectedProfile] = useState();
+  const isLoggedIn = useRecoilState(isLoggedInState);
   const navigate = useNavigate();
 
   const memberId = localStorage.getItem("memberId");
@@ -23,41 +27,22 @@ const HomeIndexPage = () => {
   const [remainingTimeToReload, setRemainingTimeToReload] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const content = () => {
-    return (
-      selectedProfile && (
-        <WrapContent>
-          <CharacterDiv>
-            <StyledImage
-              src={Characters[selectedProfile.memberInfoDto.memberCharacter]}
-              alt={Characters[selectedProfile.memberInfoDto.memberCharacter]}
-            />
-          </CharacterDiv>
-          <TextDiv>
-            <div className="text-major">{selectedProfile.department}</div>
-            <div className="text-mbti">
-              {selectedProfile.memberInfoDto.mbti}
-            </div>
-            <div className="text-tags">
-              {selectedProfile.memberInfoDto.memberHobbyDto.map(
-                (hobby, index) => (
-                  <div key={index}>#{hobby.hobby} </div>
-                )
-              )}
-              {selectedProfile.memberInfoDto.memberTagDto.map((tag, index) => (
-                <div key={index}>#{tag.tag} </div>
-              ))}
-            </div>
-          </TextDiv>
-        </WrapContent>
-      )
-    );
-  };
-
-  const fetchGetMembers = async () => {
+  const fetchMembersAuth = async () => {
     try {
       setLoading(true);
       const res = await authInstance.get("/gps/matching");
+      setMemberState(res.data.matchedUsers);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMembers = async () => {
+    try {
+      setLoading(true);
+      const res = await defaultInstance.get("/gps/matching");
       setMemberState(res.data.matchedUsers);
     } catch (error) {
       console.log(error);
@@ -95,7 +80,8 @@ const HomeIndexPage = () => {
   };
 
   useEffect(() => {
-    fetchGetMembers();
+    if (isLoggedIn) fetchMembersAuth();
+    else fetchMembers();
   }, []);
 
   const handleSelectProfile = (profile) => {
@@ -104,11 +90,6 @@ const HomeIndexPage = () => {
   };
 
   const handleCreateChatRoom = async (opponentMemberId) => {
-    // 방이 성공적으로 생성된 경우
-    // 이미 이사람과 생성된 방이 있는 경우
-    // 내가 이미 3개의 방을 갖고 있는 경우
-    // 상대방이 3개의 방을 갖고 있는 경우
-    // 이외 에러 발생 시
     await authInstance
       .post("/chatroom/create", {
         memberId: opponentMemberId,
@@ -126,17 +107,17 @@ const HomeIndexPage = () => {
       .catch((error) => {
         switch (error.response.data.code) {
           case "TOO_MANY_MY_CHATROOM":
-            alert(
+            toast.error(
               "이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요."
             );
             break;
           case "TOO_MANY_OPPONENT_CHATROOM":
-            alert(
+            toast.error(
               "상대방이 이미 생성된 채팅방 3개입니다. 상대방이 수락하면 알려드릴게요!"
             );
             break;
           default:
-            alert("채팅방 생성에 실패했습니다. 다시 시도해주세요.");
+            toast.error("채팅방 생성에 실패했습니다. 다시 시도해주세요.");
             break;
         }
       });
@@ -145,18 +126,10 @@ const HomeIndexPage = () => {
 
   return (
     <>
-      <Modal
-        ref={profileModal}
-        content={content()}
-        buttonLabel="메세지 보내기"
-        onCreateRoom={() => {
-          handleCreateChatRoom(selectedProfile.memberId);
-        }}
-      />
       <HomeContainer>
         <Header />
         <ProfileContainer>
-        {loading ? (
+          {loading ? (
             <LoaderContainer>
               <ClipLoader color={"#FF625D"} loading={loading} size={50} />
             </LoaderContainer>
@@ -165,7 +138,6 @@ const HomeIndexPage = () => {
               <Profile
                 key={index}
                 id={profile.memberId}
-                side={index % 2 === 0 ? "left" : "right"}
                 profile={profile}
                 onClick={() => handleSelectProfile(profile)}
               />
@@ -179,6 +151,60 @@ const HomeIndexPage = () => {
           <img src="/assets/home/reload-button.png" alt="Reload button" />
         </ReloadButton>
       </HomeContainer>
+
+      <Modal
+        ref={profileModal}
+        buttonLabel="메세지 보내기"
+        buttonClickHandler={() => {
+          handleCreateChatRoom(selectedProfile.memberId);
+        }}>
+        {selectedProfile && (
+          // <WrapContent>
+          //   <CharacterDiv>
+          //     <StyledImage
+          //       src={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
+          //       alt={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
+          //     />
+          //   </CharacterDiv>
+          //   <TextDiv>
+          //     <div className="text-major">{selectedProfile.department}</div>
+          //     <div className="text-mbti">
+          //       {selectedProfile.memberInfoDto.mbti}
+          //     </div>
+          //     <div className="text-tags">
+          //       {selectedProfile.memberInfoDto.memberHobbyDto.map(
+          //         (hobby, index) => (
+          //           <div key={index}>#{hobby.hobby} </div>
+          //         )
+          //       )}
+          //       {selectedProfile.memberInfoDto.memberTagDto.map(
+          //         (tag, index) => (
+          //           <div key={index}>#{tag.tag} </div>
+          //         )
+          //       )}
+          //     </div>
+          //   </TextDiv>
+          // </WrapContent>
+          <WrapContent>
+            <CharacterBackground $character={"MONKEY"}>
+              <StyledImage
+                src={CHARACTERS["MONKEY"]}
+                alt={selectedProfile.memberInfoDto.memberCharacter}
+              />
+            </CharacterBackground>
+            <TextDiv>
+              <MBTI>INFP</MBTI>
+              <Major>미디어커뮤니케이션학과</Major>
+            </TextDiv>
+            <TagContainer>
+              <Badge>#여행</Badge>
+              <Badge>#감성적인</Badge>
+              <Badge>#공감능력</Badge>
+              <Badge>#노래</Badge>
+            </TagContainer>
+          </WrapContent>
+        )}
+      </Modal>
     </>
   );
 };
@@ -196,14 +222,14 @@ const ProfileContainer = styled.div`
 const ReloadButton = styled.button`
   position: fixed;
   right: 1.5rem;
-  bottom: 5rem;
+  bottom: 7rem;
   width: 50px;
   height: 50px;
   border-radius: 50%;
   border: none;
   background-color: #ffffff;
-  box-shadow: 0px 4px 10px 0px #0000001A;
-
+  box-shadow: 0px 4px 10px 0px #0000001a;
+  transition: 0.3s;
 
   > .time-remaining {
     position: absolute;
@@ -223,49 +249,51 @@ const ReloadButton = styled.button`
   }
 
   &:disabled {
-    filter: brightness(0.4);
+    filter: brightness(0.6);
   }
 `;
 
 const WrapContent = styled.div`
-  width: 100%;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 32px 0;
+  gap: 12px;
 `;
 
-const CharacterDiv = styled.div`
-  width: 50%;
-  display: flex;
-  margin: 0 auto;
-  padding-bottom: 1rem;
+const CharacterBackground = styled.div`
+  position: relative;
+  width: 60%;
+  height: 0;
+  padding-bottom: 60%;
+  border-radius: 50%;
+  background-color: ${(props) => COLORS[props.$character]};
 `;
 
 const StyledImage = styled.img`
-  width: 100%;
+  position: absolute;
+  width: 60%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const TextDiv = styled.div`
   width: 100%;
   text-align: center;
   color: #333333;
+`;
 
-  .text-major {
-    font-size: 1.4rem;
-    font-weight: 700;
-    white-space: nowrap;
-  }
-  .text-mbti {
-    font-size: 1.2rem;
-    font-weight: 400;
-  }
-  .text-tags {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 0.2rem;
-    font-size: 1rem;
-    font-weight: 400;
-    margin: 1.5rem auto;
-  }
+const Major = styled.div`
+  font-size: 24px;
+  font-weight: 700;
+  white-space: nowrap;
+`;
+
+const MBTI = styled.div`
+  color: #000000;
+  font-size: 14px;
 `;
 
 const LoaderContainer = styled.div`
@@ -280,5 +308,12 @@ const LoaderContainer = styled.div`
   z-index: 999;
 `;
 
+const TagContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+`;
 
 export default HomeIndexPage;

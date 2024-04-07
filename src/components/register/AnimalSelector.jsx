@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Characters from "../../constants/character";
+import { CHARACTERS } from "../../constants/character";
 
 const AnimalSelector = ({ label, clickHandler }) => {
   return (
@@ -8,35 +8,35 @@ const AnimalSelector = ({ label, clickHandler }) => {
       <Label>{label}</Label>
       <Wrapper onClick={clickHandler}>
         <StyledInput>
-          <img src={Characters.DOG} alt="Dog Character" />
+          <img src={CHARACTERS.DOG} alt="Dog Character" />
           <input type="radio" name="animal" value="DOG" />
         </StyledInput>
         <StyledInput>
-          <img src={Characters.CAT} alt="Cat Character" />
+          <img src={CHARACTERS.CAT} alt="Cat Character" />
           <input type="radio" name="animal" value="CAT" />
         </StyledInput>
         <StyledInput>
-          <img src={Characters.RABBIT} alt="Rabbit Character" />
+          <img src={CHARACTERS.RABBIT} alt="Rabbit Character" />
           <input type="radio" name="animal" value="RABBIT" />
         </StyledInput>
         <StyledInput>
-          <img src={Characters.RAT} alt="Rat Character" />
+          <img src={CHARACTERS.RAT} alt="Rat Character" />
           <input type="radio" name="animal" value="RAT" />
         </StyledInput>
         <StyledInput>
-          <img src={Characters.FOX} alt="Fox Character" />
+          <img src={CHARACTERS.FOX} alt="Fox Character" />
           <input type="radio" name="animal" value="FOX" />
         </StyledInput>
         <StyledInput>
-          <img src={Characters.MONKEY} alt="Monkey Character" />
+          <img src={CHARACTERS.MONKEY} alt="Monkey Character" />
           <input type="radio" name="animal" value="MONKEY" />
         </StyledInput>
         <StyledInput>
-          <img src={Characters.BEAR} alt="Bear Character" />
+          <img src={CHARACTERS.BEAR} alt="Bear Character" />
           <input type="radio" name="animal" value="BEAR" />
         </StyledInput>
         <StyledInput>
-          <img src={Characters.PANDA} alt="Panda Character" />
+          <img src={CHARACTERS.PANDA} alt="Panda Character" />
           <input type="radio" name="animal" value="PANDA" />
         </StyledInput>
       </Wrapper>
