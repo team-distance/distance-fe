@@ -9,13 +9,17 @@ import toast, { Toaster } from "react-hot-toast";
 import BlankModal from "../../components/common/BlankModal";
 import TextInput from "../../components/register/TextInput";
 import { checkCurse } from "../../utils/checkCurse";
+import Lottie from 'react-lottie-player'
+import callAnimation from '../../lottie/call-animation.json';
 
 const ChatPage = () => {
   const [distance, setDistance] = useState(-1);
   const [isCallActive, setIsCallActive] = useState(false);
+  const [isShowLottie, setIsShowLottie] = useState(false);
   const [opponentTelNum, setOpponentTelNum] = useState("");
   const [reportMessage, setReportMessage] = useState("");
   const [displayMessage, setDisplayMessage] = useState([]);
+
 
   const reportModalRef = useRef();
 
@@ -257,6 +261,21 @@ const ChatPage = () => {
     return () => clearInterval(intervalId);
   }, [client, roomId, draftMessage, opponentId, myId]);
 
+  useEffect(() => {
+    const callEffectShown = JSON.parse(localStorage.getItem('callEffectShown'))||[];
+    if (!callEffectShown.includes(roomId)) {
+      if (isCallActive) {
+        const newArray = [...callEffectShown];
+        newArray.push(roomId);
+        localStorage.setItem("callEffectShown",JSON.stringify(newArray));
+        setIsShowLottie(true);
+        setTimeout(() => {
+          setIsShowLottie(false);
+        }, 4000);
+      }
+    }
+  }, [isCallActive]); 
+
   return (
     <Wrapper
       onScroll={() => {
@@ -268,7 +287,25 @@ const ChatPage = () => {
           }
         }
       }}>
-      <Toaster position="bottom-center" />
+      {/* <Toaster position="bottom-center" /> */}
+
+      {isShowLottie &&
+        <LottieContainer>
+          <div>
+            <Lottie
+              animationData={callAnimation}
+              play
+              style={{ width: 200, height: 200 }}
+              loop={false}
+            />
+          </div>
+          <p>
+            <strong>전화 버튼이 활성화되었어요!</strong> <br />
+            채팅 상대와 전화를 연결해보세요
+          </p>
+        </LottieContainer>
+      }
+
       <Container ref={viewportRef}>
         <TopBar>
           <BackButton
@@ -311,6 +348,7 @@ const ChatPage = () => {
           submitHandler={sendMessage}
         />
       </Container>
+
       <BlankModal ref={reportModalRef}>
         <ModalContent>
           <TextInput
@@ -329,6 +367,8 @@ const ChatPage = () => {
           </div>
         </ModalContent>
       </BlankModal>
+
+
     </Wrapper>
   );
 };
@@ -411,4 +451,27 @@ const CancelButton = styled.button`
   border: none;
 `;
 
+const LottieContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.70);
+  z-index: 99;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  div {
+    transform: rotate(20deg) translateX(10px);
+  }
+  p {
+    color: white;
+    text-align: center;
+    font-size: 0.8rem;
+    strong {
+      font-size: 1rem;
+    }
+  }
+`;
 export default ChatPage;

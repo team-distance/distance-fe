@@ -8,13 +8,13 @@ importScripts(
 );
 
 const firebaseConfig = {
-  apiKey: "%%REACT_APP_FIREBASE_API_KEY%%",
-  authDomain: "%%REACT_APP_FIREBASE_AUTH_DOMAIN%%",
-  projectId: "%%REACT_APP_FIREBASE_PROJECT_ID%%",
-  storageBucket: "%%REACT_APP_FIREBASE_STORAGE_BUCKET%%",
-  messagingSenderId: "%%REACT_APP_FIREBASE_MESSAGING_SENDER_ID%%",
-  appId: "%%REACT_APP_FIREBASE_APP_ID%%",
-  measurementId: "%%REACT_APP_FIREBASE_MEASUREMENT_ID%%",
+  apiKey: "AIzaSyDydUUUAK6jb1mEdIKqMGayiKMOSt6FUPY",
+  authDomain: "distance-97455.firebaseapp.com",
+  projectId: "distance-97455",
+  storageBucket: "distance-97455.appspot.com",
+  messagingSenderId: "53582616929",
+  appId: "1:53582616929:web:d737260d7953182dab8d20",
+  measurementId: "G-7QPW9Z4QCJ",
 };
 
 // Initialize Firebase
