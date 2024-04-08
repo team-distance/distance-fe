@@ -12,7 +12,6 @@ import { myDataState } from "../store/myData";
 const NavLayout = () => {
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const setMyData = useSetRecoilState(myDataState);
-  const myData = useRecoilValue(myDataState);
   const currentLocation = useGPS();
   const navigate = useNavigate();
   const userAgent = navigator.userAgent.toLowerCase();
