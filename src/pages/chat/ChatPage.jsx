@@ -3,7 +3,7 @@ import Messages from "../../components/chat/Messages";
 import MessageInput from "../../components/chat/MessageInput";
 import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Stomp } from "@stomp/stompjs";
+import { Client } from "@stomp/stompjs";
 import { authInstance } from "../../api/instance";
 import toast, { Toaster } from "react-hot-toast";
 import BlankModal from "../../components/common/BlankModal";
@@ -44,8 +44,8 @@ const ChatPage = () => {
   useEffect(() => {
     let tempMessages = messages.filter((el) => {
       return el.chatMessage !== "";
-    })
-    setDisplayMessage(tempMessages)
+    });
+    setDisplayMessage(tempMessages);
   }, [messages]);
 
   const handleReportUser = async (e) => {
@@ -81,7 +81,45 @@ const ChatPage = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const newClient = Stomp.client("wss://api.dis-tance.com/meet");
+
+    const newClient = new Client({
+      brokerURL: "wss://api.dis-tance.com/meet",
+      connectHeaders: {
+        Authorization: `Bearer ${token}`,
+        chatRoomId: roomId,
+        memberId: myId,
+      },
+      debug: function (str) {
+        console.log(str);
+      },
+      onConnect: (frame) => {
+        console.log("Connected: " + frame);
+
+        newClient.subscribe(`/topic/chatroom/${roomId}`, (message) => {
+          const parsedMessage = JSON.parse(message.body);
+          setMessages((prevMessages) => {
+            let lastIndexChange = -1;
+            const oldMessages = [...prevMessages];
+            for (let i = oldMessages.length - 2; i >= 0; i--) {
+              if (oldMessages[i].senderId !== oldMessages[i + 1].senderId) {
+                lastIndexChange = i;
+                break;
+              }
+            }
+            if (lastIndexChange !== -1) {
+              for (let i = 0; i <= lastIndexChange; i++) {
+                oldMessages[i].unreadCount = 0;
+              }
+            }
+            return [...oldMessages, parsedMessage.body];
+          });
+        });
+      },
+
+      reconnectDelay: 100,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+    });
 
     const fetchMessages = () => {
       const staleMessages = localStorage.getItem("staleMessages");
@@ -104,39 +142,9 @@ const ChatPage = () => {
       if (msg.length === 0) return;
       setMessages((messages) => [...messages, ...msg]);
     };
+
     fetchUnreadMessages();
 
-    const connect_callback = function (frame) {
-      let subscription_callback = function (message) {
-        const parsedMessage = JSON.parse(message.body);
-        setMessages((prevMessages) => {
-          let lastIndexChange = -1;
-          const oldMessages = [...prevMessages];
-          for (let i = oldMessages.length - 2; i >= 0; i--) {
-            if (oldMessages[i].senderId !== oldMessages[i + 1].senderId) {
-              lastIndexChange = i;
-              break;
-            }
-          }
-          if (lastIndexChange !== -1) {
-            for (let i = 0; i <= lastIndexChange; i++) {
-              oldMessages[i].unreadCount = 0;
-            }
-          }
-          return [...oldMessages, parsedMessage.body];
-        });
-      };
-
-      newClient.subscribe(`/topic/chatroom/${roomId}`, subscription_callback);
-    };
-
-    let headers = {
-      Authorization: `Bearer ${token}`,
-      chatRoomId: roomId,
-      memberId: myId,
-    };
-
-    newClient.connect(headers, connect_callback);
     newClient.activate();
     setClient(newClient);
 
@@ -222,7 +230,6 @@ const ChatPage = () => {
     }
   }, [isCallActive]);
 
-
   useEffect(() => {
     console.log(messages);
     const saveMessages = () => {
@@ -237,25 +244,25 @@ const ChatPage = () => {
     }
   }, [messages]);
 
-  useEffect(() => {
-    const publishMessage = () => {
-      client.publish({
-        destination: `/app/chat/${roomId}`,
-        body: JSON.stringify({
-          chatMessage: "",
-          senderId: opponentId,
-          receiverId: myId,
-        }),
-      });
-      console.log('메시지가 전송되었습니다.');
-    };
+  // useEffect(() => {
+  //   const publishMessage = () => {
+  //     client.publish({
+  //       destination: `/app/chat/${roomId}`,
+  //       body: JSON.stringify({
+  //         chatMessage: "",
+  //         senderId: opponentId,
+  //         receiverId: myId,
+  //       }),
+  //     });
+  //     console.log("메시지가 전송되었습니다.");
+  //   };
 
-    // 마운트 시 메시지 보내는 함수를 10초마다 실행
-    const intervalId = setInterval(publishMessage, 40000);
+  //   // 마운트 시 메시지 보내는 함수를 10초마다 실행
+  //   const intervalId = setInterval(publishMessage, 40000);
 
-    // 언마운트 시 반복 작업 중지
-    return () => clearInterval(intervalId);
-  }, [client, roomId, draftMessage, opponentId, myId]);
+  //   // 언마운트 시 반복 작업 중지
+  //   return () => clearInterval(intervalId);
+  // }, [client, roomId, draftMessage, opponentId, myId]);
 
   return (
     <Wrapper
