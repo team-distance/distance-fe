@@ -7,16 +7,16 @@ import Button from "../../components/common/Button";
 import { useNavigate } from "react-router-dom";
 import { defaultInstance } from "../../api/instance";
 import ProgressBar from "../../components/register/ProgressBar";
+import toast, { Toaster } from "react-hot-toast";
 
 const UserRegisterPage = () => {
-
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
   const [checkPhoneFlag, setCheckPhoneFlag] = useState(true);
   const [verifyNumFlag, setVerifyNumFlag] = useState(true);
   const [pwFlag, setPwFlag] = useState(true);
 
   const [isSendMessage, setIsSendMessage] = useState(false);
-  const [verifyButtonLabel, setVerifyButtonLabel] = useState('인증번호 전송');
+  const [verifyButtonLabel, setVerifyButtonLabel] = useState("인증번호 전송");
   const [verifyNum, setVerifyNum] = useState("");
   const [verify, setVerify] = useState(false);
 
@@ -37,7 +37,7 @@ const UserRegisterPage = () => {
     if (name === "verifyNum") {
       setVerifyNum(e.target.value);
       if (value.length !== 0) {
-        setVerifyNumFlag(false)
+        setVerifyNumFlag(false);
       } else {
         setVerifyNumFlag(true);
       }
@@ -50,11 +50,9 @@ const UserRegisterPage = () => {
         setPwFlag(true);
       }
     }
-
   };
 
   const sendMessage = async () => {
-
     if (verifyButtonLabel === "재전송") {
       setVerifyNumFlag(false);
       setVerify(false);
@@ -63,15 +61,23 @@ const UserRegisterPage = () => {
 
     try {
       console.log(typeof registerData.telNum, registerData.telNum);
-      await defaultInstance.post("/member/send/sms", {
-        telNum: registerData.telNum,
-      })
+      await defaultInstance
+        .post("/member/send/sms", {
+          telNum: registerData.telNum,
+        })
+        .then(() => {
+          toast.success("인증번호가 전송되었습니다.");
+        });
       setIsSendMessage(true);
       // setRegisterData(prevState => ({ ...prevState, tellNum: "" }));
       setVerifyButtonLabel("재전송");
     } catch (error) {
-      alert("인증을 재시도해주세요");
-      console.log(error);
+      const ERROR_CODE = error.response.data.code;
+      if (ERROR_CODE === "EXIST_TEL_NUM") {
+        toast.error("이미 등록된 전화번호입니다. 다른 번호를 입력해주세요.");
+      } else {
+        toast.error("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
+      }
     }
   };
 
@@ -79,17 +85,19 @@ const UserRegisterPage = () => {
     try {
       await defaultInstance.post("/member/authenticate", {
         authenticateNum: verifyNum,
-      })
+      });
       setVerify(true);
       setVerifyNumFlag(true);
     } catch (error) {
-      alert("인증을 재시도해주세요");
-      console.log(error);
+      toast.error("인증번호가 틀렸습니다.");
+
+      console.log();
     }
   };
 
   return (
     <>
+      <Toaster position="bottom-center" />
       <WrapHeader>
         <ProgressBar progress={1} />
         <p>전화번호를 인증해주세요</p>
@@ -124,9 +132,7 @@ const UserRegisterPage = () => {
             value={verifyNum}
             onChange={handleChange}
           />
-          {verify && (
-            <Tip>인증되었습니다!</Tip>
-          )}
+          {verify && <Tip>인증되었습니다!</Tip>}
         </WrapVerifyPhone>
 
         <WrapPassword $visible={verify}>
@@ -150,7 +156,6 @@ const UserRegisterPage = () => {
             학교 선택하기
           </Button>
         </WrapButton>
-
       </WrapContent>
     </>
   );
@@ -159,7 +164,7 @@ const UserRegisterPage = () => {
 const WrapHeader = styled.div`
   display: grid;
   padding: 2rem 2rem 3rem 2rem;
-  
+
   p {
     font-size: 1.5rem;
     font-weight: 700;
@@ -175,10 +180,10 @@ const WrapContent = styled.div`
 `;
 
 const WrapVerifyPhone = styled.div`
-  visibility: ${({ $visible }) => $visible ? 'visible' : 'hidden'};
+  visibility: ${({ $visible }) => ($visible ? "visible" : "hidden")};
 `;
 const WrapPassword = styled.div`
-  visibility: ${({ $visible }) => $visible ? 'visible' : 'hidden'};
+  visibility: ${({ $visible }) => ($visible ? "visible" : "hidden")};
 `;
 
 const WrapButton = styled.div`

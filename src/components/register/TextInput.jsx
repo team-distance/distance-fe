@@ -12,7 +12,7 @@ const Label = styled.label`
     font-size: 0.9rem;
     line-height: 0.9rem;
     font-weight: 400;
-    color: #D3D3D3;
+    color: #d3d3d3;
   }
 `;
 
@@ -23,14 +23,15 @@ const Input = styled.input`
   color: #333333;
   font-size: 1rem;
   border: none;
+  background-color: transparent;
 
   &:focus {
     outline: none;
   }
   &::placeholder {
-  color: #D9D9D9;
-  opacity: 1;
-}
+    color: #d9d9d9;
+    opacity: 1;
+  }
 `;
 
 const InputWrapper = styled.div`
@@ -80,7 +81,9 @@ const TextInput = ({
           {label}
           {timerState && (
             <div className="time-remaining">
-              {`${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`}
+              {`${minutes.toString().padStart(2, "0")}:${seconds
+                .toString()
+                .padStart(2, "0")}`}
             </div>
           )}
         </Label>

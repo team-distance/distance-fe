@@ -15,7 +15,7 @@ const DonePage = () => {
 
   useEffect(() => {
     const instantLogin = async () => {
-      login({ id: telNum, password })
+      login({ telNum, password })
         .then(() => {
           setIsLoggedIn(true);
           onGetToken();
@@ -37,10 +37,16 @@ const DonePage = () => {
           <Button
             size="large"
             onClick={() => {
-              navigate("/home");
+              navigate("/verify/univ");
             }}>
-            시작하기
+            학생 인증하기
           </Button>
+          <MoveToHome
+            onClick={() => {
+              navigate("/");
+            }}>
+            홈으로 이동
+          </MoveToHome>
         </WrapButton>
       </WrapContent>
     </Background>
@@ -67,6 +73,14 @@ const WrapMessage = styled.div`
 const WrapButton = styled.div`
   position: absolute;
   bottom: 2rem;
+`;
+
+const MoveToHome = styled.div`
+  color: #000;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 1rem;
 `;
 
 export default DonePage;

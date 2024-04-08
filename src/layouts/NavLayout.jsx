@@ -24,8 +24,7 @@ const NavLayout = () => {
   };
 
   const getMyData = async () => {
-    const memberId = localStorage.getItem("memberId");
-    await authInstance.get(`/member/profile/${memberId}`).then((res) => {
+    await authInstance.get(`/member/profile`).then((res) => {
       setMyData(res.data);
     });
   };
