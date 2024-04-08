@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { isLoggedInState } from "../../store/auth";
 import { Link } from "react-router-dom";
 import { myDataState } from "../../store/myData";
-import { CHARACTERS } from "../../constants/character";
+import { CHARACTERS, COLORS } from "../../constants/character";
 
 const Header = () => {
   const isLoggedIn = useRecoilValue(isLoggedInState);
@@ -14,7 +14,7 @@ const Header = () => {
       <img src="/assets/logo-pink.png" alt="디스턴스 로고" />
 
       {isLoggedIn ? (
-        <ProfileIcon>
+        <ProfileIcon $character={myData.memberCharacter}>
           <img src={CHARACTERS[myData.memberCharacter]} alt="프로필 이미지" />
         </ProfileIcon>
       ) : (
@@ -44,10 +44,10 @@ const ProfileIcon = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #aaaaaa;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: ${(props) => COLORS[props.$character]};
 
   img {
     width: 32px;

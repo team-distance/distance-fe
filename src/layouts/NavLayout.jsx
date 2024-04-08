@@ -12,6 +12,7 @@ import { myDataState } from "../store/myData";
 const NavLayout = () => {
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const setMyData = useSetRecoilState(myDataState);
+  const myData = useRecoilValue(myDataState);
   const currentLocation = useGPS();
   const navigate = useNavigate();
   const userAgent = navigator.userAgent.toLowerCase();
@@ -24,8 +25,7 @@ const NavLayout = () => {
   };
 
   const getMyData = async () => {
-    const memberId = localStorage.getItem("memberId");
-    await authInstance.get(`/member/profile/${memberId}`).then((res) => {
+    await authInstance.get(`/member/profile`).then((res) => {
       setMyData(res.data);
     });
   };
