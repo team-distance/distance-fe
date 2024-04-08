@@ -294,8 +294,7 @@ const ChatPage = () => {
           }
         }
       }}>
-      {/* <Toaster position="bottom-center" /> */}
-
+      <Toaster position="bottom-center" />
       {isShowLottie &&
         <LottieContainer>
           <div>
