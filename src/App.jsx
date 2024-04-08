@@ -28,8 +28,14 @@ import FoodTruckPage0 from "./pages/festival/FoodTruckPage0";
 import FoodTruckPage1 from "./pages/festival/FoodTruckPage1";
 import FoodTruckPage2 from "./pages/festival/FoodTruckPage2";
 import FoodTruckPage3 from "./pages/festival/FoodTruckPage3";
+import { useEffect } from "react";
+import { onGetToken } from "./firebaseConfig";
 
 function App() {
+  useEffect(() => {
+    onGetToken();
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
@@ -45,11 +51,11 @@ function App() {
         <Route path="/register/profile" element={<ProfileRegisterPage />} />
         <Route path="/register/done" element={<DonePage />} />
 
-        <Route path="/verify/univ" element={<VerifyOptionsPage/>}/>
-        <Route path="/verify/univ/mobileid" element={<VerifyMobileIdPage/>}/>
-        <Route path="/verify/univ/email" element={<VerifyEmailPage/>}/>
-        <Route path="/verify/univ/id" element={<VerifyIdPage/>}/>
-        <Route path="/verify/univ/loading" element={<VerifyLoadingPage/>}/>
+        <Route path="/verify/univ" element={<VerifyOptionsPage />} />
+        <Route path="/verify/univ/mobileid" element={<VerifyMobileIdPage />} />
+        <Route path="/verify/univ/email" element={<VerifyEmailPage />} />
+        <Route path="/verify/univ/id" element={<VerifyIdPage />} />
+        <Route path="/verify/univ/loading" element={<VerifyLoadingPage />} />
 
         <Route element={<NavLayout />}>
           <Route path="/" element={<HomeIndexPage />} />
