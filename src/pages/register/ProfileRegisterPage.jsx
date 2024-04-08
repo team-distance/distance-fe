@@ -105,7 +105,11 @@ const ProfileRegisterPage = () => {
   };
 
   const isDisabled =
-    !selectedAnimal || !selectedMBTI || hashtagCount < 3 || !toggleState || hashtagCount > 5;
+    !selectedAnimal ||
+    !selectedMBTI ||
+    hashtagCount < 3 ||
+    !toggleState ||
+    hashtagCount > 5;
 
   useEffect(() => {
     setHashtagCount(attractiveness.length + hobby.length);
@@ -122,47 +126,51 @@ const ProfileRegisterPage = () => {
         <div>
           <Label>캐릭터 선택하기</Label>
           <ProfileContainer onClick={openCharacterModal}>
-            <img 
-              className="side-image-left" 
+            <img
+              className="side-image-left"
               src="/assets/profile-register-leftimg.png"
-              alt="profile register button" />
-            {selectedAnimal === "" ?
+              alt="profile register button"
+            />
+            {selectedAnimal === "" ? (
               <img
                 src="/assets/profile-register-plusbutton.png"
-                alt="profile register button" /> :
-              <img
-                src={(CHARACTERS.find(character => character.key === selectedAnimal)).src}
-                alt="selected profile" />
-            }
+                alt="profile register button"
+              />
+            ) : (
+              <img src={CHARACTERS[selectedAnimal]} alt="selected profile" />
+            )}
             <img
-              className="side-image-right" 
-              src="/assets/profile-register-rightimg.png" 
-              alt="profile register button" />
+              className="side-image-right"
+              src="/assets/profile-register-rightimg.png"
+              alt="profile register button"
+            />
           </ProfileContainer>
         </div>
 
         <BlankModal ref={characterModalRef}>
-            <ModalTitle>
-              <div>캐릭터 선택하기</div>
-              <img
-                src="/assets/cancel-button.png"
-                alt="닫기 버튼"
-                onClick={closeCharacterModal}
-              />
-            </ModalTitle>
-            <AnimalListContainer>
-              {CHARACTERS.map((value) => (
+          <ModalTitle>
+            <div>캐릭터 선택하기</div>
+            <img
+              src="/assets/cancel-button.png"
+              alt="닫기 버튼"
+              onClick={closeCharacterModal}
+            />
+          </ModalTitle>
+          <AnimalListContainer>
+            {Object.entries(CHARACTERS).map(([character, imageSrc]) => {
+              return (
                 <AnimalListItem
-                  key={value.key}
+                  key={character}
                   onClick={() => {
-                    setSelectedAnimal(value.key);
+                    setSelectedAnimal(character);
                     closeCharacterModal();
                   }}>
-                  <img src={value.src} alt="Character" />
+                  <img src={imageSrc} alt={character} />
                 </AnimalListItem>
-              ))}
-            </AnimalListContainer>
-          </BlankModal>
+              );
+            })}
+          </AnimalListContainer>
+        </BlankModal>
 
         <div>
           <Label>MBTI 선택하기</Label>
@@ -196,7 +204,7 @@ const ProfileRegisterPage = () => {
           </BadgeContainer>
 
           <WrapSmallTitle>
-          <div className="small-label">저는 이런 취미가 있어요!</div>
+            <div className="small-label">저는 이런 취미가 있어요!</div>
             <AddButton onClick={openHobbyModal}>+ 추가하기</AddButton>
           </WrapSmallTitle>
           <BadgeContainer>
@@ -269,7 +277,7 @@ const ProfileRegisterPage = () => {
 const WrapHeader = styled.div`
   display: grid;
   padding: 2rem 2rem 3rem 2rem;
-  
+
   p {
     font-size: 1.5rem;
     font-weight: 700;
@@ -319,7 +327,7 @@ const BadgeContainer = styled.div`
   gap: 0.5rem;
   justify-content: center;
   flex-wrap: wrap;
-  background-image: linear-gradient(180deg, #FFF 0%, #F2F2F2 100%);
+  background-image: linear-gradient(180deg, #fff 0%, #f2f2f2 100%);
   margin-bottom: 1.5rem;
 `;
 
