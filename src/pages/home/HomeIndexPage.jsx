@@ -160,7 +160,8 @@ const HomeIndexPage = () => {
         }}>
         {selectedProfile && (
           <WrapContent>
-            <CharacterBackground $character={"MONKEY"}>
+            <CharacterBackground
+              $character={selectedProfile.memberInfoDto.memberCharacter}>
               <StyledImage
                 src={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
                 alt={selectedProfile.memberInfoDto.memberCharacter}
