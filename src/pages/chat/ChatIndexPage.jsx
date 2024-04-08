@@ -62,7 +62,7 @@ const ChatIndexPage = () => {
     fetchChatList();
 
     const eventSource = new EventSource(
-      `https://api.dis-tance.com//api/notify/subscribe/${memberId}`
+      `https://api.dis-tance.com/api/notify/subscribe/${memberId}`
     );
 
     eventSource.onopen = (event) => {
