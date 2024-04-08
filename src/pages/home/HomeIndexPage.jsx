@@ -117,7 +117,7 @@ const HomeIndexPage = () => {
             );
             break;
           default:
-            toast.error("채팅방 생성에 실패했습니다. 다시 시도해주세요.");
+            toast.error("로그인 후 이용해주세요.");
             break;
         }
       });
@@ -159,48 +159,26 @@ const HomeIndexPage = () => {
           handleCreateChatRoom(selectedProfile.memberId);
         }}>
         {selectedProfile && (
-          // <WrapContent>
-          //   <CharacterDiv>
-          //     <StyledImage
-          //       src={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
-          //       alt={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
-          //     />
-          //   </CharacterDiv>
-          //   <TextDiv>
-          //     <div className="text-major">{selectedProfile.department}</div>
-          //     <div className="text-mbti">
-          //       {selectedProfile.memberInfoDto.mbti}
-          //     </div>
-          //     <div className="text-tags">
-          //       {selectedProfile.memberInfoDto.memberHobbyDto.map(
-          //         (hobby, index) => (
-          //           <div key={index}>#{hobby.hobby} </div>
-          //         )
-          //       )}
-          //       {selectedProfile.memberInfoDto.memberTagDto.map(
-          //         (tag, index) => (
-          //           <div key={index}>#{tag.tag} </div>
-          //         )
-          //       )}
-          //     </div>
-          //   </TextDiv>
-          // </WrapContent>
           <WrapContent>
             <CharacterBackground $character={"MONKEY"}>
               <StyledImage
-                src={CHARACTERS["MONKEY"]}
+                src={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
                 alt={selectedProfile.memberInfoDto.memberCharacter}
               />
             </CharacterBackground>
             <TextDiv>
-              <MBTI>INFP</MBTI>
-              <Major>미디어커뮤니케이션학과</Major>
+              <MBTI>{selectedProfile.memberInfoDto.mbti}</MBTI>
+              <Major>{selectedProfile.department}</Major>
             </TextDiv>
             <TagContainer>
-              <Badge>#여행</Badge>
-              <Badge>#감성적인</Badge>
-              <Badge>#공감능력</Badge>
-              <Badge>#노래</Badge>
+              {selectedProfile.memberInfoDto.memberHobbyDto.map(
+                (hobby, index) => (
+                  <Badge key={index}>#{hobby.hobby}</Badge>
+                )
+              )}
+              {selectedProfile.memberInfoDto.memberTagDto.map((tag, index) => (
+                <Badge key={index}>#{tag.tag}</Badge>
+              ))}
             </TagContainer>
           </WrapContent>
         )}
