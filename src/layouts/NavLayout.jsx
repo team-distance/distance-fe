@@ -18,15 +18,27 @@ const NavLayout = () => {
   const isIphone = userAgent.includes("iphone");
 
   const getMemberId = async () => {
-    await authInstance.get("/member/id").then((res) => {
-      localStorage.setItem("memberId", res.data);
-    });
+    await authInstance
+      .get("/member/id")
+      .then((res) => {
+        localStorage.setItem("memberId", res.data);
+      })
+      .catch((err) => {
+        toast.error("회원 정보를 가져오는데 실패했어요!");
+        console.log(err);
+      });
   };
 
   const getMyData = async () => {
-    await authInstance.get(`/member/profile`).then((res) => {
-      setMyData(res.data);
-    });
+    await authInstance
+      .get(`/member/profile`)
+      .then((res) => {
+        setMyData(res.data);
+      })
+      .catch((err) => {
+        toast.error("프로필 정보를 가져오는데 실패했어요!");
+        console.log(err);
+      });
   };
 
   useEffect(() => {
@@ -50,10 +62,15 @@ const NavLayout = () => {
     } else {
       const memberId = localStorage.getItem("memberId");
       if (memberId) {
-        authInstance.post(`/gps/update`, {
-          latitude: currentLocation.lat,
-          longitude: currentLocation.lng,
-        });
+        authInstance
+          .post(`/gps/update`, {
+            latitude: currentLocation.lat,
+            longitude: currentLocation.lng,
+          })
+          .catch((err) => {
+            toast.error("위치 정보를 업데이트하는데 실패했어요!");
+            console.log(err);
+          });
       }
     }
   }, [currentLocation]);
