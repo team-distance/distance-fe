@@ -34,8 +34,9 @@ const VerifyMobileIdPage = () => {
 
     try {
       await authInstance.post('/studentcard/send',formData);
-      navigate('/verify/univ/loading');
+      window.confirm("인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.") && navigate('/');
     } catch (error) {
+      
       console.log(error);
     }
   }
