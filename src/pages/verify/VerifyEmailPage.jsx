@@ -10,6 +10,7 @@ const VerifyEmailPage = () => {
   const navigate = useNavigate();
 
   const [schoolEmail, setSchoolEmail] = useState("");
+  // const domain = "@sch.ac.kr";
   const [verifyNum, setVerifyNum] = useState("");
   const [emailDisabled, setEmailDisabled] = useState(true);
   const [verifyDisabled, setVerifyDisabled] = useState(true);
@@ -17,6 +18,14 @@ const VerifyEmailPage = () => {
   const [isSendEmail, setIsSendEmail] = useState(false);
 
   const handleChangeEmail = (e) => {
+
+    // if(!schoolEmail.includes(domain)) {
+    //   setSchoolEmail(e.target.value.replace(domain));
+    // }
+    // else {
+    //   setSchoolEmail(e.target.value);
+    // }
+    
     setSchoolEmail(e.target.value);
     if (e.target.value !== "") {
       setEmailDisabled(false);

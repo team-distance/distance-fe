@@ -12,6 +12,8 @@ const MyIndexPage = () => {
   const myData = useRecoilValue(myDataState);
 
   const handleLogout = () => {
+    //토큰 넘기기 (api)
+    
     setIsLoggedIn(false);
     localStorage.removeItem("token");
     localStorage.removeItem("clientToken");

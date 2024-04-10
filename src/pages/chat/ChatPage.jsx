@@ -20,7 +20,6 @@ const ChatPage = () => {
   const [reportMessage, setReportMessage] = useState("");
   const [displayMessage, setDisplayMessage] = useState([]);
 
-
   const reportModalRef = useRef();
 
   const navigate = useNavigate();
@@ -44,6 +43,13 @@ const ChatPage = () => {
     setReportMessage("");
     reportModalRef.current.close();
   };
+
+  const navigateToVerify = () => {
+    navigate('/verify/univ');
+  }
+  const navigateToBack = () => {
+    navigate('/chat');
+  }
 
   useEffect(() => {
     let tempMessages = messages.filter((el) => {
@@ -139,12 +145,17 @@ const ChatPage = () => {
     fetchMessages();
 
     const fetchUnreadMessages = async () => {
-      const msg = await authInstance
-        .get(`/chatroom/${roomId}`)
-        .then((res) => res.data);
+      try {
+        const msg = await authInstance
+          .get(`/chatroom/${roomId}`)
+          .then((res) => res.data);
 
-      if (msg.length === 0) return;
-      setMessages((messages) => [...messages, ...msg]);
+        if (msg.length === 0) return;
+        setMessages((messages) => [...messages, ...msg]);
+      } catch (error) {
+        //401에러
+        window.confirm("학생 인증이 필요합니다.") ? navigateToVerify() : navigateToBack();
+      }
     };
 
     fetchUnreadMessages();

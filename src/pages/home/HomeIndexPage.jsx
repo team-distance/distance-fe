@@ -89,6 +89,10 @@ const HomeIndexPage = () => {
     profileModal.current.open();
   };
 
+  const navigateToVerify = () => {
+    navigate('/verify/univ');
+  }
+
   const handleCreateChatRoom = async (opponentMemberId) => {
     await authInstance
       .post("/chatroom/create", {
@@ -105,7 +109,11 @@ const HomeIndexPage = () => {
         });
       })
       .catch((error) => {
+        console.log(error.response.data.code);
         switch (error.response.data.code) {
+          case "NOT_AUTHENTICATION_STUDENT":
+            window.confirm("학생 인증이 필요합니다.") && navigateToVerify()  ;
+            break;
           case "TOO_MANY_MY_CHATROOM":
             toast.error(
               "이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요."
