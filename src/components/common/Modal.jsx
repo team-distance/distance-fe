@@ -20,7 +20,10 @@ const CloseButton = styled.img`
 `;
 
 const Modal = forwardRef(
-  ({ children, buttonLabel, buttonClickHandler }, ref) => {
+  (
+    { children, buttonLabel, buttonClickHandler, buttonColor = "#FF625D" },
+    ref
+  ) => {
     const dialog = useRef();
 
     const handleCloseModal = () => {
@@ -47,7 +50,10 @@ const Modal = forwardRef(
             alt="Close"
           />
           {children}
-          <Button size={"medium"} onClick={buttonClickHandler}>
+          <Button
+            size={"medium"}
+            onClick={buttonClickHandler}
+            backgroundColor={buttonColor}>
             {buttonLabel}
           </Button>
         </StyledDialog>
