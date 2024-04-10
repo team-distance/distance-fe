@@ -1,7 +1,12 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
-navigator.serviceWorker.register("/firebase-messaging-sw.js");
+export function registerServiceWorker() {
+  navigator.serviceWorker
+    .register("/firebase-messaging-sw.js")
+    .then((registration) => console.log("서비스 워커 등록 성공", registration))
+    .catch((err) => console.log("서비스 워커 등록 실패", err));
+}
 
 const firebaseConfig = {
   apiKey: "AIzaSyDydUUUAK6jb1mEdIKqMGayiKMOSt6FUPY",
@@ -21,7 +26,8 @@ const messaging = getMessaging(FBapp);
 export const onGetToken = async () => {
   console.log(messaging);
   return getToken(messaging, {
-    vapidKey: "BA_KtCviBslZEFupMHZwhzFX10LdjtJtMLAzRRTJ4mv-GuoERIyz4G0_i4WC4tIManqSnrPkzWvcFfEAWEw9YSM",
+    vapidKey:
+      "BA_KtCviBslZEFupMHZwhzFX10LdjtJtMLAzRRTJ4mv-GuoERIyz4G0_i4WC4tIManqSnrPkzWvcFfEAWEw9YSM",
   })
     .then((currentToken) => {
       if (currentToken) {
@@ -35,20 +41,12 @@ export const onGetToken = async () => {
     });
 };
 
-// Notification.requestPermission().then(permission => {
-//   if (permission === "granted") {
-//     console.log("알림 권한이 허용되었습니다.");
-//   } else {
-//     console.log("알림 권한이 거부되었습니다.");
-//   }
-// });
-
 //포그라운드 메시지 수신
 onMessage(messaging, (payload) => {
   console.log("Message received. ", payload);
   // 알림 권한이 허용되었다면, 사용자에게 알림 표시
   if (Notification.permission === "granted") {
-    console.log("Hi");
+    const currentLocation = window.location.href;
     const notificationTitle = payload.notification.title; // 메시지에서 제목 추출
     const notificationOptions = {
       body: payload.notification.body, // 메시지에서 본문 추출
@@ -56,6 +54,8 @@ onMessage(messaging, (payload) => {
       // 필요에 따라 여기에 더 많은 옵션을 추가할 수 있습니다.
     };
 
-    new Notification(notificationTitle, notificationOptions);
+    if (!currentLocation.includes("/chat/" + payload.data.chatRoomId)) {
+      new Notification(notificationTitle, notificationOptions);
+    }
   }
 });
