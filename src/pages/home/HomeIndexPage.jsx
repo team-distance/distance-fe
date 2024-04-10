@@ -13,6 +13,8 @@ import { useRecoilState } from "recoil";
 import { isLoggedInState } from "../../store/auth";
 import toast from "react-hot-toast";
 import Badge from "../../components/common/Badge";
+import { onGetToken, registerServiceWorker } from "../../firebaseConfig";
+import { isSupported } from "firebase/messaging";
 
 const HomeIndexPage = () => {
   const profileModal = useRef();
@@ -82,16 +84,29 @@ const HomeIndexPage = () => {
   useEffect(() => {
     if (isLoggedIn) fetchMembersAuth();
     else fetchMembers();
+
+    // 홈화면에서 Firebase 초기화
+    // 카카오톡 브라우저에서는 Firebase Messaging을 지원하지 않기 때문에
+    // 카카오톡 브라우저인지 확인 후 Firebase Messaging을 초기화
+    const initializeFirebase = async () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const messaging = await isSupported();
+
+      if (messaging && !userAgent.includes("kakao")) {
+        registerServiceWorker();
+        onGetToken();
+      } else {
+        navigate("/kakaotalk-fallback");
+      }
+    };
+
+    initializeFirebase();
   }, []);
 
   const handleSelectProfile = (profile) => {
     setSelectedProfile(profile);
     profileModal.current.open();
   };
-
-  const navigateToVerify = () => {
-    navigate('/verify/univ');
-  }
 
   const handleCreateChatRoom = async (opponentMemberId) => {
     await authInstance
@@ -109,11 +124,7 @@ const HomeIndexPage = () => {
         });
       })
       .catch((error) => {
-        console.log(error.response.data.code);
         switch (error.response.data.code) {
-          case "NOT_AUTHENTICATION_STUDENT":
-            window.confirm("학생 인증이 필요합니다.") && navigateToVerify()  ;
-            break;
           case "TOO_MANY_MY_CHATROOM":
             toast.error(
               "이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요."

@@ -9,8 +9,8 @@ import toast, { Toaster } from "react-hot-toast";
 import BlankModal from "../../components/common/BlankModal";
 import TextInput from "../../components/register/TextInput";
 import { checkCurse } from "../../utils/checkCurse";
-import Lottie from 'react-lottie-player'
-import callAnimation from '../../lottie/call-animation.json';
+import Lottie from "react-lottie-player";
+import callAnimation from "../../lottie/call-animation.json";
 
 const ChatPage = () => {
   const [distance, setDistance] = useState(-1);
@@ -45,11 +45,11 @@ const ChatPage = () => {
   };
 
   const navigateToVerify = () => {
-    navigate('/verify/univ');
-  }
+    navigate("/verify/univ");
+  };
   const navigateToBack = () => {
-    navigate('/chat');
-  }
+    navigate("/chat");
+  };
 
   useEffect(() => {
     let tempMessages = messages.filter((el) => {
@@ -62,7 +62,7 @@ const ChatPage = () => {
     e.preventDefault();
 
     await authInstance
-      .post("/declare", {
+      .post("/report", {
         declareContent: reportMessage,
         opponentId,
       })
@@ -154,7 +154,9 @@ const ChatPage = () => {
         setMessages((messages) => [...messages, ...msg]);
       } catch (error) {
         //401에러
-        window.confirm("학생 인증이 필요합니다.") ? navigateToVerify() : navigateToBack();
+        window.confirm("학생 인증이 필요합니다.")
+          ? navigateToVerify()
+          : navigateToBack();
       }
     };
 
@@ -280,19 +282,20 @@ const ChatPage = () => {
   // }, [client, roomId, draftMessage, opponentId, myId]);
 
   useEffect(() => {
-    const callEffectShown = JSON.parse(localStorage.getItem('callEffectShown'))||[];
+    const callEffectShown =
+      JSON.parse(localStorage.getItem("callEffectShown")) || [];
     if (!callEffectShown.includes(roomId)) {
       if (isCallActive) {
         const newArray = [...callEffectShown];
         newArray.push(roomId);
-        localStorage.setItem("callEffectShown",JSON.stringify(newArray));
+        localStorage.setItem("callEffectShown", JSON.stringify(newArray));
         setIsShowLottie(true);
         setTimeout(() => {
           setIsShowLottie(false);
         }, 4000);
       }
     }
-  }, [isCallActive]); 
+  }, [isCallActive]);
 
   return (
     <Wrapper
@@ -306,7 +309,7 @@ const ChatPage = () => {
         }
       }}>
       <Toaster position="bottom-center" />
-      {isShowLottie &&
+      {isShowLottie && (
         <LottieContainer>
           <div>
             <Lottie
@@ -321,7 +324,7 @@ const ChatPage = () => {
             채팅 상대와 전화를 연결해보세요
           </p>
         </LottieContainer>
-      }
+      )}
 
       <Container ref={viewportRef}>
         <TopBar>
@@ -384,8 +387,6 @@ const ChatPage = () => {
           </div>
         </ModalContent>
       </BlankModal>
-
-
     </Wrapper>
   );
 };
@@ -472,7 +473,7 @@ const LottieContainer = styled.div`
   width: 100%;
   height: 100%;
   position: fixed;
-  background: rgba(0, 0, 0, 0.70);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 99;
   display: flex;
   justify-content: center;
