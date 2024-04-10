@@ -27,15 +27,9 @@ import FoodTruckPage0 from "./pages/festival/FoodTruckPage0";
 import FoodTruckPage1 from "./pages/festival/FoodTruckPage1";
 import FoodTruckPage2 from "./pages/festival/FoodTruckPage2";
 import FoodTruckPage3 from "./pages/festival/FoodTruckPage3";
-import { useEffect } from "react";
-import { onGetToken, registerServiceWorker } from "./firebaseConfig";
+import KakaotalkFallback from "./pages/root/KakaotalkFallback";
 
 function App() {
-  useEffect(() => {
-    registerServiceWorker();
-    onGetToken();
-  }, []);
-
   return (
     <BrowserRouter>
       <Routes>
@@ -82,6 +76,8 @@ function App() {
         <Route path="/festival/foodtruck/3" element={<FoodTruckPage3 />} />
 
         <Route path="/chat/:chatRoomId" element={<ChatPage />} />
+
+        <Route path="/kakaotalk-fallback" element={<KakaotalkFallback />} />
       </Routes>
     </BrowserRouter>
   );
