@@ -22,6 +22,7 @@ const FBapp = firebase.initializeApp(firebaseConfig);
 const messaging = FBapp.messaging();
 
 messaging.onBackgroundMessage(messaging, (payload) => {
+  console.log("Background message 1");
   const notificationTitle = "백그라운드 메세지 제목입니다";
   const notificationOptions = {
     body: payload.notification.body, // 'payload'의 'notification.body'를 사용
@@ -31,6 +32,7 @@ messaging.onBackgroundMessage(messaging, (payload) => {
 });
 
 self.addEventListener("notificationclick", function (event) {
+  console.log("background message 2");
   // 알림 창 닫기
   event.notification.close();
 
