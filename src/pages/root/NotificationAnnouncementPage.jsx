@@ -10,7 +10,7 @@ const NotificationAnnouncementPage = () => {
   const handleSubmit = async () => {
     await onGetToken()
       .then(() => {
-        navigate("/home");
+        navigate("/");
       })
       .catch((error) => {
         console.log(error);
@@ -18,7 +18,7 @@ const NotificationAnnouncementPage = () => {
   };
 
   if (Notification.permission === "granted") {
-    return <Navigate to="/home" />;
+    return <Navigate to="/" />;
   }
 
   return (

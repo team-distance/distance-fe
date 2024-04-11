@@ -82,6 +82,11 @@ const HomeIndexPage = () => {
   };
 
   useEffect(() => {
+    if(Notification.permission === "denied") {
+      toast.error(
+      "알림 설정이 꺼져있어요!"
+      );
+    };
     if (isLoggedIn) fetchMembersAuth();
     else fetchMembers();
   }, []);
