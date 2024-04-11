@@ -87,7 +87,7 @@ const ProfileEditPage = () => {
   return (
     <div>
       <WrapContent>
-        <HeaderPrev title="프로필 수정하기" navigateTo={"/mypage"} />
+        <HeaderPrev title="프로필 수정하기" navigateTo={-1} />
       </WrapContent>
       <AnimalSelector
         label="캐릭터 선택하기"
