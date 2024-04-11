@@ -261,26 +261,6 @@ const ChatPage = () => {
     }
   }, [messages]);
 
-  // useEffect(() => {
-  //   const publishMessage = () => {
-  //     client.publish({
-  //       destination: `/app/chat/${roomId}`,
-  //       body: JSON.stringify({
-  //         chatMessage: "",
-  //         senderId: opponentId,
-  //         receiverId: myId,
-  //       }),
-  //     });
-  //     console.log("메시지가 전송되었습니다.");
-  //   };
-
-  //   // 마운트 시 메시지 보내는 함수를 10초마다 실행
-  //   const intervalId = setInterval(publishMessage, 40000);
-
-  //   // 언마운트 시 반복 작업 중지
-  //   return () => clearInterval(intervalId);
-  // }, [client, roomId, draftMessage, opponentId, myId]);
-
   useEffect(() => {
     const callEffectShown =
       JSON.parse(localStorage.getItem("callEffectShown")) || [];
@@ -398,7 +378,7 @@ const Wrapper = styled.div`
 `;
 
 const Container = styled.div`
-  height: 100vh;
+  height: 100dvh;
   bottom: 0;
   display: flex;
   flex-direction: column;
