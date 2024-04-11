@@ -55,7 +55,7 @@ const NavLayout = () => {
       .then((res) => console.log(res))
       .catch((err) => {
         const userAgent = navigator.userAgent.toLowerCase();
-        if (!userAgent.includes("kakao")) {
+        if (userAgent.includes("kakao")) {
           navigate("/kakaotalk-fallback");
         } else {
           toast.error("Firebase Messaging 초기화에 실패했어요!");
