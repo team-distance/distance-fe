@@ -15,7 +15,9 @@ import toast from "react-hot-toast";
 import Badge from "../../components/common/Badge";
 
 const HomeIndexPage = () => {
+
   const profileModal = useRef();
+  
   const [selectedProfile, setSelectedProfile] = useState();
   const isLoggedIn = useRecoilState(isLoggedInState);
   const navigate = useNavigate();
@@ -121,7 +123,7 @@ const HomeIndexPage = () => {
             break;
         }
       });
-    profileModal.current.close();
+      profileModal.current.close();
   };
 
   return (
@@ -152,38 +154,39 @@ const HomeIndexPage = () => {
         </ReloadButton>
       </HomeContainer>
 
-      <Modal
-        ref={profileModal}
-        buttonLabel="메세지 보내기"
-        buttonClickHandler={() => {
-          handleCreateChatRoom(selectedProfile.memberId);
-        }}>
-        {selectedProfile && (
-          <WrapContent>
-            <CharacterBackground
-              $character={selectedProfile.memberInfoDto.memberCharacter}>
-              <StyledImage
-                src={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
-                alt={selectedProfile.memberInfoDto.memberCharacter}
-              />
-            </CharacterBackground>
-            <TextDiv>
-              <MBTI>{selectedProfile.memberInfoDto.mbti}</MBTI>
-              <Major>{selectedProfile.department}</Major>
-            </TextDiv>
-            <TagContainer>
-              {selectedProfile.memberInfoDto.memberHobbyDto.map(
-                (hobby, index) => (
-                  <Badge key={index}>#{hobby.hobby}</Badge>
-                )
-              )}
-              {selectedProfile.memberInfoDto.memberTagDto.map((tag, index) => (
-                <Badge key={index}>#{tag.tag}</Badge>
-              ))}
-            </TagContainer>
-          </WrapContent>
-        )}
-      </Modal>
+        <Modal
+          ref={profileModal}
+          buttonLabel="메세지 보내기"
+          buttonClickHandler={() => {
+            handleCreateChatRoom(selectedProfile.memberId);
+          }}>
+          {selectedProfile && (
+            <WrapContent>
+              <CharacterBackground
+                $character={selectedProfile.memberInfoDto.memberCharacter}>
+                <StyledImage
+                  src={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
+                  alt={selectedProfile.memberInfoDto.memberCharacter}
+                />
+              </CharacterBackground>
+              <TextDiv>
+                <MBTI>{selectedProfile.memberInfoDto.mbti}</MBTI>
+                <Major>{selectedProfile.department}</Major>
+              </TextDiv>
+              <TagContainer>
+                {selectedProfile.memberInfoDto.memberHobbyDto.map(
+                  (hobby, index) => (
+                    <Badge key={index}>#{hobby.hobby}</Badge>
+                  )
+                )}
+                {selectedProfile.memberInfoDto.memberTagDto.map((tag, index) => (
+                  <Badge key={index}>#{tag.tag}</Badge>
+                ))}
+              </TagContainer>
+            </WrapContent>
+          )}
+        </Modal>
+      
     </>
   );
 };
