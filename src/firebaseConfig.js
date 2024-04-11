@@ -6,12 +6,12 @@ import {
   onMessage,
 } from "firebase/messaging";
 
-export function registerServiceWorker() {
-  navigator.serviceWorker
+export const registerServiceWorker = async () => {
+  await navigator.serviceWorker
     .register("/firebase-messaging-sw.js")
     .then((registration) => console.log("서비스 워커 등록 성공", registration))
     .catch((err) => console.log("서비스 워커 등록 실패", err));
-}
+};
 
 const firebaseConfig = {
   apiKey: "AIzaSyDydUUUAK6jb1mEdIKqMGayiKMOSt6FUPY",

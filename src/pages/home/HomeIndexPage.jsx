@@ -96,8 +96,8 @@ const HomeIndexPage = () => {
       console.log("userAgent", userAgent);
 
       if (!userAgent.includes("kakao")) {
-        registerServiceWorker();
-        onGetToken();
+        await registerServiceWorker();
+        await onGetToken();
       } else {
         navigate("/kakaotalk-fallback");
       }
