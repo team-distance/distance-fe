@@ -95,7 +95,7 @@ const HomeIndexPage = () => {
       console.log("messaging", messaging);
       console.log("userAgent", userAgent);
 
-      if (messaging && !userAgent.includes("kakao")) {
+      if (!userAgent.includes("kakao")) {
         registerServiceWorker();
         onGetToken();
       } else {
