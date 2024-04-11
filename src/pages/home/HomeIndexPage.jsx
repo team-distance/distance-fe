@@ -13,8 +13,6 @@ import { useRecoilState } from "recoil";
 import { isLoggedInState } from "../../store/auth";
 import toast from "react-hot-toast";
 import Badge from "../../components/common/Badge";
-import { onGetToken, registerServiceWorker } from "../../firebaseConfig";
-import { isSupported } from "firebase/messaging";
 
 const HomeIndexPage = () => {
   const profileModal = useRef();
@@ -84,26 +82,6 @@ const HomeIndexPage = () => {
   useEffect(() => {
     if (isLoggedIn) fetchMembersAuth();
     else fetchMembers();
-
-    // 홈화면에서 Firebase 초기화
-    // 카카오톡 브라우저에서는 Firebase Messaging을 지원하지 않기 때문에
-    // 카카오톡 브라우저인지 확인 후 Firebase Messaging을 초기화
-    const initializeFirebase = async () => {
-      const userAgent = navigator.userAgent.toLowerCase();
-      const messaging = await isSupported();
-
-      console.log("messaging", messaging);
-      console.log("userAgent", userAgent);
-
-      if (!userAgent.includes("kakao")) {
-        await registerServiceWorker();
-        await onGetToken();
-      } else {
-        navigate("/kakaotalk-fallback");
-      }
-    };
-
-    initializeFirebase();
   }, []);
 
   const handleSelectProfile = (profile) => {
