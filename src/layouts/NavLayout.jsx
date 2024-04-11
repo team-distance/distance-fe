@@ -104,7 +104,7 @@ const NavLayout = () => {
         <Outlet />
       </Padding>
       <TabBar />
-      <Toaster position="bottom-center" />
+      <Toaster position="bottom-center"/>
     </>
   );
 };

@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { useRef, forwardRef, useImperativeHandle } from "react";
 import Button from "./Button";
 import { createPortal } from "react-dom";
-import { useEffect } from "react";
 
 const StyledDialog = styled.dialog`
   width: 60%;
