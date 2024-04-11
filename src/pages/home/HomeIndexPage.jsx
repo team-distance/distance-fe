@@ -13,11 +13,12 @@ import { useRecoilState } from "recoil";
 import { isLoggedInState } from "../../store/auth";
 import toast from "react-hot-toast";
 import Badge from "../../components/common/Badge";
+import ToastPopup from "../../components/common/ToastPopup";
 
 const HomeIndexPage = () => {
 
   const profileModal = useRef();
-  
+
   const [selectedProfile, setSelectedProfile] = useState();
   const isLoggedIn = useRecoilState(isLoggedInState);
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const HomeIndexPage = () => {
   const [isReloadButtonDisabled, setIsReloadButtonDisabled] = useState(false);
   const [remainingTimeToReload, setRemainingTimeToReload] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isPopupVisible, setIsPopupVisiblie] = useState(false);
 
   const fetchMembersAuth = async () => {
     try {
@@ -82,13 +84,17 @@ const HomeIndexPage = () => {
   };
 
   useEffect(() => {
-    if(Notification.permission === "denied") {
-      toast.error(
-      "알림 설정이 꺼져있어요!"
-      );
-    };
+    setIsPopupVisiblie(true);
     if (isLoggedIn) fetchMembersAuth();
     else fetchMembers();
+
+    const timer = setTimeout(() => {
+      setIsPopupVisiblie(false);
+    }, 3000);
+    return () => {
+      clearTimeout(timer);
+    };
+
   }, []);
 
   const handleSelectProfile = (profile) => {
@@ -128,7 +134,7 @@ const HomeIndexPage = () => {
             break;
         }
       });
-      profileModal.current.close();
+    profileModal.current.close();
   };
 
   return (
@@ -159,39 +165,45 @@ const HomeIndexPage = () => {
         </ReloadButton>
       </HomeContainer>
 
-        <Modal
-          ref={profileModal}
-          buttonLabel="메세지 보내기"
-          buttonClickHandler={() => {
-            handleCreateChatRoom(selectedProfile.memberId);
-          }}>
-          {selectedProfile && (
-            <WrapContent>
-              <CharacterBackground
-                $character={selectedProfile.memberInfoDto.memberCharacter}>
-                <StyledImage
-                  src={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
-                  alt={selectedProfile.memberInfoDto.memberCharacter}
-                />
-              </CharacterBackground>
-              <TextDiv>
-                <MBTI>{selectedProfile.memberInfoDto.mbti}</MBTI>
-                <Major>{selectedProfile.department}</Major>
-              </TextDiv>
-              <TagContainer>
-                {selectedProfile.memberInfoDto.memberHobbyDto.map(
-                  (hobby, index) => (
-                    <Badge key={index}>#{hobby.hobby}</Badge>
-                  )
-                )}
-                {selectedProfile.memberInfoDto.memberTagDto.map((tag, index) => (
-                  <Badge key={index}>#{tag.tag}</Badge>
-                ))}
-              </TagContainer>
-            </WrapContent>
-          )}
-        </Modal>
-      
+      <Modal
+        ref={profileModal}
+        buttonLabel="메세지 보내기"
+        buttonClickHandler={() => {
+          handleCreateChatRoom(selectedProfile.memberId);
+        }}>
+        {selectedProfile && (
+          <WrapContent>
+            <CharacterBackground
+              $character={selectedProfile.memberInfoDto.memberCharacter}>
+              <StyledImage
+                src={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
+                alt={selectedProfile.memberInfoDto.memberCharacter}
+              />
+            </CharacterBackground>
+            <TextDiv>
+              <MBTI>{selectedProfile.memberInfoDto.mbti}</MBTI>
+              <Major>{selectedProfile.department}</Major>
+            </TextDiv>
+            <TagContainer>
+              {selectedProfile.memberInfoDto.memberHobbyDto.map(
+                (hobby, index) => (
+                  <Badge key={index}>#{hobby.hobby}</Badge>
+                )
+              )}
+              {selectedProfile.memberInfoDto.memberTagDto.map((tag, index) => (
+                <Badge key={index}>#{tag.tag}</Badge>
+              ))}
+            </TagContainer>
+          </WrapContent>
+        )}
+      </Modal>
+
+      {isPopupVisible && 
+        <ToastPopup
+         message={"알림 설정이 꺼져있어요!"} 
+         onClick={() => navigate("/notification")}
+        />
+      }
     </>
   );
 };
