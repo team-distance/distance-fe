@@ -5,7 +5,7 @@ const ButtonStyle = styled.button`
   white-space: nowrap;
   font-weight: 600;
   color: #fbfbfb;
-  background-color: ${({ backgroundColor }) => backgroundColor};
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
   border: none;
   border-radius: ${({ $size }) => ($size === "large" ? "1rem" : "0.5rem")};
   padding: ${({ $size }) =>
@@ -33,7 +33,7 @@ const ButtonStyle = styled.button`
 
 const Button = ({ children, size, backgroundColor = "#FF625D", ...props }) => {
   return (
-    <ButtonStyle $size={size} backgroundColor={backgroundColor} {...props}>
+    <ButtonStyle $size={size} $backgroundColor={backgroundColor} {...props}>
       {children}
     </ButtonStyle>
   );
