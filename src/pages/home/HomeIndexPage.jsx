@@ -92,6 +92,9 @@ const HomeIndexPage = () => {
       const userAgent = navigator.userAgent.toLowerCase();
       const messaging = await isSupported();
 
+      console.log("messaging", messaging);
+      console.log("userAgent", userAgent);
+
       if (messaging && !userAgent.includes("kakao")) {
         registerServiceWorker();
         onGetToken();
