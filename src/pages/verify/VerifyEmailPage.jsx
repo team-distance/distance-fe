@@ -1,12 +1,11 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import { authInstance } from '../../api/instance';
-import Button from '../../components/common/Button';
-import TextInput from '../../components/register/TextInput';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import { authInstance } from "../../api/instance";
+import Button from "../../components/common/Button";
+import TextInput from "../../components/register/TextInput";
 
 const VerifyEmailPage = () => {
-
   const navigate = useNavigate();
 
   const [schoolEmail, setSchoolEmail] = useState("");
@@ -18,21 +17,20 @@ const VerifyEmailPage = () => {
   const [isSendEmail, setIsSendEmail] = useState(false);
 
   const handleChangeEmail = (e) => {
-
     // if(!schoolEmail.includes(domain)) {
     //   setSchoolEmail(e.target.value.replace(domain));
     // }
     // else {
     //   setSchoolEmail(e.target.value);
     // }
-    
+
     setSchoolEmail(e.target.value);
     if (e.target.value !== "") {
       setEmailDisabled(false);
     } else {
       setEmailDisabled(true);
     }
-  }
+  };
 
   const handleChangeVerifyNum = (e) => {
     setVerifyNum(e.target.value);
@@ -41,13 +39,19 @@ const VerifyEmailPage = () => {
     } else {
       setVerifyDisabled(true);
     }
-  }
+  };
 
   const sendEmail = async () => {
-    try { 
+    try {
       setIsSendEmail(true);
+
+      // 테스트용도로 @sch.ac.kr이 없어도 인증번호를 받을 수 있게 함
+      const payload = schoolEmail.includes("@")
+        ? schoolEmail
+        : schoolEmail + "@sch.ac.kr";
+
       const res = await authInstance.post("/univ/send/email", {
-        schoolEmail: schoolEmail,
+        schoolEmail: payload,
       });
       if (res.data) {
         alert("이메일로 인증 번호를 보냈습니다.");
@@ -58,7 +62,7 @@ const VerifyEmailPage = () => {
     }
   };
 
-  const verifyEmail = async() => {
+  const verifyEmail = async () => {
     try {
       await authInstance.post("/univ/certificate/email", {
         number: verifyNum,
@@ -69,29 +73,36 @@ const VerifyEmailPage = () => {
       alert("인증에 실패했습니다. 다시 시도해주세요.");
       console.log(error);
     }
-  }
+  };
 
   return (
     <WrapContent>
       <div>
         <h2>'학생 메일'로 인증하기</h2>
-        <p><strong>학교 도메인</strong>의 메일만 사용 가능해요</p>
+        <p>
+          <strong>학교 도메인</strong>의 메일만 사용 가능해요
+        </p>
       </div>
 
       <div>
-        <TextInput
-          label="학생메일 인증하기"
-          name="schoolEmail"
-          type="email"
-          value={schoolEmail}
-          buttonLabel="메일 보내기"
-          buttonDisabled={emailDisabled}
-          onChange={handleChangeEmail}
-          buttonClickHandler={sendEmail}
-        />
+        <Label>학생메일 인증하기</Label>
+        <InputWrapper>
+          <Input
+            type="email"
+            name="schoolEmail"
+            value={schoolEmail}
+            onChange={handleChangeEmail}
+          />
+          <SCHDomain>@sch.ac.kr</SCHDomain>
+          <div>
+            <Button size="small" disabled={emailDisabled} onClick={sendEmail}>
+              메일 보내기
+            </Button>
+          </div>
+        </InputWrapper>
         <WrapButton>
           <p>'학생 메일'로 인증하는 방법</p>
-          <img src="/assets/arrow-pink-button.png" alt="way to verify email"/>
+          <img src="/assets/arrow-pink-button.png" alt="way to verify email" />
         </WrapButton>
       </div>
 
@@ -119,10 +130,9 @@ const VerifyEmailPage = () => {
         }}>
         인증완료
       </Button>
-
     </WrapContent>
-  )
-}
+  );
+};
 export default VerifyEmailPage;
 
 const WrapContent = styled.div`
@@ -140,7 +150,7 @@ const WrapContent = styled.div`
     font-weight: 200;
   }
   strong {
-    color: #FF625D;
+    color: #ff625d;
   }
 `;
 
@@ -157,4 +167,44 @@ const WrapButton = styled.div`
     transform: rotate(180deg);
     width: 4%;
   }
-`
+`;
+
+const Input = styled.input`
+  width: 100%;
+  flex-grow: 1;
+  color: #333333;
+  font-size: 1rem;
+  border: none;
+  background-color: transparent;
+
+  &:focus {
+    outline: none;
+  }
+  &::placeholder {
+    color: #d9d9d9;
+    opacity: 1;
+  }
+`;
+
+const InputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #d9d9d9;
+  padding-bottom: 0.3rem;
+  margin-top: 0.5rem;
+
+  &:focus-within {
+    border-bottom: 2px solid #ff625d;
+  }
+`;
+
+const SCHDomain = styled.div`
+  margin-right: 1rem;
+  font-weight: 600;
+  color: #777;
+`;
+
+const Label = styled.label`
+  font-weight: 700;
+  color: #333333;
+`;
