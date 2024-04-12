@@ -13,15 +13,14 @@ const MyIndexPage = () => {
   const myData = useRecoilValue(myDataState);
 
   const handleLogout = async() => {
-    
-    setIsLoggedIn(false);
-    localStorage.removeItem("token");
-    localStorage.removeItem("clientToken");
-    localStorage.removeItem("memberId");
-    navigate("/");
 
     try {
       await authInstance.get("/member/logout");
+      setIsLoggedIn(false);
+      localStorage.removeItem("token");
+      localStorage.removeItem("clientToken");
+      localStorage.removeItem("memberId");
+      navigate("/");
     } catch (error) {
       console.log(error);
     }
