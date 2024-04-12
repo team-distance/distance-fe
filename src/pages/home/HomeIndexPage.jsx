@@ -84,16 +84,16 @@ const HomeIndexPage = () => {
     if (isLoggedIn) fetchMembersAuth();
     else fetchMembers();
 
-    if (Notification.permission !== "granted") {
-      toast.error((t) => (
-        <>
-          <span style={{ marginRight: "8px" }}>알림 설정이 꺼져있어요!</span>
-          <Link to="/notification" style={{ color: "#0096FF" }}>
-            해결하기
-          </Link>
-        </>
-      ));
-    }
+    // if (Notification.permission !== "granted") {
+    //   toast.error((t) => (
+    //     <>
+    //       <span style={{ marginRight: "8px" }}>알림 설정이 꺼져있어요!</span>
+    //       <Link to="/notification" style={{ color: "#0096FF" }}>
+    //         해결하기
+    //       </Link>
+    //     </>
+    //   ));
+    // }
   }, []);
 
   const handleSelectProfile = (profile) => {
