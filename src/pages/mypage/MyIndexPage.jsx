@@ -5,20 +5,26 @@ import Header from "../../components/common/Header";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { isLoggedInState } from "../../store/auth";
 import { myDataState } from "../../store/myData";
+import { authInstance } from "../../api/instance";
 
 const MyIndexPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
   const navigate = useNavigate();
   const myData = useRecoilValue(myDataState);
 
-  const handleLogout = () => {
-    //토큰 넘기기 (api)
+  const handleLogout = async() => {
     
     setIsLoggedIn(false);
     localStorage.removeItem("token");
     localStorage.removeItem("clientToken");
     localStorage.removeItem("memberId");
     navigate("/");
+
+    try {
+      await authInstance.get("/member/logout");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

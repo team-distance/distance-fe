@@ -17,6 +17,8 @@ const VerifyMobileIdPage = () => {
     const imageUrl = URL.createObjectURL(file);
     setFile(file);
     setUploadedImage(imageUrl);
+    
+    console.log(imageUrl);
   };
 
   const handleButtonClick = () => {
