@@ -8,7 +8,7 @@ import { CHARACTERS, COLORS } from "../../constants/character";
 import Header from "../../components/common/Header";
 import Profile from "../../components/home/Profile";
 import Modal from "../../components/common/Modal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { isLoggedInState } from "../../store/auth";
 import toast from "react-hot-toast";
@@ -84,16 +84,16 @@ const HomeIndexPage = () => {
     if (isLoggedIn) fetchMembersAuth();
     else fetchMembers();
 
-    // if (Notification.permission !== "granted") {
-    //   toast.error((t) => (
-    //     <>
-    //       <span style={{ marginRight: "8px" }}>알림 설정이 꺼져있어요!</span>
-    //       <Link to="/notification" style={{ color: "#0096FF" }}>
-    //         해결하기
-    //       </Link>
-    //     </>
-    //   ));
-    // }
+    if (Notification.permission !== "granted") {
+      toast.error((t) => (
+        <>
+          <span style={{ marginRight: "8px" }}>알림 설정이 꺼져있어요!</span>
+          <Link to="/notification" style={{ color: "#0096FF" }}>
+            해결하기
+          </Link>
+        </>
+      ));
+    }
   }, []);
 
   const handleSelectProfile = (profile) => {
