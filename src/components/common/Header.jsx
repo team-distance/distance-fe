@@ -23,7 +23,6 @@ const Header = () => {
           <ProfileIcon
             $character={myData.memberCharacter}
             onClick={() => {
-              console.log("clicked!");
               modalRef.current.open();
             }}>
             <img src={CHARACTERS[myData.memberCharacter]} alt="프로필 이미지" />

@@ -174,7 +174,7 @@ const ProfileRegisterPage = () => {
 
         <div>
           <Label>MBTI 선택하기</Label>
-          <DropdownMBTI setState={setSelectedMBTI} />
+          <DropdownMBTI state={selectedMBTI} setState={setSelectedMBTI} />
         </div>
 
         <div>
