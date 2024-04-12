@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import AnimalSelector from "../../components/register/AnimalSelector";
 import DropdownMBTI from "../../components/register/DropdownMBTI";
 import BlankModal from "../../components/common/BlankModal";
 import { ATTRACTIVENESS, HOBBY } from "../../constants/profile";
@@ -8,14 +7,12 @@ import Button from "../../components/common/Button";
 import HeaderPrev from "../../components/common/HeaderPrev";
 import { useNavigate } from "react-router-dom";
 import { authInstance } from "../../api/instance";
+import { CHARACTERS } from "../../constants/character";
 
 const ProfileEditPage = () => {
-
   const navigate = useNavigate();
-  // const location = useLocation();
-  // const [preData, setPrevData] = useState(location.state);
-
-  const [selectedAnimal, setSelectedAnimal] = useState();
+  const [department, setDepartment] = useState("");
+  const [selectedAnimal, setSelectedAnimal] = useState("");
   const [selectedMBTI, setSelectedMBTI] = useState("");
   const [attractiveness, setAttractiveness] = useState([]);
   const [hobby, setHobby] = useState([]);
@@ -26,6 +23,7 @@ const ProfileEditPage = () => {
 
     await authInstance
       .patch("/member/profile/update", {
+        department: department,
         mbti: selectedMBTI,
         memberCharacter: selectedAnimal,
         memberHobbyDto: hobby.map((value) => ({ hobby: value })),
@@ -42,8 +40,17 @@ const ProfileEditPage = () => {
       });
   };
 
+  const characterModalRef = useRef();
   const attractivenessModalRef = useRef();
   const hobbyModalRef = useRef();
+
+  const openCharacterModal = () => {
+    characterModalRef.current.open();
+  };
+
+  const closeCharacterModal = () => {
+    characterModalRef.current.close();
+  };
 
   const openAttractivenessModal = () => {
     attractivenessModalRef.current.open();
@@ -73,10 +80,6 @@ const ProfileEditPage = () => {
     });
   };
 
-  const handleAnimalClick = (e) => {
-    setSelectedAnimal(e.target.value);
-  };
-
   const isDisabled =
     !selectedAnimal || !selectedMBTI || hashtagCount < 3 || hashtagCount > 5;
 
@@ -84,19 +87,82 @@ const ProfileEditPage = () => {
     setHashtagCount(attractiveness.length + hobby.length);
   }, [attractiveness, hobby]);
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      await authInstance
+        .get("/member/profile")
+        .then((response) => {
+          setDepartment(response.data.department);
+          setSelectedAnimal(response.data.memberCharacter);
+          setSelectedMBTI(response.data.mbti);
+          setAttractiveness(
+            response.data.memberTagDto.map((value) => value.tag)
+          );
+          setHobby(response.data.memberHobbyDto.map((value) => value.hobby));
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    };
+
+    fetchProfile();
+  }, []);
+
   return (
     <div>
       <WrapContent>
         <HeaderPrev title="프로필 수정하기" navigateTo={-1} />
-      </WrapContent>
-      <AnimalSelector
-        label="캐릭터 선택하기"
-        clickHandler={handleAnimalClick}
-      />
-      <WrapContent>
+        <Label>캐릭터 선택하기</Label>
+
+        <ProfileContainer onClick={openCharacterModal}>
+          <img
+            className="side-image-left"
+            src="/assets/profile-register-leftimg.png"
+            alt="profile register button"
+          />
+          {selectedAnimal === "" ? (
+            <img
+              src="/assets/profile-register-plusbutton.png"
+              alt="profile register button"
+            />
+          ) : (
+            <img src={CHARACTERS[selectedAnimal]} alt="selected profile" />
+          )}
+          <img
+            className="side-image-right"
+            src="/assets/profile-register-rightimg.png"
+            alt="profile register button"
+          />
+        </ProfileContainer>
+
+        <BlankModal ref={characterModalRef}>
+          <ModalTitle>
+            <div>캐릭터 선택하기</div>
+            <img
+              src="/assets/cancel-button.png"
+              alt="닫기 버튼"
+              onClick={closeCharacterModal}
+            />
+          </ModalTitle>
+          <AnimalListContainer>
+            {Object.entries(CHARACTERS).map(([character, imageSrc]) => {
+              return (
+                <AnimalListItem
+                  key={character}
+                  onClick={() => {
+                    setSelectedAnimal(character);
+                    closeCharacterModal();
+                  }}>
+                  <img src={imageSrc} alt={character} />
+                </AnimalListItem>
+              );
+            })}
+          </AnimalListContainer>
+        </BlankModal>
+
         <div>
           <Label>MBTI 선택하기</Label>
-          <DropdownMBTI setState={setSelectedMBTI} />
+          <DropdownMBTI state={selectedMBTI} setState={setSelectedMBTI} />
         </div>
 
         <div>
@@ -198,12 +264,12 @@ const Badge = styled.div`
 const BadgeContainer = styled.div`
   display: flex;
   align-items: center;
-  box-shadow: 0 0 5px 1px #e0e0e0;
-  margin: 1em 0;
   height: 96px;
   gap: 0.5rem;
   justify-content: center;
   flex-wrap: wrap;
+  background-image: linear-gradient(180deg, #fff 0%, #f2f2f2 100%);
+  margin-bottom: 1.5rem;
 `;
 
 const WrapContent = styled.div`
@@ -251,6 +317,49 @@ const AddButton = styled.button`
   border-radius: 12px;
   border: 1px solid #d9d9d9;
   padding: 4px;
+`;
+
+const ProfileContainer = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  padding-top: 1rem;
+  position: relative;
+  width: 100%;
+
+  img {
+    width: 30%;
+  }
+
+  .side-image-left {
+    position: absolute;
+    bottom: -10%;
+    left: 12%;
+    z-index: 1;
+  }
+  .side-image-right {
+    position: absolute;
+    bottom: -10%;
+    right: 12%;
+    z-index: 1;
+  }
+`;
+
+const AnimalListContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-items: center;
+  overflow: auto;
+  margin-top: 0.5rem;
+  padding: 1rem 1.3rem;
+`;
+
+const AnimalListItem = styled.div`
+  padding: 0.5rem 0.2rem;
+
+  img {
+    width: 3rem;
+  }
 `;
 
 export default ProfileEditPage;

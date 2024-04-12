@@ -2,10 +2,16 @@ import React, { useState, useRef, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import useDetectClose from "../../hooks/useDetectClose";
 
-const DropdownMBTI = ({ setState }) => {
+const DropdownMBTI = ({ state = "", setState }) => {
   const [selected, setSelected] = useState("");
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useDetectClose(dropdownRef, false);
+
+  useEffect(() => {
+    if (state) {
+      setSelected(state);
+    }
+  }, [state]);
 
   useEffect(() => {
     setState(selected);
@@ -44,8 +50,7 @@ const DropdownButton = styled.div`
   background-color: #ffffff;
   border: 2px solid #d9d9d9;
   border-radius: 20px;
-  color: ${({$selected}) => $selected ? '#000' : '#D3D3D3'};
-
+  color: ${({ $selected }) => ($selected ? "#000" : "#D3D3D3")};
 `;
 
 const fadeIn = keyframes`
@@ -65,7 +70,7 @@ const DropdownContent = styled.div`
   width: 100%;
   height: 256px;
   overflow: auto;
-  border-radius: 8px;
+  border-radius: 20px;
   background-color: #ffffff;
   border: 1px solid #ddd;
   z-index: 1;
