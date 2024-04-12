@@ -8,7 +8,7 @@ import { CHARACTERS, COLORS } from "../../constants/character";
 import Header from "../../components/common/Header";
 import Profile from "../../components/home/Profile";
 import Modal from "../../components/common/Modal";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { isLoggedInState } from "../../store/auth";
 import toast from "react-hot-toast";
