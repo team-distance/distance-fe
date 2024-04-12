@@ -8,15 +8,13 @@ import { CHARACTERS, COLORS } from "../../constants/character";
 import Header from "../../components/common/Header";
 import Profile from "../../components/home/Profile";
 import Modal from "../../components/common/Modal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { isLoggedInState } from "../../store/auth";
 import toast from "react-hot-toast";
 import Badge from "../../components/common/Badge";
-import ToastPopup from "../../components/common/ToastPopup";
 
 const HomeIndexPage = () => {
-
   const profileModal = useRef();
 
   const [selectedProfile, setSelectedProfile] = useState();
@@ -29,7 +27,6 @@ const HomeIndexPage = () => {
   const [isReloadButtonDisabled, setIsReloadButtonDisabled] = useState(false);
   const [remainingTimeToReload, setRemainingTimeToReload] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [isPopupVisible, setIsPopupVisiblie] = useState(false);
 
   const fetchMembersAuth = async () => {
     try {
@@ -84,17 +81,19 @@ const HomeIndexPage = () => {
   };
 
   useEffect(() => {
-    setIsPopupVisiblie(true);
     if (isLoggedIn) fetchMembersAuth();
     else fetchMembers();
 
-    const timer = setTimeout(() => {
-      setIsPopupVisiblie(false);
-    }, 3000);
-    return () => {
-      clearTimeout(timer);
-    };
-
+    if (Notification.permission !== "granted") {
+      toast.error((t) => (
+        <>
+          <span style={{ marginRight: "8px" }}>알림 설정이 꺼져있어요!</span>
+          <Link to="/notification" style={{ color: "#0096FF" }}>
+            해결하기
+          </Link>
+        </>
+      ));
+    }
   }, []);
 
   const handleSelectProfile = (profile) => {
@@ -197,13 +196,6 @@ const HomeIndexPage = () => {
           </WrapContent>
         )}
       </Modal>
-
-      {isPopupVisible && 
-        <ToastPopup
-         message={"알림 설정이 꺼져있어요!"} 
-         onClick={() => navigate("/notification")}
-        />
-      }
     </>
   );
 };
