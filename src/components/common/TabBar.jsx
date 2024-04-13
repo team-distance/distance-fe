@@ -12,6 +12,10 @@ const BottomNavBar = () => {
   const isIphone = userAgent.includes("iphone");
 
   useEffect(() => {
+    console.log(location);
+  }, [currentPage]);
+
+  useEffect(() => {
     setCurrentPage(location.pathname);
   }, [location]);
 
@@ -25,12 +29,14 @@ const BottomNavBar = () => {
     {
       name: "채팅",
       path: "/chat",
+      alternative: "/inbox",
       icon: "/assets/icon/icon-chat-stroked.svg",
       iconActive: "/assets/icon/icon-chat-filled.svg",
     },
     {
       name: "페스티벌",
       path: "/festival/program",
+      alternative: "/festival/foodtruck",
       icon: "/assets/icon/icon-festival-stroked.svg",
       iconActive: "/assets/icon/icon-festival-filled.svg",
     },
@@ -48,10 +54,19 @@ const BottomNavBar = () => {
         {menus.map((item) => (
           <NavItem to={item.path} key={item.name}>
             <img
-              src={currentPage === item.path ? item.iconActive : item.icon}
+              src={
+                currentPage === item.path || currentPage === item?.alternative
+                  ? item.iconActive
+                  : item.icon
+              }
               alt={item.name}
             />
-            <Label color={currentPage === item.path ? "#FF625D" : "#767676"}>
+            <Label
+              color={
+                currentPage === item.path || currentPage === item?.alternative
+                  ? "#FF625D"
+                  : "#767676"
+              }>
               {item.name}
             </Label>
           </NavItem>
