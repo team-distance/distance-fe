@@ -12,10 +12,6 @@ const BottomNavBar = () => {
   const isIphone = userAgent.includes("iphone");
 
   useEffect(() => {
-    console.log(location);
-  }, [currentPage]);
-
-  useEffect(() => {
     setCurrentPage(location.pathname);
   }, [location]);
 
