@@ -28,6 +28,8 @@ import FoodTruckPage1 from "./pages/festival/FoodTruckPage1";
 import FoodTruckPage2 from "./pages/festival/FoodTruckPage2";
 import FoodTruckPage3 from "./pages/festival/FoodTruckPage3";
 import KakaotalkFallback from "./pages/root/KakaotalkFallback";
+import AccountEditPage from "./pages/mypage/AccountEditPage";
+import DropoutPage from "./pages/mypage/DropoutPage";
 
 function App() {
   return (
@@ -62,9 +64,12 @@ function App() {
           </Route>
 
           <Route path="/mypage" element={<MyIndexPage />} />
-          <Route path="/mypage/profile" element={<ProfileEditPage />} />
         </Route>
 
+        <Route path="/mypage/profile" element={<ProfileEditPage />} />
+        <Route path="/mypage/account" element={<AccountEditPage />} />
+        <Route path="/mypage/account/dropout" element={<DropoutPage />} />
+        
         <Route path="/festival/detail/0" element={<FestivalDetailPage0 />} />
         <Route path="/festival/detail/1" element={<FestivalDetailPage1 />} />
         <Route path="/festival/detail/2" element={<FestivalDetailPage2 />} />
