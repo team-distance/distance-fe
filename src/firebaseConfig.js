@@ -58,8 +58,7 @@ if (messaging) {
       const notificationTitle = payload.notification.title; // 메시지에서 제목 추출
       const notificationOptions = {
         body: payload.notification.body, // 메시지에서 본문 추출
-        // icon: payload.notification.icon, // 메시지에서 아이콘 URL 추출 (선택 사항)
-        // 필요에 따라 여기에 더 많은 옵션을 추가할 수 있습니다.
+        icon: payload.notification.image, // 메시지에서 아이콘 URL 추출 (선택 사항)
       };
 
       if (!currentLocation.includes("/chat/" + payload.data.chatRoomId)) {
