@@ -21,6 +21,10 @@ const firebaseConfig = {
 const FBapp = firebase.initializeApp(firebaseConfig);
 const messaging = FBapp.messaging();
 
+self.addEventListener("install", (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
 messaging.onBackgroundMessage(messaging, (payload) => {
   console.log("Background message 1");
   const notificationTitle = "백그라운드 메세지 제목입니다";

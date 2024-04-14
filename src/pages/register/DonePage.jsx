@@ -1,12 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "../../components/common/Button";
 import { useLocation, useNavigate } from "react-router-dom";
 import { isLoggedInState, login } from "../../store/auth";
 import { useSetRecoilState } from "recoil";
 import { onGetToken } from "../../firebaseConfig";
+import toast from "react-hot-toast";
 
 const DonePage = () => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const telNum = location.state.telNum;
@@ -15,12 +17,20 @@ const DonePage = () => {
 
   useEffect(() => {
     const instantLogin = async () => {
-      login({ telNum, password })
-        .then(() => {
-          setIsLoggedIn(true);
-          onGetToken();
-        })
-        .catch((err) => console.error(err));
+      if (Notification.permission !== "granted") {
+        alert("알림 권한 창이 표시되면 허용을 눌러주세요!");
+      }
+
+      try {
+        setLoading(true);
+        const clientToken = await onGetToken();
+        await login({ telNum, password, clientToken });
+        setIsLoggedIn(true);
+      } catch (error) {
+        toast.error("홈화면으로 이동해서 다시 로그인해주세요!");
+      } finally {
+        setLoading(false);
+      }
     };
 
     instantLogin();
@@ -38,7 +48,8 @@ const DonePage = () => {
             size="large"
             onClick={() => {
               navigate("/verify/univ");
-            }}>
+            }}
+            disabled={loading}>
             학생 인증하기
           </Button>
           <MoveToHome

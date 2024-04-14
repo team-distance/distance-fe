@@ -7,10 +7,14 @@ import {
 } from "firebase/messaging";
 
 export const registerServiceWorker = async () => {
-  await navigator.serviceWorker
-    .register("/firebase-messaging-sw.js")
-    .then((registration) => console.log("서비스 워커 등록 성공", registration))
-    .catch((err) => console.log("서비스 워커 등록 실패", err));
+  try {
+    const registration = await navigator.serviceWorker.register(
+      "/firebase-messaging-sw.js"
+    );
+    console.log("서비스 워커 등록 성공", registration);
+  } catch (error) {
+    console.log("서비스 워커 등록 실패", error);
+  }
 };
 
 const firebaseConfig = {
@@ -36,22 +40,11 @@ const isFirebaseSupported = async () => {
 const messaging = await isFirebaseSupported();
 
 // client 토큰 발급 받기
-export const onGetToken = async () => {
-  console.log(messaging);
+export const onGetToken = () => {
   return getToken(messaging, {
     vapidKey:
       "BA_KtCviBslZEFupMHZwhzFX10LdjtJtMLAzRRTJ4mv-GuoERIyz4G0_i4WC4tIManqSnrPkzWvcFfEAWEw9YSM",
-  })
-    .then((currentToken) => {
-      if (currentToken) {
-        localStorage.setItem("clientToken", currentToken);
-      } else {
-        console.log("토큰 발급 실패");
-      }
-    })
-    .catch((err) => {
-      console.log("토큰 발급 에러 발생 : ", err);
-    });
+  });
 };
 
 // 포그라운드 메시지 수신

@@ -28,8 +28,14 @@ import FoodTruckPage1 from "./pages/festival/FoodTruckPage1";
 import FoodTruckPage2 from "./pages/festival/FoodTruckPage2";
 import FoodTruckPage3 from "./pages/festival/FoodTruckPage3";
 import KakaotalkFallback from "./pages/root/KakaotalkFallback";
+import { useEffect } from "react";
+import { registerServiceWorker } from "./firebaseConfig";
 
 function App() {
+  useEffect(() => {
+    registerServiceWorker();
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
