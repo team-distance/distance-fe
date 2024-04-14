@@ -7,10 +7,14 @@ import {
 } from "firebase/messaging";
 
 export const registerServiceWorker = async () => {
-  await navigator.serviceWorker
-    .register("/firebase-messaging-sw.js")
-    .then((registration) => console.log("서비스 워커 등록 성공", registration))
-    .catch((err) => console.log("서비스 워커 등록 실패", err));
+  try {
+    const registration = await navigator.serviceWorker.register(
+      "/firebase-messaging-sw.js"
+    );
+    console.log("서비스 워커 등록 성공", registration);
+  } catch (error) {
+    console.log("서비스 워커 등록 실패", error);
+  }
 };
 
 const firebaseConfig = {
@@ -36,37 +40,25 @@ const isFirebaseSupported = async () => {
 const messaging = await isFirebaseSupported();
 
 // client 토큰 발급 받기
-export const onGetToken = async () => {
-  console.log(messaging);
+export const onGetToken = () => {
   return getToken(messaging, {
     vapidKey:
       "BA_KtCviBslZEFupMHZwhzFX10LdjtJtMLAzRRTJ4mv-GuoERIyz4G0_i4WC4tIManqSnrPkzWvcFfEAWEw9YSM",
-  })
-    .then((currentToken) => {
-      if (currentToken) {
-        localStorage.setItem("clientToken", currentToken);
-      } else {
-        console.log("토큰 발급 실패");
-      }
-    })
-    .catch((err) => {
-      console.log("토큰 발급 에러 발생 : ", err);
-    });
+  });
 };
 
 // 포그라운드 메시지 수신
 // (messaging이 초기화 되었다면, onMessage()를 호출하여 메시지 수신)
 if (messaging) {
   onMessage(messaging, (payload) => {
-    console.log("Message received. ", payload);
+    console.log("FOREGROUND MESSAGE RECEIVED", payload);
     // 알림 권한이 허용되었다면, 사용자에게 알림 표시
     if (Notification.permission === "granted") {
       const currentLocation = window.location.href;
       const notificationTitle = payload.notification.title; // 메시지에서 제목 추출
       const notificationOptions = {
         body: payload.notification.body, // 메시지에서 본문 추출
-        // icon: payload.notification.icon, // 메시지에서 아이콘 URL 추출 (선택 사항)
-        // 필요에 따라 여기에 더 많은 옵션을 추가할 수 있습니다.
+        icon: payload.notification.image, // 메시지에서 아이콘 URL 추출 (선택 사항)
       };
 
       if (!currentLocation.includes("/chat/" + payload.data.chatRoomId)) {

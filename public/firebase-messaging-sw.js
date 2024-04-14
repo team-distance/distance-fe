@@ -21,8 +21,25 @@ const firebaseConfig = {
 const FBapp = firebase.initializeApp(firebaseConfig);
 const messaging = FBapp.messaging();
 
-messaging.onBackgroundMessage(messaging, (payload) => {
-  console.log("Background message 1");
+self.addEventListener("install", (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
+// self.addEventListener("push", (event) => {
+//   console.log("PUSH EVENT!", event.data.json());
+//   const payload = event.data.json();
+//   const notificationTitle = payload.notification.title;
+//   const notificationOptions = {
+//     body: payload.notification.body,
+//   };
+//   event.waitUntil(
+//     self.registration.showNotification(notificationTitle, notificationOptions)
+//   );
+// });
+
+messaging.onBackgroundMessage((payload) => {
+  console.log("BACKGROUND MESSAGE RECEIVED", payload);
+
   const notificationTitle = "백그라운드 메세지 제목입니다";
   const notificationOptions = {
     body: payload.notification.body, // 'payload'의 'notification.body'를 사용
@@ -32,8 +49,10 @@ messaging.onBackgroundMessage(messaging, (payload) => {
 });
 
 self.addEventListener("notificationclick", function (event) {
-  console.log("background message 2");
+  console.log("Notification Clicked", event);
+
   // 알림 창 닫기
+  event.preventDefault();
   event.notification.close();
 
   // '/chat' 라우트로 사용자를 이동시킵니다.

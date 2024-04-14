@@ -8,7 +8,6 @@ import { authInstance } from "../api/instance";
 import toast, { Toaster } from "react-hot-toast";
 import useGPS from "../hooks/useGPS";
 import { myDataState } from "../store/myData";
-import { onGetToken, registerServiceWorker } from "../firebaseConfig";
 
 const NavLayout = () => {
   const isLoggedIn = useRecoilValue(isLoggedInState);
@@ -43,25 +42,11 @@ const NavLayout = () => {
   };
 
   useEffect(() => {
-    // Firebase 초기화
-    // 카카오톡 브라우저에서는 Firebase Messaging을 지원하지 않기 때문에
-    // 카카오톡 브라우저인지 확인 후 Firebase Messaging을 초기화
-    const initializeFirebase = async () => {
-      await registerServiceWorker();
-      await onGetToken();
-    };
+    const userAgent = navigator.userAgent.toLowerCase();
 
-    initializeFirebase()
-      .then((res) => console.log(res))
-      .catch((err) => {
-        const userAgent = navigator.userAgent.toLowerCase();
-        if (userAgent.includes("kakao")) {
-          navigate("/kakaotalk-fallback");
-        } else {
-          toast.error("Firebase Messaging 초기화에 실패했어요!");
-          console.log(err);
-        }
-      });
+    if (userAgent.includes("kakao")) {
+      navigate("/kakaotalk-fallback");
+    }
   }, []);
 
   useEffect(() => {
@@ -104,7 +89,7 @@ const NavLayout = () => {
         <Outlet />
       </Padding>
       <TabBar />
-      <Toaster position="bottom-center"/>
+      <Toaster position="bottom-center" />
     </>
   );
 };

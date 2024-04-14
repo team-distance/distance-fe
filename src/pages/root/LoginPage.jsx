@@ -32,10 +32,10 @@ const LoginPage = () => {
     setShowWarning(false);
 
     if (name === "telNum") {
-      setTelNumTestFlag(!(value.length===11));
+      setTelNumTestFlag(!(value.length === 11));
     }
     if (name === "password") {
-      setPwTestFlag(!(value.length>=6));
+      setPwTestFlag(!(value.length >= 6));
     }
 
     setLoginValue((prev) => ({
@@ -53,9 +53,12 @@ const LoginPage = () => {
     }
 
     try {
+      if (Notification.permission !== "granted") {
+        alert("알림 권한 창이 표시되면 허용을 눌러주세요!");
+      }
       setLoading(true);
-      await onGetToken();
-      await login(loginValue);
+      const clientToken = await onGetToken();
+      await login({ ...loginValue, clientToken });
       setIsLoggedIn(true);
       navigate("/");
     } catch (err) {
@@ -97,19 +100,17 @@ const LoginPage = () => {
                 placeholder={"6자리 이상"}
               />
               {showWarning && loginResult !== 200 && (
-                <Tip>
-                  비밀번호가 일치하지 않습니다!
-                </Tip>
+                <Tip>비밀번호가 일치하지 않습니다!</Tip>
               )}
             </div>
           </WrapContent>
-          
 
           <Button size="large" type="submit" disabled={isDisabled}>
             로그인하기
           </Button>
           <WrapText>
-            아직 계정이 없으신가요?<span onClick={()=>navigate('/register/user')}>회원가입하기</span>
+            아직 계정이 없으신가요?
+            <span onClick={() => navigate("/register/user")}>회원가입하기</span>
           </WrapText>
         </WrapForm>
       )}
