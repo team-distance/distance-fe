@@ -26,6 +26,7 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("push", (event) => {
+  console.log("PUSH EVENT!", event.data.json());
   const payload = event.data.json();
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
@@ -47,8 +48,10 @@ messaging.onBackgroundMessage(messaging, (payload) => {
 });
 
 self.addEventListener("notificationclick", function (event) {
-  console.log("background message 2");
+  console.log("Notification Clicked", event);
+
   // 알림 창 닫기
+  event.preventDefault();
   event.notification.close();
 
   // '/chat' 라우트로 사용자를 이동시킵니다.
