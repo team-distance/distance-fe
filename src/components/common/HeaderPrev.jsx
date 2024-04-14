@@ -3,35 +3,38 @@ import { useNavigate } from "react-router-dom";
 
 const WrapHeader = styled.header`
   display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+
+  p, h2 {
+    margin: 0;
+  }
+`;
+const TitleContainer = styled.div`
+  display: flex;
   gap: 1rem;
+  padding-bottom: 0.5rem;
 
   img {
     max-width: 1rem;
     object-fit: contain;
   }
-
-  .title-big {
-    font-size: 2rem;
-    font-weight: 700;
-  }
-  .title-small {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #979797;
-  }
 `;
 
-const HeaderPrev = ({title, navigateTo}) => {
+const HeaderPrev = ({title, navigateTo, text}) => {
 
   const navigate = useNavigate();
 
   return (
     <WrapHeader>
-      <img 
-        src="/assets/arrow-pink-button.png" 
-        alt="Go Back"
-        onClick={() => navigate(navigateTo)} />
-      <h2>{title}</h2>
+      <TitleContainer>
+        <img 
+          src="/assets/arrow-pink-button.png" 
+          alt="Go Back"
+          onClick={() => navigate(navigateTo)} />
+        <h2>{title}</h2>
+      </TitleContainer>
+      <p className="text">{text}</p>
     </WrapHeader>
   );
 };

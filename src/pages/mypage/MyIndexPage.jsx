@@ -48,7 +48,7 @@ const MyIndexPage = () => {
               <div
                 className="menu"
                 onClick={() =>
-                  navigate("/mypage/profile", { state: myData.contents })
+                  navigate("/mypage/account", )
                 }>
                 <div>계정 관리</div>
                 <img
