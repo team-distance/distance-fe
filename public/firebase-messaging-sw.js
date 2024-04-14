@@ -25,6 +25,17 @@ self.addEventListener("install", (event) => {
   event.waitUntil(self.skipWaiting());
 });
 
+self.addEventListener("push", (event) => {
+  const payload = event.data.json();
+  const notificationTitle = payload.notification.title;
+  const notificationOptions = {
+    body: payload.notification.body,
+  };
+  event.waitUntil(
+    self.registration.showNotification(notificationTitle, notificationOptions)
+  );
+});
+
 messaging.onBackgroundMessage(messaging, (payload) => {
   console.log("Background message 1");
   const notificationTitle = "백그라운드 메세지 제목입니다";
