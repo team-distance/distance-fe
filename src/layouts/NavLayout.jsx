@@ -57,51 +57,53 @@ const NavLayout = () => {
   }, []);
 
   useEffect(() => {
-    onMessage(messaging, (payload) => {
-      console.log("FOREGROUND MESSAGE RECEIVED", payload);
+    if (messaging) {
+      onMessage(messaging, (payload) => {
+        console.log("FOREGROUND MESSAGE RECEIVED", payload);
 
-      const currentLocation = location.pathname;
-      const notificationTitle = payload.notification.title; // 메시지에서 제목 추출
-      const notificationBody = payload.notification.body; // 메시지에서 본문 추출
+        const currentLocation = location.pathname;
+        const notificationTitle = payload.notification.title; // 메시지에서 제목 추출
+        const notificationBody = payload.notification.body; // 메시지에서 본문 추출
 
-      // 현재 들어와있는 채팅방에서 온 알림이 아닌 경우에만 토스트를 띄워줌
-      if (!currentLocation.includes("/chat/" + payload.data.chatRoomId)) {
-        const toastId = toast.custom(
-          <ToastContainer
-            onClick={() => {
-              navigate("/chat");
-              toast.remove();
-            }}>
-            <ToastSectionLeft>
-              <ToastIcon
-                src={payload.notification.image}
-                alt="디스턴스 아이콘"
-              />
-              <ToastContent>
-                <ToastTitle>{notificationTitle}</ToastTitle>
-                <ToastBody>{notificationBody}</ToastBody>
-              </ToastContent>
-            </ToastSectionLeft>
-            <ToastSectionRight>
-              <ToastCloseButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toast.remove();
-                }}>
-                <img src="/assets/cancel-button-gray.svg" alt="닫기 아이콘" />
-              </ToastCloseButton>
-            </ToastSectionRight>
-          </ToastContainer>,
-          {
-            duration: 5000,
-            position: "top-center",
-          }
-        );
+        // 현재 들어와있는 채팅방에서 온 알림이 아닌 경우에만 토스트를 띄워줌
+        if (!currentLocation.includes("/chat/" + payload.data.chatRoomId)) {
+          const toastId = toast.custom(
+            <ToastContainer
+              onClick={() => {
+                navigate("/chat");
+                toast.remove();
+              }}>
+              <ToastSectionLeft>
+                <ToastIcon
+                  src={payload.notification.image}
+                  alt="디스턴스 아이콘"
+                />
+                <ToastContent>
+                  <ToastTitle>{notificationTitle}</ToastTitle>
+                  <ToastBody>{notificationBody}</ToastBody>
+                </ToastContent>
+              </ToastSectionLeft>
+              <ToastSectionRight>
+                <ToastCloseButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toast.remove();
+                  }}>
+                  <img src="/assets/cancel-button-gray.svg" alt="닫기 아이콘" />
+                </ToastCloseButton>
+              </ToastSectionRight>
+            </ToastContainer>,
+            {
+              duration: 5000,
+              position: "top-center",
+            }
+          );
 
-        // 화면에 한개의 토스트만 띄우기 위해 이전 토스트를 지우는 코드
-        toast.remove(String(+toastId - 1));
-      }
-    });
+          // 화면에 한개의 토스트만 띄우기 위해 이전 토스트를 지우는 코드
+          toast.remove(String(+toastId - 1));
+        }
+      });
+    }
   }, []);
 
   useEffect(() => {
