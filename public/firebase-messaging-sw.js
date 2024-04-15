@@ -40,7 +40,7 @@ self.addEventListener("install", (event) => {
 messaging.onBackgroundMessage((payload) => {
   console.log("BACKGROUND MESSAGE RECEIVED", payload);
 
-  const notificationTitle = "백그라운드 메세지 제목입니다";
+  const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body, // 'payload'의 'notification.body'를 사용
   };
