@@ -12,7 +12,9 @@ const MyIndexPage = () => {
   const navigate = useNavigate();
   const myData = useRecoilValue(myDataState);
 
-  const handleLogout = async() => {
+  const handleLogout = async () => {
+    const confirmLogout = window.confirm("로그아웃 하시겠습니까?");
+    if (!confirmLogout) return;
 
     try {
       await authInstance.get("/member/logout");
@@ -45,11 +47,7 @@ const MyIndexPage = () => {
                   alt="Edit Profile"
                 />
               </div>
-              <div
-                className="menu"
-                onClick={() =>
-                  navigate("/mypage/account", )
-                }>
+              <div className="menu" onClick={() => navigate("/mypage/account")}>
                 <div>계정 관리</div>
                 <img
                   src="/assets/mypage/arrow-gray-button.png"

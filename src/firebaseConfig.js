@@ -1,10 +1,5 @@
 import { initializeApp } from "firebase/app";
-import {
-  getMessaging,
-  getToken,
-  isSupported,
-  onMessage,
-} from "firebase/messaging";
+import { getMessaging, getToken, isSupported } from "firebase/messaging";
 
 export const registerServiceWorker = async () => {
   try {
@@ -37,7 +32,7 @@ const isFirebaseSupported = async () => {
   return supported ? getMessaging(FBapp) : null;
 };
 
-const messaging = await isFirebaseSupported();
+export const messaging = await isFirebaseSupported();
 
 // client 토큰 발급 받기
 export const onGetToken = () => {
@@ -49,21 +44,47 @@ export const onGetToken = () => {
 
 // 포그라운드 메시지 수신
 // (messaging이 초기화 되었다면, onMessage()를 호출하여 메시지 수신)
-if (messaging) {
-  onMessage(messaging, (payload) => {
-    console.log("FOREGROUND MESSAGE RECEIVED", payload);
-    // 알림 권한이 허용되었다면, 사용자에게 알림 표시
-    if (Notification.permission === "granted") {
-      const currentLocation = window.location.href;
-      const notificationTitle = payload.notification.title; // 메시지에서 제목 추출
-      const notificationOptions = {
-        body: payload.notification.body, // 메시지에서 본문 추출
-        icon: payload.notification.image, // 메시지에서 아이콘 URL 추출 (선택 사항)
-      };
+// if (messaging) {
+//   onMessage(messaging, (payload) => {
+//     console.log("FOREGROUND MESSAGE RECEIVED", payload);
 
-      if (!currentLocation.includes("/chat/" + payload.data.chatRoomId)) {
-        new Notification(notificationTitle, notificationOptions);
-      }
-    }
-  });
-}
+//     const currentLocation = window.location.href;
+//     const notificationTitle = payload.notification.title; // 메시지에서 제목 추출
+//     const notificationOptions = {
+//       body: payload.notification.body, // 메시지에서 본문 추출
+//       // icon: payload.notification.image, // 메시지에서 아이콘 URL 추출 (선택 사항)
+//     };
+
+//     if (!currentLocation.includes("/chat/" + payload.data.chatRoomId)) {
+//       const toastId = toast((t) => {
+//         t.position = "top-center";
+//         t.style = {
+//           display: "flex",
+//           alignItems: "center",
+//           width: "100%",
+//         };
+//         t.icon = <img src={payload.notification.image} width={36} />;
+//         t.duration = 5000;
+
+//         return (
+//           <>
+//             <div onClick={() => {window.location.href = "/chat"}}>
+//               <div className="title">{notificationTitle}</div>
+//               <div className="body">{notificationOptions.body}</div>
+//             </div>
+//           </>
+//         );
+//       });
+//       toast.remove(String(+toastId - 1));
+//     }
+//   });
+// }
+
+//   toast.error((t) => (
+//     <>
+//       <span style={{ marginRight: "8px" }}>알림 설정이 꺼져있어요!</span>
+//       <Link to="/notification" style={{ color: "#0096FF" }}>
+//         해결하기
+//       </Link>
+//     </>
+//   ));
