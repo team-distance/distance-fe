@@ -5,6 +5,7 @@ import {
   isSupported,
   onMessage,
 } from "firebase/messaging";
+import toast from "react-hot-toast";
 
 export const registerServiceWorker = async () => {
   try {
@@ -37,7 +38,7 @@ const isFirebaseSupported = async () => {
   return supported ? getMessaging(FBapp) : null;
 };
 
-const messaging = await isFirebaseSupported();
+export const messaging = await isFirebaseSupported();
 
 // client 토큰 발급 받기
 export const onGetToken = () => {
@@ -62,8 +63,25 @@ if (messaging) {
       };
 
       if (!currentLocation.includes("/chat/" + payload.data.chatRoomId)) {
-        new Notification(notificationTitle, notificationOptions);
+        // new Notification(notificationTitle, notificationOptions);
+        toast.success((t) => {
+          return (
+            <div>
+              <div>{notificationTitle}</div>
+              <div>{notificationOptions.body}</div>
+            </div>
+          );
+        });
       }
     }
   });
 }
+
+//   toast.error((t) => (
+//     <>
+//       <span style={{ marginRight: "8px" }}>알림 설정이 꺼져있어요!</span>
+//       <Link to="/notification" style={{ color: "#0096FF" }}>
+//         해결하기
+//       </Link>
+//     </>
+//   ));
