@@ -133,7 +133,6 @@ const HomeIndexPage = () => {
             memberState.map((profile, index) => (
               <Profile
                 key={index}
-                id={profile.memberId}
                 profile={profile}
                 onClick={() => handleSelectProfile(profile)}
               />
@@ -157,25 +156,29 @@ const HomeIndexPage = () => {
         {selectedProfile && (
           <WrapContent>
             <CharacterBackground
-              $character={selectedProfile.memberInfoDto.memberCharacter}>
+              $character={selectedProfile.memberProfileDto.memberCharacter}>
               <StyledImage
-                src={CHARACTERS[selectedProfile.memberInfoDto.memberCharacter]}
-                alt={selectedProfile.memberInfoDto.memberCharacter}
+                src={
+                  CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
+                }
+                alt={selectedProfile.memberProfileDto.memberCharacter}
               />
             </CharacterBackground>
             <TextDiv>
-              <MBTI>{selectedProfile.memberInfoDto.mbti}</MBTI>
-              <Major>{selectedProfile.department}</Major>
+              <MBTI>{selectedProfile.memberProfileDto.mbti}</MBTI>
+              <Major>{selectedProfile.memberProfileDto.department}</Major>
             </TextDiv>
             <TagContainer>
-              {selectedProfile.memberInfoDto.memberHobbyDto.map(
+              {selectedProfile.memberProfileDto.memberHobbyDto.map(
                 (hobby, index) => (
                   <Badge key={index}>#{hobby.hobby}</Badge>
                 )
               )}
-              {selectedProfile.memberInfoDto.memberTagDto.map((tag, index) => (
-                <Badge key={index}>#{tag.tag}</Badge>
-              ))}
+              {selectedProfile.memberProfileDto.memberTagDto.map(
+                (tag, index) => (
+                  <Badge key={index}>#{tag.tag}</Badge>
+                )
+              )}
             </TagContainer>
           </WrapContent>
         )}

@@ -1,47 +1,28 @@
 import styled from "styled-components";
 import { CHARACTERS } from "../../constants/character";
 import { COLORS } from "../../constants/character";
-import { useEffect } from "react";
 import Badge from "../common/Badge";
 
-const Profile = ({ id, profile, onClick }) => {
-  // 글씨 크기 동적으로 조절
-  useEffect(() => {
-    const textMajorElement = document.querySelector(`.text-major-${id}`);
-
-    const aLetter = 24;
-    const innerTextLength = textMajorElement.innerText.length;
-    const parentWidth = textMajorElement.closest("article").offsetWidth;
-
-    if (textMajorElement) {
-      if (aLetter * innerTextLength > parentWidth) {
-        let adjustedALetter = parentWidth / innerTextLength;
-        adjustedALetter = Math.floor(adjustedALetter);
-        textMajorElement.style.fontSize = `${adjustedALetter}px`;
-      }
-    }
-  }, [id]);
-
+const Profile = ({ profile, onClick }) => {
   return (
     <WrapProfile onClick={onClick}>
       <Wrapper>
-        <CharacterBackground $character={profile.memberInfoDto.memberCharacter}>
+        <CharacterBackground
+          $character={profile.memberProfileDto.memberCharacter}>
           <StyledImage
-            src={CHARACTERS[profile.memberInfoDto.memberCharacter]}
-            alt={profile.memberInfoDto.memberCharacter}
+            src={CHARACTERS[profile.memberProfileDto.memberCharacter]}
+            alt={profile.memberProfileDto.memberCharacter}
           />
         </CharacterBackground>
-        <TextDiv>
-          <MBTI>{profile.memberInfoDto.mbti}</MBTI>
-          <div className={`text-major text-major-${id}`}>
-            {profile.department}
-          </div>
-        </TextDiv>
+        <div>
+          <MBTI>{profile.memberProfileDto.mbti}</MBTI>
+          <Department>{profile.memberProfileDto.department}</Department>
+        </div>
         <TagContainer>
-          {profile.memberInfoDto.memberHobbyDto.map((tag, index) => (
+          {profile.memberProfileDto.memberHobbyDto.map((tag, index) => (
             <Badge key={index}>#{tag.hobby}</Badge>
           ))}
-          {profile.memberInfoDto.memberTagDto.map((tag, index) => (
+          {profile.memberProfileDto.memberTagDto.map((tag, index) => (
             <Badge key={index}>#{tag.tag}</Badge>
           ))}
         </TagContainer>
@@ -88,18 +69,16 @@ const StyledImage = styled.img`
   transform: translate(-50%, -50%);
 `;
 
-const TextDiv = styled.div`
-  .text-major {
-    white-space: nowrap;
-    font-weight: 700;
-    color: #000000;
-    text-align: center;
-    font-size: 18px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-  }
+const Department = styled.div`
+  white-space: nowrap;
+  font-weight: 700;
+  color: #000000;
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  line-height: normal;
 `;
+
 const MBTI = styled.div`
   color: #000000;
   text-align: center;
