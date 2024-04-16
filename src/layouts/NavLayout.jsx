@@ -71,10 +71,10 @@ const NavLayout = () => {
               toast.remove();
             }}>
             <ToastSectionLeft>
-              <ToastIcon
+              {/* <ToastIcon
                 src={payload.notification.image}
                 alt="디스턴스 아이콘"
-              />
+              /> */}
               <ToastContent>
                 <ToastTitle>{notificationTitle}</ToastTitle>
                 <ToastBody>{notificationBody}</ToastBody>
@@ -177,12 +177,12 @@ const ToastSectionRight = styled.div`
   align-items: center;
 `;
 
-const ToastIcon = styled.img`
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-  margin-right: 16px;
-`;
+// const ToastIcon = styled.img`
+//   width: 36px;
+//   height: 36px;
+//   flex-shrink: 0;
+//   margin-right: 16px;
+// `;
 
 const ToastContent = styled.div``;
 
