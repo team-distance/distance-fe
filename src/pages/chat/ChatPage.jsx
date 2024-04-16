@@ -90,12 +90,12 @@ const ChatPage = () => {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const accessToken = localStorage.getItem("accessToken");
 
     const newClient = new Client({
       brokerURL: "wss://api.dis-tance.com/meet",
       connectHeaders: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
         chatRoomId: roomId,
         memberId: myId,
       },
