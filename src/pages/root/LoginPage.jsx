@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isLoggedInState, login } from "../../store/auth";
 import { useSetRecoilState } from "recoil";
@@ -25,6 +25,10 @@ const LoginPage = () => {
     telNum: "",
     password: "",
   });
+
+  useEffect(() => {
+    setIsLoggedIn(false);
+  }, []);
 
   const isDisabled = loginValue.telNum === "" || loginValue.password === "";
 
