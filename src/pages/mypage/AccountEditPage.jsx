@@ -1,13 +1,12 @@
-import styled from 'styled-components'
-import { useState } from 'react';
-import { authInstance } from '../../api/instance';
+import styled from "styled-components";
+import { useState } from "react";
+import { instance } from "../../api/instance";
 import { useNavigate } from "react-router-dom";
-import Button from '../../components/common/Button';
-import HeaderPrev from '../../components/common/HeaderPrev'
-import TextInput from '../../components/register/TextInput'
+import Button from "../../components/common/Button";
+import HeaderPrev from "../../components/common/HeaderPrev";
+import TextInput from "../../components/register/TextInput";
 
 const AccountEditPage = () => {
-
   const navigate = useNavigate();
 
   const [isDisabled, setIsDisabled] = useState(true);
@@ -19,7 +18,7 @@ const AccountEditPage = () => {
     //비밀번호 확인
     // setIsVerifyPassword(true);
     // alert("인증되었습니다");
-  }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,15 +31,15 @@ const AccountEditPage = () => {
       setIsDisabled(value.length < 6);
       setPassword(value);
     }
-  }
-
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await authInstance.patch("/member/account/update", {
-      password: password
-    })
+    await instance
+      .patch("/member/account/update", {
+        password: password,
+      })
       .then(() => {
         alert("비밀번호 수정이 완료되었습니다");
         navigate("/mypage");
@@ -75,20 +74,18 @@ const AccountEditPage = () => {
           placeholder="숫자로만 6자리 이상"
           onChange={handleChange}
         />
-        <Button
-        size="large"
-        type="submit"
-        disabled={isDisabled}>
-        수정하기
-      </Button>
+        <Button size="large" type="submit" disabled={isDisabled}>
+          수정하기
+        </Button>
       </WrapForm>
-      
-      <DropoutButton onClick={()=>navigate("/mypage/account/dropout")}>회원탈퇴</DropoutButton>
-    </WrapContent>
-  )
-}
-export default AccountEditPage
 
+      <DropoutButton onClick={() => navigate("/mypage/account/dropout")}>
+        회원탈퇴
+      </DropoutButton>
+    </WrapContent>
+  );
+};
+export default AccountEditPage;
 
 const WrapForm = styled.form`
   margin-top: 1rem;

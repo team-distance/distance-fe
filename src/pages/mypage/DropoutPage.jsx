@@ -1,12 +1,11 @@
-import styled from 'styled-components'
-import { useState } from 'react';
-import { authInstance } from '../../api/instance';
-import Button from '../../components/common/Button';
-import HeaderPrev from '../../components/common/HeaderPrev'
-import TextInput from '../../components/register/TextInput'
+import styled from "styled-components";
+import { useState } from "react";
+import { instance } from "../../api/instance";
+import Button from "../../components/common/Button";
+import HeaderPrev from "../../components/common/HeaderPrev";
+import TextInput from "../../components/register/TextInput";
 
 const DropoutPage = () => {
-
   const [isDisabled, setIsDisabled] = useState(true);
   const [verifyPasswordFlag, setVerifyPasswordFlag] = useState(true);
   // const [password, setPassword] = useState("");
@@ -15,14 +14,14 @@ const DropoutPage = () => {
     //비밀번호 확인
     setIsDisabled(false);
     alert("인증되었습니다");
-  }
+  };
 
   const handleDropout = async () => {
     try {
-      await authInstance.delete("/member");
+      await instance.delete("/member");
       localStorage.clear();
-      window.confirm("정말 탈퇴하시겠습니까?")
-        && alert("탈퇴가 정상적으로 완료되었습니다");
+      window.confirm("정말 탈퇴하시겠습니까?") &&
+        alert("탈퇴가 정상적으로 완료되었습니다");
       window.location.href = "/";
     } catch (error) {
       console.log(error);
@@ -35,12 +34,15 @@ const DropoutPage = () => {
     if (name === "verifyPassword") {
       setVerifyPasswordFlag(value.length < 6);
     }
-  }
+  };
 
   return (
     <WrapContent>
-
-      <HeaderPrev title="회원 탈퇴" navigateTo={-1} text="탈퇴 시 계정은 삭제되며 복구되지 않습니다." />
+      <HeaderPrev
+        title="회원 탈퇴"
+        navigateTo={-1}
+        text="탈퇴 시 계정은 삭제되며 복구되지 않습니다."
+      />
 
       <div className="input">
         <TextInput
@@ -55,16 +57,13 @@ const DropoutPage = () => {
         />
       </div>
 
-      <Button
-        size="large"
-        disabled={isDisabled}
-        onClick={handleDropout}>
+      <Button size="large" disabled={isDisabled} onClick={handleDropout}>
         탈퇴하기
       </Button>
     </WrapContent>
-  )
-}
-export default DropoutPage
+  );
+};
+export default DropoutPage;
 
 const WrapContent = styled.div`
   display: grid;

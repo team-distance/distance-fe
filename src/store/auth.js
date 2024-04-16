@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { defaultInstance } from "../api/instance";
+import { instance } from "../api/instance";
 
 export const isLoggedInState = atom({
   key: "isLoggedInState",
@@ -7,7 +7,7 @@ export const isLoggedInState = atom({
 });
 
 export const login = async (value) => {
-  const response = await defaultInstance.post("/login", {
+  const response = await instance.post("/login", {
     telNum: value.telNum,
     password: value.password,
     clientToken: value.clientToken,

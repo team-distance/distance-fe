@@ -4,7 +4,7 @@ import TabBar from "../components/common/TabBar";
 import styled from "styled-components";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { isLoggedInState } from "../store/auth";
-import { authInstance } from "../api/instance";
+import { instance } from "../api/instance";
 import toast, { Toaster } from "react-hot-toast";
 import useGPS from "../hooks/useGPS";
 import { myDataState } from "../store/myData";
@@ -21,7 +21,7 @@ const NavLayout = () => {
   const isIphone = userAgent.includes("iphone");
 
   const getMemberId = async () => {
-    await authInstance
+    await instance
       .get("/member/id")
       .then((res) => {
         localStorage.setItem("memberId", res.data);
@@ -35,7 +35,7 @@ const NavLayout = () => {
   };
 
   const getMyData = async () => {
-    await authInstance
+    await instance
       .get(`/member/profile`)
       .then((res) => {
         setMyData(res.data);
@@ -130,7 +130,7 @@ const NavLayout = () => {
     } else {
       const memberId = localStorage.getItem("memberId");
       if (memberId) {
-        authInstance
+        instance
           .post(`/gps/update`, {
             latitude: currentLocation.lat,
             longitude: currentLocation.lng,

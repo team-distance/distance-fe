@@ -4,7 +4,7 @@ import MessageInput from "../../components/chat/MessageInput";
 import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Client } from "@stomp/stompjs";
-import { authInstance } from "../../api/instance";
+import { instance } from "../../api/instance";
 import toast, { Toaster } from "react-hot-toast";
 import BlankModal from "../../components/common/BlankModal";
 import TextInput from "../../components/register/TextInput";
@@ -61,7 +61,7 @@ const ChatPage = () => {
   const handleReportUser = async (e) => {
     e.preventDefault();
 
-    await authInstance
+    await instance
       .post("/report", {
         declareContent: reportMessage,
         opponentId,
@@ -79,7 +79,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     const fetchDistance = async () => {
-      const distance = await authInstance
+      const distance = await instance
         .get(`/gps/distance?id1=${myId}&id2=${opponentId}`)
         .then((res) => res.data);
 
@@ -146,7 +146,7 @@ const ChatPage = () => {
 
     const fetchUnreadMessages = async () => {
       try {
-        const msg = await authInstance
+        const msg = await instance
           .get(`/chatroom/${roomId}`)
           .then((res) => res.data);
 
@@ -180,7 +180,7 @@ const ChatPage = () => {
 
   const fetchOpponentTelNum = async () => {
     if (opponentTelNum !== "") return;
-    const telNum = await authInstance
+    const telNum = await instance
       .get(`/member/tel-num/${opponentId}`)
       .then((res) => res.data.telNum);
     setOpponentTelNum(telNum);
@@ -204,7 +204,7 @@ const ChatPage = () => {
       }),
     });
 
-    await authInstance.get(`/room-member/leave/${roomId}`).then(() => {
+    await instance.get(`/room-member/leave/${roomId}`).then(() => {
       const localStorageChat = JSON.parse(
         localStorage.getItem("staleMessages")
       );

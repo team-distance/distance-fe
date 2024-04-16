@@ -1,18 +1,17 @@
-import styled from 'styled-components';
-import { useRef, useState } from 'react';
-import Button from '../../components/common/Button';
-import { useNavigate } from 'react-router-dom';
-import { authInstance } from '../../api/instance';
+import styled from "styled-components";
+import { useRef, useState } from "react";
+import Button from "../../components/common/Button";
+import { useNavigate } from "react-router-dom";
+import { instance } from "../../api/instance";
 
 const VerifyMobileIdPage = () => {
-
   const navigate = useNavigate();
 
   const fileInputRef = useRef();
   const [uploadedImage, setUploadedImage] = useState(null);
   const [file, setFile] = useState(null);
 
-  const onChangeImage = e => {
+  const onChangeImage = (e) => {
     const file = e.target.files[0];
     const imageUrl = URL.createObjectURL(file);
     setFile(file);
@@ -24,22 +23,22 @@ const VerifyMobileIdPage = () => {
   };
 
   const sendStudentId = async () => {
-
     if (!file) {
-      alert('이미지를 먼저 업로드해주세요.');
+      alert("이미지를 먼저 업로드해주세요.");
       return;
     }
     const formData = new FormData();
-    formData.append('studentcard', file);
+    formData.append("studentcard", file);
 
     try {
-      await authInstance.post('/studentcard/send',formData);
-      window.confirm("인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.") && navigate('/');
+      await instance.post("/studentcard/send", formData);
+      window.confirm(
+        "인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다."
+      ) && navigate("/");
     } catch (error) {
-      
       console.log(error);
     }
-  }
+  };
 
   return (
     <WrapContent>
@@ -50,12 +49,14 @@ const VerifyMobileIdPage = () => {
           <UploadedImageDiv
             src={uploadedImage}
             alt="profile"
-            onClick={handleButtonClick} />
+            onClick={handleButtonClick}
+          />
           <input
             ref={fileInputRef}
             type="file"
             onChange={onChangeImage}
-            hidden />
+            hidden
+          />
         </>
       ) : (
         <UploadDiv onClick={handleButtonClick}>
@@ -65,12 +66,11 @@ const VerifyMobileIdPage = () => {
             ref={fileInputRef}
             type="file"
             onChange={onChangeImage}
-            hidden />
+            hidden
+          />
         </UploadDiv>
       )}
-      <Button
-        size={"medium"}
-        onClick={sendStudentId}>
+      <Button size={"medium"} onClick={sendStudentId}>
         이미지 전송하기
       </Button>
 
@@ -94,12 +94,10 @@ const VerifyMobileIdPage = () => {
             <p>학번/이름 식별 불가능</p>
           </Example>
         </ExamplesContainer>
-
       </NoticeDiv>
-
     </WrapContent>
-  )
-}
+  );
+};
 
 export default VerifyMobileIdPage;
 
@@ -127,7 +125,7 @@ const UploadDiv = styled.div`
   width: 100%;
   height: 185px;
   border-radius: 20px;
-  border: 2px dashed #FF625D;
+  border: 2px dashed #ff625d;
 
   img {
     width: 20%;
@@ -146,12 +144,12 @@ const NoticeDiv = styled.div`
   padding: 2rem 1.5rem;
 
   h3 {
-    margin:0;
+    margin: 0;
   }
   hr {
     width: 80%;
     margin-left: 0;
-    border: 0.1px solid #D3D3D3;
+    border: 0.1px solid #d3d3d3;
   }
   p {
     color: #333333;
@@ -172,13 +170,13 @@ const Example = styled.div`
   flex: 1;
   .example-image {
     height: 90px;
-    background-color: #D9D9D9;
+    background-color: #d9d9d9;
     border-radius: 10px;
   }
   img {
     padding: 0.5rem 0;
   }
   p {
-    margin:0;
+    margin: 0;
   }
 `;

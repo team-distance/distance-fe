@@ -6,7 +6,7 @@ import { ATTRACTIVENESS, HOBBY } from "../../constants/profile";
 import Button from "../../components/common/Button";
 import HeaderPrev from "../../components/common/HeaderPrev";
 import { useNavigate } from "react-router-dom";
-import { authInstance } from "../../api/instance";
+import { instance } from "../../api/instance";
 import { CHARACTERS } from "../../constants/character";
 
 const ProfileEditPage = () => {
@@ -21,7 +21,7 @@ const ProfileEditPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await authInstance
+    await instance
       .patch("/member/profile/update", {
         department: department,
         mbti: selectedMBTI,
@@ -89,7 +89,7 @@ const ProfileEditPage = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      await authInstance
+      await instance
         .get("/member/profile")
         .then((response) => {
           setDepartment(response.data.department);
