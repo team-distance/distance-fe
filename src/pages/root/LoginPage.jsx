@@ -13,6 +13,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const location = useLocation();
+  const isExpired = location.search === "?expired=true";
 
   const [telNumTestFlag, setTelNumTestFlag] = useState(false);
   const [pwTestFlag, setPwTestFlag] = useState(false);
@@ -104,6 +105,11 @@ const LoginPage = () => {
               )}
             </div>
           </WrapContent>
+          {isExpired && (
+            <LoginExpiredMessage>
+              로그인 유지가 만료되었습니다. 다시 로그인해주세요!
+            </LoginExpiredMessage>
+          )}
 
           <Button size="large" type="submit" disabled={isDisabled}>
             로그인하기
@@ -123,11 +129,13 @@ export default LoginPage;
 const WrapForm = styled.form`
   padding: 2rem;
 `;
+
 const WrapContent = styled.div`
   display: grid;
   gap: 4rem;
   margin-bottom: 8rem;
 `;
+
 const WrapText = styled.div`
   display: flex;
   justify-content: center;
@@ -143,10 +151,19 @@ const WrapText = styled.div`
     padding-left: 0.3rem;
   }
 `;
+
 const Tip = styled.small`
   font-size: 12px;
   color: #ff625d;
   font-weight: 700;
+`;
+
+const LoginExpiredMessage = styled.div`
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  color: #ff625d;
+  margin-bottom: 1rem;
 `;
 
 const LoaderContainer = styled.div`

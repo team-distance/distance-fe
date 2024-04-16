@@ -29,7 +29,8 @@ instance.interceptors.response.use(
       }).catch((error) => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        window.location.href = "/login";
+        localStorage.removeItem("memberId");
+        window.location.href = "/login?expired=true";
         return Promise.reject(error);
       });
 
