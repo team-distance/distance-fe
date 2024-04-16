@@ -44,8 +44,10 @@ messaging.onBackgroundMessage((payload) => {
   const notificationOptions = {
     body: payload.notification.body, // 'payload'의 'notification.body'를 사용
   };
-  //알림 표시
-  self.registration.showNotification(notificationTitle, notificationOptions);
+
+  // 알림 표시
+  // 백그라운드에서 자동으로 알림이 표시되어 주석 처리함.
+  // self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
 self.addEventListener("notificationclick", function (event) {
