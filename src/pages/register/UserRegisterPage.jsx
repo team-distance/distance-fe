@@ -5,7 +5,7 @@ import { useRecoilState } from "recoil";
 import { registerDataState } from "../../store/registerDataState";
 import Button from "../../components/common/Button";
 import { useNavigate } from "react-router-dom";
-import { defaultInstance } from "../../api/instance";
+import { instance } from "../../api/instance";
 import ProgressBar from "../../components/register/ProgressBar";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -61,7 +61,7 @@ const UserRegisterPage = () => {
 
     try {
       console.log(typeof registerData.telNum, registerData.telNum);
-      await defaultInstance
+      await instance
         .post("/member/send/sms", {
           telNum: registerData.telNum,
         })
@@ -83,7 +83,7 @@ const UserRegisterPage = () => {
 
   const verifyTelNum = async () => {
     try {
-      await defaultInstance.post("/member/authenticate", {
+      await instance.post("/member/authenticate", {
         authenticateNum: verifyNum,
       });
       setVerify(true);

@@ -6,7 +6,7 @@ import BlankModal from "../../components/common/BlankModal";
 import Button from "../../components/common/Button";
 import { ATTRACTIVENESS, HOBBY } from "../../constants/profile";
 import { CHARACTERS } from "../../constants/character";
-import { defaultInstance } from "../../api/instance";
+import { instance } from "../../api/instance";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { registerDataState } from "../../store/registerDataState";
@@ -40,7 +40,7 @@ const ProfileRegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await defaultInstance
+    await instance
       .post("/member/signup", {
         department: registerData.department,
         gender: registerData.gender,

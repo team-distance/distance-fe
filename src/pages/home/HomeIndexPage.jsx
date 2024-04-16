@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useRef, useState } from "react";
-import { authInstance, defaultInstance } from "../../api/instance";
+import { instance } from "../../api/instance";
 import ClipLoader from "react-spinners/ClipLoader";
 
 import { CHARACTERS, COLORS } from "../../constants/character";
@@ -9,8 +9,6 @@ import Header from "../../components/common/Header";
 import Profile from "../../components/home/Profile";
 import Modal from "../../components/common/Modal";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
-import { isLoggedInState } from "../../store/auth";
 import toast from "react-hot-toast";
 import Badge from "../../components/common/Badge";
 
@@ -18,7 +16,6 @@ const HomeIndexPage = () => {
   const profileModal = useRef();
 
   const [selectedProfile, setSelectedProfile] = useState();
-  const isLoggedIn = useRecoilState(isLoggedInState);
   const navigate = useNavigate();
 
   const memberId = localStorage.getItem("memberId");
@@ -28,22 +25,10 @@ const HomeIndexPage = () => {
   const [remainingTimeToReload, setRemainingTimeToReload] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const fetchMembersAuth = async () => {
-    try {
-      setLoading(true);
-      const res = await authInstance.get("/gps/matching");
-      setMemberState(res.data.matchedUsers);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const fetchMembers = async () => {
     try {
       setLoading(true);
-      const res = await defaultInstance.get("/gps/matching");
+      const res = await instance.get("/gps/matching");
       setMemberState(res.data.matchedUsers);
     } catch (error) {
       console.log(error);
@@ -58,7 +43,7 @@ const HomeIndexPage = () => {
       setIsReloadButtonDisabled(true); // 버튼 비활성화
       setRemainingTimeToReload(3); // 초기 남은 시간 설정
 
-      const res = await authInstance.get("/gps/matching");
+      const res = await instance.get("/gps/matching");
       setMemberState(res.data.matchedUsers);
 
       // 매초마다 남은 시간 업데이트
@@ -81,8 +66,7 @@ const HomeIndexPage = () => {
   };
 
   useEffect(() => {
-    if (isLoggedIn) fetchMembersAuth();
-    else fetchMembers();
+    fetchMembers();
 
     // if (Notification.permission !== "granted") {
     //   toast.error((t) => (
@@ -102,7 +86,7 @@ const HomeIndexPage = () => {
   };
 
   const handleCreateChatRoom = async (opponentMemberId) => {
-    await authInstance
+    await instance
       .post("/chatroom/create", {
         memberId: opponentMemberId,
       })

@@ -5,7 +5,7 @@ import Header from "../../components/common/Header";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { isLoggedInState } from "../../store/auth";
 import { myDataState } from "../../store/myData";
-import { authInstance } from "../../api/instance";
+import { instance } from "../../api/instance";
 
 const MyIndexPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
@@ -16,15 +16,17 @@ const MyIndexPage = () => {
     const confirmLogout = window.confirm("로그아웃 하시겠습니까?");
     if (!confirmLogout) return;
 
+    localStorage.removeItem("token");
+    localStorage.removeItem("clientToken");
+    localStorage.removeItem("memberId");
+
     try {
-      await authInstance.get("/member/logout");
+      await instance.get("/member/logout");
       setIsLoggedIn(false);
-      localStorage.removeItem("token");
-      localStorage.removeItem("clientToken");
-      localStorage.removeItem("memberId");
-      navigate("/");
     } catch (error) {
       console.log(error);
+    } finally {
+      navigate("/");
     }
   };
 

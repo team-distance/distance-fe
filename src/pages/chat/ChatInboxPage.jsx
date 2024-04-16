@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Header from "../../components/common/Header";
-import { authInstance } from "../../api/instance";
+import { instance } from "../../api/instance";
 import { useNavigate } from "react-router-dom";
 import { CHARACTERS, COLORS } from "../../constants/character";
 import Badge from "../../components/common/Badge";
@@ -28,7 +28,7 @@ const ChatInboxPage = () => {
   };
 
   const fetchInboxList = async () => {
-    const res = await authInstance.get("/waiting").then((res) => res.data);
+    const res = await instance.get("/waiting").then((res) => res.data);
     setInboxList(res);
   };
 
@@ -37,7 +37,7 @@ const ChatInboxPage = () => {
     opponentMemberId,
     chatWaitingId
   ) => {
-    await authInstance
+    await instance
       .get(`/waiting/accept/${chatWaitingId}`)
       .then((res) => {
         const createdChatRoom = res.data;
@@ -71,7 +71,7 @@ const ChatInboxPage = () => {
   };
 
   const handleDenyChat = async (chatWaitingId) => {
-    await authInstance
+    await instance
       .delete(`/waiting/${chatWaitingId}`)
       .then((res) => {
         fetchInboxList(); // 새로고침

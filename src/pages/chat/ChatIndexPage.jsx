@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/common/Header";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { authInstance } from "../../api/instance";
+import { instance } from "../../api/instance";
 import { parseTime } from "../../utils/parseTime";
 import { CHARACTERS, COLORS } from "../../constants/character";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -40,7 +40,7 @@ const ChatIndexPage = () => {
   const fetchChatList = async () => {
     try {
       setLoading(true);
-      const res = await authInstance
+      const res = await instance
         .get("/chatroom")
         .then((res) => res.data)
         .then((data) => {

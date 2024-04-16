@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { authInstance } from "../../api/instance";
+import { instance } from "../../api/instance";
 import Button from "../../components/common/Button";
 import TextInput from "../../components/register/TextInput";
 
@@ -16,7 +16,6 @@ const VerifyEmailPage = () => {
   const [isSendEmail, setIsSendEmail] = useState(false);
 
   const handleChangeEmail = (e) => {
-    
     setSchoolEmail(e.target.value);
     if (e.target.value !== "") {
       setEmailDisabled(false);
@@ -43,7 +42,7 @@ const VerifyEmailPage = () => {
         ? schoolEmail
         : schoolEmail + "@sch.ac.kr";
 
-      const res = await authInstance.post("/univ/send/email", {
+      const res = await instance.post("/univ/send/email", {
         schoolEmail: payload,
       });
       if (res.data) {
@@ -57,7 +56,7 @@ const VerifyEmailPage = () => {
 
   const verifyEmail = async () => {
     try {
-      await authInstance.post("/univ/certificate/email", {
+      await instance.post("/univ/certificate/email", {
         number: verifyNum,
       });
       alert("인증에 성공했습니다.");
