@@ -75,6 +75,7 @@ const MessageByOther = styled.div`
       border-radius: 1rem;
       color: black;
       line-height: 1.5;
+      overflow-wrap: break-word;
     }
 
     > .wrapper {
@@ -132,6 +133,7 @@ const MessageByMe = styled.div`
       border-radius: 1rem;
       color: white;
       line-height: 1.5;
+      overflow-wrap: break-word;
     }
   }
 `;
