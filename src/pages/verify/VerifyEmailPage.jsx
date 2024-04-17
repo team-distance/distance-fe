@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { instance } from "../../api/instance";
 import Button from "../../components/common/Button";
 import TextInput from "../../components/register/TextInput";
+import toast, { Toaster } from "react-hot-toast";
 
 const VerifyEmailPage = () => {
   const navigate = useNavigate();
@@ -34,41 +35,43 @@ const VerifyEmailPage = () => {
   };
 
   const sendEmail = async () => {
-    try {
-      setIsSendEmail(true);
+    const email = schoolEmail.includes("@")
+      ? schoolEmail
+      : schoolEmail + "@sch.ac.kr";
 
-      // 테스트용도로 @sch.ac.kr이 없어도 인증번호를 받을 수 있게 함
-      const payload = schoolEmail.includes("@")
-        ? schoolEmail
-        : schoolEmail + "@sch.ac.kr";
+    const response = instance.post("/univ/send/email", {
+      schoolEmail: email,
+    });
 
-      const res = await instance.post("/univ/send/email", {
-        schoolEmail: payload,
-      });
-      if (res.data) {
-        alert("이메일로 인증 번호를 보냈습니다.");
-      }
-    } catch (error) {
-      alert("인증을 다시 시도해주세요.");
-      console.log(error);
-    }
+    toast.promise(response, {
+      loading: "전송 중...",
+      success: () => {
+        setIsSendEmail(true);
+        setVerifiedFlag(false);
+        return "인증메일이 전송되었습니다.";
+      },
+      error: "인증을 다시 시도해주세요.",
+    });
   };
 
   const verifyEmail = async () => {
-    try {
-      await instance.post("/univ/certificate/email", {
-        number: verifyNum,
-      });
-      alert("인증에 성공했습니다.");
-      setVerifiedFlag(false);
-    } catch (error) {
-      alert("인증에 실패했습니다. 다시 시도해주세요.");
-      console.log(error);
-    }
+    const response = instance.post("/univ/certificate/email", {
+      number: verifyNum,
+    });
+
+    toast.promise(response, {
+      loading: "인증 중...",
+      success: () => {
+        setVerifiedFlag(false);
+        return "인증에 성공했습니다.";
+      },
+      error: "인증에 실패했습니다. 다시 시도해주세요.",
+    });
   };
 
   return (
     <WrapContent>
+      <Toaster position="bottom-center" />
       <div>
         <h2>'학생 메일'로 인증하기</h2>
         <p>
