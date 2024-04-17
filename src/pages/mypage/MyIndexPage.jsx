@@ -16,16 +16,19 @@ const MyIndexPage = () => {
     const confirmLogout = window.confirm("로그아웃 하시겠습니까?");
     if (!confirmLogout) return;
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("clientToken");
-    localStorage.removeItem("memberId");
-
     try {
       await instance.get("/member/logout");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("memberId");
       setIsLoggedIn(false);
+      navigate("/");
     } catch (error) {
       console.log(error);
     } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("memberId");
       navigate("/");
     }
   };

@@ -105,9 +105,7 @@ const NavLayout = () => {
   }, []);
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      return;
-    }
+    if (!isLoggedIn) return;
 
     const fetchMemberIdAndMyData = async () => {
       await getMemberId();
@@ -118,30 +116,29 @@ const NavLayout = () => {
   }, [isLoggedIn]);
 
   useEffect(() => {
+    if (!isLoggedIn) return;
+
     if (currentLocation.error) {
       toast.error(
-        "위치 정보를 가져오는데 실패했어요! 앱 종료 후 다시 시도해주세요.",
+        "위치 정보를 가져오는데 실패했어요! 설정에서 위치 정보를 허용해주세요.",
         {
           id: "gps-error",
           position: "bottom-center",
         }
       );
     } else {
-      const memberId = localStorage.getItem("memberId");
-      if (memberId) {
-        instance
-          .post(`/gps/update`, {
-            latitude: currentLocation.lat,
-            longitude: currentLocation.lng,
-          })
-          .catch((err) => {
-            toast.error("위치 정보를 업데이트하는데 실패했어요!", {
-              id: "gps-update-error",
-              position: "bottom-center",
-            });
-            console.log(err);
+      instance
+        .post(`/gps/update`, {
+          latitude: currentLocation.lat,
+          longitude: currentLocation.lng,
+        })
+        .catch((err) => {
+          toast.error("위치 정보를 업데이트하는데 실패했어요!", {
+            id: "gps-update-error",
+            position: "bottom-center",
           });
-      }
+          console.log(err);
+        });
     }
   }, [currentLocation]);
 

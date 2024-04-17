@@ -4,7 +4,7 @@ import axios from "axios";
 
 export const isLoggedInState = atom({
   key: "isLoggedInState",
-  default: localStorage.getItem("accessToken") ? true : false,
+  default: localStorage.getItem("refreshToken") ? true : false,
 });
 
 export const login = async (value) => {
