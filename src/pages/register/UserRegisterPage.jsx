@@ -138,7 +138,7 @@ const UserRegisterPage = () => {
           <TextInput
             label="비밀번호"
             name="password"
-            type="number"
+            type="password"
             placeholder="6자리 이상"
             value={registerData.password}
             onChange={handleChange}
