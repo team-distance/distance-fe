@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { isLoggedInState, login } from "../../store/auth";
 import { useSetRecoilState } from "recoil";
 import { onGetToken } from "../../firebaseConfig";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 const DonePage = () => {
   const [loading, setLoading] = useState(false);
@@ -38,6 +38,7 @@ const DonePage = () => {
 
   return (
     <Background>
+      <Toaster position="bottom-center" />
       <WrapContent>
         <WrapMessage>
           <div style={{ fontSize: "60px" }}>🎊</div>
