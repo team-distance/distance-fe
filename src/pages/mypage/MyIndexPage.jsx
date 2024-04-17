@@ -21,6 +21,7 @@ const MyIndexPage = () => {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("memberId");
+      localStorage.removeItem("clientToken");
       setIsLoggedIn(false);
       navigate("/");
     } catch (error) {
@@ -29,6 +30,7 @@ const MyIndexPage = () => {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("memberId");
+      localStorage.removeItem("clientToken");
       navigate("/");
     }
   };

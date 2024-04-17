@@ -78,6 +78,10 @@ const LoginPage = () => {
       }
       setLoading(true);
       const clientToken = await onGetToken();
+
+      // 임시적으로 clientToken을 localStorage에 저장하는 코드
+      localStorage.setItem("clientToken", clientToken);
+
       await login({ ...loginValue, clientToken });
       setIsLoggedIn(true);
       navigate("/");

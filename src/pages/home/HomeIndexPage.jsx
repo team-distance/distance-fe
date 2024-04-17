@@ -124,6 +124,30 @@ const HomeIndexPage = () => {
     <>
       <HomeContainer>
         <Header />
+
+        {/* clientToken 임시적으로 홈화면에 표시 */}
+        {localStorage.getItem("clientToken") && (
+          <div>
+            <div
+              style={{
+                width: "100%",
+                background: "yellow",
+                overflow: "scroll",
+              }}>
+              토큰값: {localStorage.getItem("clientToken")}
+            </div>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  localStorage.getItem("clientToken")
+                );
+                toast.success("클립보드에 복사되었습니다.");
+              }}>
+              복사
+            </button>
+          </div>
+        )}
+
         <ProfileContainer>
           {loading ? (
             <LoaderContainer>
