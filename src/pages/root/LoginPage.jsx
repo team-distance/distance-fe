@@ -72,25 +72,32 @@ const LoginPage = () => {
       return;
     }
 
-    try {
-      if (Notification.permission !== "granted") {
-        alert("알림 권한 창이 표시되면 허용을 눌러주세요!");
-      }
-      setLoading(true);
-      const clientToken = await onGetToken();
-
-      // 임시적으로 clientToken을 localStorage에 저장하는 코드
-      localStorage.setItem("clientToken", clientToken);
-
-      await login({ ...loginValue, clientToken });
-      setIsLoggedIn(true);
-      navigate("/");
-    } catch (err) {
-      setShowWarning(true);
-      setLoginResult(err.response?.status || "Login failed");
-    } finally {
-      setLoading(false);
+    if (Notification.permission !== "granted") {
+      alert("알림 권한 창이 표시되면 허용을 눌러주세요!");
     }
+
+    // clientToken 없어도 로그인 가능
+    setLoading(true);
+    await onGetToken()
+      .then(async (clientToken) => {
+        localStorage.setItem("clientToken", clientToken);
+        await login({ ...loginValue, clientToken }).catch((err) => {
+          setShowWarning(true);
+          setLoginResult(err.response?.status || "Login failed");
+        });
+        setIsLoggedIn(true);
+        navigate("/");
+        setLoading(false);
+      })
+      .catch(async () => {
+        await login({ ...loginValue }).catch((err) => {
+          setShowWarning(true);
+          setLoginResult(err.response?.status || "Login failed");
+        });
+        setIsLoggedIn(true);
+        navigate("/");
+        setLoading(false);
+      });
   };
 
   return (

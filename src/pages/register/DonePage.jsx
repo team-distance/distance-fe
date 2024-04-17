@@ -21,16 +21,23 @@ const DonePage = () => {
         alert("알림 권한 창이 표시되면 허용을 눌러주세요!");
       }
 
-      try {
-        setLoading(true);
-        const clientToken = await onGetToken();
-        await login({ telNum, password, clientToken });
-        setIsLoggedIn(true);
-      } catch (error) {
-        toast.error("홈화면으로 이동해서 다시 로그인해주세요!");
-      } finally {
-        setLoading(false);
-      }
+      // clientToken 없어도 로그인 가능
+      setLoading(true);
+      await onGetToken()
+        .then(async (clientToken) => {
+          await login({ telNum, password, clientToken }).catch((error) => {
+            toast.error("홈화면으로 이동해서 다시 로그인해주세요!");
+          });
+          setIsLoggedIn(true);
+          setLoading(false);
+        })
+        .catch(async (error) => {
+          await login({ telNum, password }).catch((error) => {
+            toast.error("홈화면으로 이동해서 다시 로그인해주세요!");
+          });
+          setIsLoggedIn(true);
+          setLoading(false);
+        });
     };
 
     instantLogin();
