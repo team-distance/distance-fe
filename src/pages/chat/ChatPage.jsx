@@ -219,7 +219,7 @@ const ChatPage = () => {
     e.preventDefault();
 
     // 메시지가 비어있으면 전송하지 않음
-    if (!draftMessage) return;
+    if (!draftMessage.trim()) return;
 
     // 욕 있는지 검사
     const isIncludingBadWord = checkCurse(draftMessage);
