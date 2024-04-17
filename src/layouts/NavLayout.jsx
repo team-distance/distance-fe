@@ -27,6 +27,7 @@ const NavLayout = () => {
       })
       .catch((err) => {
         toast.error("회원 정보를 가져오는데 실패했어요!", {
+          id: "member-id-error",
           position: "bottom-center",
         });
         console.log(err);
@@ -41,6 +42,7 @@ const NavLayout = () => {
       })
       .catch((err) => {
         toast.error("프로필 정보를 가져오는데 실패했어요!", {
+          id: "my-data-error",
           position: "bottom-center",
         });
         console.log(err);
@@ -120,6 +122,7 @@ const NavLayout = () => {
       toast.error(
         "위치 정보를 가져오는데 실패했어요! 앱 종료 후 다시 시도해주세요.",
         {
+          id: "gps-error",
           position: "bottom-center",
         }
       );
@@ -133,6 +136,7 @@ const NavLayout = () => {
           })
           .catch((err) => {
             toast.error("위치 정보를 업데이트하는데 실패했어요!", {
+              id: "gps-update-error",
               position: "bottom-center",
             });
             console.log(err);
@@ -147,7 +151,11 @@ const NavLayout = () => {
         <Outlet />
       </Padding>
       <TabBar />
-      <Toaster />
+      <Toaster
+        containerStyle={{
+          bottom: isIphone ? "116px" : "96px",
+        }}
+      />
     </>
   );
 };
