@@ -17,7 +17,7 @@ const DonePage = () => {
 
   useEffect(() => {
     const instantLogin = async () => {
-      if (Notification.permission !== "granted") {
+      if ("Notification" in window && Notification.permission !== "granted") {
         alert("알림 권한 창이 표시되면 허용을 눌러주세요!");
       }
 
