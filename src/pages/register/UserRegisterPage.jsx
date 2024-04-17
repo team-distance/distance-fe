@@ -59,26 +59,26 @@ const UserRegisterPage = () => {
       setVerifyNum("");
     }
 
-    try {
-      console.log(typeof registerData.telNum, registerData.telNum);
-      await instance
-        .post("/member/send/sms", {
-          telNum: registerData.telNum,
-        })
-        .then(() => {
-          toast.success("인증번호가 전송되었습니다.");
-        });
-      setIsSendMessage(true);
-      // setRegisterData(prevState => ({ ...prevState, tellNum: "" }));
-      setVerifyButtonLabel("재전송");
-    } catch (error) {
-      const ERROR_CODE = error.response.data.code;
-      if (ERROR_CODE === "EXIST_TEL_NUM") {
-        toast.error("이미 등록된 전화번호입니다. 다른 번호를 입력해주세요.");
-      } else {
-        toast.error("인증번호 전송에 실패했습니다. 다시 시도해주세요.");
-      }
-    }
+    const response = instance.post("/member/send/sms", {
+      telNum: registerData.telNum,
+    });
+
+    toast.promise(response, {
+      loading: "전송 중...",
+      success: () => {
+        setIsSendMessage(true);
+        setVerifyButtonLabel("재전송");
+        return "인증번호가 전송되었습니다.";
+      },
+      error: (error) => {
+        const ERROR_CODE = error?.response?.data?.code;
+        if (ERROR_CODE === "EXIST_TEL_NUM") {
+          return "이미 등록된 전화번호입니다. 다른 번호를 입력해주세요.";
+        } else {
+          return "인증번호 전송에 실패했습니다. 다시 시도해주세요.";
+        }
+      },
+    });
   };
 
   const verifyTelNum = async () => {
@@ -90,7 +90,6 @@ const UserRegisterPage = () => {
       setVerifyNumFlag(true);
     } catch (error) {
       toast.error("인증번호가 틀렸습니다.");
-
       console.log();
     }
   };
@@ -126,7 +125,7 @@ const UserRegisterPage = () => {
             timerState={180}
             onTimerEnd={() => setIsSendMessage(false)}
             placeholder="인증번호 입력"
-            buttonLabel={"인증하기"}
+            buttonLabel="인증하기"
             buttonClickHandler={verifyTelNum}
             buttonDisabled={verifyNumFlag}
             value={verifyNum}

@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { registerDataState } from "../../store/registerDataState";
 import ProgressBar from "../../components/register/ProgressBar";
+import toast, { Toaster } from "react-hot-toast";
 
 /**
  * @todo 코드 분리
@@ -37,6 +38,19 @@ const ProfileRegisterPage = () => {
     }));
   }, [selectedAnimal, selectedMBTI, toggleState, attractiveness, hobby]);
 
+  // 새로고침하여 데이터가 사라졌을 때, 다시 회원가입 페이지로 이동
+  useEffect(() => {
+    if (
+      registerData.telNum === "" ||
+      registerData.verifyNum === "" ||
+      registerData.password === "" ||
+      registerData.college === "" ||
+      registerData.department === ""
+    ) {
+      navigate("/register/user");
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -58,11 +72,29 @@ const ProfileRegisterPage = () => {
             password: registerData.password,
           },
         });
+
+        setRegisterData((prev) => ({
+          ...prev,
+          telNum: "",
+          verifyNum: "",
+          password: "",
+          gender: "",
+          college: "",
+          department: "",
+          mbti: "",
+          memberCharacter: "",
+          memberTagDto: [],
+          memberHobbyDto: [],
+        }));
       })
       .catch((error) => {
         alert("회원정보 등록에 실패했습니다.");
       });
   };
+
+  useEffect(() => {
+    console.log(registerData);
+  }, [registerData]);
 
   const characterModalRef = useRef();
   const attractivenessModalRef = useRef();
@@ -117,6 +149,7 @@ const ProfileRegisterPage = () => {
 
   return (
     <div>
+      <Toaster position="bottom-center" />
       <WrapHeader>
         <ProgressBar progress={3} />
         <p>프로필을 등록해주세요</p>
@@ -230,8 +263,12 @@ const ProfileRegisterPage = () => {
                   key={index}
                   color={attractiveness.includes(value) ? "#FF0000" : "black"}
                   onClick={() => {
-                    if (attractiveness.includes(value) || hashtagCount >= 5)
+                    if (attractiveness.includes(value) || hashtagCount >= 5) {
+                      toast.error("해시태그는 5개까지만 선택 가능해요!", {
+                        id: "hashtag-limit",
+                      });
                       return;
+                    }
                     setAttractiveness([...attractiveness, value]);
                     closeAttractivenessModal();
                   }}>
@@ -256,7 +293,12 @@ const ProfileRegisterPage = () => {
                   key={index}
                   color={hobby.includes(value) ? "#FF0000" : "black"}
                   onClick={() => {
-                    if (hobby.includes(value) || hashtagCount >= 5) return;
+                    if (hobby.includes(value) || hashtagCount >= 5) {
+                      toast.error("해시태그는 5개까지만 선택 가능해요!", {
+                        id: "hashtag-limit",
+                      });
+                      return;
+                    }
                     setHobby([...hobby, value]);
                     closeHobbyModal();
                   }}>
@@ -313,6 +355,7 @@ const ProfileContainer = styled.div`
 `;
 
 const Badge = styled.div`
+  position: relative;
   height: fit-content;
   background-color: #ff625d;
   padding: 0.5rem 1rem;

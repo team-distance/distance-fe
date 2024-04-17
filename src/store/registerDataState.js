@@ -4,18 +4,15 @@ export const registerDataState = atom({
   key: "registerDataState",
   default: {
     telNum: "",
+    verifyNum: "",
     password: "",
-    checkPassword: "",
     gender: "",
+    college: "",
     department: "",
     mbti: "",
     memberCharacter: "",
     memberTagDto: [],
     memberHobbyDto: [],
-
-    school: "",
-    college: "",
-    schoolEmail: "",
 
     // agreeTerms: false,
     // agreePrivacy: false,

@@ -8,10 +8,12 @@ import TextInput from "../../components/register/TextInput";
 import Button from "../../components/common/Button";
 import ClipLoader from "react-spinners/ClipLoader";
 import { onGetToken } from "../../firebaseConfig";
+import { registerDataState } from "../../store/registerDataState";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
+  const setRegisterData = useSetRecoilState(registerDataState);
   const location = useLocation();
   const isExpired = location.search === "?expired=true";
 
@@ -28,6 +30,19 @@ const LoginPage = () => {
 
   useEffect(() => {
     setIsLoggedIn(false);
+    setRegisterData((prev) => ({
+      ...prev,
+      telNum: "",
+      verifyNum: "",
+      password: "",
+      gender: "",
+      college: "",
+      department: "",
+      mbti: "",
+      memberCharacter: "",
+      memberTagDto: [],
+      memberHobbyDto: [],
+    }));
   }, []);
 
   const isDisabled = loginValue.telNum === "" || loginValue.password === "";
