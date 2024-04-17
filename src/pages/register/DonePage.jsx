@@ -32,9 +32,11 @@ const DonePage = () => {
           setLoading(false);
         })
         .catch(async (error) => {
-          await login({ telNum, password }).catch((error) => {
-            toast.error("홈화면으로 이동해서 다시 로그인해주세요!");
-          });
+          await login({ telNum, password, clientToken: null }).catch(
+            (error) => {
+              toast.error("홈화면으로 이동해서 다시 로그인해주세요!");
+            }
+          );
           setIsLoggedIn(true);
           setLoading(false);
         });

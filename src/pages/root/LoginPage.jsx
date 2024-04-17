@@ -90,7 +90,7 @@ const LoginPage = () => {
         setLoading(false);
       })
       .catch(async () => {
-        await login({ ...loginValue }).catch((err) => {
+        await login({ ...loginValue, clientToken: null }).catch((err) => {
           setShowWarning(true);
           setLoginResult(err.response?.status || "Login failed");
         });
