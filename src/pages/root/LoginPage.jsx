@@ -77,27 +77,35 @@ const LoginPage = () => {
     }
 
     // clientToken 없어도 로그인 가능
+    // 로딩 상태 설정
     setLoading(true);
-    await onGetToken()
-      .then(async (clientToken) => {
-        localStorage.setItem("clientToken", clientToken);
-        await login({ ...loginValue, clientToken }).catch((err) => {
-          setShowWarning(true);
-          setLoginResult(err.response?.status || "Login failed");
-        });
-        setIsLoggedIn(true);
-        navigate("/");
-        setLoading(false);
-      })
-      .catch(async () => {
-        await login({ ...loginValue, clientToken: null }).catch((err) => {
-          setShowWarning(true);
-          setLoginResult(err.response?.status || "Login failed");
-        });
-        setIsLoggedIn(true);
-        navigate("/");
-        setLoading(false);
-      });
+
+    let clientToken = null;
+
+    try {
+      // 토큰을 시도하여 가져옵니다.
+      clientToken = await onGetToken();
+      localStorage.setItem("clientToken", clientToken);
+    } catch (err) {
+      // 토큰 가져오기 실패, clientToken은 null로 유지
+      console.error("Token fetch failed", err);
+    }
+
+    try {
+      // 로그인 시도 (clientToken이 null일 수도 있음)
+      await login({ ...loginValue, clientToken });
+
+      // 로그인 성공 시
+      setIsLoggedIn(true);
+      navigate("/");
+    } catch (err) {
+      // 로그인 실패 시
+      setShowWarning(true);
+      setLoginResult(err.response?.status || "Login failed");
+    } finally {
+      // 로딩 상태 해제
+      setLoading(false);
+    }
   };
 
   return (
