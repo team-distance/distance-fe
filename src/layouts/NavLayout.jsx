@@ -61,42 +61,39 @@ const NavLayout = () => {
     if (messaging) {
       onMessage(messaging, (payload) => {
         console.log("FOREGROUND MESSAGE RECEIVED", payload);
-
-        const notificationTitle = payload.data.nickName; // 메시지에서 제목 추출
-        const notificationBody = payload.data.message; // 메시지에서 본문 추출
-
-        // 현재 들어와있는 채팅방에서 온 알림이 아닌 경우에만 토스트를 띄워줌
-        const toastId = toast.custom(
-          <ToastContainer
-            onClick={() => {
-              navigate("/chat");
-              toast.remove();
-            }}>
-            <ToastSectionLeft>
-              <ToastIcon src={payload.data.iconLink} alt="디스턴스 아이콘" />
-              <ToastContent>
-                <ToastTitle>{notificationTitle}</ToastTitle>
-                <ToastBody>{notificationBody}</ToastBody>
-              </ToastContent>
-            </ToastSectionLeft>
-            <ToastSectionRight>
-              <ToastCloseButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toast.remove();
-                }}>
-                <img src="/assets/cancel-button-gray.svg" alt="닫기 아이콘" />
-              </ToastCloseButton>
-            </ToastSectionRight>
-          </ToastContainer>,
-          {
-            duration: 5000,
-            position: "top-center",
-          }
-        );
-
-        // 화면에 한개의 토스트만 띄우기 위해 이전 토스트를 지우는 코드
-        toast.remove(String(+toastId - 1));
+        // const notificationTitle = payload.data.nickName; // 메시지에서 제목 추출
+        // const notificationBody = payload.data.message; // 메시지에서 본문 추출
+        // // 현재 들어와있는 채팅방에서 온 알림이 아닌 경우에만 토스트를 띄워줌
+        // const toastId = toast.custom(
+        //   <ToastContainer
+        //     onClick={() => {
+        //       navigate("/chat");
+        //       toast.remove();
+        //     }}>
+        //     <ToastSectionLeft>
+        //       <ToastIcon src={payload.data.iconLink} alt="디스턴스 아이콘" />
+        //       <ToastContent>
+        //         <ToastTitle>{notificationTitle}</ToastTitle>
+        //         <ToastBody>{notificationBody}</ToastBody>
+        //       </ToastContent>
+        //     </ToastSectionLeft>
+        //     <ToastSectionRight>
+        //       <ToastCloseButton
+        //         onClick={(e) => {
+        //           e.stopPropagation();
+        //           toast.remove();
+        //         }}>
+        //         <img src="/assets/cancel-button-gray.svg" alt="닫기 아이콘" />
+        //       </ToastCloseButton>
+        //     </ToastSectionRight>
+        //   </ToastContainer>,
+        //   {
+        //     duration: 5000,
+        //     position: "top-center",
+        //   }
+        // );
+        // // 화면에 한개의 토스트만 띄우기 위해 이전 토스트를 지우는 코드
+        // toast.remove(String(+toastId - 1));
       });
     }
   }, []);
@@ -158,66 +155,66 @@ const Padding = styled.div`
   padding-bottom: ${(props) => (props.$isIphone ? "96px" : "74px")};
 `;
 
-const ToastContainer = styled.div`
-  width: 100%;
-  background-color: #ffffff;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
+// const ToastContainer = styled.div`
+//   width: 100%;
+//   background-color: #ffffff;
+//   border-radius: 12px;
+//   padding: 16px;
+//   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+// `;
 
-const ToastSectionLeft = styled.div`
-  display: flex;
-  align-items: center;
-`;
+// const ToastSectionLeft = styled.div`
+//   display: flex;
+//   align-items: center;
+// `;
 
-const ToastSectionRight = styled.div`
-  display: flex;
-  align-items: center;
-`;
+// const ToastSectionRight = styled.div`
+//   display: flex;
+//   align-items: center;
+// `;
 
-const ToastIcon = styled.img`
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-  margin-right: 16px;
-`;
+// const ToastIcon = styled.img`
+//   width: 36px;
+//   height: 36px;
+//   flex-shrink: 0;
+//   margin-right: 16px;
+// `;
 
-const ToastContent = styled.div``;
+// const ToastContent = styled.div``;
 
-const ToastTitle = styled.div`
-  font-size: 16px;
-  font-weight: 600;
-`;
+// const ToastTitle = styled.div`
+//   font-size: 16px;
+//   font-weight: 600;
+// `;
 
-const ToastCloseButton = styled.button`
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: none;
+// const ToastCloseButton = styled.button`
+//   width: 36px;
+//   height: 36px;
+//   border: none;
+//   background: none;
 
-  img {
-    width: 16px;
-    height: 16px;
-    -webkit-tap-highlight-color: transparent;
-  }
-`;
+//   img {
+//     width: 16px;
+//     height: 16px;
+//     -webkit-tap-highlight-color: transparent;
+//   }
+// `;
 
-const ToastBody = styled.div`
-  font-size: 14px;
-  color: #333333;
+// const ToastBody = styled.div`
+//   font-size: 14px;
+//   color: #333333;
 
-  // wrap content
-  overflow: hidden;
-  white-space: normal;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  word-break: keep-all; // 문단으로 끊어져서 줄바꿈 됨
-`;
+//   // wrap content
+//   overflow: hidden;
+//   white-space: normal;
+//   text-overflow: ellipsis;
+//   display: -webkit-box;
+//   -webkit-line-clamp: 2;
+//   -webkit-box-orient: vertical;
+//   word-break: keep-all; // 문단으로 끊어져서 줄바꿈 됨
+// `;
 
 export default NavLayout;
