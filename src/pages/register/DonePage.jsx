@@ -41,8 +41,8 @@ const DonePage = () => {
         await login({ telNum, password, clientToken });
 
         // 로그인 성공 시
-        // setIsLoggedIn(true);
-        // navigate("/");
+        setIsLoggedIn(true);
+        navigate("/");
       } catch (err) {
         // 로그인 실패 시
         toast.error("홈화면으로 이동해서 다시 로그인해주세요!");
