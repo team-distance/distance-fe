@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { memo, useEffect, useRef } from "react";
 import Message from "./Message";
 import styled from "styled-components";
 
-const Messages = ({ messages, myId }) => {
+const Messages = memo(({ groupedMessages, myId }) => {
   const messageRef = useRef();
 
   const scrollToBottom = () => {
@@ -13,27 +13,11 @@ const Messages = ({ messages, myId }) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [groupedMessages]);
 
-  // 날짜별로 분류
-  const groupMessagesByDate = (messages) => {
-    const groupedMessages = {};
-
-    messages.forEach((message) => {
-      // sendDt 속성 확인
-      if (message?.sendDt) {
-        const date = message.sendDt.split("T")[0]; // 날짜 부분만 추출
-        if (!groupedMessages[date]) {
-          groupedMessages[date] = [];
-        }
-        groupedMessages[date].push(message);
-      }
-    });
-    return groupedMessages;
-  };
-
-  const groupedMessages = groupMessagesByDate(messages);
-
+  /**
+   * @todo messages.map()의 key 속성을 고유한 값으로 설정 (message.messageId)
+   */
   return (
     <MessagesWrapper ref={messageRef}>
       <Announcement>
@@ -67,7 +51,7 @@ const Messages = ({ messages, myId }) => {
       ))}
     </MessagesWrapper>
   );
-};
+});
 
 const MessagesWrapper = styled.div`
   overflow: auto;

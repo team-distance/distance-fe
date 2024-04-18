@@ -11,6 +11,7 @@ import TextInput from "../../components/register/TextInput";
 import { checkCurse } from "../../utils/checkCurse";
 import Lottie from "react-lottie-player";
 import callAnimation from "../../lottie/call-animation.json";
+import useGroupedMessages from "../../hooks/useGroupedMessages";
 
 const ChatPage = () => {
   const [distance, setDistance] = useState(-1);
@@ -31,6 +32,7 @@ const ChatPage = () => {
   const [client, setClient] = useState(null);
   const [messages, setMessages] = useState([]);
   const [draftMessage, setDraftMessage] = useState("");
+  const groupedMessages = useGroupedMessages(messages);
 
   const viewportRef = useRef();
 
@@ -303,16 +305,7 @@ const ChatPage = () => {
   }, [isCallActive]);
 
   return (
-    <Wrapper
-      onScroll={() => {
-        // 스크롤을 항상 최하단으로 내려주는 로직
-        if (viewportRef.current) {
-          const { scrollHeight, clientHeight, scrollTop } = viewportRef.current;
-          if (scrollHeight - clientHeight === scrollTop) {
-            viewportRef.current.scrollTop = scrollHeight;
-          }
-        }
-      }}>
+    <Wrapper>
       <Toaster
         position="bottom-center"
         containerStyle={{
@@ -370,7 +363,7 @@ const ChatPage = () => {
           </div>
         </TopBar>
 
-        <Messages messages={messages} myId={myId} />
+        <Messages groupedMessages={groupedMessages} myId={myId} />
         <MessageInput
           value={draftMessage}
           buttonClickHandler={openReportModal}

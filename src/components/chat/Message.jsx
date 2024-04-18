@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import styled from "styled-components";
 import { parseTime } from "../../utils/parseTime";
 
@@ -10,40 +10,42 @@ import { parseTime } from "../../utils/parseTime";
  * @param {string} senderType - 메시지를 보낸 사람의 타입 (SYSTEM, USER)
  * @param {boolean} sentByMe - 메시지를 내가 보냈는지 여부
  */
-const Message = ({ nickname, content, time, read, senderType, sentByMe }) => {
-  if (senderType === "SYSTEM") {
-    return (
-      <Announcement>
-        <div className="content">{content}</div>
-      </Announcement>
-    );
-  } else if (senderType === "USER") {
-    return sentByMe ? (
-      <MessageByMe>
-        <div className="message-container">
-          <div className="wrapper">
-            <div className="read">{read !== 0 ? read : ""}</div>
-            <div className="time">{parseTime(time)}</div>
+const Message = memo(
+  ({ nickname, content, time, read, senderType, sentByMe }) => {
+    if (senderType === "SYSTEM") {
+      return (
+        <Announcement>
+          <div className="content">{content}</div>
+        </Announcement>
+      );
+    } else if (senderType === "USER") {
+      return sentByMe ? (
+        <MessageByMe>
+          <div className="message-container">
+            <div className="wrapper">
+              <div className="read">{read !== 0 ? read : ""}</div>
+              <div className="time">{parseTime(time)}</div>
+            </div>
+            <div className="tail"></div>
+            <div className="message">{content}</div>
           </div>
-          <div className="tail"></div>
-          <div className="message">{content}</div>
-        </div>
-      </MessageByMe>
-    ) : (
-      <MessageByOther>
-        <div className="nickname">{nickname}</div>
-        <div className="message-container">
-          <div className="tail"></div>
-          <div className="message">{content}</div>
-          <div className="wrapper">
-            <div className="read">{read !== 0 ? read : ""}</div>
-            <div className="time">{parseTime(time)}</div>
+        </MessageByMe>
+      ) : (
+        <MessageByOther>
+          <div className="nickname">{nickname}</div>
+          <div className="message-container">
+            <div className="tail"></div>
+            <div className="message">{content}</div>
+            <div className="wrapper">
+              <div className="read">{read !== 0 ? read : ""}</div>
+              <div className="time">{parseTime(time)}</div>
+            </div>
           </div>
-        </div>
-      </MessageByOther>
-    );
+        </MessageByOther>
+      );
+    }
   }
-};
+);
 
 const Announcement = styled.div`
   display: flex;
