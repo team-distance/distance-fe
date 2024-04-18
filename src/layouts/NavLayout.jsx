@@ -63,7 +63,7 @@ const NavLayout = () => {
         console.log("FOREGROUND MESSAGE RECEIVED", payload);
         const notificationTitle = payload.notification.title; // 메시지에서 제목 추출
         const notificationBody = payload.notification.body; // 메시지에서 본문 추출
-        // 현재 들어와있는 채팅방에서 온 알림이 아닌 경우에만 토스트를 띄워줌
+
         const toastId = toast.custom(
           <ToastContainer
             onClick={() => {

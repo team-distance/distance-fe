@@ -8,7 +8,7 @@ import { CHARACTERS, COLORS } from "../../constants/character";
 import Header from "../../components/common/Header";
 import Profile from "../../components/home/Profile";
 import Modal from "../../components/common/Modal";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Badge from "../../components/common/Badge";
 
@@ -68,16 +68,16 @@ const HomeIndexPage = () => {
   useEffect(() => {
     fetchMembers();
 
-    // if (Notification.permission !== "granted") {
-    //   toast.error((t) => (
-    //     <>
-    //       <span style={{ marginRight: "8px" }}>알림 설정이 꺼져있어요!</span>
-    //       <Link to="/notification" style={{ color: "#0096FF" }}>
-    //         해결하기
-    //       </Link>
-    //     </>
-    //   ));
-    // }
+    if ("Notification" in window && Notification.permission !== "granted") {
+      toast.error((t) => (
+        <>
+          <span style={{ marginRight: "8px" }}>알림 설정이 꺼져있어요!</span>
+          <Link to="/notification" style={{ color: "#0096FF" }}>
+            해결하기
+          </Link>
+        </>
+      ));
+    }
   }, []);
 
   const handleSelectProfile = (profile) => {
@@ -114,7 +114,10 @@ const HomeIndexPage = () => {
             break;
           case "NOT_AUTHENTICATION_STUDENT":
             window.confirm("학생 인증 후 이용해주세요.") &&
-            navigate('/verify/univ');
+              navigate("/verify/univ");
+            break;
+          case "NOT_EXIST_GPS":
+            toast.error("상대방의 위치정보가 없어 채팅을 할 수 없어요!");
             break;
           default:
             toast.error("로그인 후 이용해주세요.");
