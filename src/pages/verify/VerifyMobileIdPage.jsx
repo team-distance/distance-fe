@@ -8,15 +8,46 @@ const VerifyMobileIdPage = () => {
   const navigate = useNavigate();
 
   const fileInputRef = useRef();
+  const canvasRef = useRef(null);
+
   const [uploadedImage, setUploadedImage] = useState(null);
   const [file, setFile] = useState(null);
 
   const onChangeImage = (e) => {
 
     const file = e.target.files[0];
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+
     const imageUrl = URL.createObjectURL(file);
-    setFile(file);
     setUploadedImage(imageUrl);
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = new Image();
+      img.onload = function () {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+
+        // 이미지 크기를 조절
+        const scaleFactor = 0.3;
+        canvas.width = img.width * scaleFactor;
+        canvas.height = img.height * scaleFactor;
+
+        // 축소된 크기로 이미지 그리기
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // canvas의 내용을 이미지 파일로 변환 (포맷, 품질)
+        canvas.toBlob(function (blob) {
+          console.log('Resized image size:', blob.size);
+          setFile(blob)
+        }, 'image/jpeg', 0.7);
+      };
+      img.src = e.target.result; // 파일 리더 결과를 이미지 소스로 설정
+    };
+    reader.readAsDataURL(file); // 파일을 Data URL로 읽기
 
     console.log(e.target.files)
     console.log(imageUrl);
@@ -57,10 +88,13 @@ const VerifyMobileIdPage = () => {
           />
           <input
             ref={fileInputRef}
+            id="fileInput"
             type="file"
+            accept="image/*"
             onChange={onChangeImage}
             hidden
           />
+          <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
         </>
       ) : (
         <UploadDiv onClick={handleButtonClick}>
@@ -68,7 +102,9 @@ const VerifyMobileIdPage = () => {
           <p>이미지 업로드</p>
           <input
             ref={fileInputRef}
+            id="fileInput"
             type="file"
+            accept="image/*"
             onChange={onChangeImage}
             hidden
           />
