@@ -92,10 +92,6 @@ const ProfileRegisterPage = () => {
       });
   };
 
-  useEffect(() => {
-    console.log(registerData);
-  }, [registerData]);
-
   const characterModalRef = useRef();
   const attractivenessModalRef = useRef();
   const hobbyModalRef = useRef();
