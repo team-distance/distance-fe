@@ -395,10 +395,9 @@ const ChatPage = () => {
 };
 
 const Wrapper = styled.div`
-  position: fixed;
+  position: relative;
   touch-action: none;
   overflow: hidden;
-  width: 100%;
 `;
 
 const Container = styled.div`
