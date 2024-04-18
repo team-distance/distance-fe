@@ -1,10 +1,10 @@
 //public/firebase-messaging-sw.js
 
 importScripts(
-  "https://www.gstatic.com/firebasejs/9.1.0/firebase-app-compat.js"
+  "https://www.gstatic.com/firebasejs/10.2.0/firebase-app-compat.js"
 );
 importScripts(
-  "https://www.gstatic.com/firebasejs/9.1.0/firebase-messaging-compat.js"
+  "https://www.gstatic.com/firebasejs/10.2.0/firebase-messaging-compat.js"
 );
 
 const firebaseConfig = {
@@ -35,7 +35,7 @@ messaging.onBackgroundMessage((payload) => {
 
   // 알림 표시
   // 백그라운드에서 자동으로 알림이 표시되어 주석 처리함.
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  // self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
 // self.addEventListener("notificationclick", function (event) {
