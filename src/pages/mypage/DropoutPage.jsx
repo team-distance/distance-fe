@@ -10,7 +10,7 @@ const DropoutPage = () => {
   const [verifyPasswordFlag, setVerifyPasswordFlag] = useState(true);
   const [password, setPassword] = useState("");
 
-  const verifyPassword = () => {
+  const verifyPassword = async() => {
     //비밀번호 확인
     await instance.post("/member/check/password", {
       password: password
