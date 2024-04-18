@@ -71,7 +71,10 @@ const NavLayout = () => {
               toast.remove();
             }}>
             <ToastSectionLeft>
-              <ToastIcon src={payload.data.iconLink} alt="디스턴스 아이콘" />
+              <ToastIcon
+                src={payload.notification.image}
+                alt="디스턴스 아이콘"
+              />
               <ToastContent>
                 <ToastTitle>{notificationTitle}</ToastTitle>
                 <ToastBody>{notificationBody}</ToastBody>
