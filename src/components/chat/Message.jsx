@@ -14,7 +14,7 @@ const Message = ({ nickname, content, time, read, senderType, sentByMe }) => {
   if (senderType === "SYSTEM") {
     return (
       <Announcement>
-        <div className="message">{content}</div>
+        <div className="content">{content}</div>
       </Announcement>
     );
   } else if (senderType === "USER") {
