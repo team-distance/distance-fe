@@ -39,6 +39,9 @@ const Modal = forwardRef(
           dialog.current.showModal();
           document.body.style= `overflow: hidden`;
         },
+        close() {
+          dialog.current.close();
+        },
       };
     });
 
