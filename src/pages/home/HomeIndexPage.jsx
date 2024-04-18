@@ -113,9 +113,8 @@ const HomeIndexPage = () => {
             );
             break;
           case "NOT_AUTHENTICATION_STUDENT":
-            toast.error(
-              "학생 인증 후 이용해주세요."
-            );
+            window.confirm("학생 인증 후 이용해주세요.") &&
+            navigate('/verify/univ');
             break;
           default:
             toast.error("로그인 후 이용해주세요.");
