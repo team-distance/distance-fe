@@ -12,11 +12,13 @@ const VerifyMobileIdPage = () => {
   const [file, setFile] = useState(null);
 
   const onChangeImage = (e) => {
+
     const file = e.target.files[0];
     const imageUrl = URL.createObjectURL(file);
     setFile(file);
     setUploadedImage(imageUrl);
 
+    console.log(e.target.files)
     console.log(imageUrl);
   };
 

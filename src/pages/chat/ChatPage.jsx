@@ -185,7 +185,7 @@ const ChatPage = () => {
         setMessages((messages) => [...messages, ...msg]);
       } catch (error) {
         //401에러
-        window.confirm("학생 인증이 필요합니다.")
+        window.confirm("학생 인증 후 이용해주세요.")
           ? navigateToVerify()
           : navigateToBack();
       }
