@@ -10,14 +10,24 @@ const AccountEditPage = () => {
   const navigate = useNavigate();
 
   const [isDisabled, setIsDisabled] = useState(true);
-  // const [isVerifyPassword, setIsVerifyPassword] = useState(false);
   const [verifyPasswordFlag, setVerifyPasswordFlag] = useState(true);
-  const [password, setPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [isVerifyPassword, setIsVerifyPassword] = useState(false);
 
-  const verifyPassword = () => {
+  const verifyPassword = async() => {
     //비밀번호 확인
-    // setIsVerifyPassword(true);
-    // alert("인증되었습니다");
+    await instance.post("/member/check/password", {
+      password: oldPassword
+    })
+    .then(() => {
+      setIsVerifyPassword(true);
+      alert("인증되었습니다");
+    })
+    .catch((error) => {
+      console.log(error.response.data.code);
+      alert("비밀번호가 일치하지 않습니다.");
+    });
   };
 
   const handleChange = (e) => {
@@ -25,11 +35,12 @@ const AccountEditPage = () => {
 
     if (name === "verifyPassword") {
       setVerifyPasswordFlag(value.length < 6);
+      setOldPassword(value);
     }
 
     if (name === "changePassword") {
       setIsDisabled(value.length < 6);
-      setPassword(value);
+      setNewPassword(value);
     }
   };
 
@@ -38,7 +49,7 @@ const AccountEditPage = () => {
 
     await instance
       .patch("/member/account/update", {
-        password: password,
+        password: newPassword,
       })
       .then(() => {
         alert("비밀번호 수정이 완료되었습니다");
@@ -66,7 +77,7 @@ const AccountEditPage = () => {
         />
       </div>
 
-      <WrapForm onSubmit={handleSubmit}>
+      {isVerifyPassword && <WrapForm onSubmit={handleSubmit}>
         <TextInput
           label="변경할 비밀번호"
           name="changePassword"
@@ -78,6 +89,7 @@ const AccountEditPage = () => {
           수정하기
         </Button>
       </WrapForm>
+      }
 
       <DropoutButton onClick={() => navigate("/mypage/account/dropout")}>
         회원탈퇴

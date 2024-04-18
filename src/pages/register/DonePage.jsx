@@ -40,10 +40,13 @@ const DonePage = () => {
         // 로그인 시도 (clientToken이 null일 수도 있음)
         await login({ telNum, password, clientToken });
 
+        console.log(telNum, password, clientToken)
+
         // 로그인 성공 시
         setIsLoggedIn(true);
-        navigate("/");
+        // navigate("/");
       } catch (err) {
+        console.log(err);
         // 로그인 실패 시
         toast.error("홈화면으로 이동해서 다시 로그인해주세요!");
       } finally {

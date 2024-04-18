@@ -8,12 +8,22 @@ import TextInput from "../../components/register/TextInput";
 const DropoutPage = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [verifyPasswordFlag, setVerifyPasswordFlag] = useState(true);
-  // const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("");
 
-  const verifyPassword = () => {
+  const verifyPassword = async() => {
     //비밀번호 확인
-    setIsDisabled(false);
-    alert("인증되었습니다");
+    await instance.post("/member/check/password", {
+      password: password
+    })
+    .then(() => {
+      setIsDisabled(false);
+      alert("인증되었습니다");
+    })
+    .catch((error) => {
+      console.log(error.response.data.code);
+      alert("비밀번호가 일치하지 않습니다.");
+    });
+
   };
 
   const handleDropout = async () => {
@@ -33,6 +43,7 @@ const DropoutPage = () => {
 
     if (name === "verifyPassword") {
       setVerifyPasswordFlag(value.length < 6);
+      setPassword(value);
     }
   };
 
