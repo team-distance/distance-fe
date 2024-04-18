@@ -28,14 +28,15 @@ self.addEventListener("install", (event) => {
 messaging.onBackgroundMessage((payload) => {
   console.log("BACKGROUND MESSAGE RECEIVED", payload);
 
-  const notificationTitle = payload.notification.title;
+  const notificationTitle = payload.data.nickName;
   const notificationOptions = {
-    body: payload.notification.body, // 'payload'의 'notification.body'를 사용
+    body: payload.data.message,
+    icon: payload.data.iconLink,
   };
 
   // 알림 표시
   // 백그라운드에서 자동으로 알림이 표시되어 주석 처리함.
-  // self.registration.showNotification(notificationTitle, notificationOptions);
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
 // self.addEventListener("notificationclick", function (event) {
