@@ -59,6 +59,7 @@ const Messages = ({ messages, myId }) => {
               content={message.chatMessage}
               time={message.sendDt}
               read={message.unreadCount}
+              senderType={message.senderType}
               sentByMe={message.senderId !== Number(myId)}
             />
           ))}

@@ -61,11 +61,9 @@ const NavLayout = () => {
     if (messaging) {
       onMessage(messaging, (payload) => {
         console.log("FOREGROUND MESSAGE RECEIVED", payload);
-
         const notificationTitle = payload.notification.title; // 메시지에서 제목 추출
         const notificationBody = payload.notification.body; // 메시지에서 본문 추출
 
-        // 현재 들어와있는 채팅방에서 온 알림이 아닌 경우에만 토스트를 띄워줌
         const toastId = toast.custom(
           <ToastContainer
             onClick={() => {
@@ -73,10 +71,10 @@ const NavLayout = () => {
               toast.remove();
             }}>
             <ToastSectionLeft>
-              {/* <ToastIcon
+              <ToastIcon
                 src={payload.notification.image}
                 alt="디스턴스 아이콘"
-              /> */}
+              />
               <ToastContent>
                 <ToastTitle>{notificationTitle}</ToastTitle>
                 <ToastBody>{notificationBody}</ToastBody>
@@ -97,7 +95,6 @@ const NavLayout = () => {
             position: "top-center",
           }
         );
-
         // 화면에 한개의 토스트만 띄우기 위해 이전 토스트를 지우는 코드
         toast.remove(String(+toastId - 1));
       });
@@ -182,12 +179,12 @@ const ToastSectionRight = styled.div`
   align-items: center;
 `;
 
-// const ToastIcon = styled.img`
-//   width: 36px;
-//   height: 36px;
-//   flex-shrink: 0;
-//   margin-right: 16px;
-// `;
+const ToastIcon = styled.img`
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  margin-right: 16px;
+`;
 
 const ToastContent = styled.div``;
 

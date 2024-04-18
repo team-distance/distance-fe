@@ -18,7 +18,6 @@ const ChatPage = () => {
   const [isShowLottie, setIsShowLottie] = useState(false);
   const [opponentTelNum, setOpponentTelNum] = useState("");
   const [reportMessage, setReportMessage] = useState("");
-  const [displayMessage, setDisplayMessage] = useState([]);
 
   const reportModalRef = useRef();
 
@@ -78,16 +77,10 @@ const ChatPage = () => {
   const navigateToVerify = () => {
     navigate("/verify/univ");
   };
+
   const navigateToBack = () => {
     navigate("/chat");
   };
-
-  useEffect(() => {
-    let tempMessages = messages.filter((el) => {
-      return el.chatMessage !== "";
-    });
-    setDisplayMessage(tempMessages);
-  }, [messages]);
 
   const handleReportUser = async (e) => {
     e.preventDefault();
@@ -203,7 +196,10 @@ const ChatPage = () => {
 
   useEffect(() => {
     if (!isCallActive) {
-      if (messages.at(-1)?.checkTiKiTaKa) {
+      if (
+        messages.at(-1)?.checkTiKiTaKa &&
+        messages.at(-1).roomStatus === "ACTIVE"
+      ) {
         setIsCallActive(true);
       }
     }
@@ -229,21 +225,18 @@ const ChatPage = () => {
     client.publish({
       destination: `/app/chat/${roomId}`,
       body: JSON.stringify({
-        chatMessage: "[알림]상대방이 나갔습니다.",
+        chatMessage: "LEAVE",
         senderId: opponentId,
         receiverId: myId,
+        publishType: "LEAVE",
       }),
     });
 
-    await instance.get(`/room-member/leave/${roomId}`).then(() => {
-      const localStorageChat = JSON.parse(
-        localStorage.getItem("staleMessages")
-      );
-      delete localStorageChat[roomId];
-      localStorage.setItem("staleMessages", JSON.stringify(localStorageChat));
+    // const localStorageChat = JSON.parse(localStorage.getItem("staleMessages"));
+    // delete localStorageChat[roomId];
+    // localStorage.setItem("staleMessages", JSON.stringify(localStorageChat));
 
-      navigate(-1);
-    });
+    navigate(-1);
   };
 
   const sendMessage = async (e) => {
@@ -267,6 +260,7 @@ const ChatPage = () => {
         chatMessage: draftMessage,
         senderId: opponentId,
         receiverId: myId,
+        publishType: "MESSAGE",
       }),
     });
     setDraftMessage("");
@@ -376,7 +370,7 @@ const ChatPage = () => {
           </div>
         </TopBar>
 
-        <Messages messages={displayMessage} myId={myId} />
+        <Messages messages={messages} myId={myId} />
         <MessageInput
           value={draftMessage}
           buttonClickHandler={openReportModal}
