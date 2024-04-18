@@ -88,7 +88,6 @@ const VerifyMobileIdPage = () => {
           />
           <input
             ref={fileInputRef}
-            id="fileInput"
             type="file"
             accept="image/*"
             onChange={onChangeImage}
@@ -102,12 +101,12 @@ const VerifyMobileIdPage = () => {
           <p>이미지 업로드</p>
           <input
             ref={fileInputRef}
-            id="fileInput"
             type="file"
             accept="image/*"
             onChange={onChangeImage}
             hidden
           />
+          <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
         </UploadDiv>
       )}
       <Button size={"medium"} onClick={sendStudentId}>
