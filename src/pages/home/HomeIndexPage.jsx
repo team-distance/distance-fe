@@ -112,6 +112,11 @@ const HomeIndexPage = () => {
               "상대방이 이미 생성된 채팅방 3개입니다. 상대방이 수락하면 알려드릴게요!"
             );
             break;
+          case "NOT_AUTHENTICATION_STUDENT":
+            toast.error(
+              "학생 인증 후 이용해주세요."
+            );
+            break;
           default:
             toast.error("로그인 후 이용해주세요.");
             break;
