@@ -23,7 +23,6 @@ const DropoutPage = () => {
       console.log(error.response.data.code);
       alert("비밀번호가 일치하지 않습니다.");
     });
-
   };
 
   const handleDropout = async () => {
