@@ -22,14 +22,6 @@ const ButtonStyle = styled.button`
       : $size === "small"
       ? "2rem"
       : "1rem"};
-  /* padding: ${({ $size }) =>
-    $size === "large"
-      ? "1.5rem 6.5rem"
-      : $size === "medium"
-      ? "0.8rem 4.5rem"
-      : $size === "small"
-      ? "0.5rem 0.8rem"
-      : "1rem 2rem"}; */
   font-size: ${({ $size }) =>
     $size === "large"
       ? "1.2rem"
@@ -38,7 +30,6 @@ const ButtonStyle = styled.button`
       : $size === "small"
       ? "0.8rem"
       : "1rem"};
-
   &:disabled {
     background-color: #d9d9d9;
     color: #333333;

@@ -154,6 +154,7 @@ const UploadedImageDiv = styled.img`
   width: 100%;
   height: 185px;
   border-radius: 20px;
+  object-fit: cover;
 `;
 
 const UploadDiv = styled.div`
