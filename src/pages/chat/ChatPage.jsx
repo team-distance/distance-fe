@@ -17,6 +17,7 @@ const ChatPage = () => {
   const [distance, setDistance] = useState(-1);
   const [isCallActive, setIsCallActive] = useState(false);
   const [isShowLottie, setIsShowLottie] = useState(false);
+  const [isOpponentOut, setIsOpponentOut] = useState(false);
   const [opponentTelNum, setOpponentTelNum] = useState("");
   const [reportMessage, setReportMessage] = useState("");
 
@@ -197,13 +198,15 @@ const ChatPage = () => {
   }, []);
 
   useEffect(() => {
-    if (!isCallActive) {
-      if (
-        messages.at(-1)?.checkTiKiTaKa &&
-        messages.at(-1).roomStatus === "ACTIVE"
-      ) {
-        setIsCallActive(true);
-      }
+    if (
+      messages.at(-1)?.checkTiKiTaKa &&
+      messages.at(-1).roomStatus === "ACTIVE"
+    ) {
+      setIsCallActive(true);
+    }
+    else {
+      setIsCallActive(false);
+      setIsOpponentOut(true);
     }
   }, [messages]);
 
@@ -369,6 +372,7 @@ const ChatPage = () => {
           buttonClickHandler={openReportModal}
           changeHandler={handleChange}
           submitHandler={sendMessage}
+          isOpponentOut={isOpponentOut}
         />
       </Container>
 
