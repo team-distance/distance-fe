@@ -5,6 +5,7 @@ const MessageInput = ({
   buttonClickHandler,
   changeHandler,
   submitHandler,
+  isOpponentOut,
 }) => {
   return (
     <MeassageInputContainer>
@@ -12,8 +13,15 @@ const MessageInput = ({
         <img src={"/assets/report-button.svg"} alt="신고하기" />
       </WrapButton>
       <WrapInputForm onSubmit={submitHandler}>
-        <Input value={value} onChange={changeHandler} />
-        <WrapButton type="submit">
+        { isOpponentOut ? 
+        <Input 
+          value={value} 
+          onChange={changeHandler}
+          placeholder="상대방이 나갔습니다." 
+          disabled  />
+        : <Input value={value} onChange={changeHandler} />
+        }
+        <WrapButton type="submit" disabled={isOpponentOut}>
           <img src={"/assets/send-button.png"} alt="보내기" />
         </WrapButton>
       </WrapInputForm>
@@ -54,6 +62,10 @@ const WrapButton = styled.button`
   align-items: center;
   border: none;
   background-color: transparent;
+
+  &:disabled {
+    visibility: hidden;
+  }
 
   img {
     width: 1.5rem;
