@@ -198,13 +198,14 @@ const ChatPage = () => {
   }, []);
 
   useEffect(() => {
+    // console.log("messages>>>>>>>>>>>>>>", messages)
     if (
       messages.at(-1)?.checkTiKiTaKa &&
       messages.at(-1).roomStatus === "ACTIVE"
     ) {
       setIsCallActive(true);
     }
-    else {
+    else if (messages.at(-1)?.roomStatus === "INACTIVE") {
       setIsCallActive(false);
       setIsOpponentOut(true);
     }
