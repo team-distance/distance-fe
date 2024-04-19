@@ -64,7 +64,7 @@ const WrapButton = styled.button`
   background-color: transparent;
 
   &:disabled {
-    filter: brightness(0.6);
+    visibility: hidden;
   }
 
   img {
