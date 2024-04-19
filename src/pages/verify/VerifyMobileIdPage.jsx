@@ -43,7 +43,7 @@ const VerifyMobileIdPage = () => {
         canvas.toBlob(function (blob) {
           console.log('Resized image size:', blob.size);
           setFile(blob)
-        }, 'image/jpeg', 0.7);
+        }, 'image/jpeg', 0.5);
       };
       img.src = e.target.result; // 파일 리더 결과를 이미지 소스로 설정
     };
