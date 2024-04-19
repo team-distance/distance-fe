@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import Header from "../../components/common/Header";
-import { instance } from "../../api/instance";
-import { useNavigate } from "react-router-dom";
-import { CHARACTERS, COLORS } from "../../constants/character";
-import Badge from "../../components/common/Badge";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import Header from '../../components/common/Header';
+import { instance } from '../../api/instance';
+import { useNavigate } from 'react-router-dom';
+import { CHARACTERS, COLORS } from '../../constants/character';
+import Badge from '../../components/common/Badge';
 
 const ChatInboxPage = () => {
   const [inboxList, setInboxList] = useState([]);
@@ -28,7 +28,7 @@ const ChatInboxPage = () => {
   };
 
   const fetchInboxList = async () => {
-    const res = await instance.get("/waiting").then((res) => res.data);
+    const res = await instance.get('/waiting').then((res) => res.data);
     setInboxList(res);
   };
 
@@ -51,18 +51,18 @@ const ChatInboxPage = () => {
       })
       .catch((error) => {
         switch (error.response.data.code) {
-          case "TOO_MANY_MY_CHATROOM":
+          case 'TOO_MANY_MY_CHATROOM':
             alert(
-              "이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요."
+              '이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요.'
             );
             break;
-          case "TOO_MANY_OPPONENT_CHATROOM":
+          case 'TOO_MANY_OPPONENT_CHATROOM':
             alert(
-              "상대방이 이미 생성된 채팅방 3개입니다. 상대방과 연결에 실패했습니다."
+              '상대방이 이미 생성된 채팅방 3개입니다. 상대방과 연결에 실패했습니다.'
             );
             break;
           default:
-            alert("채팅방 생성에 실패했습니다. 다시 시도해주세요.");
+            alert('채팅방 생성에 실패했습니다. 다시 시도해주세요.');
             break;
         }
       });
@@ -77,7 +77,7 @@ const ChatInboxPage = () => {
         fetchInboxList(); // 새로고침
       })
       .catch((error) => {
-        alert("요청 거절에 실패했습니다. 다시 시도해주세요.");
+        alert('요청 거절에 실패했습니다. 다시 시도해주세요.');
       });
   };
 
@@ -118,7 +118,7 @@ const ChatInboxPage = () => {
                   <AcceptButton
                     onClick={() => {
                       const isAccepted =
-                        window.confirm("요청을 수락하시겠습니까?");
+                        window.confirm('요청을 수락하시겠습니까?');
                       if (isAccepted) {
                         handleAcceptChat(
                           inbox.loveReceiverId,
@@ -126,18 +126,20 @@ const ChatInboxPage = () => {
                           inbox.waitingRoomId
                         );
                       }
-                    }}>
+                    }}
+                  >
                     수락하기
                   </AcceptButton>
                   <DenyButton
                     onClick={() => {
                       const isAccepted =
-                        window.confirm("요청을 거절하시겠습니까?");
+                        window.confirm('요청을 거절하시겠습니까?');
 
                       if (isAccepted) {
                         handleDenyChat(inbox.waitingRoomId);
                       }
-                    }}>
+                    }}
+                  >
                     거절하기
                   </DenyButton>
                 </div>
@@ -148,7 +150,7 @@ const ChatInboxPage = () => {
       ) : (
         <EmptyContainer>
           <div className="wrap">
-            <img src={"/assets/empty-inbox.svg"} alt="empty icon" />
+            <img src={'/assets/empty-inbox.svg'} alt="empty icon" />
             <div>요청함이 비어있어요!</div>
           </div>
         </EmptyContainer>

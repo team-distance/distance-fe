@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import { useRef, useState } from "react";
-import Button from "../../components/common/Button";
-import { instance } from "../../api/instance";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { useRef, useState } from 'react';
+import Button from '../../components/common/Button';
+import { instance } from '../../api/instance';
+import { useNavigate } from 'react-router-dom';
 
 const VerifyMobileIdPage = () => {
   const navigate = useNavigate();
@@ -15,7 +15,6 @@ const VerifyMobileIdPage = () => {
   const [isDisabled, setIsDisabled] = useState(true);
 
   const onChangeImage = (e) => {
-
     const file = e.target.files[0];
     if (file) {
       setIsDisabled(false);
@@ -43,16 +42,20 @@ const VerifyMobileIdPage = () => {
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
           // canvas의 내용을 이미지 파일로 변환 (포맷, 품질)
-          canvas.toBlob(function (blob) {
-            console.log('Resized image size:', blob.size);
-            setFile(blob)
-          }, 'image/jpeg', 0.5);
+          canvas.toBlob(
+            function (blob) {
+              console.log('Resized image size:', blob.size);
+              setFile(blob);
+            },
+            'image/jpeg',
+            0.5
+          );
         };
         img.src = e.target.result; // 파일 리더 결과를 이미지 소스로 설정
       };
       reader.readAsDataURL(file); // 파일을 Data URL로 읽기
 
-      console.log(e.target.files)
+      console.log(e.target.files);
       console.log(imageUrl);
     }
   };
@@ -63,17 +66,17 @@ const VerifyMobileIdPage = () => {
 
   const sendStudentId = async () => {
     if (!file) {
-      alert("이미지를 먼저 업로드해주세요.");
+      alert('이미지를 먼저 업로드해주세요.');
       return;
     }
     const formData = new FormData();
-    formData.append("studentcard", file);
+    formData.append('studentcard', file);
 
     try {
-      await instance.post("/studentcard/send", formData);
+      await instance.post('/studentcard/send', formData);
       window.confirm(
-        "인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다."
-      ) && navigate("/");
+        '인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.'
+      ) && navigate('/');
     } catch (error) {
       console.log(error);
     }
@@ -113,7 +116,7 @@ const VerifyMobileIdPage = () => {
           <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
         </UploadDiv>
       )}
-      <Button size={"large"} onClick={sendStudentId} disabled={isDisabled}>
+      <Button size={'large'} onClick={sendStudentId} disabled={isDisabled}>
         이미지 전송하기
       </Button>
 

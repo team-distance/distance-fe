@@ -1,12 +1,13 @@
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const WrapHeader = styled.header`
   display: flex;
   flex-direction: column;
   padding: 1rem 0;
 
-  p, h2 {
+  p,
+  h2 {
     margin: 0;
   }
 `;
@@ -21,17 +22,17 @@ const TitleContainer = styled.div`
   }
 `;
 
-const HeaderPrev = ({title, navigateTo, text}) => {
-
+const HeaderPrev = ({ title, navigateTo, text }) => {
   const navigate = useNavigate();
 
   return (
     <WrapHeader>
       <TitleContainer>
-        <img 
-          src="/assets/arrow-pink-button.png" 
+        <img
+          src="/assets/arrow-pink-button.png"
           alt="Go Back"
-          onClick={() => navigate(navigateTo)} />
+          onClick={() => navigate(navigateTo)}
+        />
         <h2>{title}</h2>
       </TitleContainer>
       <p className="text">{text}</p>

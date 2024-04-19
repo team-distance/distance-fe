@@ -1,29 +1,29 @@
-import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import DropdownMBTI from "../../components/register/DropdownMBTI";
-import Toggle from "../../components/register/Toggle";
-import BlankModal from "../../components/common/BlankModal";
-import Button from "../../components/common/Button";
-import { ATTRACTIVENESS, HOBBY } from "../../constants/profile";
-import { CHARACTERS } from "../../constants/character";
-import { instance } from "../../api/instance";
-import { useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
-import { registerDataState } from "../../store/registerDataState";
-import ProgressBar from "../../components/register/ProgressBar";
-import toast, { Toaster } from "react-hot-toast";
+import React, { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+import DropdownMBTI from '../../components/register/DropdownMBTI';
+import Toggle from '../../components/register/Toggle';
+import BlankModal from '../../components/common/BlankModal';
+import Button from '../../components/common/Button';
+import { ATTRACTIVENESS, HOBBY } from '../../constants/profile';
+import { CHARACTERS } from '../../constants/character';
+import { instance } from '../../api/instance';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { registerDataState } from '../../store/registerDataState';
+import ProgressBar from '../../components/register/ProgressBar';
+import toast, { Toaster } from 'react-hot-toast';
 
 /**
  * @todo 코드 분리
  */
 const ProfileRegisterPage = () => {
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
-  const [selectedAnimal, setSelectedAnimal] = useState("");
-  const [selectedMBTI, setSelectedMBTI] = useState("");
+  const [selectedAnimal, setSelectedAnimal] = useState('');
+  const [selectedMBTI, setSelectedMBTI] = useState('');
   const [attractiveness, setAttractiveness] = useState([]);
   const [hobby, setHobby] = useState([]);
   const [hashtagCount, setHashtagCount] = useState(0);
-  const [toggleState, setToggleState] = useState("");
+  const [toggleState, setToggleState] = useState('');
 
   const navigate = useNavigate();
 
@@ -41,13 +41,13 @@ const ProfileRegisterPage = () => {
   // 새로고침하여 데이터가 사라졌을 때, 다시 회원가입 페이지로 이동
   useEffect(() => {
     if (
-      registerData.telNum === "" ||
-      registerData.verifyNum === "" ||
-      registerData.password === "" ||
-      registerData.college === "" ||
-      registerData.department === ""
+      registerData.telNum === '' ||
+      registerData.verifyNum === '' ||
+      registerData.password === '' ||
+      registerData.college === '' ||
+      registerData.department === ''
     ) {
-      navigate("/register/user");
+      navigate('/register/user');
     }
   }, []);
 
@@ -55,7 +55,7 @@ const ProfileRegisterPage = () => {
     e.preventDefault();
 
     await instance
-      .post("/member/signup", {
+      .post('/member/signup', {
         department: registerData.department,
         gender: registerData.gender,
         mbti: selectedMBTI,
@@ -66,7 +66,7 @@ const ProfileRegisterPage = () => {
         telNum: registerData.telNum,
       })
       .then(() => {
-        navigate("/register/done", {
+        navigate('/register/done', {
           state: {
             telNum: registerData.telNum,
             password: registerData.password,
@@ -75,20 +75,20 @@ const ProfileRegisterPage = () => {
 
         setRegisterData((prev) => ({
           ...prev,
-          telNum: "",
-          verifyNum: "",
-          password: "",
-          gender: "",
-          college: "",
-          department: "",
-          mbti: "",
-          memberCharacter: "",
+          telNum: '',
+          verifyNum: '',
+          password: '',
+          gender: '',
+          college: '',
+          department: '',
+          mbti: '',
+          memberCharacter: '',
           memberTagDto: [],
           memberHobbyDto: [],
         }));
       })
       .catch((error) => {
-        alert("회원정보 등록에 실패했습니다.");
+        alert('회원정보 등록에 실패했습니다.');
       });
   };
 
@@ -160,7 +160,7 @@ const ProfileRegisterPage = () => {
               src="/assets/profile-register-leftimg.png"
               alt="profile register button"
             />
-            {selectedAnimal === "" ? (
+            {selectedAnimal === '' ? (
               <img
                 src="/assets/profile-register-plusbutton.png"
                 alt="profile register button"
@@ -193,7 +193,8 @@ const ProfileRegisterPage = () => {
                   onClick={() => {
                     setSelectedAnimal(character);
                     closeCharacterModal();
-                  }}>
+                  }}
+                >
                   <img src={imageSrc} alt={character} />
                 </AnimalListItem>
               );
@@ -257,17 +258,18 @@ const ProfileRegisterPage = () => {
               {ATTRACTIVENESS.map((value, index) => (
                 <ListItem
                   key={index}
-                  color={attractiveness.includes(value) ? "#FF0000" : "black"}
+                  color={attractiveness.includes(value) ? '#FF0000' : 'black'}
                   onClick={() => {
                     if (attractiveness.includes(value) || hashtagCount >= 5) {
-                      toast.error("해시태그는 5개까지만 선택 가능해요!", {
-                        id: "hashtag-limit",
+                      toast.error('해시태그는 5개까지만 선택 가능해요!', {
+                        id: 'hashtag-limit',
                       });
                       return;
                     }
                     setAttractiveness([...attractiveness, value]);
                     closeAttractivenessModal();
-                  }}>
+                  }}
+                >
                   {value}
                 </ListItem>
               ))}
@@ -287,17 +289,18 @@ const ProfileRegisterPage = () => {
               {HOBBY.map((value, index) => (
                 <ListItem
                   key={index}
-                  color={hobby.includes(value) ? "#FF0000" : "black"}
+                  color={hobby.includes(value) ? '#FF0000' : 'black'}
                   onClick={() => {
                     if (hobby.includes(value) || hashtagCount >= 5) {
-                      toast.error("해시태그는 5개까지만 선택 가능해요!", {
-                        id: "hashtag-limit",
+                      toast.error('해시태그는 5개까지만 선택 가능해요!', {
+                        id: 'hashtag-limit',
                       });
                       return;
                     }
                     setHobby([...hobby, value]);
                     closeHobbyModal();
-                  }}>
+                  }}
+                >
                   {value}
                 </ListItem>
               ))}

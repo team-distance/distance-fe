@@ -1,16 +1,16 @@
-import React, { useEffect } from "react";
-import styled from "styled-components";
-import { useRef, useState } from "react";
-import { instance } from "../../api/instance";
-import ClipLoader from "react-spinners/ClipLoader";
+import React, { useEffect } from 'react';
+import styled from 'styled-components';
+import { useRef, useState } from 'react';
+import { instance } from '../../api/instance';
+import ClipLoader from 'react-spinners/ClipLoader';
 
-import { CHARACTERS, COLORS } from "../../constants/character";
-import Header from "../../components/common/Header";
-import Profile from "../../components/home/Profile";
-import Modal from "../../components/common/Modal";
-import { Link, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import Badge from "../../components/common/Badge";
+import { CHARACTERS, COLORS } from '../../constants/character';
+import Header from '../../components/common/Header';
+import Profile from '../../components/home/Profile';
+import Modal from '../../components/common/Modal';
+import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import Badge from '../../components/common/Badge';
 
 const HomeIndexPage = () => {
   const profileModal = useRef();
@@ -18,7 +18,7 @@ const HomeIndexPage = () => {
   const [selectedProfile, setSelectedProfile] = useState();
   const navigate = useNavigate();
 
-  const memberId = localStorage.getItem("memberId");
+  const memberId = localStorage.getItem('memberId');
   const [memberState, setMemberState] = useState([]);
 
   const [isReloadButtonDisabled, setIsReloadButtonDisabled] = useState(false);
@@ -28,7 +28,7 @@ const HomeIndexPage = () => {
   const fetchMembers = async () => {
     try {
       setLoading(true);
-      const res = await instance.get("/gps/matching");
+      const res = await instance.get('/gps/matching');
       setMemberState(res.data.matchedUsers);
     } catch (error) {
       console.log(error);
@@ -43,7 +43,7 @@ const HomeIndexPage = () => {
       setIsReloadButtonDisabled(true); // 버튼 비활성화
       setRemainingTimeToReload(3); // 초기 남은 시간 설정
 
-      const res = await instance.get("/gps/matching");
+      const res = await instance.get('/gps/matching');
       setMemberState(res.data.matchedUsers);
 
       // 매초마다 남은 시간 업데이트
@@ -68,11 +68,11 @@ const HomeIndexPage = () => {
   useEffect(() => {
     fetchMembers();
 
-    if ("Notification" in window && Notification.permission !== "granted") {
+    if ('Notification' in window && Notification.permission !== 'granted') {
       toast.error((t) => (
         <>
-          <span style={{ marginRight: "8px" }}>알림 설정이 꺼져있어요!</span>
-          <Link to="/notification" style={{ color: "#0096FF" }}>
+          <span style={{ marginRight: '8px' }}>알림 설정이 꺼져있어요!</span>
+          <Link to="/notification" style={{ color: '#0096FF' }}>
             해결하기
           </Link>
         </>
@@ -87,7 +87,7 @@ const HomeIndexPage = () => {
 
   const handleCreateChatRoom = async (opponentMemberId) => {
     await instance
-      .post("/chatroom/create", {
+      .post('/chatroom/create', {
         memberId: opponentMemberId,
       })
       .then((res) => {
@@ -102,25 +102,25 @@ const HomeIndexPage = () => {
       })
       .catch((error) => {
         switch (error.response.data.code) {
-          case "TOO_MANY_MY_CHATROOM":
+          case 'TOO_MANY_MY_CHATROOM':
             toast.error(
-              "이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요."
+              '이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요.'
             );
             break;
-          case "TOO_MANY_OPPONENT_CHATROOM":
+          case 'TOO_MANY_OPPONENT_CHATROOM':
             toast.error(
-              "상대방이 이미 생성된 채팅방 3개입니다. 상대방이 수락하면 알려드릴게요!"
+              '상대방이 이미 생성된 채팅방 3개입니다. 상대방이 수락하면 알려드릴게요!'
             );
             break;
-          case "NOT_AUTHENTICATION_STUDENT":
-            window.confirm("학생 인증 후 이용해주세요.") &&
-              navigate("/verify/univ");
+          case 'NOT_AUTHENTICATION_STUDENT':
+            window.confirm('학생 인증 후 이용해주세요.') &&
+              navigate('/verify/univ');
             break;
-          case "NOT_EXIST_GPS":
-            toast.error("상대방의 위치정보가 없어 채팅을 할 수 없어요!");
+          case 'NOT_EXIST_GPS':
+            toast.error('상대방의 위치정보가 없어 채팅을 할 수 없어요!');
             break;
           default:
-            toast.error("로그인 후 이용해주세요.");
+            toast.error('로그인 후 이용해주세요.');
             break;
         }
       });
@@ -133,23 +133,25 @@ const HomeIndexPage = () => {
         <Header />
 
         {/* clientToken 임시적으로 홈화면에 표시 */}
-        {localStorage.getItem("clientToken") && (
+        {localStorage.getItem('clientToken') && (
           <div>
             <div
               style={{
-                width: "100%",
-                background: "yellow",
-                overflow: "scroll",
-              }}>
-              토큰값: {localStorage.getItem("clientToken")}
+                width: '100%',
+                background: 'yellow',
+                overflow: 'scroll',
+              }}
+            >
+              토큰값: {localStorage.getItem('clientToken')}
             </div>
             <button
               onClick={() => {
                 navigator.clipboard.writeText(
-                  localStorage.getItem("clientToken")
+                  localStorage.getItem('clientToken')
                 );
-                toast.success("클립보드에 복사되었습니다.");
-              }}>
+                toast.success('클립보드에 복사되었습니다.');
+              }}
+            >
               복사
             </button>
           </div>
@@ -158,7 +160,7 @@ const HomeIndexPage = () => {
         <ProfileContainer>
           {loading ? (
             <LoaderContainer>
-              <ClipLoader color={"#FF625D"} loading={loading} size={50} />
+              <ClipLoader color={'#FF625D'} loading={loading} size={50} />
             </LoaderContainer>
           ) : (
             memberState.map((profile, index) => (
@@ -183,11 +185,13 @@ const HomeIndexPage = () => {
         buttonLabel="메세지 보내기"
         buttonClickHandler={() => {
           handleCreateChatRoom(selectedProfile.memberId);
-        }}>
+        }}
+      >
         {selectedProfile && (
           <WrapContent>
             <CharacterBackground
-              $character={selectedProfile.memberProfileDto.memberCharacter}>
+              $character={selectedProfile.memberProfileDto.memberCharacter}
+            >
               <StyledImage
                 src={
                   CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]

@@ -1,10 +1,10 @@
-import React from "react";
-import { useState } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import { Outlet } from "react-router-dom";
+import React from 'react';
+import { useState } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
-import Header from "../../components/common/Header";
+import Header from '../../components/common/Header';
 
 const FestivalContainer = styled.div`
   padding: 2rem 1.5rem;
@@ -20,7 +20,7 @@ const Tab = styled.div`
   font-weight: 600;
   text-align: center;
   border-bottom: ${(props) =>
-    props.$isSelected ? "3px solid #FF625D" : "3px solid transparent"};
+    props.$isSelected ? '3px solid #FF625D' : '3px solid transparent'};
   transition: all 200ms;
 `;
 
@@ -29,11 +29,11 @@ const FestivalIndexPage = () => {
   const [tabMenuState, setTabMenuState] = useState(0);
 
   const handleClickProgram = () => {
-    navigate("/festival/program");
+    navigate('/festival/program');
     setTabMenuState(0);
   };
   const handleClickFoodTruck = () => {
-    navigate("/festival/foodtruck");
+    navigate('/festival/foodtruck');
     setTabMenuState(1);
   };
 

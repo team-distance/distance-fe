@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { useRef, forwardRef, useImperativeHandle } from "react";
+import styled from 'styled-components';
+import { useRef, forwardRef, useImperativeHandle } from 'react';
 
 const BlankModal = forwardRef(({ children }, ref) => {
   const modalRef = useRef();
@@ -28,11 +28,9 @@ const StyledDialog = styled.dialog`
   border-radius: 20px;
   box-shadow: 0px 4px 10px 10px #3333334d;
   position: relative;
-  
 
   position: fixed;
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
-
 `;

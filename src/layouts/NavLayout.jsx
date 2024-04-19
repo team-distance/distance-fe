@@ -1,15 +1,15 @@
-import React, { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import TabBar from "../components/common/TabBar";
-import styled from "styled-components";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { isLoggedInState } from "../store/auth";
-import { instance } from "../api/instance";
-import toast, { Toaster } from "react-hot-toast";
-import useGPS from "../hooks/useGPS";
-import { myDataState } from "../store/myData";
-import { onMessage } from "firebase/messaging";
-import { messaging } from "../firebaseConfig";
+import React, { useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import TabBar from '../components/common/TabBar';
+import styled from 'styled-components';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { isLoggedInState } from '../store/auth';
+import { instance } from '../api/instance';
+import toast, { Toaster } from 'react-hot-toast';
+import useGPS from '../hooks/useGPS';
+import { myDataState } from '../store/myData';
+import { onMessage } from 'firebase/messaging';
+import { messaging } from '../firebaseConfig';
 
 const NavLayout = () => {
   const setMyData = useSetRecoilState(myDataState);
@@ -17,18 +17,18 @@ const NavLayout = () => {
   const currentLocation = useGPS();
   const navigate = useNavigate();
   const userAgent = navigator.userAgent.toLowerCase();
-  const isIphone = userAgent.includes("iphone");
+  const isIphone = userAgent.includes('iphone');
 
   const getMemberId = async () => {
     await instance
-      .get("/member/id")
+      .get('/member/id')
       .then((res) => {
-        localStorage.setItem("memberId", res.data);
+        localStorage.setItem('memberId', res.data);
       })
       .catch((err) => {
-        toast.error("회원 정보를 가져오는데 실패했어요!", {
-          id: "member-id-error",
-          position: "bottom-center",
+        toast.error('회원 정보를 가져오는데 실패했어요!', {
+          id: 'member-id-error',
+          position: 'bottom-center',
         });
         console.log(err);
       });
@@ -41,9 +41,9 @@ const NavLayout = () => {
         setMyData(res.data);
       })
       .catch((err) => {
-        toast.error("프로필 정보를 가져오는데 실패했어요!", {
-          id: "my-data-error",
-          position: "bottom-center",
+        toast.error('프로필 정보를 가져오는데 실패했어요!', {
+          id: 'my-data-error',
+          position: 'bottom-center',
         });
         console.log(err);
       });
@@ -52,24 +52,25 @@ const NavLayout = () => {
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
 
-    if (userAgent.includes("kakao")) {
-      navigate("/kakaotalk-fallback");
+    if (userAgent.includes('kakao')) {
+      navigate('/kakaotalk-fallback');
     }
   }, []);
 
   useEffect(() => {
     if (messaging) {
       onMessage(messaging, (payload) => {
-        console.log("FOREGROUND MESSAGE RECEIVED", payload);
+        console.log('FOREGROUND MESSAGE RECEIVED', payload);
         const notificationTitle = payload.notification.title; // 메시지에서 제목 추출
         const notificationBody = payload.notification.body; // 메시지에서 본문 추출
 
         const toastId = toast.custom(
           <ToastContainer
             onClick={() => {
-              navigate("/chat");
+              navigate('/chat');
               toast.remove();
-            }}>
+            }}
+          >
             <ToastSectionLeft>
               <ToastIcon
                 src={payload.notification.image}
@@ -85,14 +86,15 @@ const NavLayout = () => {
                 onClick={(e) => {
                   e.stopPropagation();
                   toast.remove();
-                }}>
+                }}
+              >
                 <img src="/assets/cancel-button-gray.svg" alt="닫기 아이콘" />
               </ToastCloseButton>
             </ToastSectionRight>
           </ToastContainer>,
           {
             duration: 5000,
-            position: "top-center",
+            position: 'top-center',
           }
         );
         // 화면에 한개의 토스트만 띄우기 위해 이전 토스트를 지우는 코드
@@ -117,10 +119,10 @@ const NavLayout = () => {
 
     if (currentLocation.error) {
       toast.error(
-        "위치 정보를 가져오는데 실패했어요! 설정에서 위치 정보를 허용해주세요.",
+        '위치 정보를 가져오는데 실패했어요! 설정에서 위치 정보를 허용해주세요.',
         {
-          id: "gps-error",
-          position: "bottom-center",
+          id: 'gps-error',
+          position: 'bottom-center',
         }
       );
     } else {
@@ -130,9 +132,9 @@ const NavLayout = () => {
           longitude: currentLocation.lng,
         })
         .catch((err) => {
-          toast.error("위치 정보를 업데이트하는데 실패했어요!", {
-            id: "gps-update-error",
-            position: "bottom-center",
+          toast.error('위치 정보를 업데이트하는데 실패했어요!', {
+            id: 'gps-update-error',
+            position: 'bottom-center',
           });
           console.log(err);
         });
@@ -147,7 +149,7 @@ const NavLayout = () => {
       <TabBar />
       <Toaster
         containerStyle={{
-          bottom: isIphone ? "116px" : "96px",
+          bottom: isIphone ? '116px' : '96px',
         }}
       />
     </>
@@ -155,7 +157,7 @@ const NavLayout = () => {
 };
 
 const Padding = styled.div`
-  padding-bottom: ${(props) => (props.$isIphone ? "96px" : "74px")};
+  padding-bottom: ${(props) => (props.$isIphone ? '96px' : '74px')};
 `;
 
 const ToastContainer = styled.div`

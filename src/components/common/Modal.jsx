@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { useRef, forwardRef, useImperativeHandle } from "react";
-import Button from "./Button";
-import { createPortal } from "react-dom";
+import styled from 'styled-components';
+import { useRef, forwardRef, useImperativeHandle } from 'react';
+import Button from './Button';
+import { createPortal } from 'react-dom';
 
 const StyledDialog = styled.dialog`
   width: 60%;
@@ -14,10 +14,10 @@ const StyledDialog = styled.dialog`
   z-index: 999;
 
   &[open]::backdrop {
-    background: rgba(0, 0, 0, 0.50);
+    background: rgba(0, 0, 0, 0.5);
     overflow-y: hidden;
   }
-`
+`;
 
 const CloseButton = styled.img`
   flex: 1;
@@ -28,16 +28,16 @@ const CloseButton = styled.img`
 
 const Modal = forwardRef(
   (
-    { children, buttonLabel, buttonClickHandler, buttonColor = "#FF625D" },
+    { children, buttonLabel, buttonClickHandler, buttonColor = '#FF625D' },
     ref
   ) => {
     const dialog = useRef();
-    
+
     useImperativeHandle(ref, () => {
       return {
         open() {
           dialog.current.showModal();
-          document.body.style= `overflow: hidden`;
+          document.body.style = `overflow: hidden`;
         },
         close() {
           dialog.current.close();
@@ -47,7 +47,7 @@ const Modal = forwardRef(
 
     const handleCloseModal = () => {
       dialog.current.close();
-      document.body.style = `overflow: auto`
+      document.body.style = `overflow: auto`;
     };
 
     return createPortal(
@@ -55,19 +55,21 @@ const Modal = forwardRef(
         <StyledDialog ref={dialog}>
           <CloseButton
             onClick={handleCloseModal}
-            src={"/assets/cancel-button-gray.svg"}
+            src={'/assets/cancel-button-gray.svg'}
             alt="Close"
           />
           {children}
           <Button
-            size={"medium"}
+            size={'medium'}
             onClick={buttonClickHandler}
-            backgroundColor={buttonColor}>
+            backgroundColor={buttonColor}
+          >
             {buttonLabel}
           </Button>
         </StyledDialog>
-      </>
-    , document.getElementById('modal'));
+      </>,
+      document.getElementById('modal')
+    );
   }
 );
 

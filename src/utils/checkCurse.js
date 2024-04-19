@@ -1,4 +1,4 @@
-import { curseWords } from "../constants/curseWords";
+import { curseWords } from '../constants/curseWords';
 
 export const checkCurse = (message) => {
   let isIncludingCurse = false;

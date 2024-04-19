@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const KakaotalkFallback = () => {
-  const [selectedTab, setSelectedTab] = useState("iOS");
+  const [selectedTab, setSelectedTab] = useState('iOS');
   const navigate = useNavigate();
 
   const handleClickTab = (e) => {
@@ -13,8 +13,8 @@ const KakaotalkFallback = () => {
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
 
-    if (!userAgent.includes("kakao")) {
-      navigate("/");
+    if (!userAgent.includes('kakao')) {
+      navigate('/');
     }
   }, []);
 
@@ -38,19 +38,21 @@ const KakaotalkFallback = () => {
       <TabMenu>
         <Tab
           id="iOS"
-          $isSelected={selectedTab === "iOS"}
-          onClick={handleClickTab}>
+          $isSelected={selectedTab === 'iOS'}
+          onClick={handleClickTab}
+        >
           iOS
         </Tab>
         <Tab
           id="Android"
-          $isSelected={selectedTab === "Android"}
-          onClick={handleClickTab}>
+          $isSelected={selectedTab === 'Android'}
+          onClick={handleClickTab}
+        >
           Android
         </Tab>
       </TabMenu>
 
-      {selectedTab === "iOS" ? (
+      {selectedTab === 'iOS' ? (
         <WrapBox>
           <Box>
             <h3>STEP 1</h3>
@@ -60,12 +62,12 @@ const KakaotalkFallback = () => {
               alt="이미지1"
             />
             <p>
-              하단{" "}
+              하단{' '}
               <img
                 className="icon"
                 src="/assets/kakaotalk-fallback/ios-share.png"
                 alt="공유하기 버튼"
-              />{" "}
+              />{' '}
               버튼을 터치합니다.
             </p>
           </Box>
@@ -92,12 +94,12 @@ const KakaotalkFallback = () => {
               alt="이미지1"
             />
             <p>
-              하단{" "}
+              하단{' '}
               <img
                 className="icon"
                 src="/assets/kakaotalk-fallback/android-share.png"
                 alt="공유하기 버튼"
-              />{" "}
+              />{' '}
               버튼을 터치합니다.
             </p>
           </Box>
@@ -163,7 +165,7 @@ const Tab = styled.div`
   font-weight: 600;
   text-align: center;
   border-bottom: ${(props) =>
-    props.$isSelected ? "3px solid #FF625D" : "3px solid transparent"};
+    props.$isSelected ? '3px solid #FF625D' : '3px solid transparent'};
   transition: all 200ms;
 `;
 

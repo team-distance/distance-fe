@@ -1,16 +1,16 @@
-import { atom } from "recoil";
+import { atom } from 'recoil';
 
 export const registerDataState = atom({
-  key: "registerDataState",
+  key: 'registerDataState',
   default: {
-    telNum: "",
-    verifyNum: "",
-    password: "",
-    gender: "",
-    college: "",
-    department: "",
-    mbti: "",
-    memberCharacter: "",
+    telNum: '',
+    verifyNum: '',
+    password: '',
+    gender: '',
+    college: '',
+    department: '',
+    mbti: '',
+    memberCharacter: '',
     memberTagDto: [],
     memberHobbyDto: [],
 

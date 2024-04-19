@@ -1,32 +1,32 @@
 //public/firebase-messaging-sw.js
 
 importScripts(
-  "https://www.gstatic.com/firebasejs/10.2.0/firebase-app-compat.js"
+  'https://www.gstatic.com/firebasejs/10.2.0/firebase-app-compat.js'
 );
 importScripts(
-  "https://www.gstatic.com/firebasejs/10.2.0/firebase-messaging-compat.js"
+  'https://www.gstatic.com/firebasejs/10.2.0/firebase-messaging-compat.js'
 );
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDydUUUAK6jb1mEdIKqMGayiKMOSt6FUPY",
-  authDomain: "distance-97455.firebaseapp.com",
-  projectId: "distance-97455",
-  storageBucket: "distance-97455.appspot.com",
-  messagingSenderId: "53582616929",
-  appId: "1:53582616929:web:d737260d7953182dab8d20",
-  measurementId: "G-7QPW9Z4QCJ",
+  apiKey: 'AIzaSyDydUUUAK6jb1mEdIKqMGayiKMOSt6FUPY',
+  authDomain: 'distance-97455.firebaseapp.com',
+  projectId: 'distance-97455',
+  storageBucket: 'distance-97455.appspot.com',
+  messagingSenderId: '53582616929',
+  appId: '1:53582616929:web:d737260d7953182dab8d20',
+  measurementId: 'G-7QPW9Z4QCJ',
 };
 
 // Initialize Firebase
 const FBapp = firebase.initializeApp(firebaseConfig);
 const messaging = FBapp.messaging();
 
-self.addEventListener("install", (event) => {
+self.addEventListener('install', (event) => {
   event.waitUntil(self.skipWaiting());
 });
 
 messaging.onBackgroundMessage((payload) => {
-  console.log("BACKGROUND MESSAGE RECEIVED", payload);
+  console.log('BACKGROUND MESSAGE RECEIVED', payload);
 
   // const notificationTitle = payload.data.nickName;
   // const notificationOptions = {

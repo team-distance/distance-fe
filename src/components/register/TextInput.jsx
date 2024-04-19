@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import Button from "../common/Button";
-import { useId, useState, useEffect } from "react";
+import styled from 'styled-components';
+import Button from '../common/Button';
+import { useId, useState, useEffect } from 'react';
 
 const Label = styled.label`
   font-weight: 700;
@@ -81,9 +81,9 @@ const TextInput = ({
           {label}
           {timerState && (
             <div className="time-remaining">
-              {`${minutes.toString().padStart(2, "0")}:${seconds
+              {`${minutes.toString().padStart(2, '0')}:${seconds
                 .toString()
-                .padStart(2, "0")}`}
+                .padStart(2, '0')}`}
             </div>
           )}
         </Label>
@@ -95,7 +95,8 @@ const TextInput = ({
             <Button
               size="small"
               disabled={buttonDisabled}
-              onClick={buttonClickHandler}>
+              onClick={buttonClickHandler}
+            >
               {buttonLabel}
             </Button>
           </div>

@@ -1,7 +1,7 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import Header from "../../components/common/Header";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import Header from '../../components/common/Header';
 
 const DetailContainer = styled.section`
   padding: 2rem 1.5rem 8rem 1.5rem;
@@ -61,22 +61,22 @@ const FoodTruckPage1 = () => {
     if (navigator.share) {
       navigator
         .share({
-          title: "피자마루",
-          text: "피자마루의 푸드트럭 메뉴를 확인하세요.",
+          title: '피자마루',
+          text: '피자마루의 푸드트럭 메뉴를 확인하세요.',
           url: window.location.href,
         })
-        .then(() => alert("공유가 성공적으로 완료되었습니다."))
-        .catch((error) => console.log("공유에 실패했습니다.", error));
+        .then(() => alert('공유가 성공적으로 완료되었습니다.'))
+        .catch((error) => console.log('공유에 실패했습니다.', error));
     } else {
-      alert("이 브라우저에서는 공유 기능을 사용할 수 없습니다.");
+      alert('이 브라우저에서는 공유 기능을 사용할 수 없습니다.');
     }
   };
 
   const copyButtonHandler = () => {
     navigator.clipboard
       .writeText(window.location.href)
-      .then(() => alert("링크가 성공적으로 복사되었습니다."))
-      .catch((error) => console.error("링크 복사에 실패했습니다.", error));
+      .then(() => alert('링크가 성공적으로 복사되었습니다.'))
+      .catch((error) => console.error('링크 복사에 실패했습니다.', error));
   };
 
   return (
@@ -88,13 +88,13 @@ const FoodTruckPage1 = () => {
           <div>
             <img
               className="copy-button"
-              src={"/assets/festival/copy-button.png"}
+              src={'/assets/festival/copy-button.png'}
               alt="Copy button"
               onClick={copyButtonHandler}
             />
             <img
               className="share-button"
-              src={"/assets/festival/share-button.png"}
+              src={'/assets/festival/share-button.png'}
               alt="Share button"
               onClick={shareButtonHandler}
             />
@@ -112,7 +112,7 @@ const FoodTruckPage1 = () => {
       <PrevButton
         src="/assets/festival/prev-button.png"
         alt="Prev button"
-        onClick={() => navigate("/festival/foodtruck")}
+        onClick={() => navigate('/festival/foodtruck')}
       />
     </DetailContainer>
   );
