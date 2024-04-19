@@ -1,44 +1,45 @@
-import styled from "styled-components";
-import { useState } from "react";
-import { instance } from "../../api/instance";
-import { useNavigate } from "react-router-dom";
-import Button from "../../components/common/Button";
-import HeaderPrev from "../../components/common/HeaderPrev";
-import TextInput from "../../components/register/TextInput";
+import styled from 'styled-components';
+import { useState } from 'react';
+import { instance } from '../../api/instance';
+import { useNavigate } from 'react-router-dom';
+import Button from '../../components/common/Button';
+import HeaderPrev from '../../components/common/HeaderPrev';
+import TextInput from '../../components/register/TextInput';
 
 const AccountEditPage = () => {
   const navigate = useNavigate();
 
   const [isDisabled, setIsDisabled] = useState(true);
   const [verifyPasswordFlag, setVerifyPasswordFlag] = useState(true);
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [isVerifyPassword, setIsVerifyPassword] = useState(false);
 
-  const verifyPassword = async() => {
+  const verifyPassword = async () => {
     //비밀번호 확인
-    await instance.post("/member/check/password", {
-      password: oldPassword
-    })
-    .then(() => {
-      setIsVerifyPassword(true);
-      alert("인증되었습니다");
-    })
-    .catch((error) => {
-      console.log(error.response.data.code);
-      alert("비밀번호가 일치하지 않습니다.");
-    });
+    await instance
+      .post('/member/check/password', {
+        password: oldPassword,
+      })
+      .then(() => {
+        setIsVerifyPassword(true);
+        alert('인증되었습니다');
+      })
+      .catch((error) => {
+        console.log(error.response.data.code);
+        alert('비밀번호가 일치하지 않습니다.');
+      });
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "verifyPassword") {
+    if (name === 'verifyPassword') {
       setVerifyPasswordFlag(value.length < 6);
       setOldPassword(value);
     }
 
-    if (name === "changePassword") {
+    if (name === 'changePassword') {
       setIsDisabled(value.length < 6);
       setNewPassword(value);
     }
@@ -48,12 +49,12 @@ const AccountEditPage = () => {
     e.preventDefault();
 
     await instance
-      .patch("/member/account/update", {
+      .patch('/member/account/update', {
         password: newPassword,
       })
       .then(() => {
-        alert("비밀번호 수정이 완료되었습니다");
-        navigate("/mypage");
+        alert('비밀번호 수정이 완료되었습니다');
+        navigate('/mypage');
       })
       .catch((error) => {
         console.error(error);
@@ -70,28 +71,29 @@ const AccountEditPage = () => {
           name="verifyPassword"
           type="text"
           placeholder="숫자로만 6자리 이상"
-          buttonLabel={"인증하기"}
+          buttonLabel={'인증하기'}
           buttonClickHandler={verifyPassword}
           buttonDisabled={verifyPasswordFlag}
           onChange={handleChange}
         />
       </div>
 
-      {isVerifyPassword && <WrapForm onSubmit={handleSubmit}>
-        <TextInput
-          label="변경할 비밀번호"
-          name="changePassword"
-          type="text"
-          placeholder="숫자로만 6자리 이상"
-          onChange={handleChange}
-        />
-        <Button size="large" type="submit" disabled={isDisabled}>
-          수정하기
-        </Button>
-      </WrapForm>
-      }
+      {isVerifyPassword && (
+        <WrapForm onSubmit={handleSubmit}>
+          <TextInput
+            label="변경할 비밀번호"
+            name="changePassword"
+            type="text"
+            placeholder="숫자로만 6자리 이상"
+            onChange={handleChange}
+          />
+          <Button size="large" type="submit" disabled={isDisabled}>
+            수정하기
+          </Button>
+        </WrapForm>
+      )}
 
-      <DropoutButton onClick={() => navigate("/mypage/account/dropout")}>
+      <DropoutButton onClick={() => navigate('/mypage/account/dropout')}>
         회원탈퇴
       </DropoutButton>
     </WrapContent>

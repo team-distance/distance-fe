@@ -1,8 +1,8 @@
-import React from "react";
-import styled from "styled-components";
-import Button from "../../components/common/Button";
-import { Navigate, useNavigate } from "react-router-dom";
-import { onGetToken } from "../../firebaseConfig";
+import React from 'react';
+import styled from 'styled-components';
+import Button from '../../components/common/Button';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { onGetToken } from '../../firebaseConfig';
 
 const NotificationAnnouncementPage = () => {
   const navigate = useNavigate();
@@ -10,14 +10,14 @@ const NotificationAnnouncementPage = () => {
   const handleSubmit = async () => {
     await onGetToken()
       .then(() => {
-        navigate("/");
+        navigate('/');
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-  if (Notification.permission === "granted") {
+  if (Notification.permission === 'granted') {
     return <Navigate to="/" />;
   }
 

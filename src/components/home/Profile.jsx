@@ -1,14 +1,15 @@
-import styled from "styled-components";
-import { CHARACTERS } from "../../constants/character";
-import { COLORS } from "../../constants/character";
-import Badge from "../common/Badge";
+import styled from 'styled-components';
+import { CHARACTERS } from '../../constants/character';
+import { COLORS } from '../../constants/character';
+import Badge from '../common/Badge';
 
 const Profile = ({ profile, onClick }) => {
   return (
     <WrapProfile onClick={onClick}>
       <Wrapper>
         <CharacterBackground
-          $character={profile.memberProfileDto.memberCharacter}>
+          $character={profile.memberProfileDto.memberCharacter}
+        >
           <StyledImage
             src={CHARACTERS[profile.memberProfileDto.memberCharacter]}
             alt={profile.memberProfileDto.memberCharacter}

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { DISTANCE } from "../constants/location";
-import { calculateDistanceInMeter } from "../utils/calculateDistanceInMeter";
+import { useEffect, useState } from 'react';
+import { DISTANCE } from '../constants/location';
+import { calculateDistanceInMeter } from '../utils/calculateDistanceInMeter';
 
 const useGPS = () => {
   const [curLocation, setCurLocation] = useState({
@@ -31,7 +31,7 @@ const useGPS = () => {
   const error = () => {
     setCurLocation({
       ...curLocation,
-      error: "Unable to retrieve your location",
+      error: 'Unable to retrieve your location',
     });
   };
 
@@ -39,7 +39,7 @@ const useGPS = () => {
     if (!navigator.geolocation) {
       setCurLocation({
         ...curLocation,
-        error: "Geolocation is not supported",
+        error: 'Geolocation is not supported',
       });
     } else {
       const watcher = navigator.geolocation.watchPosition(success, error);

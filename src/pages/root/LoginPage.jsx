@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { isLoggedInState, login } from "../../store/auth";
-import { useSetRecoilState } from "recoil";
-import { useLocation } from "react-router-dom";
-import styled from "styled-components";
-import TextInput from "../../components/register/TextInput";
-import Button from "../../components/common/Button";
-import ClipLoader from "react-spinners/ClipLoader";
-import { onGetToken } from "../../firebaseConfig";
-import { registerDataState } from "../../store/registerDataState";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { isLoggedInState, login } from '../../store/auth';
+import { useSetRecoilState } from 'recoil';
+import { useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import TextInput from '../../components/register/TextInput';
+import Button from '../../components/common/Button';
+import ClipLoader from 'react-spinners/ClipLoader';
+import { onGetToken } from '../../firebaseConfig';
+import { registerDataState } from '../../store/registerDataState';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const setRegisterData = useSetRecoilState(registerDataState);
   const location = useLocation();
-  const isExpired = location.search === "?expired=true";
+  const isExpired = location.search === '?expired=true';
 
   const [telNumTestFlag, setTelNumTestFlag] = useState(false);
   const [pwTestFlag, setPwTestFlag] = useState(false);
@@ -24,37 +24,37 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
 
   const [loginValue, setLoginValue] = useState({
-    telNum: "",
-    password: "",
+    telNum: '',
+    password: '',
   });
 
   useEffect(() => {
     setIsLoggedIn(false);
     setRegisterData((prev) => ({
       ...prev,
-      telNum: "",
-      verifyNum: "",
-      password: "",
-      gender: "",
-      college: "",
-      department: "",
-      mbti: "",
-      memberCharacter: "",
+      telNum: '',
+      verifyNum: '',
+      password: '',
+      gender: '',
+      college: '',
+      department: '',
+      mbti: '',
+      memberCharacter: '',
       memberTagDto: [],
       memberHobbyDto: [],
     }));
   }, []);
 
-  const isDisabled = loginValue.telNum === "" || loginValue.password === "";
+  const isDisabled = loginValue.telNum === '' || loginValue.password === '';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setShowWarning(false);
 
-    if (name === "telNum") {
+    if (name === 'telNum') {
       setTelNumTestFlag(!(value.length === 11));
     }
-    if (name === "password") {
+    if (name === 'password') {
       setPwTestFlag(!(value.length >= 6));
     }
 
@@ -72,8 +72,8 @@ const LoginPage = () => {
       return;
     }
 
-    if ("Notification" in window && Notification.permission !== "granted") {
-      alert("알림 권한 창이 표시되면 허용을 눌러주세요!");
+    if ('Notification' in window && Notification.permission !== 'granted') {
+      alert('알림 권한 창이 표시되면 허용을 눌러주세요!');
     }
 
     // clientToken 없어도 로그인 가능
@@ -85,10 +85,10 @@ const LoginPage = () => {
     try {
       // 토큰을 시도하여 가져옵니다.
       clientToken = await onGetToken();
-      localStorage.setItem("clientToken", clientToken);
+      localStorage.setItem('clientToken', clientToken);
     } catch (err) {
       // 토큰 가져오기 실패, clientToken은 null로 유지
-      console.error("Token fetch failed", err);
+      console.error('Token fetch failed', err);
     }
 
     try {
@@ -97,11 +97,11 @@ const LoginPage = () => {
 
       // 로그인 성공 시
       setIsLoggedIn(true);
-      navigate("/");
+      navigate('/');
     } catch (err) {
       // 로그인 실패 시
       setShowWarning(true);
-      setLoginResult(err.response?.status || "Login failed");
+      setLoginResult(err.response?.status || 'Login failed');
     } finally {
       // 로딩 상태 해제
       setLoading(false);
@@ -112,12 +112,12 @@ const LoginPage = () => {
     <>
       {loading ? (
         <LoaderContainer>
-          <ClipLoader color={"#FF625D"} loading={loading} size={50} />
+          <ClipLoader color={'#FF625D'} loading={loading} size={50} />
         </LoaderContainer>
       ) : (
         <WrapForm onSubmit={handleSubmit}>
           <WrapContent>
-            {location.state?.alert && alert("로그인이 필요합니다.")}
+            {location.state?.alert && alert('로그인이 필요합니다.')}
             <h2>전화번호로 로그인하기</h2>
 
             <div>
@@ -136,7 +136,7 @@ const LoginPage = () => {
                 name="password"
                 type="password"
                 onChange={handleChange}
-                placeholder={"6자리 이상"}
+                placeholder={'6자리 이상'}
               />
               {showWarning && loginResult !== 200 && (
                 <Tip>비밀번호가 일치하지 않습니다!</Tip>
@@ -154,7 +154,7 @@ const LoginPage = () => {
           </Button>
           <WrapText>
             아직 계정이 없으신가요?
-            <span onClick={() => navigate("/register/user")}>회원가입하기</span>
+            <span onClick={() => navigate('/register/user')}>회원가입하기</span>
           </WrapText>
         </WrapForm>
       )}

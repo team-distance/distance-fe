@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const MessageInput = ({
   value,
@@ -10,19 +10,21 @@ const MessageInput = ({
   return (
     <MeassageInputContainer>
       <WrapButton onClick={buttonClickHandler}>
-        <img src={"/assets/report-button.svg"} alt="신고하기" />
+        <img src={'/assets/report-button.svg'} alt="신고하기" />
       </WrapButton>
       <WrapInputForm onSubmit={submitHandler}>
-        { isOpponentOut ? 
-        <Input 
-          value={value} 
-          onChange={changeHandler}
-          placeholder="상대방이 나갔습니다." 
-          disabled  />
-        : <Input value={value} onChange={changeHandler} />
-        }
+        {isOpponentOut ? (
+          <Input
+            value={value}
+            onChange={changeHandler}
+            placeholder="상대방이 나갔습니다."
+            disabled
+          />
+        ) : (
+          <Input value={value} onChange={changeHandler} />
+        )}
         <WrapButton type="submit" disabled={isOpponentOut}>
-          <img src={"/assets/send-button.png"} alt="보내기" />
+          <img src={'/assets/send-button.png'} alt="보내기" />
         </WrapButton>
       </WrapInputForm>
     </MeassageInputContainer>

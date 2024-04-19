@@ -1,14 +1,14 @@
-import { atom } from "recoil";
-import { instance } from "../api/instance";
-import axios from "axios";
+import { atom } from 'recoil';
+import { instance } from '../api/instance';
+import axios from 'axios';
 
 export const isLoggedInState = atom({
-  key: "isLoggedInState",
-  default: localStorage.getItem("refreshToken") ? true : false,
+  key: 'isLoggedInState',
+  default: localStorage.getItem('refreshToken') ? true : false,
 });
 
 export const login = async (value) => {
-  const response = await instance.post("/login", {
+  const response = await instance.post('/login', {
     telNum: value.telNum,
     password: value.password,
     clientToken: value.clientToken,
@@ -16,15 +16,15 @@ export const login = async (value) => {
 
   const { accessToken, refreshToken } = response.data;
 
-  localStorage.setItem("accessToken", accessToken);
-  localStorage.setItem("refreshToken", refreshToken);
+  localStorage.setItem('accessToken', accessToken);
+  localStorage.setItem('refreshToken', refreshToken);
 };
 
 export const refresh = async (value) => {
-  const response = await axios.post("https://api.dis-tance.com/api/refresh", {
+  const response = await axios.post('https://api.dis-tance.com/api/refresh', {
     refreshToken: value.refreshToken,
   });
 
   const { accessToken } = response.data;
-  localStorage.setItem("accessToken", accessToken);
+  localStorage.setItem('accessToken', accessToken);
 };

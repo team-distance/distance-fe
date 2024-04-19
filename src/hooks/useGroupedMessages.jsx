@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 const useGroupedMessages = (messages) => {
   const [groupedMessages, setGroupedMessages] = useState({});
 
   useEffect(() => {
     const groups = messages.reduce((acc, message) => {
-      const date = message.sendDt.split("T")[0];
+      const date = message.sendDt.split('T')[0];
       acc[date] = acc[date] || [];
       acc[date].push(message);
       return acc;

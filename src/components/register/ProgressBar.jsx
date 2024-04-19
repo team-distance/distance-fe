@@ -18,7 +18,10 @@ const UlProgress = styled.ul`
     left: 0;
     width: 100%;
     height: 2px;
-    background-image: ${ ({$step}) => $step > 0 ? `linear-gradient(to right, #FF625D, #D3D3D3 ${$step * 50}%)` : 'none'};
+    background-image: ${({ $step }) =>
+      $step > 0
+        ? `linear-gradient(to right, #FF625D, #D3D3D3 ${$step * 50}%)`
+        : 'none'};
     z-index: 0;
   }
 `;
@@ -27,18 +30,17 @@ const ProgressPoint = styled.li`
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: ${({$active}) => ($active ? '#FF625D' : '#D3D3D3')};
+  background-color: ${({ $active }) => ($active ? '#FF625D' : '#D3D3D3')};
   z-index: 1;
 
   text-align: center;
-  color: ${({$active}) => ($active ? 'white' : 'black')};
+  color: ${({ $active }) => ($active ? 'white' : 'black')};
   font-size: 0.8rem;
   font-weight: 500;
   line-height: 1.2rem;
 `;
 
-const ProgressBar = ({progress}) => {
-
+const ProgressBar = ({ progress }) => {
   return (
     <UlProgress $step={progress}>
       <ProgressPoint $active={progress >= 1}>1</ProgressPoint>

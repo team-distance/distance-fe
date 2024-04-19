@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { instance } from "../../api/instance";
-import Button from "../../components/common/Button";
-import TextInput from "../../components/register/TextInput";
-import toast, { Toaster } from "react-hot-toast";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { instance } from '../../api/instance';
+import Button from '../../components/common/Button';
+import TextInput from '../../components/register/TextInput';
+import toast, { Toaster } from 'react-hot-toast';
 
 const VerifyEmailPage = () => {
   const navigate = useNavigate();
 
-  const [schoolEmail, setSchoolEmail] = useState("");
-  const [verifyNum, setVerifyNum] = useState("");
+  const [schoolEmail, setSchoolEmail] = useState('');
+  const [verifyNum, setVerifyNum] = useState('');
   const [emailDisabled, setEmailDisabled] = useState(true);
   const [verifyDisabled, setVerifyDisabled] = useState(true);
   const [verifiedFlag, setVerifiedFlag] = useState(true);
@@ -18,7 +18,7 @@ const VerifyEmailPage = () => {
 
   const handleChangeEmail = (e) => {
     setSchoolEmail(e.target.value);
-    if (e.target.value !== "") {
+    if (e.target.value !== '') {
       setEmailDisabled(false);
     } else {
       setEmailDisabled(true);
@@ -27,7 +27,7 @@ const VerifyEmailPage = () => {
 
   const handleChangeVerifyNum = (e) => {
     setVerifyNum(e.target.value);
-    if (e.target.value !== "") {
+    if (e.target.value !== '') {
       setVerifyDisabled(false);
     } else {
       setVerifyDisabled(true);
@@ -35,37 +35,37 @@ const VerifyEmailPage = () => {
   };
 
   const sendEmail = async () => {
-    const email = schoolEmail.includes("@")
+    const email = schoolEmail.includes('@')
       ? schoolEmail
-      : schoolEmail + "@sch.ac.kr";
+      : schoolEmail + '@sch.ac.kr';
 
-    const response = instance.post("/univ/send/email", {
+    const response = instance.post('/univ/send/email', {
       schoolEmail: email,
     });
 
     toast.promise(response, {
-      loading: "전송 중...",
+      loading: '전송 중...',
       success: () => {
         setIsSendEmail(true);
         setVerifiedFlag(false);
-        return "인증메일이 전송되었습니다.";
+        return '인증메일이 전송되었습니다.';
       },
-      error: "인증을 다시 시도해주세요.",
+      error: '인증을 다시 시도해주세요.',
     });
   };
 
   const verifyEmail = async () => {
-    const response = instance.post("/univ/certificate/email", {
+    const response = instance.post('/univ/certificate/email', {
       number: verifyNum,
     });
 
     toast.promise(response, {
-      loading: "인증 중...",
+      loading: '인증 중...',
       success: () => {
         setVerifiedFlag(false);
-        return "인증에 성공했습니다.";
+        return '인증에 성공했습니다.';
       },
-      error: "인증에 실패했습니다. 다시 시도해주세요.",
+      error: '인증에 실패했습니다. 다시 시도해주세요.',
     });
   };
 
@@ -121,8 +121,9 @@ const VerifyEmailPage = () => {
         size="large"
         disabled={verifiedFlag}
         onClick={() => {
-          navigate("/");
-        }}>
+          navigate('/');
+        }}
+      >
         인증완료
       </Button>
     </WrapContent>

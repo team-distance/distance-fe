@@ -1,11 +1,11 @@
-import React from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import Header from "../../components/common/Header";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { isLoggedInState } from "../../store/auth";
-import { myDataState } from "../../store/myData";
-import { instance } from "../../api/instance";
+import React from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import Header from '../../components/common/Header';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { isLoggedInState } from '../../store/auth';
+import { myDataState } from '../../store/myData';
+import { instance } from '../../api/instance';
 
 const MyIndexPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
@@ -13,25 +13,25 @@ const MyIndexPage = () => {
   const myData = useRecoilValue(myDataState);
 
   const handleLogout = async () => {
-    const confirmLogout = window.confirm("로그아웃 하시겠습니까?");
+    const confirmLogout = window.confirm('로그아웃 하시겠습니까?');
     if (!confirmLogout) return;
 
     try {
-      await instance.get("/member/logout");
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("memberId");
-      localStorage.removeItem("clientToken");
+      await instance.get('/member/logout');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('memberId');
+      localStorage.removeItem('clientToken');
       setIsLoggedIn(false);
-      navigate("/");
+      navigate('/');
     } catch (error) {
       console.log(error);
     } finally {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("memberId");
-      localStorage.removeItem("clientToken");
-      navigate("/");
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('memberId');
+      localStorage.removeItem('clientToken');
+      navigate('/');
     }
   };
 
@@ -46,15 +46,16 @@ const MyIndexPage = () => {
               <div
                 className="menu"
                 onClick={() =>
-                  navigate("/mypage/profile", { state: myData.contents })
-                }>
+                  navigate('/mypage/profile', { state: myData.contents })
+                }
+              >
                 <div>프로필 수정</div>
                 <img
                   src="/assets/mypage/arrow-gray-button.png"
                   alt="Edit Profile"
                 />
               </div>
-              <div className="menu" onClick={() => navigate("/mypage/account")}>
+              <div className="menu" onClick={() => navigate('/mypage/account')}>
                 <div>계정 관리</div>
                 <img
                   src="/assets/mypage/arrow-gray-button.png"
@@ -72,7 +73,7 @@ const MyIndexPage = () => {
       ) : (
         <EmptyContainer>
           <div className="wrap">
-            <img src={"/assets/access-denied-mypage.svg"} alt="access denied" />
+            <img src={'/assets/access-denied-mypage.svg'} alt="access denied" />
             <div>로그인 후 이용해주세요!</div>
           </div>
         </EmptyContainer>

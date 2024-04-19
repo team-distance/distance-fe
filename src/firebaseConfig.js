@@ -1,25 +1,25 @@
-import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, isSupported } from "firebase/messaging";
+import { initializeApp } from 'firebase/app';
+import { getMessaging, getToken, isSupported } from 'firebase/messaging';
 
 export const registerServiceWorker = async () => {
   try {
     const registration = await navigator.serviceWorker.register(
-      "/firebase-messaging-sw.js"
+      '/firebase-messaging-sw.js'
     );
-    console.log("서비스 워커 등록 성공", registration);
+    console.log('서비스 워커 등록 성공', registration);
   } catch (error) {
-    console.log("서비스 워커 등록 실패", error);
+    console.log('서비스 워커 등록 실패', error);
   }
 };
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDydUUUAK6jb1mEdIKqMGayiKMOSt6FUPY",
-  authDomain: "distance-97455.firebaseapp.com",
-  projectId: "distance-97455",
-  storageBucket: "distance-97455.appspot.com",
-  messagingSenderId: "53582616929",
-  appId: "1:53582616929:web:d737260d7953182dab8d20",
-  measurementId: "G-7QPW9Z4QCJ",
+  apiKey: 'AIzaSyDydUUUAK6jb1mEdIKqMGayiKMOSt6FUPY',
+  authDomain: 'distance-97455.firebaseapp.com',
+  projectId: 'distance-97455',
+  storageBucket: 'distance-97455.appspot.com',
+  messagingSenderId: '53582616929',
+  appId: '1:53582616929:web:d737260d7953182dab8d20',
+  measurementId: 'G-7QPW9Z4QCJ',
 };
 
 // firebase 앱 초기화
@@ -38,7 +38,7 @@ export const messaging = await isFirebaseSupported();
 export const onGetToken = () => {
   return getToken(messaging, {
     vapidKey:
-      "BA_KtCviBslZEFupMHZwhzFX10LdjtJtMLAzRRTJ4mv-GuoERIyz4G0_i4WC4tIManqSnrPkzWvcFfEAWEw9YSM",
+      'BA_KtCviBslZEFupMHZwhzFX10LdjtJtMLAzRRTJ4mv-GuoERIyz4G0_i4WC4tIManqSnrPkzWvcFfEAWEw9YSM',
   });
 };
 
