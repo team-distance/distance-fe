@@ -1,20 +1,19 @@
-import React from "react";
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import React from 'react';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 const LandingPage = () => {
-
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(token) {
-      navigate("/home");
+    if (token) {
+      navigate('/home');
     } else {
-      navigate("/");
+      navigate('/');
     }
-  }, [])
+  }, []);
 
   return (
     <>
@@ -24,8 +23,9 @@ const LandingPage = () => {
           <WrapButton>
             <LongButton
               onClick={() => {
-                navigate("/register/user");
-              }}>
+                navigate('/register/user');
+              }}
+            >
               학생 메일로 가입하기
             </LongButton>
             <StyledLink to="/login">로그인</StyledLink>

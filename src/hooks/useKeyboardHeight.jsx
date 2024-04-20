@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 const useKeyboardHeight = () => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -7,17 +7,17 @@ const useKeyboardHeight = () => {
     const originalHeight = window.innerHeight;
 
     const onResize = () => {
-      console.log("onResize called!");
+      console.log('onResize called!');
       // const resizeHeight = window.innerHeight;
       const resizeHeight = 844;
       const heightDifference = originalHeight - resizeHeight;
       setKeyboardHeight(heightDifference > 0 ? heightDifference : 0);
     };
 
-    window.addEventListener("resize", onResize);
+    window.addEventListener('resize', onResize);
 
     return () => {
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 

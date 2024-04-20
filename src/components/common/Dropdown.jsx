@@ -1,9 +1,9 @@
-import React, { useState, useRef } from "react";
-import styled, { keyframes } from "styled-components";
-import useDetectClose from "../hooks/useDetectClose";
+import React, { useState, useRef } from 'react';
+import styled, { keyframes } from 'styled-components';
+import useDetectClose from '../hooks/useDetectClose';
 
-const Dropdown = ({placeholder, types, }) => {
-  const [selected, setSelected] = useState("");
+const Dropdown = ({ placeholder, types }) => {
+  const [selected, setSelected] = useState('');
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useDetectClose(dropdownRef, false);
 
@@ -22,12 +22,12 @@ const Dropdown = ({placeholder, types, }) => {
                 onClick={() => {
                   setSelected(type);
                   setIsOpen(false);
-                }}>
+                }}
+              >
                 {type}
               </DropdownItem>
             ))}
           </WrapItems>
-
         </DropdownContent>
       )}
     </div>
@@ -41,7 +41,7 @@ const DropdownButton = styled.div`
   border-radius: 8px;
   border: 1px solid #d9d9d9;
   margin-bottom: 1rem;
-  color: ${({$isOpen}) => $isOpen ? '#ff625d' : '#000000' };
+  color: ${({ $isOpen }) => ($isOpen ? '#ff625d' : '#000000')};
 
   img {
     position: absolute;
@@ -81,6 +81,5 @@ const DropdownItem = styled.div`
     background-color: #f1f1f1;
   }
 `;
-
 
 export default Dropdown;

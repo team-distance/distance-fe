@@ -1,13 +1,13 @@
-import { useRecoilValue } from "recoil";
-import styled from "styled-components";
-import { isLoggedInState } from "../../store/auth";
-import { Link } from "react-router-dom";
-import { myDataState } from "../../store/myData";
-import { CHARACTERS, COLORS } from "../../constants/character";
-import { useNavigate } from "react-router-dom";
-import Modal from "./Modal";
-import { useRef } from "react";
-import Badge from "./Badge";
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+import { isLoggedInState } from '../../store/auth';
+import { Link } from 'react-router-dom';
+import { myDataState } from '../../store/myData';
+import { CHARACTERS, COLORS } from '../../constants/character';
+import { useNavigate } from 'react-router-dom';
+import Modal from './Modal';
+import { useRef } from 'react';
+import Badge from './Badge';
 
 const Header = () => {
   const isLoggedIn = useRecoilValue(isLoggedInState);
@@ -24,7 +24,8 @@ const Header = () => {
             $character={myData.memberCharacter}
             onClick={() => {
               modalRef.current.open();
-            }}>
+            }}
+          >
             <img src={CHARACTERS[myData.memberCharacter]} alt="프로필 이미지" />
           </ProfileIcon>
         ) : (
@@ -36,8 +37,9 @@ const Header = () => {
         buttonLabel="프로필 수정하기"
         buttonColor="#FFAC0B"
         buttonClickHandler={() => {
-          navigate("/mypage/profile", { state: myData });
-        }}>
+          navigate('/mypage/profile', { state: myData });
+        }}
+      >
         <WrapContent>
           <CharacterBackground $character={myData.memberCharacter}>
             <StyledImage

@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
-import styled, { keyframes } from "styled-components";
-import useDetectClose from "../../hooks/useDetectClose";
+import React, { useState, useRef, useEffect } from 'react';
+import styled, { keyframes } from 'styled-components';
+import useDetectClose from '../../hooks/useDetectClose';
 
-const DropdownMBTI = ({ state = "", setState }) => {
-  const [selected, setSelected] = useState("");
+const DropdownMBTI = ({ state = '', setState }) => {
+  const [selected, setSelected] = useState('');
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useDetectClose(dropdownRef, false);
 
@@ -20,7 +20,7 @@ const DropdownMBTI = ({ state = "", setState }) => {
   return (
     <DropdownContainer ref={dropdownRef}>
       <DropdownButton $selected={selected} onClick={() => setIsOpen(!isOpen)}>
-        {selected || "MBTI를 선택해주세요."}
+        {selected || 'MBTI를 선택해주세요.'}
       </DropdownButton>
       {isOpen && (
         <DropdownContent>
@@ -31,7 +31,8 @@ const DropdownMBTI = ({ state = "", setState }) => {
               onClick={() => {
                 setSelected(type);
                 setIsOpen(false);
-              }}>
+              }}
+            >
               {type}
             </DropdownItem>
           ))}
@@ -50,7 +51,7 @@ const DropdownButton = styled.div`
   background-color: #ffffff;
   border: 2px solid #d9d9d9;
   border-radius: 20px;
-  color: ${({ $selected }) => ($selected ? "#000" : "#D3D3D3")};
+  color: ${({ $selected }) => ($selected ? '#000' : '#D3D3D3')};
 `;
 
 const fadeIn = keyframes`
@@ -91,22 +92,22 @@ const DropdownItem = styled.div`
 `;
 
 const mbtiTypes = [
-  "ISTJ",
-  "ISFJ",
-  "INFJ",
-  "INTJ",
-  "ISTP",
-  "ISFP",
-  "INFP",
-  "INTP",
-  "ESTP",
-  "ESFP",
-  "ENFP",
-  "ENTP",
-  "ESTJ",
-  "ESFJ",
-  "ENFJ",
-  "ENTJ",
+  'ISTJ',
+  'ISFJ',
+  'INFJ',
+  'INTJ',
+  'ISTP',
+  'ISFP',
+  'INFP',
+  'INTP',
+  'ESTP',
+  'ESFP',
+  'ENFP',
+  'ENTP',
+  'ESTJ',
+  'ESFJ',
+  'ENFJ',
+  'ENTJ',
 ];
 
 export default DropdownMBTI;

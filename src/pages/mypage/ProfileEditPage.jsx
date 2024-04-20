@@ -1,19 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import DropdownMBTI from "../../components/register/DropdownMBTI";
-import BlankModal from "../../components/common/BlankModal";
-import { ATTRACTIVENESS, HOBBY } from "../../constants/profile";
-import Button from "../../components/common/Button";
-import HeaderPrev from "../../components/common/HeaderPrev";
-import { useNavigate } from "react-router-dom";
-import { instance } from "../../api/instance";
-import { CHARACTERS } from "../../constants/character";
+import React, { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+import DropdownMBTI from '../../components/register/DropdownMBTI';
+import BlankModal from '../../components/common/BlankModal';
+import { ATTRACTIVENESS, HOBBY } from '../../constants/profile';
+import Button from '../../components/common/Button';
+import HeaderPrev from '../../components/common/HeaderPrev';
+import { useNavigate } from 'react-router-dom';
+import { instance } from '../../api/instance';
+import { CHARACTERS } from '../../constants/character';
 
 const ProfileEditPage = () => {
   const navigate = useNavigate();
-  const [department, setDepartment] = useState("");
-  const [selectedAnimal, setSelectedAnimal] = useState("");
-  const [selectedMBTI, setSelectedMBTI] = useState("");
+  const [department, setDepartment] = useState('');
+  const [selectedAnimal, setSelectedAnimal] = useState('');
+  const [selectedMBTI, setSelectedMBTI] = useState('');
   const [attractiveness, setAttractiveness] = useState([]);
   const [hobby, setHobby] = useState([]);
   const [hashtagCount, setHashtagCount] = useState(0);
@@ -22,7 +22,7 @@ const ProfileEditPage = () => {
     e.preventDefault();
 
     await instance
-      .patch("/member/profile/update", {
+      .patch('/member/profile/update', {
         department: department,
         mbti: selectedMBTI,
         memberCharacter: selectedAnimal,
@@ -30,10 +30,10 @@ const ProfileEditPage = () => {
         memberTagDto: attractiveness.map((value) => ({ tag: value })),
       })
       .then(() => {
-        alert("회원정보 수정이 완료되었습니다.");
+        alert('회원정보 수정이 완료되었습니다.');
       })
       .then(() => {
-        navigate("/mypage");
+        navigate('/mypage');
       })
       .catch((error) => {
         console.error(error);
@@ -90,7 +90,7 @@ const ProfileEditPage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       await instance
-        .get("/member/profile")
+        .get('/member/profile')
         .then((response) => {
           setDepartment(response.data.department);
           setSelectedAnimal(response.data.memberCharacter);
@@ -120,7 +120,7 @@ const ProfileEditPage = () => {
             src="/assets/profile-register-leftimg.png"
             alt="profile register button"
           />
-          {selectedAnimal === "" ? (
+          {selectedAnimal === '' ? (
             <img
               src="/assets/profile-register-plusbutton.png"
               alt="profile register button"
@@ -152,7 +152,8 @@ const ProfileEditPage = () => {
                   onClick={() => {
                     setSelectedAnimal(character);
                     closeCharacterModal();
-                  }}>
+                  }}
+                >
                   <img src={imageSrc} alt={character} />
                 </AnimalListItem>
               );
@@ -170,7 +171,7 @@ const ProfileEditPage = () => {
           <Tip>최소 3개, 최대 5개까지 고를 수 있어요!</Tip>
 
           <br />
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div>저는 이런 매력이 있어요!</div>
             <AddButton onClick={openAttractivenessModal}>+ 추가하기</AddButton>
           </div>
@@ -182,7 +183,7 @@ const ProfileEditPage = () => {
             ))}
           </BadgeContainer>
 
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div>저는 이런 취미가 있어요!</div>
             <AddButton onClick={openHobbyModal}>+ 추가하기</AddButton>
           </div>
@@ -207,13 +208,14 @@ const ProfileEditPage = () => {
               {ATTRACTIVENESS.map((value, index) => (
                 <ListItem
                   key={index}
-                  color={attractiveness.includes(value) ? "#FF0000" : "black"}
+                  color={attractiveness.includes(value) ? '#FF0000' : 'black'}
                   onClick={() => {
                     if (attractiveness.includes(value) || hashtagCount >= 5)
                       return;
                     setAttractiveness([...attractiveness, value]);
                     closeAttractivenessModal();
-                  }}>
+                  }}
+                >
                   {value}
                 </ListItem>
               ))}
@@ -233,12 +235,13 @@ const ProfileEditPage = () => {
               {HOBBY.map((value, index) => (
                 <ListItem
                   key={index}
-                  color={hobby.includes(value) ? "#FF0000" : "black"}
+                  color={hobby.includes(value) ? '#FF0000' : 'black'}
                   onClick={() => {
                     if (hobby.includes(value) || hashtagCount >= 5) return;
                     setHobby([...hobby, value]);
                     closeHobbyModal();
-                  }}>
+                  }}
+                >
                   {value}
                 </ListItem>
               ))}

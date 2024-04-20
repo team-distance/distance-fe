@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 const ToggleContainer = styled.div`
   display: flex;
@@ -11,17 +11,18 @@ const ToggleOption = styled.div`
   flex: 1;
   padding: 10px 20px;
   text-align: center;
-  background-color: ${({ $isActive }) => ($isActive ? "#FF625D" : "#FBFBFB")};
-  color: ${({ $isActive }) => ($isActive ? "white" : "black")};
+  background-color: ${({ $isActive }) => ($isActive ? '#FF625D' : '#FBFBFB')};
+  color: ${({ $isActive }) => ($isActive ? 'white' : 'black')};
   transition: background-color 0.3s, color 0.3s;
-  border-radius: ${({$option}) => $option === "남" ? "20px 0 0 20px" : "0 20px 20px 0"};
+  border-radius: ${({ $option }) =>
+    $option === '남' ? '20px 0 0 20px' : '0 20px 20px 0'};
 `;
 
-const ToggleSwitch = ({ options = ["남", "여"], setState }) => {
+const ToggleSwitch = ({ options = ['남', '여'], setState }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    setState(activeIndex === 1 ? "F" : "M");
+    setState(activeIndex === 1 ? 'F' : 'M');
   }, [setState, activeIndex]);
 
   return (
@@ -32,7 +33,8 @@ const ToggleSwitch = ({ options = ["남", "여"], setState }) => {
             key={index}
             $isActive={index === activeIndex}
             $option={option}
-            onClick={() => setActiveIndex(index)}>
+            onClick={() => setActiveIndex(index)}
+          >
             {option}
           </ToggleOption>
         ))}

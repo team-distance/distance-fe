@@ -1,25 +1,25 @@
-import React, { useEffect, useRef, useState } from "react";
-import Messages from "../../components/chat/Messages";
-import MessageInput from "../../components/chat/MessageInput";
-import styled from "styled-components";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Client } from "@stomp/stompjs";
-import { instance } from "../../api/instance";
-import toast, { Toaster } from "react-hot-toast";
-import BlankModal from "../../components/common/BlankModal";
-import TextInput from "../../components/register/TextInput";
-import { checkCurse } from "../../utils/checkCurse";
-import Lottie from "react-lottie-player";
-import callAnimation from "../../lottie/call-animation.json";
-import useGroupedMessages from "../../hooks/useGroupedMessages";
+import React, { useEffect, useRef, useState } from 'react';
+import Messages from '../../components/chat/Messages';
+import MessageInput from '../../components/chat/MessageInput';
+import styled from 'styled-components';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Client } from '@stomp/stompjs';
+import { instance } from '../../api/instance';
+import toast, { Toaster } from 'react-hot-toast';
+import BlankModal from '../../components/common/BlankModal';
+import TextInput from '../../components/register/TextInput';
+import { checkCurse } from '../../utils/checkCurse';
+import Lottie from 'react-lottie-player';
+import callAnimation from '../../lottie/call-animation.json';
+import useGroupedMessages from '../../hooks/useGroupedMessages';
 
 const ChatPage = () => {
   const [distance, setDistance] = useState(-1);
   const [isCallActive, setIsCallActive] = useState(false);
   const [isShowLottie, setIsShowLottie] = useState(false);
   const [isOpponentOut, setIsOpponentOut] = useState(false);
-  const [opponentTelNum, setOpponentTelNum] = useState("");
-  const [reportMessage, setReportMessage] = useState("");
+  const [opponentTelNum, setOpponentTelNum] = useState('');
+  const [reportMessage, setReportMessage] = useState('');
 
   const reportModalRef = useRef();
 
@@ -32,7 +32,7 @@ const ChatPage = () => {
 
   const [client, setClient] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [draftMessage, setDraftMessage] = useState("");
+  const [draftMessage, setDraftMessage] = useState('');
   const groupedMessages = useGroupedMessages(messages);
 
   const viewportRef = useRef();
@@ -61,8 +61,8 @@ const ChatPage = () => {
   // 메시지 길이 제한
   useEffect(() => {
     if (getByteLength(draftMessage) > 200) {
-      toast.error("내용이 너무 많아요!", {
-        id: "message-length-error",
+      toast.error('내용이 너무 많아요!', {
+        id: 'message-length-error',
       });
       setDraftMessage(draftMessage.slice(0, -1));
     }
@@ -73,32 +73,32 @@ const ChatPage = () => {
   };
 
   const closeReportModal = () => {
-    setReportMessage("");
+    setReportMessage('');
     reportModalRef.current.close();
   };
 
   const navigateToVerify = () => {
-    navigate("/verify/univ");
+    navigate('/verify/univ');
   };
 
   const navigateToBack = () => {
-    navigate("/chat");
+    navigate('/chat');
   };
 
   const handleReportUser = async (e) => {
     e.preventDefault();
 
     await instance
-      .post("/report", {
+      .post('/report', {
         declareContent: reportMessage,
         opponentId,
       })
       .then((res) => {
-        alert("신고가 완료되었어요!");
+        alert('신고가 완료되었어요!');
       })
       .catch((error) => {
         console.log(error);
-        alert("이미 신고한 사용자예요! 신고는 한 번만 가능해요.");
+        alert('이미 신고한 사용자예요! 신고는 한 번만 가능해요.');
       });
 
     closeReportModal();
@@ -117,10 +117,10 @@ const ChatPage = () => {
   }, []);
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem('accessToken');
 
     const newClient = new Client({
-      brokerURL: "wss://api.dis-tance.com/meet",
+      brokerURL: 'wss://api.dis-tance.com/meet',
       connectHeaders: {
         Authorization: `Bearer ${accessToken}`,
         chatRoomId: roomId,
@@ -130,7 +130,7 @@ const ChatPage = () => {
         console.log(str);
       },
       onConnect: (frame) => {
-        console.log("Connected: " + frame);
+        console.log('Connected: ' + frame);
 
         newClient.subscribe(`/topic/chatroom/${roomId}`, (message) => {
           const parsedMessage = JSON.parse(message.body);
@@ -159,8 +159,8 @@ const ChatPage = () => {
     });
 
     const fetchMessages = () => {
-      const staleMessages = localStorage.getItem("staleMessages");
-      console.log("staleMessages", staleMessages);
+      const staleMessages = localStorage.getItem('staleMessages');
+      console.log('staleMessages', staleMessages);
       if (staleMessages) {
         const parsedStaleMessages = JSON.parse(staleMessages);
         if (parsedStaleMessages[roomId]) {
@@ -181,7 +181,7 @@ const ChatPage = () => {
         setMessages((messages) => [...messages, ...msg]);
       } catch (error) {
         //401에러
-        window.confirm("학생 인증 후 이용해주세요.")
+        window.confirm('학생 인증 후 이용해주세요.')
           ? navigateToVerify()
           : navigateToBack();
       }
@@ -201,18 +201,17 @@ const ChatPage = () => {
     // console.log("messages>>>>>>>>>>>>>>", messages)
     if (
       messages.at(-1)?.checkTiKiTaKa &&
-      messages.at(-1).roomStatus === "ACTIVE"
+      messages.at(-1).roomStatus === 'ACTIVE'
     ) {
       setIsCallActive(true);
-    }
-    else if (messages.at(-1)?.roomStatus === "INACTIVE") {
+    } else if (messages.at(-1)?.roomStatus === 'INACTIVE') {
       setIsCallActive(false);
       setIsOpponentOut(true);
     }
   }, [messages]);
 
   const fetchOpponentTelNum = async () => {
-    if (opponentTelNum !== "") return;
+    if (opponentTelNum !== '') return;
     const telNum = await instance
       .get(`/member/tel-num/${opponentId}`)
       .then((res) => res.data.telNum);
@@ -225,16 +224,16 @@ const ChatPage = () => {
 
   const handleLeaveRoom = async (e) => {
     e.preventDefault();
-    const res = window.confirm("정말로 나가시겠습니까?");
+    const res = window.confirm('정말로 나가시겠습니까?');
     if (!res) return;
 
     client.publish({
       destination: `/app/chat/${roomId}`,
       body: JSON.stringify({
-        chatMessage: "LEAVE",
+        chatMessage: 'LEAVE',
         senderId: opponentId,
         receiverId: myId,
-        publishType: "LEAVE",
+        publishType: 'LEAVE',
       }),
     });
 
@@ -255,8 +254,8 @@ const ChatPage = () => {
     const isIncludingBadWord = checkCurse(draftMessage);
 
     if (isIncludingBadWord) {
-      toast.error("앗! 부적절한 단어가 포함되어 있어요.");
-      setDraftMessage("");
+      toast.error('앗! 부적절한 단어가 포함되어 있어요.');
+      setDraftMessage('');
       return;
     }
 
@@ -266,10 +265,10 @@ const ChatPage = () => {
         chatMessage: draftMessage,
         senderId: opponentId,
         receiverId: myId,
-        publishType: "MESSAGE",
+        publishType: 'MESSAGE',
       }),
     });
-    setDraftMessage("");
+    setDraftMessage('');
   };
 
   useEffect(() => {
@@ -282,9 +281,9 @@ const ChatPage = () => {
     console.log(messages);
     const saveMessages = () => {
       const staleMessages =
-        JSON.parse(localStorage.getItem("staleMessages")) || {};
+        JSON.parse(localStorage.getItem('staleMessages')) || {};
       staleMessages[roomId] = JSON.stringify(messages); // Save the current state of messages for this room
-      localStorage.setItem("staleMessages", JSON.stringify(staleMessages));
+      localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
     };
 
     if (messages.length > 0) {
@@ -294,12 +293,12 @@ const ChatPage = () => {
 
   useEffect(() => {
     const callEffectShown =
-      JSON.parse(localStorage.getItem("callEffectShown")) || [];
+      JSON.parse(localStorage.getItem('callEffectShown')) || [];
     if (!callEffectShown.includes(roomId)) {
       if (isCallActive) {
         const newArray = [...callEffectShown];
         newArray.push(roomId);
-        localStorage.setItem("callEffectShown", JSON.stringify(newArray));
+        localStorage.setItem('callEffectShown', JSON.stringify(newArray));
         setIsShowLottie(true);
         setTimeout(() => {
           setIsShowLottie(false);
@@ -338,7 +337,8 @@ const ChatPage = () => {
           <BackButton
             onClick={() => {
               navigate(-1);
-            }}>
+            }}
+          >
             <img
               src="/assets/arrow-pink-button.png"
               alt="뒤로가기"
@@ -348,7 +348,7 @@ const ChatPage = () => {
           <WrapTitle>
             <div className="title">상대방과의 거리</div>
             <div className="subtitle">
-              {distance === -1 ? "불러오는 중..." : `${distance}m`}
+              {distance === -1 ? '불러오는 중...' : `${distance}m`}
             </div>
           </WrapTitle>
           <div>
@@ -385,10 +385,11 @@ const ChatPage = () => {
             value={reportMessage}
             onChange={(e) => setReportMessage(e.target.value)}
           />
-          <div style={{ display: "flex", gap: "0.5rem" }}>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
             <ReportButton
-              disabled={reportMessage === ""}
-              onClick={handleReportUser}>
+              disabled={reportMessage === ''}
+              onClick={handleReportUser}
+            >
               신고하기
             </ReportButton>
             <CancelButton onClick={closeReportModal}>취소하기</CancelButton>

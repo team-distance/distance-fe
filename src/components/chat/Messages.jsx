@@ -1,6 +1,6 @@
-import React, { memo, useEffect, useRef } from "react";
-import Message from "./Message";
-import styled from "styled-components";
+import React, { memo, useEffect, useRef } from 'react';
+import Message from './Message';
+import styled from 'styled-components';
 
 const Messages = memo(({ groupedMessages, myId }) => {
   const messageRef = useRef();
@@ -29,10 +29,10 @@ const Messages = memo(({ groupedMessages, myId }) => {
         <React.Fragment key={date}>
           <Announcement>
             <div className="content">
-              {new Date(date).toLocaleDateString("ko-KR", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
+              {new Date(date).toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
               })}
             </div>
           </Announcement>

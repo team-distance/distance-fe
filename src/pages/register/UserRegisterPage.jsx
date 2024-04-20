@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import TextInput from "../../components/register/TextInput";
-import { useRecoilState } from "recoil";
-import { registerDataState } from "../../store/registerDataState";
-import Button from "../../components/common/Button";
-import { useNavigate } from "react-router-dom";
-import { instance } from "../../api/instance";
-import ProgressBar from "../../components/register/ProgressBar";
-import toast, { Toaster } from "react-hot-toast";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import TextInput from '../../components/register/TextInput';
+import { useRecoilState } from 'recoil';
+import { registerDataState } from '../../store/registerDataState';
+import Button from '../../components/common/Button';
+import { useNavigate } from 'react-router-dom';
+import { instance } from '../../api/instance';
+import ProgressBar from '../../components/register/ProgressBar';
+import toast, { Toaster } from 'react-hot-toast';
 
 const UserRegisterPage = () => {
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
@@ -16,8 +16,8 @@ const UserRegisterPage = () => {
   const [pwFlag, setPwFlag] = useState(true);
 
   const [isSendMessage, setIsSendMessage] = useState(false);
-  const [verifyButtonLabel, setVerifyButtonLabel] = useState("인증번호 전송");
-  const [verifyNum, setVerifyNum] = useState("");
+  const [verifyButtonLabel, setVerifyButtonLabel] = useState('인증번호 전송');
+  const [verifyNum, setVerifyNum] = useState('');
   const [verify, setVerify] = useState(false);
 
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ const UserRegisterPage = () => {
     const { name, value } = e.target;
     setRegisterData({ ...registerData, [name]: value });
 
-    if (name === "telNum") {
+    if (name === 'telNum') {
       if (value.length === 11) {
         setCheckPhoneFlag(false);
       } else {
@@ -34,7 +34,7 @@ const UserRegisterPage = () => {
       }
     }
 
-    if (name === "verifyNum") {
+    if (name === 'verifyNum') {
       setVerifyNum(e.target.value);
       if (value.length !== 0) {
         setVerifyNumFlag(false);
@@ -43,7 +43,7 @@ const UserRegisterPage = () => {
       }
     }
 
-    if (name === "password") {
+    if (name === 'password') {
       if (value.length >= 6) {
         setPwFlag(false);
       } else {
@@ -53,29 +53,29 @@ const UserRegisterPage = () => {
   };
 
   const sendMessage = async () => {
-    if (verifyButtonLabel === "재전송") {
+    if (verifyButtonLabel === '재전송') {
       setVerifyNumFlag(false);
       setVerify(false);
-      setVerifyNum("");
+      setVerifyNum('');
     }
 
-    const response = instance.post("/member/send/sms", {
+    const response = instance.post('/member/send/sms', {
       telNum: registerData.telNum,
     });
 
     toast.promise(response, {
-      loading: "전송 중...",
+      loading: '전송 중...',
       success: () => {
         setIsSendMessage(true);
-        setVerifyButtonLabel("재전송");
-        return "인증번호가 전송되었습니다.";
+        setVerifyButtonLabel('재전송');
+        return '인증번호가 전송되었습니다.';
       },
       error: (error) => {
         const ERROR_CODE = error?.response?.data?.code;
-        if (ERROR_CODE === "EXIST_TEL_NUM") {
-          return "이미 등록된 전화번호입니다. 다른 번호를 입력해주세요.";
+        if (ERROR_CODE === 'EXIST_TEL_NUM') {
+          return '이미 등록된 전화번호입니다. 다른 번호를 입력해주세요.';
         } else {
-          return "인증번호 전송에 실패했습니다. 다시 시도해주세요.";
+          return '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
         }
       },
     });
@@ -83,13 +83,13 @@ const UserRegisterPage = () => {
 
   const verifyTelNum = async () => {
     try {
-      await instance.post("/member/authenticate", {
+      await instance.post('/member/authenticate', {
         authenticateNum: verifyNum,
       });
       setVerify(true);
       setVerifyNumFlag(true);
     } catch (error) {
-      toast.error("인증번호가 틀렸습니다.");
+      toast.error('인증번호가 틀렸습니다.');
       console.log();
     }
   };
@@ -150,8 +150,9 @@ const UserRegisterPage = () => {
             size="large"
             disabled={pwFlag}
             onClick={() => {
-              navigate("/register/univ");
-            }}>
+              navigate('/register/univ');
+            }}
+          >
             학교 선택하기
           </Button>
         </WrapButton>
@@ -179,10 +180,10 @@ const WrapContent = styled.div`
 `;
 
 const WrapVerifyPhone = styled.div`
-  visibility: ${({ $visible }) => ($visible ? "visible" : "hidden")};
+  visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
 `;
 const WrapPassword = styled.div`
-  visibility: ${({ $visible }) => ($visible ? "visible" : "hidden")};
+  visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
 `;
 
 const WrapButton = styled.div`

@@ -16,7 +16,7 @@ import Badge from "../../components/common/Badge";
 const ChatIndexPage = () => {
   const navigate = useNavigate();
   const [chatList, setChatList] = useState([]);
-  const memberId = localStorage.getItem("memberId");
+  const memberId = localStorage.getItem('memberId');
   const [loading, setLoading] = useState(false);
   const isLoggedIn = useRecoilValue(isLoggedInState);
 
@@ -41,7 +41,7 @@ const ChatIndexPage = () => {
     try {
       setLoading(true);
       const res = await instance
-        .get("/chatroom")
+        .get('/chatroom')
         .then((res) => res.data)
         .then((data) => {
           const tempResponse = [...data];
@@ -66,17 +66,17 @@ const ChatIndexPage = () => {
     );
 
     eventSource.onopen = (event) => {
-      console.log("Connection opened");
+      console.log('Connection opened');
       console.log(event);
     };
 
     eventSource.onmessage = (event) => {
-      console.log("Message received");
+      console.log('Message received');
       console.log(event);
     };
 
     eventSource.onerror = (event) => {
-      console.log("Error occurred");
+      console.log('Error occurred');
       console.log(event);
     };
 
@@ -97,13 +97,13 @@ const ChatIndexPage = () => {
     }
     // 어제 날짜와 같은 경우
     else if (yesterday.toDateString() === date.toDateString()) {
-      return "어제";
+      return '어제';
     }
     // 그 외 (어제보다 이전의 날짜)
     else {
       const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, "0");
-      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
       return `${year}-${month}-${day}`;
     }
   };
@@ -137,15 +137,16 @@ const ChatIndexPage = () => {
       {isLoggedIn ? (
         loading ? (
           <LoaderContainer>
-            <ClipLoader color={"#FF625D"} loading={loading} size={50} />
+            <ClipLoader color={'#FF625D'} loading={loading} size={50} />
           </LoaderContainer>
         ) : (
           <>
             <WrapInboxButton>
               <InboxButton
                 onClick={() => {
-                  navigate("/inbox");
-                }}>
+                  navigate('/inbox');
+                }}
+              >
                 <div>요청함</div>
                 <img src="/assets/arrow-pink-right.svg" alt="화살표 아이콘" />
               </InboxButton>
@@ -196,7 +197,7 @@ const ChatIndexPage = () => {
             ) : (
               <EmptyContainer>
                 <div className="wrap">
-                  <img src={"/assets/empty-icon.svg"} alt="empty icon" />
+                  <img src={'/assets/empty-icon.svg'} alt="empty icon" />
                   <div>채팅을 시작해보세요!</div>
                 </div>
               </EmptyContainer>
@@ -206,7 +207,7 @@ const ChatIndexPage = () => {
       ) : (
         <EmptyContainer>
           <div className="wrap">
-            <img src={"/assets/empty-icon.svg"} alt="empty icon" />
+            <img src={'/assets/empty-icon.svg'} alt="empty icon" />
             <div>로그인 후 채팅을 시작해보세요!</div>
           </div>
         </EmptyContainer>

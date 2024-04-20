@@ -1,6 +1,6 @@
-import axios from "axios";
-import { baseURL } from "../constants/baseURL";
-import { refresh } from "../store/auth";
+import axios from 'axios';
+import { baseURL } from '../constants/baseURL';
+import { refresh } from '../store/auth';
 
 export const instance = axios.create({
   baseURL: baseURL,
@@ -8,7 +8,7 @@ export const instance = axios.create({
 });
 
 instance.interceptors.request.use((config) => {
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = localStorage.getItem('accessToken');
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
@@ -24,20 +24,20 @@ instance.interceptors.response.use(
     const message = error?.response?.data?.message;
 
     // accessToken이 만료되었을 때
-    if (status === 401 && message === "만료된 JWT 토큰입니다!") {
+    if (status === 401 && message === '만료된 JWT 토큰입니다!') {
       // refreshToken으로 accessToken 갱신
       await refresh({
-        refreshToken: localStorage.getItem("refreshToken"),
+        refreshToken: localStorage.getItem('refreshToken'),
       }).catch((error) => {
         // refreshToken이 만료되었을 때
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("memberId");
-        window.location.href = "/login?expired=true";
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('memberId');
+        window.location.href = '/login?expired=true';
         return Promise.reject(error);
       });
 
-      const accessToken = localStorage.getItem("accessToken");
+      const accessToken = localStorage.getItem('accessToken');
       error.config.headers.Authorization = `Bearer ${accessToken}`;
       return instance(error.config);
     }
