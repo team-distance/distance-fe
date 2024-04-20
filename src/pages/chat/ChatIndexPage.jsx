@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import Header from '../../components/common/Header';
-import styled from 'styled-components';
-import { Link, useNavigate } from 'react-router-dom';
-import { instance } from '../../api/instance';
-import { parseTime } from '../../utils/parseTime';
-import { CHARACTERS, COLORS } from '../../constants/character';
-import ClipLoader from 'react-spinners/ClipLoader';
-import { useRecoilValue } from 'recoil';
-import { isLoggedInState } from '../../store/auth';
-import Badge from '../../components/common/Badge';
+import React, { useEffect, useState } from "react";
+import Header from "../../components/common/Header";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import { instance } from "../../api/instance";
+import { parseTime } from "../../utils/parseTime";
+import { CHARACTERS, COLORS } from "../../constants/character";
+import ClipLoader from "react-spinners/ClipLoader";
+import { useRecoilValue } from "recoil";
+import { isLoggedInState } from "../../store/auth";
+import Badge from "../../components/common/Badge";
 
 /**
  * @todo LINE 61: localStorage에 저장된 대화 내역 삭제
@@ -108,6 +108,28 @@ const ChatIndexPage = () => {
     }
   };
 
+  const goOutChatroom = async (chat) => {
+
+    if (chat.opponentMemberId === null) {
+      const res = window.confirm("정말로 나가시겠습니까?");
+      if (!res) return;
+      try {
+        await instance.get(`/room-member/leave/${chat.chatRoomId}`)
+      } catch(error) {
+        console.log(error);
+      }
+    } else {
+      navigate(`/chat/${chat.chatRoomId}`, {
+        state: {
+          myId: memberId,
+          opponentId: chat.opponentMemberId,
+          roomId: chat.chatRoomId,
+        }
+      });
+    }
+    
+  }
+
   return (
     <PagePadding>
       <Header />
@@ -132,20 +154,17 @@ const ChatIndexPage = () => {
             {chatList.length !== 0 ? (
               chatList.map((chat) => {
                 const roomNameParts = parseRoomName(chat.roomName);
+                const timeDisplay = chat.modifyDt ? formatTime(chat.modifyDt) : "(알수없음)";
 
                 return (
                   <ChatRoomContainer
                     key={chat.chatRoomId}
-                    to={`/chat/${chat.chatRoomId}`}
-                    state={{
-                      myId: memberId,
-                      opponentId: chat.opponentMemberId,
-                      roomId: chat.chatRoomId,
-                    }}
-                  >
+                    onClick={() => goOutChatroom(chat)}
+                    >
                     <div className="left-section">
                       <CharacterBackground $character={chat.memberCharacter}>
                         <img
+                          className="null-img"
                           src={CHARACTERS[chat.memberCharacter]}
                           alt={chat.memberCharacter}
                         />
@@ -166,15 +185,14 @@ const ChatIndexPage = () => {
                     </div>
 
                     <div className="right-section">
-                      <Time>{formatTime(chat.modifyDt)}</Time>
-                      {chat.askedCount !== 0 ? (
+                      <Time>{timeDisplay}</Time>
+                      {chat.askedCount > 0 &&
                         <UnreadCount>{chat.askedCount}</UnreadCount>
-                      ) : (
-                        <br />
-                      )}
+                      }
+                      <br/>
                     </div>
                   </ChatRoomContainer>
-                );
+                )
               })
             ) : (
               <EmptyContainer>
@@ -202,7 +220,7 @@ const PagePadding = styled.div`
   padding: 2rem 1.5rem;
 `;
 
-const ChatRoomContainer = styled(Link)`
+const ChatRoomContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -243,6 +261,10 @@ const CharacterBackground = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+  }
+  .null-img {
+    height: 50%;
+    object-fit: contain;
   }
 `;
 
