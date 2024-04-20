@@ -15,6 +15,7 @@ export const CHARACTERS = {
   PANDA: "/assets/home/profile-panda.png",
   LION: "/assets/home/profile-lion.png",
   FOX: "/assets/home/profile-fox.png",
+  null: "/assets/home/profile-null.png",
 };
 
 export const COLORS = {
@@ -34,4 +35,5 @@ export const COLORS = {
   PANDA: "#D9EAD3",
   LION: "#FFDFD2",
   FOX: "#FCEDDC",
+  null: "#D9D9D9"
 };
