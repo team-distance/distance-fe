@@ -108,6 +108,18 @@ const ChatIndexPage = () => {
     }
   };
 
+  const goOutChatroom = async (chat) => {
+    if (chat.lastMessage === "상대방이 탈퇴했습니다.") {
+      const res = window.confirm("정말로 나가시겠습니까?");
+      if (!res) return;
+      try {
+        await instance.get(`/room-member/leave/${chat.chatRoomId}`)
+      } catch(error) {
+        console.log(error);
+      }
+    }
+  }
+
   return (
     <PagePadding>
       <Header />
@@ -140,7 +152,9 @@ const ChatIndexPage = () => {
                       myId: memberId,
                       opponentId: chat.opponentMemberId,
                       roomId: chat.chatRoomId,
-                    }}>
+                    }}
+                    onClick={()=>{goOutChatroom(chat)}}
+                    >
                     <div className="left-section">
                       <CharacterBackground $character={chat.memberCharacter}>
                         <img
