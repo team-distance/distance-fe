@@ -21,8 +21,14 @@ const firebaseConfig = {
 const FBapp = firebase.initializeApp(firebaseConfig);
 const messaging = FBapp.messaging();
 
+// 대기 중인 서비스 워커를 강제로 활성화
 self.addEventListener('install', (event) => {
   event.waitUntil(self.skipWaiting());
+});
+
+// 클라이언트가 페이지를 새로 고침하거나 페이지를 방문할 때마다 서비스 워커를 활성화
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim());
 });
 
 messaging.onBackgroundMessage((payload) => {

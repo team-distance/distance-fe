@@ -4,9 +4,11 @@ import { getMessaging, getToken, isSupported } from 'firebase/messaging';
 export const registerServiceWorker = async () => {
   try {
     const registration = await navigator.serviceWorker.register(
-      '/firebase-messaging-sw.js'
+      '/firebase-messaging-sw.js',
+      { scope: '/' }
     );
     console.log('서비스 워커 등록 성공', registration);
+    console.log('서비스 워커 스코프: ', registration.scope);
   } catch (error) {
     console.log('서비스 워커 등록 실패', error);
   }
