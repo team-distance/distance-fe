@@ -15,9 +15,6 @@ const Messages = memo(({ groupedMessages, myId }) => {
     scrollToBottom();
   }, [groupedMessages]);
 
-  /**
-   * @todo messages.map()의 key 속성을 고유한 값으로 설정 (message.messageId)
-   */
   return (
     <MessagesWrapper ref={messageRef}>
       <Announcement>
@@ -36,9 +33,9 @@ const Messages = memo(({ groupedMessages, myId }) => {
               })}
             </div>
           </Announcement>
-          {messages.map((message, index) => (
+          {messages.map((message) => (
             <Message
-              key={index}
+              key={message.messageId}
               nickname={message.senderName}
               content={message.chatMessage}
               time={message.sendDt}
