@@ -5,10 +5,6 @@ const PWAInstallPrompt = () => {
   const [isIos, setIsIos] = useState(false);
   const [prompt, setPropmt] = useState(null);
 
-  useEffect(() => {
-    console.log(isIos);
-    console.log(navigator.standalone);
-  }, [isIos]);
   const handleClick = () => {
     setIsOpened(false);
     if (!prompt) return;
@@ -29,8 +25,6 @@ const PWAInstallPrompt = () => {
       setIsOpened(true);
     };
 
-    if (isIos && !navigator.standalone) setIsOpened(true);
-
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
     return () => {
@@ -40,6 +34,10 @@ const PWAInstallPrompt = () => {
       );
     };
   }, []);
+
+  useEffect(() => {
+    if (isIos && !navigator.standalone) setIsOpened(true);
+  }, [isIos]);
 
   return (
     isOpened &&
