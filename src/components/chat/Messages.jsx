@@ -2,7 +2,7 @@ import React, { memo, useEffect, useRef } from 'react';
 import Message from './Message';
 import styled from 'styled-components';
 
-const Messages = memo(({ groupedMessages, myId }) => {
+const Messages = memo(({ groupedMessages, myId, responseCall }) => {
   const messageRef = useRef();
 
   const scrollToBottom = () => {
@@ -42,6 +42,7 @@ const Messages = memo(({ groupedMessages, myId }) => {
               read={message.unreadCount}
               senderType={message.senderType}
               sentByMe={message.senderId !== Number(myId)}
+              responseCall={responseCall}
             />
           ))}
         </React.Fragment>

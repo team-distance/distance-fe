@@ -12,6 +12,7 @@ import { checkCurse } from '../../utils/checkCurse';
 import Lottie from 'react-lottie-player';
 import callAnimation from '../../lottie/call-animation.json';
 import useGroupedMessages from '../../hooks/useGroupedMessages';
+import Modal from '../../components/common/Modal';
 
 const ChatPage = () => {
   const [distance, setDistance] = useState(-1);
@@ -20,8 +21,10 @@ const ChatPage = () => {
   const [isOpponentOut, setIsOpponentOut] = useState(false);
   const [opponentTelNum, setOpponentTelNum] = useState('');
   const [reportMessage, setReportMessage] = useState('');
+  const [bothAgreed, setBothAgreed] = useState(false);
 
   const reportModalRef = useRef();
+  const callModalRef = useRef();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -68,6 +71,20 @@ const ChatPage = () => {
     }
   }, [draftMessage]);
 
+  const handleClickCallButton = async () => {
+    // 전화 버튼 클릭 시 API 호출 후 true, false에 따라 표시할 모달 변경
+    try {
+      const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
+      setBothAgreed(response.data.bothAgreed);
+    } catch (error) {
+      toast.error('방 상태를 가져오는데 실패했어요!', {
+        position: 'bottom-center',
+      });
+    }
+
+    openCallModal();
+  };
+
   const openReportModal = () => {
     reportModalRef.current.open();
   };
@@ -77,12 +94,44 @@ const ChatPage = () => {
     reportModalRef.current.close();
   };
 
+  const openCallModal = () => {
+    callModalRef.current.open();
+  };
+
+  const closeCallModal = () => {
+    callModalRef.current.close();
+  };
+
   const navigateToVerify = () => {
     navigate('/verify/univ');
   };
 
   const navigateToBack = () => {
     navigate('/chat');
+  };
+
+  const requestCall = async () => {
+    client.publish({
+      destination: `/app/chat/${roomId}`,
+      body: JSON.stringify({
+        chatMessage: '통화를 요청하셨어요!',
+        senderId: opponentId,
+        receiverId: myId,
+        publishType: 'CALL_REQUEST',
+      }),
+    });
+  };
+
+  const responseCall = async () => {
+    client.publish({
+      destination: `/app/chat/${roomId}`,
+      body: JSON.stringify({
+        chatMessage: '통화 요청을 수락했어요!',
+        senderId: opponentId,
+        receiverId: myId,
+        publishType: 'CALL_RESPONSE',
+      }),
+    });
   };
 
   const handleReportUser = async (e) => {
@@ -265,7 +314,7 @@ const ChatPage = () => {
         chatMessage: draftMessage,
         senderId: opponentId,
         receiverId: myId,
-        publishType: 'MESSAGE',
+        publishType: 'USER',
       }),
     });
     setDraftMessage('');
@@ -354,11 +403,13 @@ const ChatPage = () => {
           <div>
             <CallButton>
               {isCallActive ? (
-                <a href={`tel:${opponentTelNum}`}>
+                <div onClick={handleClickCallButton}>
                   <img src="/assets/callicon-active.png" alt="전화버튼" />
-                </a>
+                </div>
               ) : (
-                <img src="/assets/callicon.png" alt="전화버튼" />
+                <div>
+                  <img src="/assets/callicon.png" alt="전화버튼" />
+                </div>
               )}
             </CallButton>
             <LeaveButton onClick={handleLeaveRoom}>
@@ -367,7 +418,11 @@ const ChatPage = () => {
           </div>
         </TopBar>
 
-        <Messages groupedMessages={groupedMessages} myId={myId} />
+        <Messages
+          groupedMessages={groupedMessages}
+          myId={myId}
+          responseCall={responseCall}
+        />
         <MessageInput
           value={draftMessage}
           buttonClickHandler={openReportModal}
@@ -396,6 +451,38 @@ const ChatPage = () => {
           </div>
         </ModalContent>
       </BlankModal>
+
+      <Modal
+        ref={callModalRef}
+        buttonLabel={bothAgreed ? '통화하기' : '요청하기'}
+        buttonClickHandler={
+          bothAgreed
+            ? async () => {
+                const res = await instance.get(
+                  `/member/tel-num?memberId=${opponentId}&chatRoomId=${roomId}`
+                );
+                window.open(`tel:${res.data.telNum}`);
+              }
+            : () => {
+                requestCall();
+                closeCallModal();
+              }
+        }
+      >
+        {bothAgreed ? (
+          <>
+            <strong>요청을 수락했어요!</strong>
+            <div>통화하시겠어요?</div>
+          </>
+        ) : (
+          <>
+            <strong>전화를 요청할까요?</strong>
+            <ul>
+              <li>상대방이 요청을 수락하면 서로의 번호로 통화할 수 있어요.</li>
+            </ul>
+          </>
+        )}
+      </Modal>
     </Wrapper>
   );
 };
@@ -492,6 +579,7 @@ const LottieContainer = styled.div`
   div {
     transform: rotate(20deg) translateX(10px);
   }
+
   p {
     color: white;
     text-align: center;
