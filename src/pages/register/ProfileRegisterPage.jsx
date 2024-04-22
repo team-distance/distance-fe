@@ -263,9 +263,14 @@ const ProfileRegisterPage = () => {
                   key={index}
                   color={attractiveness.includes(value) ? '#FF0000' : 'black'}
                   onClick={() => {
-                    if (attractiveness.includes(value) || hashtagCount >= 5) {
+                    if (hashtagCount >= 5) {
                       toast.error('해시태그는 5개까지만 선택 가능해요!', {
                         id: 'hashtag-limit',
+                      });
+                      return;
+                    } else if (attractiveness.includes(value)) {
+                      toast.error('이미 선택한 해시태그에요!', {
+                        id: 'hashtag-duplicate',
                       });
                       return;
                     }
@@ -294,9 +299,14 @@ const ProfileRegisterPage = () => {
                   key={index}
                   color={hobby.includes(value) ? '#FF0000' : 'black'}
                   onClick={() => {
-                    if (hobby.includes(value) || hashtagCount >= 5) {
+                    if (hashtagCount >= 5) {
                       toast.error('해시태그는 5개까지만 선택 가능해요!', {
                         id: 'hashtag-limit',
+                      });
+                      return;
+                    } else if (hobby.includes(value)) {
+                      toast.error('이미 선택한 해시태그에요!', {
+                        id: 'hashtag-duplicate',
                       });
                       return;
                     }
@@ -369,6 +379,7 @@ const BadgeContainer = styled.div`
   display: flex;
   align-items: center;
   height: 96px;
+  padding: 0.5rem;
   gap: 0.5rem;
   justify-content: center;
   flex-wrap: wrap;
