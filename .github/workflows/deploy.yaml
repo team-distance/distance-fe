@@ -17,7 +17,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: latest
+          node-version: lts/*
 
       - name: .env setting
         run: |
@@ -34,13 +34,19 @@ jobs:
         run: node src/replaceEnvForSW.js
         env:
           REACT_APP_FIREBASE_API_KEY: ${{ secrets.REACT_APP_FIREBASE_API_KEY }}
-          REACT_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.REACT_APP_FIREBASE_AUTH_DOMAIN }}
-          REACT_APP_FIREBASE_PROJECT_ID: ${{ secrets.REACT_APP_FIREBASE_PROJECT_ID }}
-          REACT_APP_FIREBASE_STORAGE_BUCKET: ${{ secrets.REACT_APP_FIREBASE_STORAGE_BUCKET }}
-          REACT_APP_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.REACT_APP_FIREBASE_MESSAGING_SENDER_ID }}
+          REACT_APP_FIREBASE_AUTH_DOMAIN:
+            ${{ secrets.REACT_APP_FIREBASE_AUTH_DOMAIN }}
+          REACT_APP_FIREBASE_PROJECT_ID:
+            ${{ secrets.REACT_APP_FIREBASE_PROJECT_ID }}
+          REACT_APP_FIREBASE_STORAGE_BUCKET:
+            ${{ secrets.REACT_APP_FIREBASE_STORAGE_BUCKET }}
+          REACT_APP_FIREBASE_MESSAGING_SENDER_ID:
+            ${{ secrets.REACT_APP_FIREBASE_MESSAGING_SENDER_ID }}
           REACT_APP_FIREBASE_APP_ID: ${{ secrets.REACT_APP_FIREBASE_APP_ID }}
-          REACT_APP_FIREBASE_MEASUREMENT_ID: ${{ secrets.REACT_APP_FIREBASE_MEASUREMENT_ID }}
-          REACT_APP_FIREBASE_VAPID_KEY: ${{ secrets.REACT_APP_FIREBASE_VAPID_KEY }}
+          REACT_APP_FIREBASE_MEASUREMENT_ID:
+            ${{ secrets.REACT_APP_FIREBASE_MEASUREMENT_ID }}
+          REACT_APP_FIREBASE_VAPID_KEY:
+            ${{ secrets.REACT_APP_FIREBASE_VAPID_KEY }}
 
       - name: NPM install
         run: npm install
@@ -55,15 +61,17 @@ jobs:
         env:
           AWS_S3_BUCKET: ${{ secrets.AWS_BUCKET_NAME }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_IAM_MANAGER_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_IAM_MANAGER_SECRET_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY:
+            ${{ secrets.AWS_IAM_MANAGER_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_BUCKET_REGION }}
-          SOURCE_DIR: "build"
+          SOURCE_DIR: 'build'
 
       - name: Invalidate CloudFront
         uses: chetan/invalidate-cloudfront-action@v2
         env:
           DISTRIBUTION: ${{ secrets.AWS_DISTRIBUTION_ID }}
-          PATHS: "/*"
-          AWS_REGION: "ap-northeast-2"
+          PATHS: '/*'
+          AWS_REGION: 'ap-northeast-2'
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_IAM_MANAGER_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_IAM_MANAGER_SECRET_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY:
+            ${{ secrets.AWS_IAM_MANAGER_SECRET_ACCESS_KEY }}
