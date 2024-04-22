@@ -88,11 +88,25 @@ const ProfileIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${(props) => COLORS[props.$character]};
+  /* background-color: ${(props) => COLORS[props.$character]}; */
+  background-color: white;
+  position: relative;
 
   img {
     width: 32px;
     height: 32px;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #ff625d, #ffac0b);
+    z-index: -1;
   }
 `;
 

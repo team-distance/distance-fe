@@ -47,9 +47,11 @@ const WrapProfile = styled.article`
 
 const Wrapper = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   flex-direction: column;
+  padding: 0 6px;
+  width: 100%;
   gap: 12px;
 `;
 
@@ -96,4 +98,5 @@ const TagContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 4px;
+  overflow: scroll;
 `;
