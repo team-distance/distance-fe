@@ -154,10 +154,11 @@ const ChatPage = () => {
   useEffect(() => {
     const fetchDistance = async () => {
       const distance = await instance
-        .get(`/gps/distance?id1=${myId}&id2=${opponentId}`)
-        .then((res) => res.data);
+        .get(`/gps/distance/${roomId}`)
+        .then((res) => res.data.distance);
 
       const parseDistance = parseInt(distance);
+      // console.log('고정 거리 >>>>>>>>>>>>>>>>>', parseDistance);
       setDistance(parseDistance);
     };
     fetchDistance();

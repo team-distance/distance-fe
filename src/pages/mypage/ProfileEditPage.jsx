@@ -7,7 +7,7 @@ import Button from '../../components/common/Button';
 import HeaderPrev from '../../components/common/HeaderPrev';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
-import { CHARACTERS } from '../../constants/character';
+import { CHOOSE_CHARACTERS } from '../../constants/character';
 
 const ProfileEditPage = () => {
   const navigate = useNavigate();
@@ -126,7 +126,10 @@ const ProfileEditPage = () => {
               alt="profile register button"
             />
           ) : (
-            <img src={CHARACTERS[selectedAnimal]} alt="selected profile" />
+            <img
+              src={CHOOSE_CHARACTERS[selectedAnimal]}
+              alt="selected profile"
+            />
           )}
           <img
             className="side-image-right"
@@ -145,7 +148,7 @@ const ProfileEditPage = () => {
             />
           </ModalTitle>
           <AnimalListContainer>
-            {Object.entries(CHARACTERS).map(([character, imageSrc]) => {
+            {Object.entries(CHOOSE_CHARACTERS).map(([character, imageSrc]) => {
               return (
                 <AnimalListItem
                   key={character}

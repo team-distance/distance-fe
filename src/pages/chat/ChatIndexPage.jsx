@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
-import Header from "../../components/common/Header";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import { instance } from "../../api/instance";
-import { parseTime } from "../../utils/parseTime";
-import { CHARACTERS, COLORS } from "../../constants/character";
-import ClipLoader from "react-spinners/ClipLoader";
-import { useRecoilValue } from "recoil";
-import { isLoggedInState } from "../../store/auth";
-import Badge from "../../components/common/Badge";
+import React, { useEffect, useState } from 'react';
+import Header from '../../components/common/Header';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { instance } from '../../api/instance';
+import { parseTime } from '../../utils/parseTime';
+import { CHARACTERS, COLORS } from '../../constants/character';
+import ClipLoader from 'react-spinners/ClipLoader';
+import { useRecoilValue } from 'recoil';
+import { isLoggedInState } from '../../store/auth';
+import Badge from '../../components/common/Badge';
 
 /**
  * @todo LINE 61: localStorage에 저장된 대화 내역 삭제
@@ -109,13 +109,13 @@ const ChatIndexPage = () => {
   };
 
   const goOutChatroom = async (chat) => {
-
     if (chat.opponentMemberId === null) {
-      const res = window.confirm("정말로 나가시겠습니까?");
+      const res = window.confirm('정말로 나가시겠습니까?');
       if (!res) return;
       try {
-        await instance.get(`/room-member/leave/${chat.chatRoomId}`)
-      } catch(error) {
+        await instance.get(`/room-member/leave/${chat.chatRoomId}`);
+        window.location.href = '/chat';
+      } catch (error) {
         console.log(error);
       }
     } else {
@@ -124,11 +124,10 @@ const ChatIndexPage = () => {
           myId: memberId,
           opponentId: chat.opponentMemberId,
           roomId: chat.chatRoomId,
-        }
+        },
       });
     }
-    
-  }
+  };
 
   return (
     <PagePadding>
@@ -154,13 +153,15 @@ const ChatIndexPage = () => {
             {chatList.length !== 0 ? (
               chatList.map((chat) => {
                 const roomNameParts = parseRoomName(chat.roomName);
-                const timeDisplay = chat.modifyDt ? formatTime(chat.modifyDt) : "(알수없음)";
+                const timeDisplay = chat.modifyDt
+                  ? formatTime(chat.modifyDt)
+                  : '(알수없음)';
 
                 return (
                   <ChatRoomContainer
                     key={chat.chatRoomId}
                     onClick={() => goOutChatroom(chat)}
-                    >
+                  >
                     <div className="left-section">
                       <CharacterBackground $character={chat.memberCharacter}>
                         <img
@@ -186,13 +187,13 @@ const ChatIndexPage = () => {
 
                     <div className="right-section">
                       <Time>{timeDisplay}</Time>
-                      {chat.askedCount > 0 &&
+                      {chat.askedCount > 0 && (
                         <UnreadCount>{chat.askedCount}</UnreadCount>
-                      }
-                      <br/>
+                      )}
+                      <br />
                     </div>
                   </ChatRoomContainer>
-                )
+                );
               })
             ) : (
               <EmptyContainer>

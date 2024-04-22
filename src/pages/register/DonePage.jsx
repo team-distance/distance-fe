@@ -107,6 +107,7 @@ const WrapMessage = styled.div`
 `;
 
 const WrapButton = styled.div`
+  width: 80%;
   position: absolute;
   bottom: 2rem;
 `;
