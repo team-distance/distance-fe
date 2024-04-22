@@ -15,6 +15,9 @@ import useGroupedMessages from '../../hooks/useGroupedMessages';
 import Modal from '../../components/common/Modal';
 
 const ChatPage = () => {
+  const [client, setClient] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [draftMessage, setDraftMessage] = useState('');
   const [distance, setDistance] = useState(-1);
   const [isCallActive, setIsCallActive] = useState(false);
   const [isShowLottie, setIsShowLottie] = useState(false);
@@ -25,6 +28,7 @@ const ChatPage = () => {
 
   const reportModalRef = useRef();
   const callModalRef = useRef();
+  const viewportRef = useRef();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,12 +37,7 @@ const ChatPage = () => {
   const opponentId = location.state.opponentId;
   const roomId = location.state.roomId;
 
-  const [client, setClient] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [draftMessage, setDraftMessage] = useState('');
   const groupedMessages = useGroupedMessages(messages);
-
-  const viewportRef = useRef();
 
   // 문자열의 바이트 길이를 구하는 함수
   const getByteLength = (s) => {
