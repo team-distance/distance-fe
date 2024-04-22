@@ -6,6 +6,7 @@ import { isLoggedInState, login } from '../../store/auth';
 import { useSetRecoilState } from 'recoil';
 import { onGetToken } from '../../firebaseConfig';
 import toast, { Toaster } from 'react-hot-toast';
+import { ClipLoader } from 'react-spinners';
 
 const DonePage = () => {
   const [loading, setLoading] = useState(false);
@@ -27,30 +28,22 @@ const DonePage = () => {
 
       let clientToken = null;
 
+      // clientToken 가져오기를 먼저 시도
       try {
-        // 토큰을 시도하여 가져옵니다.
         clientToken = await onGetToken();
         localStorage.setItem('clientToken', clientToken);
       } catch (err) {
-        // 토큰 가져오기 실패, clientToken은 null로 유지
         console.error('Token fetch failed', err);
       }
 
+      // 로그인 시도 (clientToken이 null일 수도 있음)
       try {
-        // 로그인 시도 (clientToken이 null일 수도 있음)
         await login({ telNum, password, clientToken });
-
-        console.log(telNum, password, clientToken);
-
-        // 로그인 성공 시
         setIsLoggedIn(true);
-        // navigate("/");
       } catch (err) {
         console.log(err);
-        // 로그인 실패 시
         toast.error('홈화면으로 이동해서 다시 로그인해주세요!');
       } finally {
-        // 로딩 상태 해제
         setLoading(false);
       }
     };
@@ -74,7 +67,21 @@ const DonePage = () => {
             }}
             disabled={loading}
           >
-            학생 인증하기
+            {loading ? (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  color: '#fff',
+                }}
+              >
+                <ClipLoader color={'#fff'} loading={true} size={16} />
+                <div>로그인 중...</div>
+              </div>
+            ) : (
+              <div>학생 인증하기</div>
+            )}
           </Button>
           <MoveToHome
             onClick={() => {
