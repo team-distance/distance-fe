@@ -22,7 +22,6 @@ const ChatPage = () => {
   const [isCallActive, setIsCallActive] = useState(false);
   const [isShowLottie, setIsShowLottie] = useState(false);
   const [isOpponentOut, setIsOpponentOut] = useState(false);
-  const [opponentTelNum, setOpponentTelNum] = useState('');
   const [reportMessage, setReportMessage] = useState('');
   const [bothAgreed, setBothAgreed] = useState(false);
 
@@ -74,7 +73,7 @@ const ChatPage = () => {
     // 전화 버튼 클릭 시 API 호출 후 true, false에 따라 표시할 모달 변경
     try {
       const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
-      setBothAgreed(response.data.bothAgreed);
+      setBothAgreed(response.data);
     } catch (error) {
       toast.error('방 상태를 가져오는데 실패했어요!', {
         position: 'bottom-center',
@@ -258,14 +257,6 @@ const ChatPage = () => {
     }
   }, [messages]);
 
-  const fetchOpponentTelNum = async () => {
-    if (opponentTelNum !== '') return;
-    const telNum = await instance
-      .get(`/member/tel-num/${opponentId}`)
-      .then((res) => res.data.telNum);
-    setOpponentTelNum(telNum);
-  };
-
   const handleChange = (e) => {
     setDraftMessage(e.target.value);
   };
@@ -318,12 +309,6 @@ const ChatPage = () => {
     });
     setDraftMessage('');
   };
-
-  useEffect(() => {
-    if (isCallActive) {
-      fetchOpponentTelNum();
-    }
-  }, [isCallActive]);
 
   useEffect(() => {
     console.log(messages);
@@ -460,7 +445,7 @@ const ChatPage = () => {
                 const res = await instance.get(
                   `/member/tel-num?memberId=${opponentId}&chatRoomId=${roomId}`
                 );
-                window.open(`tel:${res.data.telNum}`);
+                window.location.href = `tel:${res.data.telNum}`;
               }
             : () => {
                 requestCall();
