@@ -280,7 +280,7 @@ const ChatPage = () => {
     // delete localStorageChat[roomId];
     // localStorage.setItem("staleMessages", JSON.stringify(localStorageChat));
 
-    navigate(-1);
+    navigate('/');
   };
 
   const sendMessage = async (e) => {
