@@ -8,6 +8,7 @@ import HeaderPrev from '../../components/common/HeaderPrev';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import { CHOOSE_CHARACTERS } from '../../constants/character';
+import toast, { Toaster } from 'react-hot-toast';
 
 const ProfileEditPage = () => {
   const navigate = useNavigate();
@@ -110,6 +111,7 @@ const ProfileEditPage = () => {
 
   return (
     <div>
+      <Toaster position="bottom-center" />
       <WrapContent>
         <HeaderPrev title="프로필 수정하기" navigateTo={-1} />
         <Label>캐릭터 선택하기</Label>
@@ -213,8 +215,17 @@ const ProfileEditPage = () => {
                   key={index}
                   color={attractiveness.includes(value) ? '#FF0000' : 'black'}
                   onClick={() => {
-                    if (attractiveness.includes(value) || hashtagCount >= 5)
+                    if (hashtagCount >= 5) {
+                      toast.error('해시태그는 5개까지만 선택 가능해요!', {
+                        id: 'hashtag-limit',
+                      });
                       return;
+                    } else if (attractiveness.includes(value)) {
+                      toast.error('이미 선택한 해시태그에요!', {
+                        id: 'hashtag-duplicate',
+                      });
+                      return;
+                    }
                     setAttractiveness([...attractiveness, value]);
                     closeAttractivenessModal();
                   }}
@@ -240,7 +251,17 @@ const ProfileEditPage = () => {
                   key={index}
                   color={hobby.includes(value) ? '#FF0000' : 'black'}
                   onClick={() => {
-                    if (hobby.includes(value) || hashtagCount >= 5) return;
+                    if (hashtagCount >= 5) {
+                      toast.error('해시태그는 5개까지만 선택 가능해요!', {
+                        id: 'hashtag-limit',
+                      });
+                      return;
+                    } else if (hobby.includes(value)) {
+                      toast.error('이미 선택한 해시태그에요!', {
+                        id: 'hashtag-duplicate',
+                      });
+                      return;
+                    }
                     setHobby([...hobby, value]);
                     closeHobbyModal();
                   }}
