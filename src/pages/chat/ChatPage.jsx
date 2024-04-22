@@ -179,20 +179,14 @@ const ChatPage = () => {
       },
       onConnect: (frame) => {
         console.log('Connected: ' + frame);
-
         newClient.subscribe(`/topic/chatroom/${roomId}`, (message) => {
           const parsedMessage = JSON.parse(message.body);
+
+          // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
           setMessages((prevMessages) => {
-            let lastIndexChange = -1;
             const oldMessages = [...prevMessages];
-            for (let i = oldMessages.length - 2; i >= 0; i--) {
-              if (oldMessages[i].senderId !== oldMessages[i + 1].senderId) {
-                lastIndexChange = i;
-                break;
-              }
-            }
-            if (lastIndexChange !== -1) {
-              for (let i = 0; i <= lastIndexChange; i++) {
+            if (parsedMessage.body.senderId !== oldMessages.at(-1)?.senderId) {
+              for (let i = 0; i < oldMessages.length; i++) {
                 oldMessages[i].unreadCount = 0;
               }
             }
@@ -200,7 +194,6 @@ const ChatPage = () => {
           });
         });
       },
-
       reconnectDelay: 100,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
