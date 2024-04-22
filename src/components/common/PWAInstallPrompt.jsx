@@ -5,6 +5,10 @@ const PWAInstallPrompt = () => {
   const [isIos, setIsIos] = useState(false);
   const [prompt, setPropmt] = useState(null);
 
+  useEffect(() => {
+    console.log(isIos);
+    console.log(navigator.standalone);
+  }, [isIos]);
   const handleClick = () => {
     setIsOpened(false);
     if (!prompt) return;
@@ -25,7 +29,7 @@ const PWAInstallPrompt = () => {
       setIsOpened(true);
     };
 
-    if (isIos && !window.navigator.standalone) setIsOpened(true);
+    if (isIos && !navigator.standalone) setIsOpened(true);
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
@@ -41,12 +45,12 @@ const PWAInstallPrompt = () => {
     isOpened &&
     (isIos ? (
       <div>
-        <button>닫기</button>
+        <button onClick={() => setIsOpened(false)}>닫기</button>
         ios입니다.
       </div>
     ) : (
       <div>
-        <button>닫기</button>
+        <button onClick={() => setIsOpened(false)}>닫기</button>
         <div>PWA를 설치하세요.</div>
         <button onClick={handleClick}>설치하기</button>
       </div>
