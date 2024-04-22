@@ -13,8 +13,10 @@ const VerifyEmailPage = () => {
   const [verifyNum, setVerifyNum] = useState('');
   const [emailDisabled, setEmailDisabled] = useState(true);
   const [verifyDisabled, setVerifyDisabled] = useState(true);
-  const [verifiedFlag, setVerifiedFlag] = useState(true);
   const [isSendEmail, setIsSendEmail] = useState(false);
+
+  // 서비스 개시 전까지는 사용하지 않음
+  // const regex = /^[a-zA-Z0-9-_]{4,20}$/;
 
   const handleChangeEmail = (e) => {
     setSchoolEmail(e.target.value);
@@ -47,7 +49,6 @@ const VerifyEmailPage = () => {
       loading: '전송 중...',
       success: () => {
         setIsSendEmail(true);
-        setVerifiedFlag(false);
         return '인증메일이 전송되었습니다.';
       },
       error: '인증을 다시 시도해주세요.',
@@ -55,18 +56,19 @@ const VerifyEmailPage = () => {
   };
 
   const verifyEmail = async () => {
-    const response = instance.post('/univ/certificate/email', {
-      number: verifyNum,
-    });
-
-    toast.promise(response, {
-      loading: '인증 중...',
-      success: () => {
-        setVerifiedFlag(false);
-        return '인증에 성공했습니다.';
-      },
-      error: '인증에 실패했습니다. 다시 시도해주세요.',
-    });
+    try {
+      await instance.post('/univ/certificate/email', {
+        number: verifyNum,
+        schoolEmail: schoolEmail.includes('@')
+          ? schoolEmail
+          : schoolEmail + '@sch.ac.kr',
+      });
+      window.confirm(
+        '인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.'
+      ) && navigate('/');
+    } catch (error) {
+      toast.error('인증번호가 일치하지 않습니다.');
+    }
   };
 
   return (
@@ -107,23 +109,14 @@ const VerifyEmailPage = () => {
             label="인증번호"
             name="emailVerify"
             type="text"
-            buttonLabel="인증하기"
-            buttonDisabled={verifyDisabled}
             onChange={handleChangeVerifyNum}
-            buttonClickHandler={verifyEmail}
             timerState={180}
             onTimerEnd={() => setIsSendEmail(false)}
           />
         </div>
       )}
 
-      <Button
-        size="large"
-        disabled={verifiedFlag}
-        onClick={() => {
-          navigate('/');
-        }}
-      >
+      <Button size="large" disabled={verifyDisabled} onClick={verifyEmail}>
         인증완료
       </Button>
     </WrapContent>
