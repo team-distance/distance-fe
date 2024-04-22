@@ -10,6 +10,7 @@ import useGPS from '../hooks/useGPS';
 import { myDataState } from '../store/myData';
 import { onMessage } from 'firebase/messaging';
 import { messaging } from '../firebaseConfig';
+import PWAInstallPrompt from '../components/common/PWAInstallPrompt';
 
 const NavLayout = () => {
   const setMyData = useSetRecoilState(myDataState);
@@ -145,6 +146,7 @@ const NavLayout = () => {
 
   return (
     <>
+      <PWAInstallPrompt />
       <Padding $isIphone={isIphone}>
         <Outlet />
       </Padding>
