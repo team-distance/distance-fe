@@ -133,7 +133,7 @@ const HomeIndexPage = () => {
         <Header />
 
         {/* clientToken 임시적으로 홈화면에 표시 */}
-        {localStorage.getItem('clientToken') && (
+        {/* {localStorage.getItem('clientToken') && (
           <div>
             <div
               style={{
@@ -155,7 +155,7 @@ const HomeIndexPage = () => {
               복사
             </button>
           </div>
-        )}
+        )} */}
 
         <ProfileContainer>
           {loading ? (

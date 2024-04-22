@@ -36,6 +36,7 @@ export default Profile;
 const WrapProfile = styled.article`
   display: flex;
   justify-content: center;
+  /* align-items: flex-start; */
   align-items: center;
   text-align: center;
   width: 100%;
@@ -47,9 +48,10 @@ const WrapProfile = styled.article`
 
 const Wrapper = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   flex-direction: column;
+  padding: 0 6px;
   gap: 12px;
 `;
 
@@ -57,6 +59,7 @@ const CharacterBackground = styled.div`
   position: relative;
   width: 60%;
   height: 0;
+  /* margin-top: 5%; */
   padding-bottom: 60%;
   border-radius: 50%;
   background-color: ${(props) => COLORS[props.$character]};
@@ -96,4 +99,5 @@ const TagContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 4px;
+  overflow: scroll;
 `;
