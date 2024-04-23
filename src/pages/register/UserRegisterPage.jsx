@@ -59,6 +59,11 @@ const UserRegisterPage = () => {
       setVerifyNum('');
     }
 
+    setIsSendMessage(true);
+    setVerify(false);
+    setVerifyButtonLabel('재전송');
+    setCheckPhoneFlag(true);
+
     const response = instance.post('/member/send/sms', {
       telNum: registerData.telNum,
     });
@@ -67,6 +72,7 @@ const UserRegisterPage = () => {
       loading: '전송 중...',
       success: () => {
         setIsSendMessage(true);
+        setVerify(false);
         setVerifyButtonLabel('재전송');
         return '인증번호가 전송되었습니다.';
       },
@@ -88,6 +94,7 @@ const UserRegisterPage = () => {
       });
       setVerify(true);
       setVerifyNumFlag(true);
+      setCheckPhoneFlag(false);
     } catch (error) {
       toast.error('인증번호가 틀렸습니다.');
       console.log();
