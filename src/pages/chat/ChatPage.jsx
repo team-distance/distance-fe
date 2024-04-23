@@ -14,6 +14,7 @@ import callAnimation from '../../lottie/call-animation.json';
 import useGroupedMessages from '../../hooks/useGroupedMessages';
 import Modal from '../../components/common/Modal';
 import Tooltip from '../../components/common/Tooltip';
+import { getByteLength } from '../../utils/getByteLength';
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
@@ -38,27 +39,6 @@ const ChatPage = () => {
   const roomId = location.state.roomId;
 
   const groupedMessages = useGroupedMessages(messages);
-
-  // 문자열의 바이트 길이를 구하는 함수
-  const getByteLength = (s) => {
-    let b = 0,
-      i = 0;
-    while (i < s.length) {
-      const codePoint = s.codePointAt(i);
-      if (codePoint <= 0x7f) {
-        b += 1;
-      } else if (codePoint <= 0x7ff) {
-        b += 2;
-      } else if (codePoint <= 0xffff) {
-        b += 3;
-      } else if (codePoint <= 0x10ffff) {
-        b += 4;
-        i++; // 이모지 같은 서로게이트 쌍의 경우 다음 코드 유닛을 건너뜀
-      }
-      i++;
-    }
-    return b;
-  };
 
   // 메시지 길이 제한
   useEffect(() => {
