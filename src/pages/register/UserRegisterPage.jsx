@@ -44,7 +44,8 @@ const UserRegisterPage = () => {
     }
 
     if (name === 'password') {
-      if (value.length >= 6) {
+      const isNumeric = /^[0-9]+$/.test(value);
+      if (value.length >= 6 && isNumeric) {
         setPwFlag(false);
       } else {
         setPwFlag(true);
@@ -146,10 +147,11 @@ const UserRegisterPage = () => {
             label="비밀번호"
             name="password"
             type="password"
-            placeholder="6자리 이상"
+            placeholder="숫자로만 6자리 이상"
             value={registerData.password}
             onChange={handleChange}
           />
+          {pwFlag && <Tip>숫자로만 구성된 6자리 이상이어야 합니다.</Tip>}
         </WrapPassword>
 
         <WrapButton>
