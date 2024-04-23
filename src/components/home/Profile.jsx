@@ -52,6 +52,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   padding: 0 6px;
   width: 100%;
+  max-width: 150px;
   gap: 12px;
 `;
 
