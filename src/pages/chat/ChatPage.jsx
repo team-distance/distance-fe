@@ -16,6 +16,9 @@ import Modal from '../../components/common/Modal';
 import Tooltip from '../../components/common/Tooltip';
 import { getByteLength } from '../../utils/getByteLength';
 
+/**
+ * @todo 모든 메시지 가져오는 API 응답 구조 변경되면 주석 처리 해제
+ */
 const ChatPage = () => {
   const [client, setClient] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -69,125 +72,16 @@ const ChatPage = () => {
     setDraftMessage(e.target.value);
   };
 
-  // 전화 버튼 클릭 시
-  const handleClickCallButton = async () => {
-    try {
-      const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
-      setBothAgreed(response.data);
-    } catch (error) {
-      toast.error('방 상태를 가져오는데 실패했어요!', {
-        position: 'bottom-center',
-      });
-    }
-
-    openCallModal();
-  };
-
-  // 로컬 스토리지에서 메시지 불러오기
-  const fetchMessages = () => {
-    const staleMessages = localStorage.getItem('staleMessages');
-    if (staleMessages) {
-      const parsedStaleMessages = JSON.parse(staleMessages);
-      if (parsedStaleMessages[roomId]) {
-        setMessages(JSON.parse(parsedStaleMessages[roomId]));
-      }
-    }
-  };
-
   // 로컬 스토리지에 메시지 저장
-  const saveMessages = () => {
+  const saveMessagesToLocal = () => {
     const staleMessages =
       JSON.parse(localStorage.getItem('staleMessages')) || {};
-    staleMessages[roomId] = JSON.stringify(messages); // Save the current state of messages for this room
+    staleMessages[roomId] = JSON.stringify(messages);
     localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
   };
 
-  // 서버에서 읽지 않은 메시지 불러오기
-  const fetchUnreadMessages = async () => {
-    try {
-      const msg = await instance
-        .get(`/chatroom/${roomId}`)
-        .then((res) => res.data);
-
-      if (msg.length === 0) return;
-      setMessages((messages) => [...messages, ...msg]);
-    } catch (error) {
-      console.log('error', error);
-      //401에러
-      window.confirm('학생 인증 후 이용해주세요.')
-        ? navigateToVerify()
-        : navigateToBack();
-    }
-  };
-
-  // 통화 요청 메시지 전송
-  const requestCall = async () => {
-    client.publish({
-      destination: `/app/chat/${roomId}`,
-      body: JSON.stringify({
-        chatMessage: '통화를 요청하셨어요!',
-        senderId: opponentId,
-        receiverId: myId,
-        publishType: 'CALL_REQUEST',
-      }),
-    });
-  };
-
-  // 통화 요청 수락 메시지 전송
-  const responseCall = async () => {
-    client.publish({
-      destination: `/app/chat/${roomId}`,
-      body: JSON.stringify({
-        chatMessage: '통화 요청을 수락했어요!',
-        senderId: opponentId,
-        receiverId: myId,
-        publishType: 'CALL_RESPONSE',
-      }),
-    });
-  };
-
-  // 신고하기
-  const handleReportUser = async () => {
-    await instance
-      .post('/report', {
-        declareContent: reportMessage,
-        opponentId,
-      })
-      .then((res) => {
-        alert('신고가 완료되었어요!');
-      })
-      .catch((error) => {
-        console.log(error);
-        alert('이미 신고한 사용자예요! 신고는 한 번만 가능해요.');
-      });
-
-    closeReportModal();
-  };
-
-  // 방 나가기
-  const handleLeaveRoom = async () => {
-    const res = window.confirm('정말로 나가시겠습니까?');
-    if (!res) return;
-
-    client.publish({
-      destination: `/app/chat/${roomId}`,
-      body: JSON.stringify({
-        chatMessage: 'LEAVE',
-        senderId: opponentId,
-        receiverId: myId,
-        publishType: 'LEAVE',
-      }),
-    });
-
-    const localStorageChat = JSON.parse(localStorage.getItem('staleMessages'));
-    delete localStorageChat[roomId];
-    localStorage.setItem('staleMessages', JSON.stringify(localStorageChat));
-
-    navigate('/');
-  };
-
   // 메시지 전송
-  const sendMessage = async (e) => {
+  const sendMessage = (e) => {
     e.preventDefault();
 
     if (!draftMessage.trim()) return;
@@ -212,14 +106,52 @@ const ChatPage = () => {
     setDraftMessage('');
   };
 
-  // 거리 불러오기
-  const fetchDistance = async () => {
-    const distance = await instance
-      .get(`/gps/distance/${roomId}`)
-      .then((res) => res.data.distance);
+  // 방 나가기
+  const handleLeaveRoom = () => {
+    const res = window.confirm('정말로 나가시겠습니까?');
+    if (!res) return;
 
-    const parseDistance = parseInt(distance);
-    setDistance(parseDistance);
+    client.publish({
+      destination: `/app/chat/${roomId}`,
+      body: JSON.stringify({
+        chatMessage: 'LEAVE',
+        senderId: opponentId,
+        receiverId: myId,
+        publishType: 'LEAVE',
+      }),
+    });
+
+    const staleMessages = JSON.parse(localStorage.getItem('staleMessages'));
+    delete staleMessages[roomId];
+    localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
+
+    navigate('/');
+  };
+
+  // 통화 요청 메시지 전송
+  const requestCall = () => {
+    client.publish({
+      destination: `/app/chat/${roomId}`,
+      body: JSON.stringify({
+        chatMessage: '통화를 요청하셨어요!',
+        senderId: opponentId,
+        receiverId: myId,
+        publishType: 'CALL_REQUEST',
+      }),
+    });
+  };
+
+  // 통화 요청 수락 메시지 전송
+  const responseCall = () => {
+    client.publish({
+      destination: `/app/chat/${roomId}`,
+      body: JSON.stringify({
+        chatMessage: '통화 요청을 수락했어요!',
+        senderId: opponentId,
+        receiverId: myId,
+        publishType: 'CALL_RESPONSE',
+      }),
+    });
   };
 
   // STOMP 메시지 수신 시 작동하는 콜백 함수
@@ -236,6 +168,88 @@ const ChatPage = () => {
       }
       return [...oldMessages, parsedMessage.body];
     });
+  };
+
+  // 로컬 스토리지에서 메시지 불러오기
+  // 방에 해당하는 메시지가 있는지 여부에 따라 로직을 처리해야 하므로
+  // 비동기 함수로 작성
+  const fetchMessagesFromLocal = async () => {
+    const staleMessages = localStorage.getItem('staleMessages');
+    if (staleMessages) {
+      const parsedStaleMessages = JSON.parse(staleMessages);
+      if (parsedStaleMessages[roomId]) {
+        const localMessages = JSON.parse(parsedStaleMessages[roomId]);
+        setMessages(JSON.parse(parsedStaleMessages[roomId]));
+        return localMessages;
+      }
+    }
+    return [];
+  };
+
+  // 전화 버튼 클릭 시
+  const handleClickCallButton = async () => {
+    try {
+      const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
+      setBothAgreed(response.data);
+    } catch (error) {
+      toast.error('방 상태를 가져오는데 실패했어요!', {
+        position: 'bottom-center',
+      });
+    }
+
+    openCallModal();
+  };
+
+  // 서버에서 모든 메시지 불러오기
+  // const fetchAllMessagesFromServer = async () => {
+  //   try {
+  //     const msg = await instance.get(`/chatroom/${roomId}/allmessage`);
+  //     if (msg.data.length === 0) return;
+  //     setMessages(msg.data);
+  //   } catch (error) {
+  //     console.log('error', error);
+  //   }
+  // };
+
+  // 서버에서 읽지 않은 메시지 불러오기
+  const fetchUnreadMessagesFromServer = async () => {
+    try {
+      const msg = await instance.get(`/chatroom/${roomId}`);
+      if (msg.data.length === 0) return;
+      setMessages((messages) => [...messages, ...msg.data]);
+    } catch (error) {
+      console.log('error', error);
+      //401에러
+      window.confirm('학생 인증 후 이용해주세요.')
+        ? navigateToVerify()
+        : navigateToBack();
+    }
+  };
+
+  // 신고하기
+  const handleReportUser = async () => {
+    try {
+      await instance.post('/report', {
+        declareContent: reportMessage,
+        opponentId,
+      });
+      alert('신고가 완료되었어요!');
+    } catch (error) {
+      console.log(error);
+      alert('이미 신고한 사용자예요! 신고는 한 번만 가능해요.');
+    }
+    closeReportModal();
+  };
+
+  // 거리 불러오기
+  const fetchDistance = async () => {
+    try {
+      const distance = await instance.get(`/gps/distance/${roomId}`);
+      const parseDistance = parseInt(distance.data.distance);
+      setDistance(parseDistance);
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
   // STOMP 클라이언트 생성
@@ -260,8 +274,19 @@ const ChatPage = () => {
 
     // STOMP 클라이언트 생성 시 거리, 메시지, 읽지 않은 메시지 불러오기
     fetchDistance();
-    fetchMessages();
-    fetchUnreadMessages();
+
+    // API 변경되면 여기부터 두줄 주석 처리하고
+    fetchMessagesFromLocal();
+    fetchUnreadMessagesFromServer();
+
+    // 여기부터 initMessages()까지 주석 해제
+    // const initMessages = async () => {
+    //   await fetchMessagesFromLocal();
+    //   if (messages.length === 0) fetchAllMessagesFromServer();
+    //   else fetchUnreadMessagesFromServer();
+    // };
+
+    // initMessages();
 
     newClient.activate();
     setClient(newClient);
@@ -284,7 +309,7 @@ const ChatPage = () => {
     }
 
     if (messages.length > 0) {
-      saveMessages();
+      saveMessagesToLocal();
     }
   }, [messages]);
 
