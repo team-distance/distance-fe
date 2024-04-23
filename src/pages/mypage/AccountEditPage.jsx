@@ -94,7 +94,8 @@ const AccountEditPage = () => {
       )}
 
       <DropoutButton onClick={() => navigate('/mypage/account/dropout')}>
-        회원탈퇴
+        <img src="/assets/dropout-icon.svg" alt="로그아웃" />
+        <div>회원탈퇴</div>
       </DropoutButton>
     </WrapContent>
   );
@@ -106,22 +107,29 @@ const WrapForm = styled.form`
   display: grid;
   gap: 8rem;
 `;
+
 const WrapContent = styled.div`
   display: grid;
   gap: 2rem;
   padding: 2rem;
-
-  div {
-    padding-top: 0.5rem;
-  }
 `;
 
 const DropoutButton = styled.div`
   position: absolute;
   left: 50%;
-  bottom: 3rem;
   transform: translateX(-50%);
-  color: #767676;
-  font-size: 12px;
+  display: flex;
+  bottom: 3rem;
+  align-items: center;
+  gap: 4px;
+  border-radius: 4px;
+  padding: 4px;
+  color: #ffffff;
+  background-color: #aaaaaa;
+  font-size: 14px;
   font-weight: 500;
+
+  img {
+    width: 14px;
+  }
 `;
