@@ -128,7 +128,7 @@ const ChatIndexPage = () => {
       if (!res) return;
       try {
         await instance.get(`/room-member/leave/${chat.chatRoomId}`);
-        window.location.href = '/chat';
+        fetchChatList();
       } catch (error) {
         console.log(error);
       }
