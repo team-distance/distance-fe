@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/common/Header';
 import { instance } from '../../api/instance';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { CHARACTERS, COLORS } from '../../constants/character';
 import Badge from '../../components/common/Badge';
 
 const ChatInboxPage = () => {
   const [inboxList, setInboxList] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const parseRoomName = (str) => {
     // 정규표현식: 학과명(capturing group 1), MBTI(capturing group 2), memberId(capturing group 3)
@@ -28,8 +29,7 @@ const ChatInboxPage = () => {
   };
 
   const fetchInboxList = async () => {
-    const res = await instance.get('/waiting').then((res) => res.data);
-    setInboxList(res);
+    setInboxList(location.state.inboxList);
   };
 
   const handleAcceptChat = async (

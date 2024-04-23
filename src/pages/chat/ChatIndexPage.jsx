@@ -19,6 +19,8 @@ const ChatIndexPage = () => {
   const memberId = localStorage.getItem('memberId');
   const [loading, setLoading] = useState(false);
   const isLoggedIn = useRecoilValue(isLoggedInState);
+  const [waitingCount, setWaitingCount] = useState(0);
+  const [inboxList, setInboxList] = useState([]);
 
   const parseRoomName = (str) => {
     // 정규표현식: 학과명(capturing group 1), MBTI(capturing group 2), memberId(capturing group 3)
@@ -51,6 +53,7 @@ const ChatIndexPage = () => {
           return tempResponse;
         });
       setChatList(res);
+      console.log(res);
     } catch (error) {
       console.log(error);
     } finally {
@@ -58,8 +61,19 @@ const ChatIndexPage = () => {
     }
   };
 
+  const fetchChatWaiting = async () => {
+    try {
+      const res = await instance.get('/waiting').then((res) => res.data);
+      setInboxList(res);
+      setWaitingCount(res.length);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchChatList();
+    fetchChatWaiting();
 
     const eventSource = new EventSource(
       `https://api.dis-tance.com/api/notify/subscribe/${memberId}`
@@ -143,10 +157,19 @@ const ChatIndexPage = () => {
             <WrapInboxButton>
               <InboxButton
                 onClick={() => {
-                  navigate('/inbox');
+                  navigate('/inbox', {
+                    state: {
+                      inboxList: inboxList,
+                    },
+                  });
                 }}
               >
-                <div>요청함</div>
+                <div>
+                  {waitingCount > 0 && (
+                    <UnreadCount>{waitingCount}</UnreadCount>
+                  )}
+                  <div>요청함</div>
+                </div>
                 <img src="/assets/arrow-pink-right.svg" alt="화살표 아이콘" />
               </InboxButton>
             </WrapInboxButton>
@@ -187,10 +210,11 @@ const ChatIndexPage = () => {
 
                     <div className="right-section">
                       <Time>{timeDisplay}</Time>
-                      {chat.askedCount > 0 && (
+                      {chat.askedCount > 0 ? (
                         <UnreadCount>{chat.askedCount}</UnreadCount>
+                      ) : (
+                        <br />
                       )}
-                      <br />
                     </div>
                   </ChatRoomContainer>
                 );
@@ -308,6 +332,11 @@ const InboxButton = styled.div`
   display: flex;
   gap: 8px;
   font-weight: 600;
+
+  div {
+    display: flex;
+    margin-left: 5px;
+  }
 `;
 
 const LoaderContainer = styled.div`
