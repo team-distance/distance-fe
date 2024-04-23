@@ -10,11 +10,12 @@ import useGPS from '../hooks/useGPS';
 import { myDataState } from '../store/myData';
 import { onMessage } from 'firebase/messaging';
 import { messaging } from '../firebaseConfig';
+import PWAInstallPrompt from '../components/common/PWAInstallPrompt';
 
 const NavLayout = () => {
   const setMyData = useSetRecoilState(myDataState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
-  const currentLocation = useGPS();
+  const currentLocation = useGPS(isLoggedIn);
   const navigate = useNavigate();
   const userAgent = navigator.userAgent.toLowerCase();
   const isIphone = userAgent.includes('iphone');
@@ -145,6 +146,7 @@ const NavLayout = () => {
 
   return (
     <>
+      <PWAInstallPrompt />
       <Padding $isIphone={isIphone}>
         <Outlet />
       </Padding>
@@ -215,7 +217,7 @@ const ToastBody = styled.div`
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  word-break: keep-all; // 문단으로 끊어져서 줄바꿈 됨
+  word-break: break-all; // 문단으로 끊어져서 줄바꿈 됨
 `;
 
 export default NavLayout;

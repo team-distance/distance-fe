@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { DISTANCE } from '../constants/location';
 import { calculateDistanceInMeter } from '../utils/calculateDistanceInMeter';
 
-const useGPS = () => {
+const useGPS = (isLoggedIn) => {
   const [curLocation, setCurLocation] = useState({
     lat: 0,
     lng: 0,
@@ -41,9 +41,10 @@ const useGPS = () => {
         ...curLocation,
         error: 'Geolocation is not supported',
       });
-    } else {
-      const watcher = navigator.geolocation.watchPosition(success, error);
+    }
 
+    if (isLoggedIn) {
+      const watcher = navigator.geolocation.watchPosition(success, error);
       return () => navigator.geolocation.clearWatch(watcher);
     }
   }, []);

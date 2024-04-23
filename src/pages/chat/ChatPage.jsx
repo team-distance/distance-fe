@@ -13,6 +13,7 @@ import Lottie from 'react-lottie-player';
 import callAnimation from '../../lottie/call-animation.json';
 import useGroupedMessages from '../../hooks/useGroupedMessages';
 import Modal from '../../components/common/Modal';
+import Tooltip from '../../components/common/Tooltip';
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
@@ -179,20 +180,14 @@ const ChatPage = () => {
       },
       onConnect: (frame) => {
         console.log('Connected: ' + frame);
-
         newClient.subscribe(`/topic/chatroom/${roomId}`, (message) => {
           const parsedMessage = JSON.parse(message.body);
+
+          // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
           setMessages((prevMessages) => {
-            let lastIndexChange = -1;
             const oldMessages = [...prevMessages];
-            for (let i = oldMessages.length - 2; i >= 0; i--) {
-              if (oldMessages[i].senderId !== oldMessages[i + 1].senderId) {
-                lastIndexChange = i;
-                break;
-              }
-            }
-            if (lastIndexChange !== -1) {
-              for (let i = 0; i <= lastIndexChange; i++) {
+            if (parsedMessage.body.senderId !== oldMessages.at(-1)?.senderId) {
+              for (let i = 0; i < oldMessages.length; i++) {
                 oldMessages[i].unreadCount = 0;
               }
             }
@@ -200,7 +195,6 @@ const ChatPage = () => {
           });
         });
       },
-
       reconnectDelay: 100,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
@@ -382,7 +376,14 @@ const ChatPage = () => {
           <WrapTitle>
             <div className="title">상대방과의 거리</div>
             <div className="subtitle">
-              {distance === -1 ? '불러오는 중...' : `${distance}m`}
+              {distance === -1 ? (
+                <>
+                  <Tooltip message="두 명 모두 위치 정보를 공유해야 확인할 수 있어요!" />{' '}
+                  <span>위치를 표시할 수 없습니다.</span>
+                </>
+              ) : (
+                `${distance}m`
+              )}
             </div>
           </WrapTitle>
           <div>
@@ -526,6 +527,7 @@ const TopBar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  z-index: 9999;
 `;
 
 const ModalContent = styled.div`
