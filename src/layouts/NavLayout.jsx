@@ -15,7 +15,7 @@ import PWAInstallPrompt from '../components/common/PWAInstallPrompt';
 const NavLayout = () => {
   const setMyData = useSetRecoilState(myDataState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
-  const currentLocation = useGPS();
+  const currentLocation = useGPS(isLoggedIn);
   const navigate = useNavigate();
   const userAgent = navigator.userAgent.toLowerCase();
   const isIphone = userAgent.includes('iphone');

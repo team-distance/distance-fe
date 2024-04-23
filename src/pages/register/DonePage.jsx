@@ -19,7 +19,7 @@ const DonePage = () => {
   useEffect(() => {
     const instantLogin = async () => {
       if ('Notification' in window && Notification.permission !== 'granted') {
-        alert('알림 권한 창이 표시되면 허용을 눌러주세요!');
+        alert('알림, 위치 권한을 허용해주세요!');
       }
 
       // clientToken 없어도 로그인 가능
