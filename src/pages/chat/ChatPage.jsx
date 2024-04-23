@@ -426,7 +426,7 @@ const ChatPage = () => {
       </Container>
 
       <BlankModal ref={reportModalRef}>
-        <ModalContent>
+        <ReportModalContent>
           <TextInput
             label="사용자 신고하기"
             placeholder="신고 내용을 입력해주세요."
@@ -442,7 +442,7 @@ const ChatPage = () => {
             </ReportButton>
             <CancelButton onClick={closeReportModal}>취소하기</CancelButton>
           </div>
-        </ModalContent>
+        </ReportModalContent>
       </BlankModal>
 
       <Modal
@@ -469,19 +469,23 @@ const ChatPage = () => {
               }
         }
       >
-        {bothAgreed ? (
-          <>
-            <strong>요청을 수락했어요!</strong>
-            <div>통화하시겠어요?</div>
-          </>
-        ) : (
-          <>
-            <strong>전화를 요청할까요?</strong>
-            <ul>
-              <li>상대방이 요청을 수락하면 서로의 번호로 통화할 수 있어요.</li>
-            </ul>
-          </>
-        )}
+        <CallModalContent>
+          {bothAgreed ? (
+            <>
+              <strong>🎉 이제 통화할 수 있어요!</strong>
+              <div>아래 버튼을 눌러 통화해보세요.</div>
+            </>
+          ) : (
+            <>
+              <strong>📞 통화를 요청할까요?</strong>
+              <div>
+                상대방이 요청을 수락하면
+                <br />
+                서로의 번호로 통화할 수 있어요.
+              </div>
+            </>
+          )}
+        </CallModalContent>
       </Modal>
     </Wrapper>
   );
@@ -544,7 +548,7 @@ const TopBar = styled.div`
   z-index: 1;
 `;
 
-const ModalContent = styled.div`
+const ReportModalContent = styled.div`
   display: grid;
   gap: 1rem;
   width: 250px;
@@ -564,6 +568,13 @@ const ReportButton = styled.button`
 const CancelButton = styled.button`
   background: none;
   border: none;
+`;
+
+const CallModalContent = styled.div`
+  display: grid;
+  gap: 1rem;
+  padding: 32px 0;
+  text-align: center;
 `;
 
 const LottieContainer = styled.div`
