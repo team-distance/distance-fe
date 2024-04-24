@@ -1,8 +1,28 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { instance } from '../../api/instance';
 
 const VerifyOptionsPage = () => {
   const navigate = useNavigate();
+
+  const checkVerified = async () => {
+    try {
+      const authUniv = await instance.get('/member/check/university');
+      if (authUniv.data === 'SUCCESS') {
+        alert('이미 인증되었어요!');
+        navigate('/mypage');
+      }
+    } catch (error) {
+      console.log(error);
+      alert('정보를 불러올 수 없어요. 다시 시도해주세요.');
+      navigate('/mypage');
+    }
+  };
+
+  useEffect(() => {
+    checkVerified();
+  }, []);
 
   return (
     <WrapContent>
