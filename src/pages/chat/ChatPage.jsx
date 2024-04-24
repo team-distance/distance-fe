@@ -16,9 +16,6 @@ import Modal from '../../components/common/Modal';
 import Tooltip from '../../components/common/Tooltip';
 import { getByteLength } from '../../utils/getByteLength';
 
-/**
- * @todo 모든 메시지 가져오는 API 응답 구조 변경되면 주석 처리 해제
- */
 const ChatPage = () => {
   const [client, setClient] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -78,6 +75,20 @@ const ChatPage = () => {
       JSON.parse(localStorage.getItem('staleMessages')) || {};
     staleMessages[roomId] = JSON.stringify(messages);
     localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
+  };
+
+  // 로컬 스토리지에서 메시지 불러오기
+  const fetchStaleMessagesFromLocal = () => {
+    const staleMessages = localStorage.getItem('staleMessages');
+    if (staleMessages) {
+      const parsedStaleMessages = JSON.parse(staleMessages);
+      if (parsedStaleMessages[roomId]) {
+        const localMessages = JSON.parse(parsedStaleMessages[roomId]);
+        setMessages(JSON.parse(parsedStaleMessages[roomId]));
+        return localMessages;
+      }
+    }
+    return [];
   };
 
   // 메시지 전송
@@ -170,22 +181,6 @@ const ChatPage = () => {
     });
   };
 
-  // 로컬 스토리지에서 메시지 불러오기
-  // 방에 해당하는 메시지가 있는지 여부에 따라 로직을 처리해야 하므로
-  // 비동기 함수로 작성
-  const fetchMessagesFromLocal = async () => {
-    const staleMessages = localStorage.getItem('staleMessages');
-    if (staleMessages) {
-      const parsedStaleMessages = JSON.parse(staleMessages);
-      if (parsedStaleMessages[roomId]) {
-        const localMessages = JSON.parse(parsedStaleMessages[roomId]);
-        setMessages(JSON.parse(parsedStaleMessages[roomId]));
-        return localMessages;
-      }
-    }
-    return [];
-  };
-
   // 전화 버튼 클릭 시
   const handleClickCallButton = async () => {
     try {
@@ -201,15 +196,15 @@ const ChatPage = () => {
   };
 
   // 서버에서 모든 메시지 불러오기
-  // const fetchAllMessagesFromServer = async () => {
-  //   try {
-  //     const msg = await instance.get(`/chatroom/${roomId}/allmessage`);
-  //     if (msg.data.length === 0) return;
-  //     setMessages(msg.data);
-  //   } catch (error) {
-  //     console.log('error', error);
-  //   }
-  // };
+  const fetchAllMessagesFromServer = async () => {
+    try {
+      const msg = await instance.get(`/chatroom/${roomId}/allmessage`);
+      if (msg.data.length === 0) return;
+      setMessages(msg.data);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
 
   // 서버에서 읽지 않은 메시지 불러오기
   const fetchUnreadMessagesFromServer = async () => {
@@ -272,21 +267,11 @@ const ChatPage = () => {
       heartbeatOutgoing: 4000,
     });
 
-    // STOMP 클라이언트 생성 시 거리, 메시지, 읽지 않은 메시지 불러오기
+    const staleMessages = fetchStaleMessagesFromLocal();
+    if (staleMessages.length === 0) fetchAllMessagesFromServer();
+    else fetchUnreadMessagesFromServer();
+
     fetchDistance();
-
-    // API 변경되면 여기부터 두줄 주석 처리하고
-    fetchMessagesFromLocal();
-    fetchUnreadMessagesFromServer();
-
-    // 여기부터 initMessages()까지 주석 해제
-    // const initMessages = async () => {
-    //   await fetchMessagesFromLocal();
-    //   if (messages.length === 0) fetchAllMessagesFromServer();
-    //   else fetchUnreadMessagesFromServer();
-    // };
-
-    // initMessages();
 
     newClient.activate();
     setClient(newClient);
