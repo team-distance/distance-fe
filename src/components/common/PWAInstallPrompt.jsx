@@ -70,7 +70,7 @@ const PWAInstallPrompt = () => {
               <div className="title">경영학과ENFJ#4</div>
               <div className="timestamp">1분 전</div>
             </div>
-            <div className="content">뭐해?</div>
+            <div className="content">새로운 메시지가 도착했습니다!</div>
           </div>
         </IosNotification>
         <div style={{ verticalAlign: 'middle' }}>
@@ -110,7 +110,7 @@ const PWAInstallPrompt = () => {
                 <div className="dot">•</div>
                 <div className="timestamp">1분</div>
               </div>
-              <div className="content">뭐해?</div>
+              <div className="content">새로운 메시지가 도착했습니다!</div>
             </div>
           </div>
           <div className="right-section">
