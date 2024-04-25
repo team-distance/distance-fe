@@ -56,14 +56,15 @@ const ProfileRegisterPage = () => {
 
     await instance
       .post('/member/signup', {
+        telNum: registerData.telNum,
+        password: registerData.password,
+        college: registerData.college,
         department: registerData.department,
         gender: registerData.gender,
         mbti: selectedMBTI,
         memberCharacter: selectedAnimal,
         memberHobbyDto: registerData.memberHobbyDto,
         memberTagDto: registerData.memberTagDto,
-        password: registerData.password,
-        telNum: registerData.telNum,
       })
       .then(() => {
         navigate('/register/done', {
