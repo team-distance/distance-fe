@@ -67,6 +67,7 @@ const UserRegisterPage = () => {
 
     const response = instance.post('/member/send/sms', {
       telNum: registerData.telNum,
+      type: 'SIGNUP',
     });
 
     toast.promise(response, {
