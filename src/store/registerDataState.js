@@ -13,8 +13,7 @@ export const registerDataState = atom({
     memberCharacter: '',
     memberTagDto: [],
     memberHobbyDto: [],
-
-    // agreeTerms: false,
-    // agreePrivacy: false,
+    agreeTerms: false,
+    agreePrivacy: false,
   },
 });

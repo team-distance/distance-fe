@@ -13,9 +13,6 @@ import { registerDataState } from '../../store/registerDataState';
 import ProgressBar from '../../components/register/ProgressBar';
 import toast, { Toaster } from 'react-hot-toast';
 
-/**
- * @todo 코드 분리
- */
 const ProfileRegisterPage = () => {
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
   const [selectedAnimal, setSelectedAnimal] = useState('');
@@ -41,13 +38,15 @@ const ProfileRegisterPage = () => {
   // 새로고침하여 데이터가 사라졌을 때, 다시 회원가입 페이지로 이동
   useEffect(() => {
     if (
+      !registerData.agreeTerms ||
+      !registerData.agreePrivacy ||
       registerData.telNum === '' ||
       registerData.verifyNum === '' ||
       registerData.password === '' ||
       registerData.college === '' ||
       registerData.department === ''
     ) {
-      navigate('/register/user');
+      navigate('/register/terms-and-privacy');
     }
   }, []);
 
@@ -148,7 +147,7 @@ const ProfileRegisterPage = () => {
     <div>
       <Toaster position="bottom-center" />
       <WrapHeader>
-        <ProgressBar progress={3} />
+        <ProgressBar progress={4} />
         <p>프로필을 등록해주세요</p>
       </WrapHeader>
 
