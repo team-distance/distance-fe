@@ -20,6 +20,8 @@ const UnivRegisterPage = () => {
   // 새로고침하여 데이터가 사라졌을 때, 다시 회원가입 페이지로 이동
   useEffect(() => {
     if (
+      !registerData.agreeTerms ||
+      !registerData.agreePrivacy ||
       registerData.telNum === '' ||
       registerData.verifyNum === '' ||
       registerData.password === ''
@@ -162,7 +164,7 @@ const UnivRegisterPage = () => {
   return (
     <>
       <WrapHeader>
-        <ProgressBar progress={2} />
+        <ProgressBar progress={3} />
         <p>학과를 선택해주세요</p>
       </WrapHeader>
 

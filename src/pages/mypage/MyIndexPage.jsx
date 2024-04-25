@@ -45,6 +45,13 @@ const MyIndexPage = () => {
                   alt="학생 인증"
                 />
               </div>
+              <div className="menu" onClick={() => navigate('/privacy')}>
+                <div>개인정보 처리방침</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="개인정보 처리방침"
+                />
+              </div>
               <div className="menu">
                 <div>버전</div>
                 <div className="version">1.0.0</div>

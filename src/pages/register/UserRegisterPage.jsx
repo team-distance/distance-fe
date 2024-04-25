@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
 import { useRecoilState } from 'recoil';
@@ -21,6 +21,13 @@ const UserRegisterPage = () => {
   const [verify, setVerify] = useState(false);
 
   const navigate = useNavigate();
+
+  // 새로고침하여 데이터가 사라졌을 때, 다시 회원가입 페이지로 이동
+  useEffect(() => {
+    if (!registerData.agreeTerms || !registerData.agreePrivacy) {
+      navigate('/register/terms-and-privacy');
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -107,7 +114,7 @@ const UserRegisterPage = () => {
     <>
       <Toaster position="bottom-center" />
       <WrapHeader>
-        <ProgressBar progress={1} />
+        <ProgressBar progress={2} />
         <p>전화번호를 인증해주세요</p>
       </WrapHeader>
 
