@@ -193,19 +193,16 @@ const ChatIndexPage = () => {
                           alt={chat.memberCharacter}
                         />
                       </CharacterBackground>
-
-                      <div className="profile-section">
-                        {roomNameParts ? (
-                          <Profile>
-                            {roomNameParts.department}
-                            <Badge>{roomNameParts.mbti}</Badge>
-                            {/* roomNameParts.memberId */}
-                          </Profile>
-                        ) : (
-                          <Profile>{chat.roomName}</Profile>
-                        )}
-                        <Message>{chat.lastMessage}</Message>
-                      </div>
+                    </div>
+                    <div className="profile-section">
+                      <Profile>
+                        <div className="cover">
+                          {roomNameParts.department[0]}
+                        </div>
+                        {roomNameParts.department}
+                        <Badge>{roomNameParts.mbti}</Badge>
+                      </Profile>
+                      <Message>{chat.lastMessage}</Message>
                     </div>
 
                     <div className="right-section">
@@ -251,16 +248,28 @@ const ChatRoomContainer = styled.div`
   justify-content: space-between;
   text-decoration-line: none;
   padding: 16px 0;
+  width: 100%;
 
   > .left-section {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex: 0 0 auto;
+  }
 
-    > .profile-section {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+  > .profile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 15px;
+    flex: 1 1 auto;
+    min-width: 0;
+
+    div {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      /* text-overflow: ellipsis; */
     }
   }
 
@@ -269,6 +278,7 @@ const ChatRoomContainer = styled.div`
     gap: 12px;
     flex-direction: column;
     align-items: flex-end;
+    flex: 0 0 auto;
   }
 `;
 
@@ -294,15 +304,19 @@ const CharacterBackground = styled.div`
 `;
 
 const Profile = styled.div`
-  display: flex;
+  display: inline-block;
   gap: 4px;
   color: #000000;
   font-size: 18px;
   font-weight: 700;
-  width: 170px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  position: relative;
+
+  .cover {
+    width: 100%;
+    position: absolute;
+    background-image: linear-gradient(90deg, transparent 80%, white 100%);
+    z-index: 99;
+  }
 `;
 
 const Message = styled.div`
@@ -368,10 +382,10 @@ const EmptyContainer = styled.div`
   height: 72vh;
 
   > .wrap {
-    text-align: center; // 텍스트를 중앙 정렬합니다.
+    text-align: center;
 
     > img {
-      margin-bottom: 1rem; // 아이콘과 텍스트 사이의 간격을 조정합니다.
+      margin-bottom: 1rem;
     }
 
     > div {

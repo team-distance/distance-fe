@@ -12,7 +12,8 @@ const Badge = ({ children }) => {
 const Background = styled.span`
   border-radius: 12px;
   background: #f0f0f0;
-  padding: 3px 8px;
+  padding: 0 8px;
+  margin-left: 5px;
 `;
 
 const Contents = styled.div`
