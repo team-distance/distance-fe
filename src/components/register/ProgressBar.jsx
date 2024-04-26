@@ -7,7 +7,7 @@ const UlProgress = styled.ul`
   justify-content: space-between;
   align-items: center;
   padding: 20px 0; // 상단과 하단에 여백 추가
-  width: 50%;
+  width: 100%;
   margin: 0; // 기본 마진 제거
   position: relative; // 수평 선을 위한 포지셔닝 기준
 
@@ -46,6 +46,7 @@ const ProgressBar = ({ progress }) => {
       <ProgressPoint $active={progress >= 1}>1</ProgressPoint>
       <ProgressPoint $active={progress >= 2}>2</ProgressPoint>
       <ProgressPoint $active={progress >= 3}>3</ProgressPoint>
+      <ProgressPoint $active={progress >= 4}>4</ProgressPoint>
     </UlProgress>
   );
 };

@@ -32,6 +32,8 @@ import AccountEditPage from './pages/mypage/AccountEditPage';
 import DropoutPage from './pages/mypage/DropoutPage';
 import { useEffect } from 'react';
 import { registerServiceWorker } from './firebaseConfig';
+import TermsAndPrivacyAgreementPage from './pages/register/TermsAndPrivacyAgreementPage';
+import PrivacyPolicyPage from './pages/root/PrivacyPolicyPage';
 
 function App() {
   useEffect(() => {
@@ -48,6 +50,10 @@ function App() {
           element={<NotificationAnnouncementPage />}
         />
 
+        <Route
+          path="/register/terms-and-privacy"
+          element={<TermsAndPrivacyAgreementPage />}
+        />
         <Route path="/register/user" element={<UserRegisterPage />} />
         <Route path="/register/univ" element={<UnivRegisterPage />} />
         <Route path="/register/profile" element={<ProfileRegisterPage />} />
@@ -89,6 +95,8 @@ function App() {
         <Route path="/chat/:chatRoomId" element={<ChatPage />} />
 
         <Route path="/kakaotalk-fallback" element={<KakaotalkFallback />} />
+
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
       </Routes>
     </BrowserRouter>
   );

@@ -14,6 +14,7 @@ import callAnimation from '../../lottie/call-animation.json';
 import useGroupedMessages from '../../hooks/useGroupedMessages';
 import Modal from '../../components/common/Modal';
 import Tooltip from '../../components/common/Tooltip';
+import { getByteLength } from '../../utils/getByteLength';
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
@@ -38,51 +39,6 @@ const ChatPage = () => {
   const roomId = location.state.roomId;
 
   const groupedMessages = useGroupedMessages(messages);
-
-  // 문자열의 바이트 길이를 구하는 함수
-  const getByteLength = (s) => {
-    let b = 0,
-      i = 0;
-    while (i < s.length) {
-      const codePoint = s.codePointAt(i);
-      if (codePoint <= 0x7f) {
-        b += 1;
-      } else if (codePoint <= 0x7ff) {
-        b += 2;
-      } else if (codePoint <= 0xffff) {
-        b += 3;
-      } else if (codePoint <= 0x10ffff) {
-        b += 4;
-        i++; // 이모지 같은 서로게이트 쌍의 경우 다음 코드 유닛을 건너뜀
-      }
-      i++;
-    }
-    return b;
-  };
-
-  // 메시지 길이 제한
-  useEffect(() => {
-    if (getByteLength(draftMessage) > 200) {
-      toast.error('내용이 너무 많아요!', {
-        id: 'message-length-error',
-      });
-      setDraftMessage(draftMessage.slice(0, -1));
-    }
-  }, [draftMessage]);
-
-  const handleClickCallButton = async () => {
-    // 전화 버튼 클릭 시 API 호출 후 true, false에 따라 표시할 모달 변경
-    try {
-      const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
-      setBothAgreed(response.data);
-    } catch (error) {
-      toast.error('방 상태를 가져오는데 실패했어요!', {
-        position: 'bottom-center',
-      });
-    }
-
-    openCallModal();
-  };
 
   const openReportModal = () => {
     reportModalRef.current.open();
@@ -109,182 +65,37 @@ const ChatPage = () => {
     navigate('/chat');
   };
 
-  const requestCall = async () => {
-    client.publish({
-      destination: `/app/chat/${roomId}`,
-      body: JSON.stringify({
-        chatMessage: '통화를 요청하셨어요!',
-        senderId: opponentId,
-        receiverId: myId,
-        publishType: 'CALL_REQUEST',
-      }),
-    });
-  };
-
-  const responseCall = async () => {
-    client.publish({
-      destination: `/app/chat/${roomId}`,
-      body: JSON.stringify({
-        chatMessage: '통화 요청을 수락했어요!',
-        senderId: opponentId,
-        receiverId: myId,
-        publishType: 'CALL_RESPONSE',
-      }),
-    });
-  };
-
-  const handleReportUser = async (e) => {
-    e.preventDefault();
-
-    await instance
-      .post('/report', {
-        declareContent: reportMessage,
-        opponentId,
-      })
-      .then((res) => {
-        alert('신고가 완료되었어요!');
-      })
-      .catch((error) => {
-        console.log(error);
-        alert('이미 신고한 사용자예요! 신고는 한 번만 가능해요.');
-      });
-
-    closeReportModal();
-  };
-
-  useEffect(() => {
-    const fetchDistance = async () => {
-      const distance = await instance
-        .get(`/gps/distance/${roomId}`)
-        .then((res) => res.data.distance);
-
-      const parseDistance = parseInt(distance);
-      // console.log('고정 거리 >>>>>>>>>>>>>>>>>', parseDistance);
-      setDistance(parseDistance);
-    };
-    fetchDistance();
-  }, []);
-
-  useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
-
-    const newClient = new Client({
-      brokerURL: 'wss://api.dis-tance.com/meet',
-      connectHeaders: {
-        Authorization: `Bearer ${accessToken}`,
-        chatRoomId: roomId,
-        memberId: myId,
-      },
-      debug: function (str) {
-        console.log(str);
-      },
-      onConnect: (frame) => {
-        console.log('Connected: ' + frame);
-        newClient.subscribe(`/topic/chatroom/${roomId}`, (message) => {
-          const parsedMessage = JSON.parse(message.body);
-
-          // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
-          setMessages((prevMessages) => {
-            const oldMessages = [...prevMessages];
-            if (parsedMessage.body.senderId !== oldMessages.at(-1)?.senderId) {
-              for (let i = 0; i < oldMessages.length; i++) {
-                oldMessages[i].unreadCount = 0;
-              }
-            }
-            return [...oldMessages, parsedMessage.body];
-          });
-        });
-      },
-      reconnectDelay: 100,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-    });
-
-    const fetchMessages = () => {
-      const staleMessages = localStorage.getItem('staleMessages');
-      console.log('staleMessages', staleMessages);
-      if (staleMessages) {
-        const parsedStaleMessages = JSON.parse(staleMessages);
-        if (parsedStaleMessages[roomId]) {
-          setMessages(JSON.parse(parsedStaleMessages[roomId]));
-        }
-      }
-    };
-
-    fetchMessages();
-
-    const fetchUnreadMessages = async () => {
-      try {
-        const msg = await instance
-          .get(`/chatroom/${roomId}`)
-          .then((res) => res.data);
-
-        if (msg.length === 0) return;
-        setMessages((messages) => [...messages, ...msg]);
-      } catch (error) {
-        //401에러
-        window.confirm('학생 인증 후 이용해주세요.')
-          ? navigateToVerify()
-          : navigateToBack();
-      }
-    };
-
-    fetchUnreadMessages();
-
-    newClient.activate();
-    setClient(newClient);
-
-    return () => {
-      newClient.deactivate();
-    };
-  }, []);
-
-  useEffect(() => {
-    // console.log("messages>>>>>>>>>>>>>>", messages)
-    if (
-      messages.at(-1)?.checkTiKiTaKa &&
-      messages.at(-1).roomStatus === 'ACTIVE'
-    ) {
-      setIsCallActive(true);
-    } else if (messages.at(-1)?.roomStatus === 'INACTIVE') {
-      setIsCallActive(false);
-      setIsOpponentOut(true);
-    }
-  }, [messages]);
-
-  const handleChange = (e) => {
+  const handleChangeMessage = (e) => {
     setDraftMessage(e.target.value);
   };
 
-  const handleLeaveRoom = async (e) => {
-    e.preventDefault();
-    const res = window.confirm('정말로 나가시겠습니까?');
-    if (!res) return;
-
-    client.publish({
-      destination: `/app/chat/${roomId}`,
-      body: JSON.stringify({
-        chatMessage: 'LEAVE',
-        senderId: opponentId,
-        receiverId: myId,
-        publishType: 'LEAVE',
-      }),
-    });
-
-    // const localStorageChat = JSON.parse(localStorage.getItem("staleMessages"));
-    // delete localStorageChat[roomId];
-    // localStorage.setItem("staleMessages", JSON.stringify(localStorageChat));
-
-    navigate('/');
+  // 로컬 스토리지에 메시지 저장
+  const saveMessagesToLocal = () => {
+    const staleMessages =
+      JSON.parse(localStorage.getItem('staleMessages')) || {};
+    staleMessages[roomId] = JSON.stringify(messages);
+    localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
   };
 
-  const sendMessage = async (e) => {
+  // 로컬 스토리지에서 메시지 불러오기
+  const fetchStaleMessagesFromLocal = () => {
+    const staleMessages = localStorage.getItem('staleMessages');
+    if (staleMessages) {
+      const parsedStaleMessages = JSON.parse(staleMessages);
+      if (parsedStaleMessages[roomId]) {
+        const localMessages = JSON.parse(parsedStaleMessages[roomId]);
+        setMessages(JSON.parse(parsedStaleMessages[roomId]));
+        return localMessages;
+      }
+    }
+    return [];
+  };
+
+  // 메시지 전송
+  const sendMessage = (e) => {
     e.preventDefault();
 
-    // 메시지가 비어있으면 전송하지 않음
     if (!draftMessage.trim()) return;
-
-    // 욕 있는지 검사
     const isIncludingBadWord = checkCurse(draftMessage);
 
     if (isIncludingBadWord) {
@@ -302,26 +113,196 @@ const ChatPage = () => {
         publishType: 'USER',
       }),
     });
+
     setDraftMessage('');
   };
 
+  // 방 나가기
+  const handleLeaveRoom = () => {
+    const res = window.confirm('정말로 나가시겠습니까?');
+    if (!res) return;
+
+    client.publish({
+      destination: `/app/chat/${roomId}`,
+      body: JSON.stringify({
+        chatMessage: 'LEAVE',
+        senderId: opponentId,
+        receiverId: myId,
+        publishType: 'LEAVE',
+      }),
+    });
+
+    const staleMessages = JSON.parse(localStorage.getItem('staleMessages'));
+    delete staleMessages[roomId];
+    localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
+
+    navigate('/');
+  };
+
+  // 통화 요청 메시지 전송
+  const requestCall = () => {
+    client.publish({
+      destination: `/app/chat/${roomId}`,
+      body: JSON.stringify({
+        chatMessage: '통화를 요청하셨어요!',
+        senderId: opponentId,
+        receiverId: myId,
+        publishType: 'CALL_REQUEST',
+      }),
+    });
+  };
+
+  // 통화 요청 수락 메시지 전송
+  const responseCall = () => {
+    client.publish({
+      destination: `/app/chat/${roomId}`,
+      body: JSON.stringify({
+        chatMessage: '통화 요청을 수락했어요!',
+        senderId: opponentId,
+        receiverId: myId,
+        publishType: 'CALL_RESPONSE',
+      }),
+    });
+  };
+
+  // STOMP 메시지 수신 시 작동하는 콜백 함수
+  const subscritionCallback = (message) => {
+    const parsedMessage = JSON.parse(message.body);
+
+    // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
+    setMessages((prevMessages) => {
+      const oldMessages = [...prevMessages];
+      if (parsedMessage.body.senderId !== oldMessages.at(-1)?.senderId) {
+        for (let i = 0; i < oldMessages.length; i++) {
+          oldMessages[i].unreadCount = 0;
+        }
+      }
+      return [...oldMessages, parsedMessage.body];
+    });
+  };
+
+  // 전화 버튼 클릭 시
+  const handleClickCallButton = async () => {
+    try {
+      const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
+      setBothAgreed(response.data);
+    } catch (error) {
+      toast.error('방 상태를 가져오는데 실패했어요!', {
+        position: 'bottom-center',
+      });
+    }
+
+    openCallModal();
+  };
+
+  // 서버에서 모든 메시지 불러오기
+  const fetchAllMessagesFromServer = async () => {
+    try {
+      const msg = await instance.get(`/chatroom/${roomId}/allmessage`);
+      if (msg.data.length === 0) return;
+      setMessages(msg.data);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  // 서버에서 읽지 않은 메시지 불러오기
+  const fetchUnreadMessagesFromServer = async () => {
+    try {
+      const msg = await instance.get(`/chatroom/${roomId}`);
+      if (msg.data.length === 0) return;
+      setMessages((messages) => [...messages, ...msg.data]);
+    } catch (error) {
+      console.log('error', error);
+      //401에러
+      window.confirm('학생 인증 후 이용해주세요.')
+        ? navigateToVerify()
+        : navigateToBack();
+    }
+  };
+
+  // 신고하기
+  const handleReportUser = async () => {
+    try {
+      await instance.post('/report', {
+        declareContent: reportMessage,
+        opponentId,
+      });
+      alert('신고가 완료되었어요!');
+    } catch (error) {
+      console.log(error);
+      alert('이미 신고한 사용자예요! 신고는 한 번만 가능해요.');
+    }
+    closeReportModal();
+  };
+
+  // 거리 불러오기
+  const fetchDistance = async () => {
+    try {
+      const distance = await instance.get(`/gps/distance/${roomId}`);
+      const parseDistance = parseInt(distance.data.distance);
+      setDistance(parseDistance);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  // STOMP 클라이언트 생성
   useEffect(() => {
-    console.log(messages);
-    const saveMessages = () => {
-      const staleMessages =
-        JSON.parse(localStorage.getItem('staleMessages')) || {};
-      staleMessages[roomId] = JSON.stringify(messages); // Save the current state of messages for this room
-      localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
+    const newClient = new Client({
+      brokerURL: 'wss://api.dis-tance.com/meet',
+      connectHeaders: {
+        chatRoomId: roomId,
+        memberId: myId,
+      },
+      debug: function (str) {
+        console.log(str);
+      },
+      onConnect: (frame) => {
+        console.log('Connected: ' + frame);
+        newClient.subscribe(`/topic/chatroom/${roomId}`, subscritionCallback);
+      },
+      reconnectDelay: 100,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+    });
+
+    const staleMessages = fetchStaleMessagesFromLocal();
+    if (staleMessages.length === 0) fetchAllMessagesFromServer();
+    else fetchUnreadMessagesFromServer();
+
+    fetchDistance();
+
+    newClient.activate();
+    setClient(newClient);
+
+    return () => {
+      newClient.deactivate();
     };
+  }, []);
+
+  // 메시지가 업데이트 될 때마다 상대방이 나갔는지 확인
+  // 메시지가 업데이트 될 때마다 로컬 스토리지에 저장
+  useEffect(() => {
+    const lastMessage = messages.at(-1);
+
+    if (lastMessage?.checkTiKiTaKa && lastMessage?.roomStatus === 'ACTIVE') {
+      setIsCallActive(true);
+    } else if (lastMessage?.roomStatus === 'INACTIVE') {
+      setIsCallActive(false);
+      setIsOpponentOut(true);
+    }
 
     if (messages.length > 0) {
-      saveMessages();
+      saveMessagesToLocal();
     }
   }, [messages]);
 
+  // 전화 버튼 애니메이션
   useEffect(() => {
     const callEffectShown =
       JSON.parse(localStorage.getItem('callEffectShown')) || [];
+
     if (!callEffectShown.includes(roomId)) {
       if (isCallActive) {
         const newArray = [...callEffectShown];
@@ -334,6 +315,16 @@ const ChatPage = () => {
       }
     }
   }, [isCallActive]);
+
+  // 메시지 길이 제한
+  useEffect(() => {
+    if (getByteLength(draftMessage) > 200) {
+      toast.error('내용이 너무 많아요!', {
+        id: 'message-length-error',
+      });
+      setDraftMessage(draftMessage.slice(0, -1));
+    }
+  }, [draftMessage]);
 
   return (
     <Wrapper>
@@ -409,17 +400,18 @@ const ChatPage = () => {
           myId={myId}
           responseCall={responseCall}
         />
+
         <MessageInput
           value={draftMessage}
           buttonClickHandler={openReportModal}
-          changeHandler={handleChange}
+          changeHandler={handleChangeMessage}
           submitHandler={sendMessage}
           isOpponentOut={isOpponentOut}
         />
       </Container>
 
       <BlankModal ref={reportModalRef}>
-        <ModalContent>
+        <ReportModalContent>
           <TextInput
             label="사용자 신고하기"
             placeholder="신고 내용을 입력해주세요."
@@ -435,7 +427,7 @@ const ChatPage = () => {
             </ReportButton>
             <CancelButton onClick={closeReportModal}>취소하기</CancelButton>
           </div>
-        </ModalContent>
+        </ReportModalContent>
       </BlankModal>
 
       <Modal
@@ -444,10 +436,17 @@ const ChatPage = () => {
         buttonClickHandler={
           bothAgreed
             ? async () => {
-                const res = await instance.get(
-                  `/member/tel-num?memberId=${opponentId}&chatRoomId=${roomId}`
-                );
-                window.location.href = `tel:${res.data.telNum}`;
+                try {
+                  const res = await instance.get(
+                    `/member/tel-num?memberId=${opponentId}&chatRoomId=${roomId}`
+                  );
+                  window.location.href = `tel:${res.data.telNum}`;
+                } catch (error) {
+                  toast.error('상대방의 전화번호를 가져오는데 실패했어요!', {
+                    position: 'bottom-center',
+                  });
+                  console.log(error);
+                }
               }
             : () => {
                 requestCall();
@@ -455,19 +454,23 @@ const ChatPage = () => {
               }
         }
       >
-        {bothAgreed ? (
-          <>
-            <strong>요청을 수락했어요!</strong>
-            <div>통화하시겠어요?</div>
-          </>
-        ) : (
-          <>
-            <strong>전화를 요청할까요?</strong>
-            <ul>
-              <li>상대방이 요청을 수락하면 서로의 번호로 통화할 수 있어요.</li>
-            </ul>
-          </>
-        )}
+        <CallModalContent>
+          {bothAgreed ? (
+            <>
+              <strong>🎉 이제 통화할 수 있어요!</strong>
+              <div>아래 버튼을 눌러 통화해보세요.</div>
+            </>
+          ) : (
+            <>
+              <strong>📞 통화를 요청할까요?</strong>
+              <div>
+                상대방이 요청을 수락하면
+                <br />
+                서로의 번호로 통화할 수 있어요.
+              </div>
+            </>
+          )}
+        </CallModalContent>
       </Modal>
     </Wrapper>
   );
@@ -527,10 +530,10 @@ const TopBar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 9999;
+  z-index: 1;
 `;
 
-const ModalContent = styled.div`
+const ReportModalContent = styled.div`
   display: grid;
   gap: 1rem;
   width: 250px;
@@ -550,6 +553,13 @@ const ReportButton = styled.button`
 const CancelButton = styled.button`
   background: none;
   border: none;
+`;
+
+const CallModalContent = styled.div`
+  display: grid;
+  gap: 1rem;
+  padding: 32px 0;
+  text-align: center;
 `;
 
 const LottieContainer = styled.div`

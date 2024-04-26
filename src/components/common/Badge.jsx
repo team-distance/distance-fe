@@ -13,6 +13,8 @@ const Background = styled.span`
   border-radius: 12px;
   background: #f0f0f0;
   padding: 3px 8px;
+  position: relative;
+  z-index: 1;
 `;
 
 const Contents = styled.div`

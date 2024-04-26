@@ -31,10 +31,12 @@ const Message = memo(
               </div>
               <div className="tail"></div>
               <div className="message">
-                <strong>통화를 요청하셨어요!</strong>
-                <ul>
-                  <li>요청을 수락하면 서로의 번호로 통화할 수 있어요.</li>
-                </ul>
+                <strong>📞 우리 통화해요!</strong>
+                <div>
+                  요청을 수락하면
+                  <br />
+                  서로의 번호로 통화할 수 있어요.
+                </div>
               </div>
             </div>
           </MessageByMe>
@@ -44,13 +46,15 @@ const Message = memo(
             <div className="message-container">
               <div className="tail"></div>
               <div className="message">
-                <strong>통화를 요청하셨어요!</strong>
-                <ul>
-                  <li>요청을 수락하면 서로의 번호로 통화할 수 있어요.</li>
-                </ul>
+                <strong>📞 우리 통화해요!</strong>
+                <div style={{ marginBottom: '8px' }}>
+                  요청을 수락하면
+                  <br />
+                  서로의 번호로 통화할 수 있어요.
+                </div>
                 <Button
-                  size="large"
-                  backgroundColor="#18D736"
+                  size="medium"
+                  backgroundColor="#36CF00"
                   onClick={responseCall}
                 >
                   수락하기
@@ -74,9 +78,14 @@ const Message = memo(
               </div>
               <div className="tail"></div>
               <div className="message">
-                <strong>통화 요청을 수락했어요!</strong>
+                <strong>🎉 통화 요청을 수락했어요!</strong>
                 <div>
-                  상단 <img src="/assets/callicon-active.png" alt="전화버튼" />
+                  상단{' '}
+                  <img
+                    src="/assets/callicon-active.png"
+                    alt="전화버튼"
+                    style={{ verticalAlign: 'middle' }}
+                  />{' '}
                   버튼을 눌러 통화해보세요.
                 </div>
               </div>
@@ -88,9 +97,14 @@ const Message = memo(
             <div className="message-container">
               <div className="tail"></div>
               <div className="message">
-                <strong>통화 요청을 수락했어요!</strong>
+                <strong>🎉 통화 요청을 수락했어요!</strong>
                 <div>
-                  상단 <img src="/assets/callicon-active.png" alt="전화버튼" />
+                  상단{' '}
+                  <img
+                    src="/assets/callicon-active.png"
+                    alt="전화버튼"
+                    style={{ verticalAlign: 'middle' }}
+                  />{' '}
                   버튼을 눌러 통화해보세요.
                 </div>
               </div>

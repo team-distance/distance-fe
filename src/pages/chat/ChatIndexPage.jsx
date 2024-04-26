@@ -196,6 +196,9 @@ const ChatIndexPage = () => {
                     </div>
                     <div className="profile-section">
                       <Profile>
+                        <div className="cover">
+                          {roomNameParts.department[0]}
+                        </div>
                         {roomNameParts.department}
                         <Badge>{roomNameParts.mbti}</Badge>
                       </Profile>
@@ -267,7 +270,7 @@ const ChatRoomContainer = styled.div`
       display: inline-block;
       overflow: hidden;
       white-space: nowrap;
-      text-overflow: ellipsis;
+      /* text-overflow: ellipsis; */
     }
   }
 
@@ -307,6 +310,14 @@ const Profile = styled.div`
   color: #000000;
   font-size: 18px;
   font-weight: 700;
+  position: relative;
+
+  .cover {
+    width: 100%;
+    position: absolute;
+    background-image: linear-gradient(90deg, transparent 80%, white 100%);
+    z-index: 99;
+  }
 `;
 
 const Message = styled.div`

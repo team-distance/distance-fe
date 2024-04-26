@@ -42,6 +42,8 @@ const LoginPage = () => {
       memberCharacter: '',
       memberTagDto: [],
       memberHobbyDto: [],
+      agreeTerms: false,
+      agreePrivacy: false,
     }));
   }, []);
 
@@ -154,7 +156,9 @@ const LoginPage = () => {
           </Button>
           <WrapText>
             아직 계정이 없으신가요?
-            <span onClick={() => navigate('/register/user')}>회원가입하기</span>
+            <span onClick={() => navigate('/register/terms-and-privacy')}>
+              회원가입하기
+            </span>
           </WrapText>
         </WrapForm>
       )}

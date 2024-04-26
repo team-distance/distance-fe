@@ -2,38 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/common/Header';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
 import { myDataState } from '../../store/myData';
-import { instance } from '../../api/instance';
 
 const MyIndexPage = () => {
-  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
+  const isLoggedIn = useRecoilValue(isLoggedInState);
   const navigate = useNavigate();
   const myData = useRecoilValue(myDataState);
-
-  const handleLogout = async () => {
-    const confirmLogout = window.confirm('로그아웃 하시겠습니까?');
-    if (!confirmLogout) return;
-
-    try {
-      await instance.get('/member/logout');
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('memberId');
-      localStorage.removeItem('clientToken');
-      setIsLoggedIn(false);
-      navigate('/');
-    } catch (error) {
-      console.log(error);
-    } finally {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('memberId');
-      localStorage.removeItem('clientToken');
-      navigate('/');
-    }
-  };
 
   return (
     <MyPageContainer>
@@ -52,14 +28,28 @@ const MyIndexPage = () => {
                 <div>프로필 수정</div>
                 <img
                   src="/assets/mypage/arrow-gray-button.png"
-                  alt="Edit Profile"
+                  alt="프로필 수정"
                 />
               </div>
               <div className="menu" onClick={() => navigate('/mypage/account')}>
                 <div>계정 관리</div>
                 <img
                   src="/assets/mypage/arrow-gray-button.png"
-                  alt="Edit Profile"
+                  alt="계정 관리"
+                />
+              </div>
+              <div className="menu" onClick={() => navigate('/verify/univ')}>
+                <div>학생 인증</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="학생 인증"
+                />
+              </div>
+              <div className="menu" onClick={() => navigate('/privacy')}>
+                <div>개인정보 처리방침</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="개인정보 처리방침"
                 />
               </div>
               <div className="menu">
@@ -67,7 +57,6 @@ const MyIndexPage = () => {
                 <div className="version">1.0.0</div>
               </div>
             </WrapButton>
-            <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
           </WrapMenu>
         </>
       ) : (
@@ -140,14 +129,4 @@ const EmptyContainer = styled.div`
       font-weight: 700;
     }
   }
-`;
-
-const LogoutButton = styled.div`
-  position: absolute;
-  left: 50%;
-  bottom: 7rem;
-  transform: translateX(-50%);
-  color: #767676;
-  font-size: 12px;
-  font-weight: 500;
 `;
