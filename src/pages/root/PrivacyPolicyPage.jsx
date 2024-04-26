@@ -1,11 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import HeaderPrev from '../../components/common/HeaderPrev';
 
 const PrivacyPolicyPage = () => {
-  const navigate = useNavigate();
-
   return (
     <Article>
       <HeaderPrev title="개인정보 처리방침" navigateTo={-1} />
