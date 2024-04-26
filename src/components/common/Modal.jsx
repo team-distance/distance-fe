@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 
 const StyledDialog = styled.dialog`
   width: 60%;
+  max-height: 80%;
   padding: 32px;
   position: relative;
   border: none;
@@ -41,6 +42,9 @@ const Modal = forwardRef(
         },
         close() {
           dialog.current.close();
+        },
+        scrollToTop() {
+          dialog.current.scrollTo(0, 0);
         },
       };
     });

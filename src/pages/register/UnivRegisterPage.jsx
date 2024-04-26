@@ -164,7 +164,7 @@ const UnivRegisterPage = () => {
   return (
     <>
       <WrapHeader>
-        <ProgressBar progress={3} />
+        <ProgressBar progress={2} />
         <p>학과를 선택해주세요</p>
       </WrapHeader>
 

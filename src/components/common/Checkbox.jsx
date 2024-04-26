@@ -11,7 +11,7 @@ const Checkbox = ({ label, ...props }) => {
 };
 
 const Label = styled.label`
-  font-weight: 600;
+  font-weight: 200;
 `;
 
 const Input = styled.input`

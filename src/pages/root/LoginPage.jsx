@@ -157,7 +157,7 @@ const LoginPage = () => {
           <WrapText>
             <span
               className="sign-up"
-              onClick={() => navigate('/register/terms-and-privacy')}
+              onClick={() => navigate('/register/user')}
             >
               회원가입
             </span>
