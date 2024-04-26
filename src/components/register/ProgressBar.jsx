@@ -46,7 +46,6 @@ const ProgressBar = ({ progress }) => {
       <ProgressPoint $active={progress >= 1}>1</ProgressPoint>
       <ProgressPoint $active={progress >= 2}>2</ProgressPoint>
       <ProgressPoint $active={progress >= 3}>3</ProgressPoint>
-      <ProgressPoint $active={progress >= 4}>4</ProgressPoint>
     </UlProgress>
   );
 };

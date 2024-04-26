@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
 import { useRecoilState } from 'recoil';
@@ -8,6 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import ProgressBar from '../../components/register/ProgressBar';
 import toast, { Toaster } from 'react-hot-toast';
+import Checkbox from '../../components/common/Checkbox';
+import Modal from '../../components/common/Modal';
+import TermsOfServiceArticle from '../../components/register/TermsOfServiceArticle';
+import PrivacyArticle from '../../components/register/PrivacyArticle';
 
 const UserRegisterPage = () => {
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
@@ -22,14 +26,20 @@ const UserRegisterPage = () => {
 
   const navigate = useNavigate();
 
-  // 새로고침하여 데이터가 사라졌을 때, 다시 회원가입 페이지로 이동
-  useEffect(() => {
-    if (!registerData.agreeTerms || !registerData.agreePrivacy) {
-      navigate('/register/terms-and-privacy');
-    }
-  }, []);
+  const termsModalRef = useRef();
+  const privacyModalRef = useRef();
 
-  const handleChange = (e) => {
+  const handleOpenModal = (ref) => {
+    ref.current.open();
+    ref.current.scrollToTop();
+  };
+
+  const handleChangeCheckbox = (e) => {
+    const { name, checked } = e.target;
+    setRegisterData({ ...registerData, [name]: checked });
+  };
+
+  const handleChangeInput = (e) => {
     const { name, value } = e.target;
     setRegisterData({ ...registerData, [name]: value });
 
@@ -62,15 +72,10 @@ const UserRegisterPage = () => {
 
   const sendMessage = async () => {
     if (verifyButtonLabel === '재전송') {
-      setVerifyNumFlag(false);
+      setVerifyNumFlag(true);
       setVerify(false);
       setVerifyNum('');
     }
-
-    setIsSendMessage(true);
-    setVerify(false);
-    setVerifyButtonLabel('재전송');
-    setCheckPhoneFlag(true);
 
     const response = instance.post('/member/send/sms', {
       telNum: registerData.telNum,
@@ -83,6 +88,7 @@ const UserRegisterPage = () => {
         setIsSendMessage(true);
         setVerify(false);
         setVerifyButtonLabel('재전송');
+        setCheckPhoneFlag(true);
         return '인증번호가 전송되었습니다.';
       },
       error: (error) => {
@@ -103,7 +109,7 @@ const UserRegisterPage = () => {
       });
       setVerify(true);
       setVerifyNumFlag(true);
-      setCheckPhoneFlag(false);
+      setCheckPhoneFlag(true);
     } catch (error) {
       toast.error('인증번호가 틀렸습니다.');
       console.log();
@@ -114,7 +120,7 @@ const UserRegisterPage = () => {
     <>
       <Toaster position="bottom-center" />
       <WrapHeader>
-        <ProgressBar progress={2} />
+        <ProgressBar progress={1} />
         <p>전화번호를 인증해주세요</p>
       </WrapHeader>
 
@@ -129,7 +135,7 @@ const UserRegisterPage = () => {
             buttonClickHandler={sendMessage}
             buttonDisabled={checkPhoneFlag}
             value={registerData.telNum}
-            onChange={handleChange}
+            onChange={handleChangeInput}
           />
         </div>
 
@@ -145,7 +151,7 @@ const UserRegisterPage = () => {
             buttonClickHandler={verifyTelNum}
             buttonDisabled={verifyNumFlag}
             value={verifyNum}
-            onChange={handleChange}
+            onChange={handleChangeInput}
           />
           {verify && <Tip>인증되었습니다!</Tip>}
         </WrapVerifyPhone>
@@ -157,15 +163,47 @@ const UserRegisterPage = () => {
             type="password"
             placeholder="숫자로만 6자리 이상"
             value={registerData.password}
-            onChange={handleChange}
+            onChange={handleChangeInput}
           />
           {pwFlag && <Tip>숫자로만 구성된 6자리 이상이어야 합니다.</Tip>}
         </WrapPassword>
 
         <WrapButton>
+          <WrapCheckbox>
+            <Checkbox
+              label="(필수) 서비스 이용약관 동의"
+              name="agreeTerms"
+              checked={registerData.agreeTerms}
+              onChange={handleChangeCheckbox}
+            />
+            <ShowDetail
+              onClick={() => {
+                handleOpenModal(termsModalRef);
+              }}
+            >
+              더보기
+            </ShowDetail>
+          </WrapCheckbox>
+          <WrapCheckbox>
+            <Checkbox
+              label="(필수) 개인정보 수집 및 이용 동의"
+              name="agreePrivacy"
+              checked={registerData.agreePrivacy}
+              onChange={handleChangeCheckbox}
+            />
+            <ShowDetail
+              onClick={() => {
+                handleOpenModal(privacyModalRef);
+              }}
+            >
+              더보기
+            </ShowDetail>
+          </WrapCheckbox>
           <Button
             size="large"
-            disabled={pwFlag}
+            disabled={
+              pwFlag || !registerData.agreeTerms || !registerData.agreePrivacy
+            }
             onClick={() => {
               navigate('/register/univ');
             }}
@@ -174,6 +212,26 @@ const UserRegisterPage = () => {
           </Button>
         </WrapButton>
       </WrapContent>
+      <Modal
+        ref={termsModalRef}
+        buttonLabel="동의하기"
+        buttonClickHandler={() => {
+          setRegisterData({ ...registerData, agreeTerms: true });
+          termsModalRef.current.close();
+        }}
+      >
+        <TermsOfServiceArticle />
+      </Modal>
+      <Modal
+        ref={privacyModalRef}
+        buttonLabel="동의하기"
+        buttonClickHandler={() => {
+          setRegisterData({ ...registerData, agreePrivacy: true });
+          privacyModalRef.current.close();
+        }}
+      >
+        <PrivacyArticle />
+      </Modal>
     </>
   );
 };
@@ -199,13 +257,30 @@ const WrapContent = styled.div`
 const WrapVerifyPhone = styled.div`
   visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
 `;
+
 const WrapPassword = styled.div`
   visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
 `;
 
+const WrapCheckbox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const ShowDetail = styled.div`
+  font-size: 12px;
+  color: #90949b;
+  font-weight: 200;
+`;
+
 const WrapButton = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin-top: 5rem;
 `;
+
 const Tip = styled.small`
   font-size: 12px;
   color: #90949b;

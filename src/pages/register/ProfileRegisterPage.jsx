@@ -46,7 +46,7 @@ const ProfileRegisterPage = () => {
       registerData.college === '' ||
       registerData.department === ''
     ) {
-      navigate('/register/terms-and-privacy');
+      navigate('/register/user');
     }
   }, []);
 
