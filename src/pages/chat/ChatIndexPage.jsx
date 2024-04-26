@@ -206,8 +206,7 @@ const ChatIndexPage = () => {
                     </div>
 
                     <div className="right-section">
-                      {/* <Time>{timeDisplay}</Time> */}
-                      <Time>04.24 05:54</Time>
+                      <Time>{timeDisplay}</Time>
                       {chat.askedCount > 0 ? (
                         <UnreadCount>{chat.askedCount}</UnreadCount>
                       ) : (
