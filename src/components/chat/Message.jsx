@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { parseTime } from '../../utils/parseTime';
 import Button from '../common/Button';
@@ -13,6 +14,17 @@ import Button from '../common/Button';
  */
 const Message = memo(
   ({ nickname, content, time, read, senderType, sentByMe, responseCall }) => {
+    const navigate = useNavigate();
+
+    const isValidUrl = (url) => {
+      try {
+        new URL(url);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    };
+
     switch (senderType) {
       case 'SYSTEM':
         return (
@@ -125,7 +137,27 @@ const Message = memo(
                 <div className="time">{parseTime(time)}</div>
               </div>
               <div className="tail"></div>
-              <div className="message">{content}</div>
+              <div className="message">
+                {isValidUrl(content) ? (
+                  content.startsWith('https://dis-tance.com') ? (
+                    <div
+                      className="link"
+                      onClick={() => {
+                        const url = new URL(content);
+                        navigate(url.pathname);
+                      }}
+                    >
+                      {content}
+                    </div>
+                  ) : (
+                    <a href={content} target="_blank" rel="noopener noreferrer">
+                      {content}
+                    </a>
+                  )
+                ) : (
+                  content
+                )}
+              </div>
             </div>
           </MessageByMe>
         ) : (
@@ -133,7 +165,21 @@ const Message = memo(
             <div className="nickname">{nickname}</div>
             <div className="message-container">
               <div className="tail"></div>
-              <div className="message">{content}</div>
+              <div className="message">
+                {isValidUrl(content) ? (
+                  content.startsWith('https://dis-tance.com') ? (
+                    <a href={content} target="_blank" rel="noopener noreferrer">
+                      {content}
+                    </a>
+                  ) : (
+                    <a href={content} target="_blank" rel="noopener noreferrer">
+                      {content}
+                    </a>
+                  )
+                ) : (
+                  content
+                )}
+              </div>
               <div className="wrapper">
                 <div className="read">{read !== 0 ? read : ''}</div>
                 <div className="time">{parseTime(time)}</div>
@@ -197,6 +243,10 @@ const MessageByOther = styled.div`
       color: black;
       line-height: 1.5;
       overflow-wrap: break-word;
+
+      a {
+        color: white;
+      }
     }
 
     > .wrapper {
@@ -255,6 +305,14 @@ const MessageByMe = styled.div`
       color: white;
       line-height: 1.5;
       overflow-wrap: break-word;
+
+      .link {
+        text-decoration: underline;
+      }
+
+      a {
+        color: white;
+      }
     }
   }
 `;
