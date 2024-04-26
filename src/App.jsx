@@ -33,6 +33,7 @@ import DropoutPage from './pages/mypage/DropoutPage';
 import { useEffect } from 'react';
 import { registerServiceWorker } from './firebaseConfig';
 import PrivacyPolicyPage from './pages/root/PrivacyPolicyPage';
+import ResetPassword from './pages/root/ResetPassword';
 
 function App() {
   useEffect(() => {
@@ -43,6 +44,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/password" element={<ResetPassword />} />
 
         <Route
           path="/notification"

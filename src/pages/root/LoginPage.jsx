@@ -155,8 +155,18 @@ const LoginPage = () => {
             로그인하기
           </Button>
           <WrapText>
-            아직 계정이 없으신가요?
-            <span onClick={() => navigate('/register/user')}>회원가입하기</span>
+            <span
+              className="sign-up"
+              onClick={() => navigate('/register/user')}
+            >
+              회원가입
+            </span>
+            <span
+              className="find-password"
+              onClick={() => navigate('/password')}
+            >
+              비밀번호 재설정
+            </span>
           </WrapText>
         </WrapForm>
       )}
@@ -184,11 +194,25 @@ const WrapText = styled.div`
   padding: 1rem 0 4rem 0;
   font-size: 0.8rem;
 
-  span {
+  .sign-up {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
     color: #000000;
     font-weight: 800;
     font-size: 1rem;
-    padding-left: 0.3rem;
+  }
+  .find-password {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    color: #d9d9d9;
+    font-weight: 800;
+    font-size: 1rem;
+    border-left: 1px solid #d9d9d9;
+    height: 1.5rem;
   }
 `;
 
