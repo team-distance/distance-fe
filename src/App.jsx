@@ -34,6 +34,7 @@ import { useEffect } from 'react';
 import { registerServiceWorker } from './firebaseConfig';
 import TermsAndPrivacyAgreementPage from './pages/register/TermsAndPrivacyAgreementPage';
 import PrivacyPolicyPage from './pages/root/PrivacyPolicyPage';
+import ResetPassword from './pages/root/ResetPassword';
 
 function App() {
   useEffect(() => {
@@ -44,6 +45,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/password" element={<ResetPassword />} />
 
         <Route
           path="/notification"
