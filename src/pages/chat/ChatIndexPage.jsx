@@ -195,22 +195,16 @@ const ChatIndexPage = () => {
                       </CharacterBackground>
                     </div>
                     <div className="profile-section">
-                      {roomNameParts ? (
-                        <Profile>
-                          {roomNameParts.department}
-                          <Badge>{roomNameParts.mbti}</Badge>
-                        </Profile>
-                      ) : (
-                        <div>
-                          <Profile>{chat.roomName}</Profile>
-                        </div>
-                      )}
+                      <Profile>
+                        {roomNameParts.department}
+                        <Badge>{roomNameParts.mbti}</Badge>
+                      </Profile>
                       <Message>{chat.lastMessage}</Message>
                     </div>
 
                     <div className="right-section">
-                      <Time>{timeDisplay}</Time>
-                      {/* <Time>04.24 05:54</Time> */}
+                      {/* <Time>{timeDisplay}</Time> */}
+                      <Time>04.24 05:54</Time>
                       {chat.askedCount > 0 ? (
                         <UnreadCount>{chat.askedCount}</UnreadCount>
                       ) : (
