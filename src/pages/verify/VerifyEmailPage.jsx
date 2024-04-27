@@ -63,9 +63,7 @@ const VerifyEmailPage = () => {
           ? schoolEmail
           : schoolEmail + '@sch.ac.kr',
       });
-      window.confirm(
-        '인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.'
-      ) && navigate('/');
+      window.confirm('인증되었습니다.') && navigate('/');
     } catch (error) {
       toast.error('인증번호가 일치하지 않습니다.');
     }
