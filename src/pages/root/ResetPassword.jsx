@@ -149,7 +149,7 @@ const ResetPassword = () => {
             <>
               <TextInput
                 label="새 비밀번호"
-                name="password"
+                name="newPassword"
                 type="text"
                 onChange={handleChange}
                 placeholder={'숫자로만 6자리 이상'}
