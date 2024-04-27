@@ -390,7 +390,7 @@ const ChatPage = () => {
               )}
             </CallButton>
             <LeaveButton onClick={handleLeaveRoom}>
-              <img src="/assets/leave-button.png" alt="나가기 버튼" />
+              <img src="/assets/leave-button.svg" alt="나가기 버튼" />
             </LeaveButton>
           </div>
         </TopBar>

@@ -85,8 +85,8 @@ const Header = () => {
             ))}
           </TagContainer>
           <LogoutButton
-            src={'/assets/leave-button.svg'}
-            alt="leave-button"
+            src="/assets/leave-button.svg"
+            alt="나가기 버튼"
             onClick={handleLogout}
           />
         </WrapContent>
