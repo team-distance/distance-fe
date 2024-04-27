@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
 import Button from '../../components/common/Button';
-import ClipLoader from 'react-spinners/ClipLoader';
 import { instance } from '../../api/instance';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
@@ -62,11 +61,6 @@ const ResetPassword = () => {
 
   const sendMessage = async (e) => {
     e.preventDefault();
-    // if (verifyButtonLabel === '재전송') {
-    //   setTelNumTestFlag(true);
-    //   setVerify(false);
-    //   setVerifyNum('');
-    // }
 
     const response = instance.post('/member/send/sms', {
       telNum: telNum,
@@ -180,16 +174,4 @@ const WrapContent = styled.div`
 
 const HiddenDiv = styled.div`
   visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
-`;
-
-const LoaderContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
 `;

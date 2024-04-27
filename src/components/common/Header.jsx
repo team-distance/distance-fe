@@ -160,23 +160,4 @@ const TagContainer = styled.div`
   gap: 4px;
 `;
 
-const LogoutButton = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  padding: 4px;
-  border-radius: 4px;
-  color: #ffffff;
-  background-color: #aaaaaa;
-  font-size: 14px;
-  font-weight: 500;
-
-  img {
-    width: 14px;
-  }
-`;
-
 export default Header;
