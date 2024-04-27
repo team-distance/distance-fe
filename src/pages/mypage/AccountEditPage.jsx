@@ -15,7 +15,9 @@ const AccountEditPage = () => {
   const [newPassword, setNewPassword] = useState('');
   const [isVerifyPassword, setIsVerifyPassword] = useState(false);
 
-  const verifyPassword = async () => {
+  const verifyPassword = async (e) => {
+    e.preventDefault();
+
     //비밀번호 확인
     await instance
       .post('/member/check/password', {
@@ -34,7 +36,7 @@ const AccountEditPage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === 'verifyPassword') {
+    if (name === 'password') {
       setVerifyPasswordFlag(value.length < 6);
       setOldPassword(value);
     }
@@ -68,7 +70,7 @@ const AccountEditPage = () => {
       <form>
         <TextInput
           label="현재 비밀번호"
-          name="verifyPassword"
+          name="password"
           type="password"
           placeholder="숫자로만 6자리 이상"
           buttonLabel="인증하기"
