@@ -38,7 +38,8 @@ const ResetPassword = () => {
       setFormFlags((prev) => ({ ...prev, verifyNumValid: value.length > 0 }));
     }
 
-    if (name === 'password') {
+    if (name === 'newPassword') {
+      console.log(value.length);
       setFormFlags((prev) => ({
         ...prev,
         newPasswordValid: value.length >= 6,
@@ -48,6 +49,7 @@ const ResetPassword = () => {
 
   const sendMessage = async (e) => {
     e.preventDefault();
+    setFormFlags((prev) => ({ ...prev, telNumValid: false }));
     const toastId = toast.loading('전송 중...');
     try {
       await instance.post('/member/send/sms', {
@@ -55,7 +57,6 @@ const ResetPassword = () => {
         type: 'FIND',
       });
       setFormActive((prev) => ({ ...prev, isSendMessage: true }));
-      setFormFlags((prev) => ({ ...prev, telNumValid: false }));
       setVerifyButtonLabel('재전송');
       toast.success('인증번호가 전송되었습니다.', {
         id: toastId,
