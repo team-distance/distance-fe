@@ -50,10 +50,10 @@ const ResetPassword = () => {
     e.preventDefault();
     const toastId = toast.loading('전송 중...');
     try {
-      // await instance.post('/member/send/sms', {
-      //   telNum: formData.telNum,
-      //   type: 'FIND',
-      // });
+      await instance.post('/member/send/sms', {
+        telNum: formData.telNum,
+        type: 'FIND',
+      });
       setFormActive((prev) => ({ ...prev, isSendMessage: true }));
       setFormFlags((prev) => ({ ...prev, telNumValid: false }));
       setVerifyButtonLabel('재전송');
