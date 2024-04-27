@@ -34,6 +34,7 @@ import { useEffect } from 'react';
 import { registerServiceWorker } from './firebaseConfig';
 import PrivacyPolicyPage from './pages/root/PrivacyPolicyPage';
 import ResetPassword from './pages/root/ResetPassword';
+import NotFoundPage from './pages/root/NotFoundPage';
 
 function App() {
   useEffect(() => {
@@ -94,6 +95,8 @@ function App() {
         <Route path="/kakaotalk-fallback" element={<KakaotalkFallback />} />
 
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
