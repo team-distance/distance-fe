@@ -69,7 +69,7 @@ const AccountEditPage = () => {
         <TextInput
           label="현재 비밀번호"
           name="verifyPassword"
-          type="text"
+          type="password"
           placeholder="숫자로만 6자리 이상"
           buttonLabel={'인증하기'}
           buttonClickHandler={verifyPassword}
@@ -83,7 +83,7 @@ const AccountEditPage = () => {
           <TextInput
             label="변경할 비밀번호"
             name="changePassword"
-            type="text"
+            type="password"
             placeholder="숫자로만 6자리 이상"
             onChange={handleChange}
           />
