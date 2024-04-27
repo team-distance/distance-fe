@@ -2,14 +2,38 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/common/Header';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
 import { myDataState } from '../../store/myData';
+import { instance } from '../../api/instance';
 
 const MyIndexPage = () => {
-  const isLoggedIn = useRecoilValue(isLoggedInState);
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
   const navigate = useNavigate();
   const myData = useRecoilValue(myDataState);
+
+  const handleLogout = async () => {
+    const confirmLogout = window.confirm('로그아웃 하시겠습니까?');
+    if (!confirmLogout) return;
+
+    try {
+      await instance.get('/member/logout');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('memberId');
+      localStorage.removeItem('clientToken');
+      setIsLoggedIn(false);
+      navigate('/');
+    } catch (error) {
+      console.log(error);
+    } finally {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('memberId');
+      localStorage.removeItem('clientToken');
+      navigate('/');
+    }
+  };
 
   return (
     <MyPageContainer>
@@ -45,16 +69,12 @@ const MyIndexPage = () => {
                   alt="학생 인증"
                 />
               </div>
-              <div className="menu" onClick={() => navigate('/privacy')}>
-                <div>개인정보 처리방침</div>
-                <img
-                  src="/assets/mypage/arrow-gray-button.png"
-                  alt="개인정보 처리방침"
-                />
-              </div>
-              <div className="menu">
+              <div className="menu border">
                 <div>버전</div>
                 <div className="version">1.0.0</div>
+              </div>
+              <div className="menu border" onClick={handleLogout}>
+                <div>로그아웃</div>
               </div>
             </WrapButton>
           </WrapMenu>
@@ -103,8 +123,10 @@ const WrapButton = styled.div`
       color: #b9b9b9;
     }
   }
+
   .border {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    border-top: 1px solid #f0f0f0;
+    padding: 1.3rem 0;
   }
 `;
 
