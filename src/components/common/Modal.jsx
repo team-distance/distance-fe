@@ -23,8 +23,8 @@ const StyledDialog = styled.dialog`
 const CloseButton = styled.img`
   flex: 1;
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 25px;
+  right: 32px;
 `;
 
 const Modal = forwardRef(
