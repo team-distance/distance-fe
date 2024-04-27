@@ -196,11 +196,9 @@ const ChatIndexPage = () => {
                     </div>
                     <div className="profile-section">
                       <Profile>
-                        <div className="cover">
-                          {roomNameParts.department[0]}
-                        </div>
-                        {roomNameParts.department}
-                        <Badge>{roomNameParts.mbti}</Badge>
+                        <div className="cover">{roomNameParts?.department}</div>
+                        {roomNameParts?.department}
+                        <Badge>{roomNameParts?.mbti}</Badge>
                       </Profile>
                       <Message>{chat.lastMessage}</Message>
                     </div>
