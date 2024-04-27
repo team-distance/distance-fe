@@ -65,19 +65,18 @@ const AccountEditPage = () => {
     <WrapContent>
       <HeaderPrev title="계정 관리" navigateTo={-1} />
 
-      <div>
+      <form>
         <TextInput
           label="현재 비밀번호"
           name="verifyPassword"
           type="password"
           placeholder="숫자로만 6자리 이상"
-          textContentType="oneTimeCode"
-          buttonLabel={'인증하기'}
+          buttonLabel="인증하기"
           buttonClickHandler={verifyPassword}
           buttonDisabled={verifyPasswordFlag}
           onChange={handleChange}
         />
-      </div>
+      </form>
 
       {isVerifyPassword && (
         <WrapForm onSubmit={handleSubmit}>
@@ -85,7 +84,6 @@ const AccountEditPage = () => {
             label="변경할 비밀번호"
             name="changePassword"
             type="password"
-            textContentType="oneTimeCode"
             placeholder="숫자로만 6자리 이상"
             onChange={handleChange}
           />
