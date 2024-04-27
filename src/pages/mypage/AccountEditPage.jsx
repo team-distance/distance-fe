@@ -71,6 +71,7 @@ const AccountEditPage = () => {
           name="verifyPassword"
           type="password"
           placeholder="숫자로만 6자리 이상"
+          textContentType="oneTimeCode"
           buttonLabel={'인증하기'}
           buttonClickHandler={verifyPassword}
           buttonDisabled={verifyPasswordFlag}
@@ -84,6 +85,7 @@ const AccountEditPage = () => {
             label="변경할 비밀번호"
             name="changePassword"
             type="password"
+            textContentType="oneTimeCode"
             placeholder="숫자로만 6자리 이상"
             onChange={handleChange}
           />
