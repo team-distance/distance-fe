@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { isLoggedInState } from '../../store/auth';
 import { Link } from 'react-router-dom';
@@ -8,37 +8,12 @@ import { useNavigate } from 'react-router-dom';
 import Modal from './Modal';
 import { useRef } from 'react';
 import Badge from './Badge';
-import { instance } from '../../api/instance';
 
 const Header = () => {
-  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
+  const isLoggedIn = useRecoilValue(isLoggedInState);
   const myData = useRecoilValue(myDataState);
   const modalRef = useRef();
   const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    const confirmLogout = window.confirm('로그아웃 하시겠습니까?');
-    if (!confirmLogout) return;
-
-    try {
-      await instance.get('/member/logout');
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('memberId');
-      localStorage.removeItem('clientToken');
-      setIsLoggedIn(false);
-      navigate('/');
-    } catch (error) {
-      console.log(error);
-    } finally {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('memberId');
-      localStorage.removeItem('clientToken');
-      modalRef.current.close();
-      navigate('/');
-    }
-  };
 
   return (
     <>
@@ -84,10 +59,6 @@ const Header = () => {
               <Badge key={index}>#{tag.tag}</Badge>
             ))}
           </TagContainer>
-          <LogoutButton onClick={handleLogout}>
-            <img src="/assets/logout-icon.svg" alt="로그아웃" />
-            <div>로그아웃</div>
-          </LogoutButton>
         </WrapContent>
       </Modal>
     </>
