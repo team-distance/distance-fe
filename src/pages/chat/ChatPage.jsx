@@ -381,16 +381,20 @@ const ChatPage = () => {
             <CallButton>
               {isCallActive ? (
                 <div onClick={handleClickCallButton}>
-                  <img src="/assets/callicon-active.png" alt="전화버튼" />
+                  <img src="/assets/callicon-active.svg" alt="전화버튼" />
                 </div>
               ) : (
                 <div>
-                  <img src="/assets/callicon.png" alt="전화버튼" />
+                  <img src="/assets/callicon.svg" alt="전화버튼" />
                 </div>
               )}
             </CallButton>
             <LeaveButton onClick={handleLeaveRoom}>
-              <img src="/assets/leave-button.svg" alt="나가기 버튼" />
+              <img
+                src="/assets/leave-button.svg"
+                alt="나가기 버튼"
+                width={21}
+              />
             </LeaveButton>
           </div>
         </TopBar>

@@ -94,7 +94,7 @@ const Message = memo(
                 <div>
                   상단{' '}
                   <img
-                    src="/assets/callicon-active.png"
+                    src="/assets/callicon-active.svg"
                     alt="전화버튼"
                     style={{ verticalAlign: 'middle' }}
                   />{' '}
@@ -113,7 +113,7 @@ const Message = memo(
                 <div>
                   상단{' '}
                   <img
-                    src="/assets/callicon-active.png"
+                    src="/assets/callicon-active.svg"
                     alt="전화버튼"
                     style={{ verticalAlign: 'middle' }}
                   />{' '}
