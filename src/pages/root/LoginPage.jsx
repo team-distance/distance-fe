@@ -141,7 +141,7 @@ const LoginPage = () => {
                 placeholder={'6자리 이상'}
               />
               {showWarning && loginResult !== 200 && (
-                <Tip>비밀번호가 일치하지 않습니다!</Tip>
+                <Tip>로그인 정보가 일치하지 않습니다!</Tip>
               )}
             </div>
           </WrapContent>
