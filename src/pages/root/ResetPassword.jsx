@@ -180,7 +180,3 @@ const WrapContent = styled.div`
   gap: 4rem;
   margin-bottom: 8rem;
 `;
-
-const HiddenDiv = styled.div`
-  visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
-`;
