@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/common/Header';
 import { instance } from '../../api/instance';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CHARACTERS, COLORS } from '../../constants/character';
 import Badge from '../../components/common/Badge';
 
+/**
+ * @todo 채팅 요청함 API 응답 수정되면 myRoomName을 department, mbti로 수정
+ */
 const ChatInboxPage = () => {
   const [inboxList, setInboxList] = useState([]);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const parseRoomName = (str) => {
     // 정규표현식: 학과명(capturing group 1), MBTI(capturing group 2), memberId(capturing group 3)
@@ -29,7 +31,12 @@ const ChatInboxPage = () => {
   };
 
   const fetchInboxList = async () => {
-    setInboxList(location.state.inboxList);
+    try {
+      const res = await instance.get('/waiting').then((res) => res.data);
+      setInboxList(res);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleAcceptChat = async (
@@ -37,35 +44,32 @@ const ChatInboxPage = () => {
     opponentMemberId,
     chatWaitingId
   ) => {
-    await instance
-      .get(`/waiting/accept/${chatWaitingId}`)
-      .then((res) => {
-        const createdChatRoom = res.data;
-        navigate(`/chat/${createdChatRoom}`, {
-          state: {
-            myId: myMemberId,
-            opponentId: opponentMemberId,
-            roomId: createdChatRoom,
-          },
-        });
-      })
-      .catch((error) => {
-        switch (error.response.data.code) {
-          case 'TOO_MANY_MY_CHATROOM':
-            alert(
-              '이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요.'
-            );
-            break;
-          case 'TOO_MANY_OPPONENT_CHATROOM':
-            alert(
-              '상대방이 이미 생성된 채팅방 3개입니다. 상대방과 연결에 실패했습니다.'
-            );
-            break;
-          default:
-            alert('채팅방 생성에 실패했습니다. 다시 시도해주세요.');
-            break;
-        }
+    try {
+      const chatRoomId = await instance.get(`/waiting/accept/${chatWaitingId}`);
+      navigate(`/chat/${chatRoomId.data}`, {
+        state: {
+          myId: myMemberId,
+          opponentId: opponentMemberId,
+          roomId: chatRoomId.data,
+        },
       });
+    } catch (error) {
+      switch (error?.response?.data?.code) {
+        case 'TOO_MANY_MY_CHATROOM':
+          alert(
+            '이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요.'
+          );
+          break;
+        case 'TOO_MANY_OPPONENT_CHATROOM':
+          alert(
+            '상대방이 이미 생성된 채팅방 3개입니다. 상대방과 연결에 실패했습니다.'
+          );
+          break;
+        default:
+          alert('채팅방 생성에 실패했습니다. 다시 시도해주세요.');
+          break;
+      }
+    }
 
     fetchInboxList(); // 새로고침
   };
