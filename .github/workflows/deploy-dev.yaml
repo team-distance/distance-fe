@@ -1,13 +1,13 @@
-name: Auto Deploy & Cloudfront Invalidate after push
+name: (DEV)Auto Deploy to S3 Bucket & Cloudfront Invalidate
 
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   deploy:
-    name: Build, Deploy to S3 bucket
+    name: (DEV)Auto Deploy to S3 Bucket & Cloudfront Invalidate
     runs-on: ubuntu-latest
 
     steps:
@@ -59,7 +59,7 @@ jobs:
         with:
           args: --acl public-read --follow-symlinks --delete
         env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_BUCKET_NAME }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_BUCKET_NAME_DEV }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_IAM_MANAGER_KEY_ID }}
           AWS_SECRET_ACCESS_KEY:
             ${{ secrets.AWS_IAM_MANAGER_SECRET_ACCESS_KEY }}
@@ -69,9 +69,9 @@ jobs:
       - name: Invalidate CloudFront
         uses: chetan/invalidate-cloudfront-action@v2
         env:
-          DISTRIBUTION: ${{ secrets.AWS_DISTRIBUTION_ID }}
+          DISTRIBUTION: ${{ secrets.AWS_DISTRIBUTION_ID_DEV }}
           PATHS: '/*'
-          AWS_REGION: 'ap-northeast-2'
+          AWS_REGION: ${{ secrets.AWS_BUCKET_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_IAM_MANAGER_KEY_ID }}
           AWS_SECRET_ACCESS_KEY:
             ${{ secrets.AWS_IAM_MANAGER_SECRET_ACCESS_KEY }}
