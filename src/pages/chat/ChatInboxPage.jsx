@@ -13,23 +13,6 @@ const ChatInboxPage = () => {
   const [inboxList, setInboxList] = useState([]);
   const navigate = useNavigate();
 
-  const parseRoomName = (str) => {
-    // 정규표현식: 학과명(capturing group 1), MBTI(capturing group 2), memberId(capturing group 3)
-    const regex = /(.+)([A-Z]{4})#(\d+)/;
-    const match = str.match(regex);
-
-    if (match) {
-      return {
-        department: match[1], // 학과명
-        mbti: match[2], // MBTI
-        memberId: match[3], // memberId
-      };
-    } else {
-      // 일치하는 패턴이 없을 경우
-      return null;
-    }
-  };
-
   const fetchInboxList = async () => {
     try {
       const res = await instance.get('/waiting').then((res) => res.data);
@@ -95,8 +78,6 @@ const ChatInboxPage = () => {
       <Title>요청함</Title>
       {inboxList.length !== 0 ? (
         inboxList.map((inbox) => {
-          const roomNameParts = parseRoomName(inbox.myRoomName);
-
           return (
             <InboxContainer key={inbox.waitingRoomId}>
               <CharacterBackground $character={inbox.memberCharacter}>
@@ -108,15 +89,10 @@ const ChatInboxPage = () => {
 
               <div className="right-section">
                 <div className="upper-area">
-                  {roomNameParts ? (
-                    <Profile>
-                      {roomNameParts.department}
-                      <Badge>{roomNameParts.mbti}</Badge>
-                      {/* roomNameParts.memberId */}
-                    </Profile>
-                  ) : (
-                    <Profile>{inbox.myRoomName}</Profile>
-                  )}
+                  <Profile>
+                    {inbox.department}
+                    <Badge>{inbox.mbti}</Badge>
+                  </Profile>
                 </div>
                 <div className="lower-area">
                   <AcceptButton

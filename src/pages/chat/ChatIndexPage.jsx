@@ -264,6 +264,7 @@ const Profile = styled.div`
     position: absolute;
     background-image: linear-gradient(90deg, transparent 80%, white 100%);
     z-index: 99;
+    color: transparent;
   }
 `;
 
