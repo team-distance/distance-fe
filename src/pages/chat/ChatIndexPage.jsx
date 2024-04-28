@@ -10,9 +10,6 @@ import { useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
 import Badge from '../../components/common/Badge';
 
-/**
- * @todo LINE 61: localStorage에 저장된 대화 내역 삭제
- */
 const ChatIndexPage = () => {
   const navigate = useNavigate();
   const [chatList, setChatList] = useState([]);
@@ -20,7 +17,6 @@ const ChatIndexPage = () => {
   const [loading, setLoading] = useState(false);
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const [waitingCount, setWaitingCount] = useState(0);
-  const [inboxList, setInboxList] = useState([]);
 
   const fetchChatList = async () => {
     try {
@@ -47,7 +43,6 @@ const ChatIndexPage = () => {
   const fetchChatWaiting = async () => {
     try {
       const res = await instance.get('/waiting').then((res) => res.data);
-      setInboxList(res);
       setWaitingCount(res.length);
     } catch (error) {
       console.log(error);
@@ -57,29 +52,6 @@ const ChatIndexPage = () => {
   useEffect(() => {
     fetchChatList();
     fetchChatWaiting();
-
-    const eventSource = new EventSource(
-      `https://api.dis-tance.com/api/notify/subscribe/${memberId}`
-    );
-
-    eventSource.onopen = (event) => {
-      console.log('Connection opened');
-      console.log(event);
-    };
-
-    eventSource.onmessage = (event) => {
-      console.log('Message received');
-      console.log(event);
-    };
-
-    eventSource.onerror = (event) => {
-      console.log('Error occurred');
-      console.log(event);
-    };
-
-    return () => {
-      eventSource.close();
-    };
   }, []);
 
   const formatTime = (time) => {
@@ -140,11 +112,7 @@ const ChatIndexPage = () => {
             <WrapInboxButton>
               <InboxButton
                 onClick={() => {
-                  navigate('/inbox', {
-                    state: {
-                      inboxList: inboxList,
-                    },
-                  });
+                  navigate('/inbox');
                 }}
               >
                 <div>
@@ -178,7 +146,7 @@ const ChatIndexPage = () => {
                     </div>
                     <div className="profile-section">
                       <Profile>
-                        <div className="cover">{chat.department[0]}</div>
+                        <div className="cover">{chat.department}</div>
                         {chat.department}
                         <Badge>{chat.mbti}</Badge>
                       </Profile>
