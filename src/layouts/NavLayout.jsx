@@ -6,7 +6,6 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isLoggedInState } from '../store/auth';
 import { instance } from '../api/instance';
 import toast, { Toaster } from 'react-hot-toast';
-import useGPS from '../hooks/useGPS';
 import { myDataState } from '../store/myData';
 import { onMessage } from 'firebase/messaging';
 import { messaging } from '../firebaseConfig';
@@ -15,7 +14,6 @@ import PWAInstallPrompt from '../components/common/PWAInstallPrompt';
 const NavLayout = () => {
   const setMyData = useSetRecoilState(myDataState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
-  const currentLocation = useGPS(isLoggedIn);
   const navigate = useNavigate();
   const userAgent = navigator.userAgent.toLowerCase();
   const isIphone = userAgent.includes('iphone');
@@ -116,33 +114,6 @@ const NavLayout = () => {
 
     fetchMemberIdAndMyData();
   }, [isLoggedIn]);
-
-  useEffect(() => {
-    if (!isLoggedIn) return;
-
-    if (currentLocation.error) {
-      toast.error(
-        '위치 정보를 가져오는데 실패했어요! 설정에서 위치 정보를 허용해주세요.',
-        {
-          id: 'gps-error',
-          position: 'bottom-center',
-        }
-      );
-    } else {
-      instance
-        .post(`/gps/update`, {
-          latitude: currentLocation.lat,
-          longitude: currentLocation.lng,
-        })
-        .catch((err) => {
-          toast.error('위치 정보를 업데이트하는데 실패했어요!', {
-            id: 'gps-update-error',
-            position: 'bottom-center',
-          });
-          console.log(err);
-        });
-    }
-  }, [currentLocation]);
 
   return (
     <>

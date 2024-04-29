@@ -297,9 +297,12 @@ const ChatPage = () => {
   // 메시지가 업데이트 될 때마다 로컬 스토리지에 저장
   useEffect(() => {
     const lastMessage = messages.at(-1);
+    console.log('lastMessage', lastMessage);
 
     if (lastMessage?.checkTiKiTaKa && lastMessage?.roomStatus === 'ACTIVE') {
       setIsCallActive(true);
+    } else if (lastMessage?.roomStatus === 'ACTIVE') {
+      setIsOpponentOut(false);
     } else if (lastMessage?.roomStatus === 'INACTIVE') {
       setIsCallActive(false);
       setIsOpponentOut(true);
