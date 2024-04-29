@@ -57,29 +57,6 @@ const ChatIndexPage = () => {
   useEffect(() => {
     fetchChatList();
     fetchChatWaiting();
-
-    const eventSource = new EventSource(
-      `https://api.dis-tance.com/api/notify/subscribe/${memberId}`
-    );
-
-    eventSource.onopen = (event) => {
-      console.log('Connection opened');
-      console.log(event);
-    };
-
-    eventSource.onmessage = (event) => {
-      console.log('Message received');
-      console.log(event);
-    };
-
-    eventSource.onerror = (event) => {
-      console.log('Error occurred');
-      console.log(event);
-    };
-
-    return () => {
-      eventSource.close();
-    };
   }, []);
 
   const formatTime = (time) => {
