@@ -51,6 +51,7 @@ function App() {
 
   useEffect(() => {
     if (!isLoggedIn) return;
+    console.log('위치정보 업데이트', currentLocation);
     if (currentLocation.error) {
       toast.error(
         '위치 정보를 가져오는데 실패했어요! 설정에서 위치 정보를 허용해주세요.',
