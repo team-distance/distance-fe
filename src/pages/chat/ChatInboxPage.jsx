@@ -28,16 +28,18 @@ const ChatInboxPage = () => {
     chatWaitingId
   ) => {
     try {
-      const chatRoomId = await instance.get(`/waiting/accept/${chatWaitingId}`);
-      navigate(`/chat/${chatRoomId.data}`, {
+      const createdChatRoom = await instance
+        .get(`/waiting/accept/${chatWaitingId}`)
+        .then((res) => res.data);
+      navigate(`/chat/${createdChatRoom}`, {
         state: {
           myId: myMemberId,
           opponentId: opponentMemberId,
-          roomId: chatRoomId.data,
+          roomId: createdChatRoom,
         },
       });
     } catch (error) {
-      switch (error?.response?.data?.code) {
+      switch (error.response.data.code) {
         case 'TOO_MANY_MY_CHATROOM':
           alert(
             '이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요.'
@@ -58,14 +60,12 @@ const ChatInboxPage = () => {
   };
 
   const handleDenyChat = async (chatWaitingId) => {
-    await instance
-      .delete(`/waiting/${chatWaitingId}`)
-      .then((res) => {
-        fetchInboxList(); // 새로고침
-      })
-      .catch((error) => {
-        alert('요청 거절에 실패했습니다. 다시 시도해주세요.');
-      });
+    try {
+      await instance.delete(`/waiting/${chatWaitingId}`);
+      fetchInboxList();
+    } catch (error) {
+      alert('요청 거절에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   useEffect(() => {
