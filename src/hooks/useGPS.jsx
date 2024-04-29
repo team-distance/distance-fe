@@ -11,6 +11,17 @@ const useGPS = (isLoggedIn) => {
 
   const success = (position) => {
     const { latitude, longitude } = position.coords;
+
+    console.log(
+      '미터 차이: ',
+      calculateDistanceInMeter(
+        curLocation.lat,
+        curLocation.lng,
+        latitude,
+        longitude
+      )
+    );
+
     if (
       calculateDistanceInMeter(
         curLocation.lat,
