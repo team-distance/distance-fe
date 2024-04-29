@@ -20,7 +20,6 @@ const ChatIndexPage = () => {
   const [loading, setLoading] = useState(false);
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const [waitingCount, setWaitingCount] = useState(0);
-  const [inboxList, setInboxList] = useState([]);
 
   const fetchChatList = async () => {
     try {
@@ -47,7 +46,6 @@ const ChatIndexPage = () => {
   const fetchChatWaiting = async () => {
     try {
       const res = await instance.get('/waiting').then((res) => res.data);
-      setInboxList(res);
       setWaitingCount(res.length);
     } catch (error) {
       console.log(error);
@@ -117,11 +115,7 @@ const ChatIndexPage = () => {
             <WrapInboxButton>
               <InboxButton
                 onClick={() => {
-                  navigate('/inbox', {
-                    state: {
-                      inboxList: inboxList,
-                    },
-                  });
+                  navigate('/inbox');
                 }}
               >
                 <div>
@@ -157,7 +151,7 @@ const ChatIndexPage = () => {
                       <Profile>
                         <div className="cover">{chat.department}</div>
                         {chat.department}
-                        <Badge>{chat.mbti}</Badge>
+                        {chat.mbti && <Badge>{chat.mbti}</Badge>}
                       </Profile>
                       <Message>{chat.lastMessage}</Message>
                     </div>
