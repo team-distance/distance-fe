@@ -46,7 +46,6 @@ const HomeIndexPage = () => {
 
       const res = await instance.get('/gps/matching');
       setMemberState(res.data.matchedUsers);
-      console.log('memberState>>>>>>>>>>>.', memberState);
 
       // 매초마다 남은 시간 업데이트
       const intervalId = setInterval(() => {
