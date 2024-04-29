@@ -11,23 +11,6 @@ const ChatInboxPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const parseRoomName = (str) => {
-    // 정규표현식: 학과명(capturing group 1), MBTI(capturing group 2), memberId(capturing group 3)
-    const regex = /(.+)([A-Z]{4})#(\d+)/;
-    const match = str.match(regex);
-
-    if (match) {
-      return {
-        department: match[1], // 학과명
-        mbti: match[2], // MBTI
-        memberId: match[3], // memberId
-      };
-    } else {
-      // 일치하는 패턴이 없을 경우
-      return null;
-    }
-  };
-
   const fetchInboxList = async () => {
     setInboxList(location.state.inboxList);
   };
