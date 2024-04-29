@@ -12,31 +12,25 @@ const useGPS = (isLoggedIn) => {
   const success = (position) => {
     const { latitude, longitude } = position.coords;
 
-    console.log(
-      '미터 차이: ',
-      calculateDistanceInMeter(
-        curLocation.lat,
-        curLocation.lng,
-        latitude,
-        longitude
-      )
-    );
+    setCurLocation((prev) => {
+      console.log(
+        '미터 차이: ',
+        calculateDistanceInMeter(prev.lat, prev.lng, latitude, longitude)
+      );
 
-    if (
-      calculateDistanceInMeter(
-        curLocation.lat,
-        curLocation.lng,
-        latitude,
-        longitude
-      ) > DISTANCE
-    ) {
-      setCurLocation((prev) => ({
-        ...prev,
-        lat: latitude,
-        lng: longitude,
-        error: null,
-      }));
-    }
+      if (
+        calculateDistanceInMeter(prev.lat, prev.lng, latitude, longitude) >
+        DISTANCE
+      ) {
+        return {
+          ...prev,
+          lat: latitude,
+          lng: longitude,
+          error: null,
+        };
+      }
+      return prev; // 조건을 만족하지 않으면 상태를 변경하지 않음
+    });
   };
 
   const error = () => {
