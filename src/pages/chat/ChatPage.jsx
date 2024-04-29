@@ -209,9 +209,21 @@ const ChatPage = () => {
   // 서버에서 읽지 않은 메시지 불러오기
   const fetchUnreadMessagesFromServer = async () => {
     try {
-      const msg = await instance.get(`/chatroom/${roomId}`);
-      if (msg.data.length === 0) return;
-      setMessages((messages) => [...messages, ...msg.data]);
+      const unreadMessages = await instance
+        .get(`/chatroom/${roomId}`)
+        .then((res) => res.data);
+      if (unreadMessages.length === 0) return;
+
+      // unreadMessages를 순회하며 messageId가 이미 messages에 있는지 확인하고 없으면 추가
+      unreadMessages.forEach((unreadMessage) => {
+        if (
+          !messages.find(
+            (message) => message.messageId === unreadMessage.messageId
+          )
+        ) {
+          setMessages((messages) => [...messages, unreadMessage]);
+        }
+      });
     } catch (error) {
       console.log('error', error);
       //401에러
@@ -250,7 +262,7 @@ const ChatPage = () => {
   // STOMP 클라이언트 생성
   useEffect(() => {
     const newClient = new Client({
-      brokerURL: 'wss://api.dis-tance.com/meet',
+      brokerURL: 'wss://dev.dis-tance.com/meet',
       connectHeaders: {
         chatRoomId: roomId,
         memberId: myId,
@@ -285,17 +297,15 @@ const ChatPage = () => {
   // 메시지가 업데이트 될 때마다 로컬 스토리지에 저장
   useEffect(() => {
     const lastMessage = messages.at(-1);
+    console.log('lastMessage', lastMessage);
 
-    if (lastMessage?.checkTiKiTaKa && lastMessage?.roomStatus === 'ACTIVE') {
-      setIsCallActive(true);
-    } else if (lastMessage?.roomStatus === 'INACTIVE') {
-      setIsCallActive(false);
-      setIsOpponentOut(true);
-    }
+    if (lastMessage?.checkTiKiTaKa) setIsCallActive(true);
+    else setIsCallActive(false);
 
-    if (messages.length > 0) {
-      saveMessagesToLocal();
-    }
+    if (lastMessage?.roomStatus === 'ACTIVE') setIsOpponentOut(false);
+    else setIsOpponentOut(true);
+
+    if (messages.length > 0) saveMessagesToLocal();
   }, [messages]);
 
   // 전화 버튼 애니메이션

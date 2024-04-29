@@ -148,7 +148,7 @@ const ChatIndexPage = () => {
                       <Profile>
                         <div className="cover">{chat.department}</div>
                         {chat.department}
-                        <Badge>{chat.mbti}</Badge>
+                        {chat.mbti && <Badge>{chat.mbti}</Badge>}
                       </Profile>
                       <Message>{chat.lastMessage}</Message>
                     </div>
@@ -262,7 +262,7 @@ const Profile = styled.div`
   .cover {
     width: 100%;
     position: absolute;
-    background-image: linear-gradient(90deg, transparent 80%, white 100%);
+    background-image: linear-gradient(90deg, transparent 80%, #fbfbfb 100%);
     z-index: 99;
     color: transparent;
   }
