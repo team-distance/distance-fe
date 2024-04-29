@@ -3,7 +3,7 @@ name: (DEV)Auto Deploy to S3 Bucket & Cloudfront Invalidate
 on:
   push:
     branches:
-      - dev
+      - develop
 
 jobs:
   deploy:
