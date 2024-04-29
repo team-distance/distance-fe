@@ -303,7 +303,7 @@ const ChatPage = () => {
     else setIsCallActive(false);
 
     if (lastMessage?.roomStatus === 'ACTIVE') setIsOpponentOut(false);
-    else setIsOpponentOut(true);
+    else if (lastMessage?.roomStatus === 'INACTIVE') setIsOpponentOut(true);
 
     if (messages.length > 0) saveMessagesToLocal();
   }, [messages]);
