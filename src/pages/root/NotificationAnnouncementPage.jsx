@@ -14,7 +14,8 @@ const NotificationAnnouncementPage = () => {
       })
       .catch((error) => {
         console.log(error);
-      });
+      })
+      .finally('/');
   };
 
   if (Notification.permission === 'granted') {

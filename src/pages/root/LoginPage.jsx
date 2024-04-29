@@ -84,13 +84,15 @@ const LoginPage = () => {
 
     let clientToken = null;
 
+    // clientToken 가져오기를 시도
+    // 브라우저에서 최초로 앱을 실행할 때, clientToken이 없을 수 있음
+    // 그래서 1회 시도 후 실패하면 다시 시도
     try {
-      // 토큰을 시도하여 가져옵니다.
       clientToken = await onGetToken();
       localStorage.setItem('clientToken', clientToken);
     } catch (err) {
-      // 토큰 가져오기 실패, clientToken은 null로 유지
-      console.error('Token fetch failed', err);
+      clientToken = await onGetToken();
+      localStorage.setItem('clientToken', clientToken);
     }
 
     try {
