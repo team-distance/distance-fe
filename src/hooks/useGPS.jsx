@@ -11,9 +11,6 @@ const useGPS = (isLoggedIn) => {
 
   const success = (position) => {
     const { latitude, longitude } = position.coords;
-    console.log('curLocation', curLocation.lat, curLocation.lng);
-    console.log('newLocation', latitude, longitude);
-
     if (
       calculateDistanceInMeter(
         curLocation.lat,
@@ -32,18 +29,18 @@ const useGPS = (isLoggedIn) => {
   };
 
   const error = () => {
-    setCurLocation({
-      ...curLocation,
+    setCurLocation((prev) => ({
+      ...prev,
       error: 'Unable to retrieve your location',
-    });
+    }));
   };
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setCurLocation({
-        ...curLocation,
+      setCurLocation((prev) => ({
+        ...prev,
         error: 'Geolocation is not supported',
-      });
+      }));
     }
   }, []);
 
@@ -53,6 +50,10 @@ const useGPS = (isLoggedIn) => {
       return () => navigator.geolocation.clearWatch(watcher);
     }
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    console.log(curLocation);
+  }, [curLocation]);
 
   return curLocation;
 };
