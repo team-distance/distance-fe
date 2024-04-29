@@ -22,23 +22,6 @@ const ChatIndexPage = () => {
   const [waitingCount, setWaitingCount] = useState(0);
   const [inboxList, setInboxList] = useState([]);
 
-  const parseRoomName = (str) => {
-    // 정규표현식: 학과명(capturing group 1), MBTI(capturing group 2), memberId(capturing group 3)
-    const regex = /(.+)([A-Z]{4})#(\d+)/;
-    const match = str.match(regex);
-
-    if (match) {
-      return {
-        department: match[1], // 학과명
-        mbti: match[2], // MBTI
-        memberId: match[3], // memberId
-      };
-    } else {
-      // 일치하는 패턴이 없을 경우
-      return null;
-    }
-  };
-
   const fetchChatList = async () => {
     try {
       setLoading(true);
@@ -175,7 +158,6 @@ const ChatIndexPage = () => {
             </WrapInboxButton>
             {chatList.length !== 0 ? (
               chatList.map((chat) => {
-                const roomNameParts = parseRoomName(chat.roomName);
                 const timeDisplay = chat.modifyDt
                   ? formatTime(chat.modifyDt)
                   : '(알수없음)';
@@ -196,9 +178,9 @@ const ChatIndexPage = () => {
                     </div>
                     <div className="profile-section">
                       <Profile>
-                        <div className="cover">{roomNameParts?.department}</div>
-                        {roomNameParts?.department}
-                        <Badge>{roomNameParts?.mbti}</Badge>
+                        <div className="cover">{chat.department}</div>
+                        {chat.department}
+                        <Badge>{chat.mbti}</Badge>
                       </Profile>
                       <Message>{chat.lastMessage}</Message>
                     </div>
@@ -312,7 +294,7 @@ const Profile = styled.div`
   .cover {
     width: 100%;
     position: absolute;
-    background-image: linear-gradient(90deg, transparent 80%, white 100%);
+    background-image: linear-gradient(90deg, transparent 80%, #fbfbfb 100%);
     z-index: 99;
   }
 `;
