@@ -209,9 +209,21 @@ const ChatPage = () => {
   // 서버에서 읽지 않은 메시지 불러오기
   const fetchUnreadMessagesFromServer = async () => {
     try {
-      const msg = await instance.get(`/chatroom/${roomId}`);
-      if (msg.data.length === 0) return;
-      setMessages((messages) => [...messages, ...msg.data]);
+      const unreadMessages = await instance
+        .get(`/chatroom/${roomId}`)
+        .then((res) => res.data);
+      if (unreadMessages.length === 0) return;
+
+      // unreadMessages를 순회하며 messageId가 이미 messages에 있는지 확인하고 없으면 추가
+      unreadMessages.forEach((unreadMessage) => {
+        if (
+          !messages.find(
+            (message) => message.messageId === unreadMessage.messageId
+          )
+        ) {
+          setMessages((messages) => [...messages, unreadMessage]);
+        }
+      });
     } catch (error) {
       console.log('error', error);
       //401에러
