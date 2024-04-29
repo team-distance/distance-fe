@@ -91,8 +91,6 @@ const ChatInboxPage = () => {
       <Title>요청함</Title>
       {inboxList.length !== 0 ? (
         inboxList.map((inbox) => {
-          const roomNameParts = parseRoomName(inbox.myRoomName);
-
           return (
             <InboxContainer key={inbox.waitingRoomId}>
               <CharacterBackground $character={inbox.memberCharacter}>
@@ -104,15 +102,10 @@ const ChatInboxPage = () => {
 
               <div className="right-section">
                 <div className="upper-area">
-                  {roomNameParts ? (
-                    <Profile>
-                      {roomNameParts.department}
-                      <Badge>{roomNameParts.mbti}</Badge>
-                      {/* roomNameParts.memberId */}
-                    </Profile>
-                  ) : (
-                    <Profile>{inbox.myRoomName}</Profile>
-                  )}
+                  <Profile>
+                    {inbox.department}
+                    <Badge>{inbox.mbti}</Badge>
+                  </Profile>
                 </div>
                 <div className="lower-area">
                   <AcceptButton
