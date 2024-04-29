@@ -301,6 +301,7 @@ const ChatPage = () => {
 
     if (lastMessage?.checkTiKiTaKa && lastMessage?.roomStatus === 'ACTIVE') {
       setIsCallActive(true);
+      setIsOpponentOut(false);
     } else if (lastMessage?.roomStatus === 'ACTIVE') {
       setIsOpponentOut(false);
     } else if (lastMessage?.roomStatus === 'INACTIVE') {
