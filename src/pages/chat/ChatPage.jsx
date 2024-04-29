@@ -299,18 +299,13 @@ const ChatPage = () => {
     const lastMessage = messages.at(-1);
     console.log('lastMessage', lastMessage);
 
-    if (lastMessage?.checkTiKiTaKa && lastMessage?.roomStatus === 'ACTIVE') {
-      setIsCallActive(true);
-    } else if (lastMessage?.roomStatus === 'ACTIVE') {
-      setIsOpponentOut(false);
-    } else if (lastMessage?.roomStatus === 'INACTIVE') {
-      setIsCallActive(false);
-      setIsOpponentOut(true);
-    }
+    if (lastMessage?.checkTiKiTaKa) setIsCallActive(true);
+    else setIsCallActive(false);
 
-    if (messages.length > 0) {
-      saveMessagesToLocal();
-    }
+    if (lastMessage?.roomStatus === 'ACTIVE') setIsOpponentOut(false);
+    else setIsOpponentOut(true);
+
+    if (messages.length > 0) saveMessagesToLocal();
   }, [messages]);
 
   // 전화 버튼 애니메이션
