@@ -11,6 +11,8 @@ const useGPS = (isLoggedIn) => {
 
   const success = (position) => {
     const { latitude, longitude } = position.coords;
+    console.log('curLocation', curLocation.lat, curLocation.lng);
+    console.log('newLocation', latitude, longitude);
 
     if (
       calculateDistanceInMeter(
@@ -20,11 +22,12 @@ const useGPS = (isLoggedIn) => {
         longitude
       ) > DISTANCE
     ) {
-      setCurLocation({
+      setCurLocation((prev) => ({
+        ...prev,
         lat: latitude,
         lng: longitude,
         error: null,
-      });
+      }));
     }
   };
 
@@ -42,12 +45,14 @@ const useGPS = (isLoggedIn) => {
         error: 'Geolocation is not supported',
       });
     }
+  }, []);
 
+  useEffect(() => {
     if (isLoggedIn) {
       const watcher = navigator.geolocation.watchPosition(success, error);
       return () => navigator.geolocation.clearWatch(watcher);
     }
-  }, []);
+  }, [isLoggedIn]);
 
   return curLocation;
 };
