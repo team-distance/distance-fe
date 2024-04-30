@@ -90,29 +90,28 @@ const ChatIndexPage = () => {
     }
   };
 
-  const goOutChatroom = async (chat) => {
-    console.log('authUniv', authUniv);
-
+  const onClickChatroom = async (chat) => {
     if (!authUniv) {
       window.confirm('학생 인증 후 이용해주세요.') && navigate('/verify/univ');
     } else {
-      navigate(`/chat/${chat.chatRoomId}`, {
-        state: {
-          myId: memberId,
-          opponentId: chat.opponentMemberId,
-          roomId: chat.chatRoomId,
-        },
-      });
-    }
-
-    if (chat.opponentMemberId === null) {
-      const res = window.confirm('정말로 나가시겠습니까?');
-      if (!res) return;
-      try {
-        await instance.get(`/room-member/leave/${chat.chatRoomId}`);
-        fetchChatList();
-      } catch (error) {
-        console.log(error);
+      if (chat.opponentMemberId === null) {
+        const res = window.confirm('정말로 나가시겠습니까?');
+        console.log(res);
+        if (!res) return;
+        try {
+          await instance.get(`/room-member/leave/${chat.chatRoomId}`);
+          fetchChatList();
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        navigate(`/chat/${chat.chatRoomId}`, {
+          state: {
+            myId: memberId,
+            opponentId: chat.opponentMemberId,
+            roomId: chat.chatRoomId,
+          },
+        });
       }
     }
   };
@@ -160,7 +159,7 @@ const ChatIndexPage = () => {
                 return (
                   <ChatRoomContainer
                     key={chat.chatRoomId}
-                    onClick={() => goOutChatroom(chat)}
+                    onClick={() => onClickChatroom(chat)}
                   >
                     <div className="left-section">
                       <CharacterBackground $character={chat.memberCharacter}>
