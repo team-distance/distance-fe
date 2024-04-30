@@ -13,11 +13,6 @@ const useGPS = (isLoggedIn) => {
     const { latitude, longitude } = position.coords;
 
     setCurLocation((prev) => {
-      console.log(
-        '미터 차이: ',
-        calculateDistanceInMeter(prev.lat, prev.lng, latitude, longitude)
-      );
-
       if (
         calculateDistanceInMeter(prev.lat, prev.lng, latitude, longitude) >
         DISTANCE
@@ -55,10 +50,6 @@ const useGPS = (isLoggedIn) => {
       return () => navigator.geolocation.clearWatch(watcher);
     }
   }, [isLoggedIn]);
-
-  useEffect(() => {
-    console.log(curLocation);
-  }, [curLocation]);
 
   return curLocation;
 };
