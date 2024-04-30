@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
 import { useRecoilState } from 'recoil';
@@ -70,7 +70,7 @@ const UserRegisterPage = () => {
     }
   };
 
-  const sendMessage = async () => {
+  const sendMessage = () => {
     if (verifyButtonLabel === '재전송') {
       setVerifyNumFlag(true);
       setVerify(false);
@@ -117,6 +117,13 @@ const UserRegisterPage = () => {
       console.log();
     }
   };
+
+  useEffect(() => {
+    return () => {
+      // 컴포넌트가 언마운트될 때 모든 토스트 메시지를 닫음
+      toast.dismiss();
+    };
+  }, []);
 
   return (
     <>
@@ -207,6 +214,7 @@ const UserRegisterPage = () => {
               pwFlag || !registerData.agreeTerms || !registerData.agreePrivacy
             }
             onClick={() => {
+              toast.dismiss();
               navigate('/register/univ');
             }}
           >

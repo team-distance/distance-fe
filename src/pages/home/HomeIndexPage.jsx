@@ -67,6 +67,7 @@ const HomeIndexPage = () => {
 
   useEffect(() => {
     fetchMembers();
+    toast.dismiss();
 
     if ('Notification' in window && Notification.permission !== 'granted') {
       toast.error((t) => (
