@@ -98,10 +98,6 @@ const WrapPage = styled.div`
   flex-direction: column;
 `;
 
-const Wrapper = styled.div`
-  padding: 2rem 1rem;
-`;
-
 const WrapBox = styled.div`
   margin: 1rem 0;
   display: grid;
