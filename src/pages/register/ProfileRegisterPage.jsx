@@ -66,6 +66,7 @@ const ProfileRegisterPage = () => {
         memberTagDto: registerData.memberTagDto,
       })
       .then(() => {
+        window.scrollTo(0, 0);
         navigate('/register/done', {
           state: {
             telNum: registerData.telNum,
