@@ -202,7 +202,9 @@ const ChatPage = () => {
       if (msg.data.length === 0) return;
       setMessages(msg.data);
     } catch (error) {
-      console.log('error', error);
+      window.confirm('학생 인증 후 이용해주세요.')
+        ? navigateToVerify()
+        : navigateToBack();
     }
   };
 

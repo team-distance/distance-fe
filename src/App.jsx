@@ -21,7 +21,7 @@ import VerifyMobileIdPage from './pages/verify/VerifyMobileIdPage';
 import VerifyOptionsPage from './pages/verify/VerifyOptionsPage';
 import VerifyEmailPage from './pages/verify/VerifyEmailPage';
 import VerifyIdPage from './pages/verify/VerifyIdPage';
-import NotificationAnnouncementPage from './pages/root/NotificationAnnouncementPage';
+import NotificationSolutionPage from './pages/root/NotificationSolutionPage';
 import FoodTruck from './components/festival/FoodTruck';
 import FoodTruckPage0 from './pages/festival/FoodTruckPage0';
 import FoodTruckPage1 from './pages/festival/FoodTruckPage1';
@@ -82,10 +82,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/password" element={<ResetPassword />} />
 
-        <Route
-          path="/notification"
-          element={<NotificationAnnouncementPage />}
-        />
+        <Route path="/notification" element={<NotificationSolutionPage />} />
 
         <Route path="/register/user" element={<UserRegisterPage />} />
         <Route path="/register/univ" element={<UnivRegisterPage />} />
