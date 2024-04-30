@@ -19,7 +19,7 @@ const HomeIndexPage = () => {
   const navigate = useNavigate();
 
   const memberId = localStorage.getItem('memberId');
-  const [memberState, setMemberState] = useState([]);
+  const [memberState, setMemberState] = useState();
 
   const [isReloadButtonDisabled, setIsReloadButtonDisabled] = useState(false);
   const [remainingTimeToReload, setRemainingTimeToReload] = useState(0);
@@ -30,7 +30,6 @@ const HomeIndexPage = () => {
       setLoading(true);
       const res = await instance.get('/gps/matching');
       setMemberState(res.data.matchedUsers);
-      console.log('memberState>>>>>>>>>>>.', memberState);
     } catch (error) {
       console.log(error);
     } finally {
@@ -157,13 +156,22 @@ const HomeIndexPage = () => {
             </button>
           </div>
         )} */}
-        {memberState.length !== 0 ? (
+
+        {memberState && memberState.length === 0 ? (
+          <EmptyContainer>
+            <div className="wrap">
+              <img src={'/assets/empty-home.svg'} alt="empty icon" />
+              <div>현재 근처에 있는 사람이 없어요!</div>
+            </div>
+          </EmptyContainer>
+        ) : (
           <ProfileContainer>
             {loading ? (
               <LoaderContainer>
                 <ClipLoader color={'#FF625D'} loading={loading} size={50} />
               </LoaderContainer>
             ) : (
+              memberState &&
               memberState.map((profile, index) => (
                 <Profile
                   key={index}
@@ -173,13 +181,6 @@ const HomeIndexPage = () => {
               ))
             )}
           </ProfileContainer>
-        ) : (
-          <EmptyContainer>
-            <div className="wrap">
-              <img src={'/assets/empty-home.svg'} alt="empty icon" />
-              <div>현재 근처에 있는 사람이 없어요!</div>
-            </div>
-          </EmptyContainer>
         )}
         <ReloadButton onClick={reloadMembers} disabled={isReloadButtonDisabled}>
           {isReloadButtonDisabled && (

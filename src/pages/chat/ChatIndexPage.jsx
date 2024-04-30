@@ -12,7 +12,7 @@ import Badge from '../../components/common/Badge';
 
 const ChatIndexPage = () => {
   const navigate = useNavigate();
-  const [chatList, setChatList] = useState([]);
+  const [chatList, setChatList] = useState();
   const memberId = localStorage.getItem('memberId');
   const [loading, setLoading] = useState(false);
   const isLoggedIn = useRecoilValue(isLoggedInState);
@@ -124,7 +124,15 @@ const ChatIndexPage = () => {
                 <img src="/assets/arrow-pink-right.svg" alt="화살표 아이콘" />
               </InboxButton>
             </WrapInboxButton>
-            {chatList.length !== 0 ? (
+            {chatList && chatList.length === 0 ? (
+              <EmptyContainer>
+                <div className="wrap">
+                  <img src={'/assets/empty-icon.svg'} alt="empty icon" />
+                  <div>채팅을 시작해보세요!</div>
+                </div>
+              </EmptyContainer>
+            ) : (
+              chatList &&
               chatList.map((chat) => {
                 const timeDisplay = chat.modifyDt
                   ? formatTime(chat.modifyDt)
@@ -164,13 +172,6 @@ const ChatIndexPage = () => {
                   </ChatRoomContainer>
                 );
               })
-            ) : (
-              <EmptyContainer>
-                <div className="wrap">
-                  <img src={'/assets/empty-icon.svg'} alt="empty icon" />
-                  <div>채팅을 시작해보세요!</div>
-                </div>
-              </EmptyContainer>
             )}
           </>
         )
