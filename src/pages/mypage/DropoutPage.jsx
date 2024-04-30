@@ -31,11 +31,12 @@ const DropoutPage = () => {
 
   const handleDropout = async () => {
     try {
-      await instance.delete('/member');
-      localStorage.clear();
-      window.confirm('정말 탈퇴하시겠습니까?') &&
+      if (window.confirm('정말 탈퇴하시겠습니까?')) {
+        await instance.delete('/member');
+        localStorage.clear();
         alert('탈퇴가 정상적으로 완료되었습니다');
-      window.location.href = '/';
+        window.location.href = '/';
+      }
     } catch (error) {
       console.log(error);
     }
