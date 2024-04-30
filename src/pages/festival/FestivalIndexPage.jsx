@@ -29,7 +29,7 @@ const EmptyContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 72vh;
+  height: 65vh;
 
   > .wrap {
     text-align: center;
@@ -41,14 +41,24 @@ const EmptyContainer = styled.div`
     > div {
       color: #333333;
       text-align: center;
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    > span {
+      background: linear-gradient(#ff3f38 0%, #ffb1ae 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      font-size: 2rem;
+      font-weight: 600;
     }
   }
 `;
 
 const FestivalIndexPage = () => {
   const navigate = useNavigate();
+
   const [tabMenuState, setTabMenuState] = useState(0);
 
   const handleClickProgram = () => {
@@ -59,6 +69,16 @@ const FestivalIndexPage = () => {
     navigate('/festival/foodtruck');
     setTabMenuState(1);
   };
+
+  const calculateDDay = (targetDate) => {
+    const today = new Date();
+    const target = new Date(targetDate);
+    const difference = target - today;
+    const days = Math.ceil(difference / (1000 * 60 * 60 * 24));
+
+    return days;
+  };
+  const dDay = calculateDDay('2024-5-7');
 
   return (
     <FestivalContainer>
@@ -74,7 +94,8 @@ const FestivalIndexPage = () => {
       <EmptyContainer>
         <div className="wrap">
           <img src={'/assets/empty-icon.svg'} alt="empty icon" />
-          <div>축제페이지는 준비중입니다.</div>
+          <div>피닉시아 축제까지</div>
+          <span>D-{dDay}</span>
         </div>
       </EmptyContainer>
       {/* <Outlet /> */}
