@@ -93,7 +93,7 @@ const FestivalIndexPage = () => {
       </TabMenu>
       <EmptyContainer>
         <div className="wrap">
-          <img src={'/assets/empty-icon.svg'} alt="empty icon" />
+          <img src={'/assets/empty-festival.svg'} alt="empty icon" />
           <div>피닉시아 축제까지</div>
           <span>D-{dDay}</span>
         </div>
