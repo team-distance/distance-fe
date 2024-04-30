@@ -78,7 +78,7 @@ const FestivalIndexPage = () => {
 
     return days;
   };
-  const dDay = calculateDDay('2024-5-7');
+  const dDay = calculateDDay('2024-05-07');
 
   return (
     <FestivalContainer>
