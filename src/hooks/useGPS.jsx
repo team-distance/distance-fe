@@ -12,42 +12,44 @@ const useGPS = (isLoggedIn) => {
   const success = (position) => {
     const { latitude, longitude } = position.coords;
 
-    if (
-      calculateDistanceInMeter(
-        curLocation.lat,
-        curLocation.lng,
-        latitude,
-        longitude
-      ) > DISTANCE
-    ) {
-      setCurLocation({
-        lat: latitude,
-        lng: longitude,
-        error: null,
-      });
-    }
+    setCurLocation((prev) => {
+      if (
+        calculateDistanceInMeter(prev.lat, prev.lng, latitude, longitude) >
+        DISTANCE
+      ) {
+        return {
+          ...prev,
+          lat: latitude,
+          lng: longitude,
+          error: null,
+        };
+      }
+      return prev; // 조건을 만족하지 않으면 상태를 변경하지 않음
+    });
   };
 
   const error = () => {
-    setCurLocation({
-      ...curLocation,
+    setCurLocation((prev) => ({
+      ...prev,
       error: 'Unable to retrieve your location',
-    });
+    }));
   };
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setCurLocation({
-        ...curLocation,
+      setCurLocation((prev) => ({
+        ...prev,
         error: 'Geolocation is not supported',
-      });
+      }));
     }
+  }, []);
 
+  useEffect(() => {
     if (isLoggedIn) {
       const watcher = navigator.geolocation.watchPosition(success, error);
       return () => navigator.geolocation.clearWatch(watcher);
     }
-  }, []);
+  }, [isLoggedIn]);
 
   return curLocation;
 };

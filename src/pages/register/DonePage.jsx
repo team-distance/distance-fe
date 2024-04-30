@@ -28,12 +28,15 @@ const DonePage = () => {
 
       let clientToken = null;
 
-      // clientToken 가져오기를 먼저 시도
+      // clientToken 가져오기를 시도
+      // 브라우저에서 최초로 앱을 실행할 때, clientToken이 없을 수 있음
+      // 그래서 1회 시도 후 실패하면 다시 시도
       try {
         clientToken = await onGetToken();
         localStorage.setItem('clientToken', clientToken);
       } catch (err) {
-        console.error('Token fetch failed', err);
+        clientToken = await onGetToken().catch((error) => console.log(error));
+        localStorage.setItem('clientToken', clientToken);
       }
 
       // 로그인 시도 (clientToken이 null일 수도 있음)

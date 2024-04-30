@@ -10,34 +10,14 @@ import { useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
 import Badge from '../../components/common/Badge';
 
-/**
- * @todo LINE 61: localStorage에 저장된 대화 내역 삭제
- */
 const ChatIndexPage = () => {
   const navigate = useNavigate();
-  const [chatList, setChatList] = useState([]);
+  const [chatList, setChatList] = useState();
   const memberId = localStorage.getItem('memberId');
   const [loading, setLoading] = useState(false);
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const [waitingCount, setWaitingCount] = useState(0);
-  const [inboxList, setInboxList] = useState([]);
-
-  const parseRoomName = (str) => {
-    // 정규표현식: 학과명(capturing group 1), MBTI(capturing group 2), memberId(capturing group 3)
-    const regex = /(.+)([A-Z]{4})#(\d+)/;
-    const match = str.match(regex);
-
-    if (match) {
-      return {
-        department: match[1], // 학과명
-        mbti: match[2], // MBTI
-        memberId: match[3], // memberId
-      };
-    } else {
-      // 일치하는 패턴이 없을 경우
-      return null;
-    }
-  };
+  const [authUniv, setAuthUniv] = useState(false);
 
   const fetchChatList = async () => {
     try {
@@ -64,8 +44,18 @@ const ChatIndexPage = () => {
   const fetchChatWaiting = async () => {
     try {
       const res = await instance.get('/waiting').then((res) => res.data);
-      setInboxList(res);
       setWaitingCount(res.length);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const checkVerified = async () => {
+    try {
+      const authUniv = await instance.get('/member/check/university');
+      if (authUniv.data === 'SUCCESS') {
+        setAuthUniv(true);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -74,29 +64,7 @@ const ChatIndexPage = () => {
   useEffect(() => {
     fetchChatList();
     fetchChatWaiting();
-
-    const eventSource = new EventSource(
-      `https://api.dis-tance.com/api/notify/subscribe/${memberId}`
-    );
-
-    eventSource.onopen = (event) => {
-      console.log('Connection opened');
-      console.log(event);
-    };
-
-    eventSource.onmessage = (event) => {
-      console.log('Message received');
-      console.log(event);
-    };
-
-    eventSource.onerror = (event) => {
-      console.log('Error occurred');
-      console.log(event);
-    };
-
-    return () => {
-      eventSource.close();
-    };
+    checkVerified();
   }, []);
 
   const formatTime = (time) => {
@@ -122,24 +90,29 @@ const ChatIndexPage = () => {
     }
   };
 
-  const goOutChatroom = async (chat) => {
-    if (chat.opponentMemberId === null) {
-      const res = window.confirm('정말로 나가시겠습니까?');
-      if (!res) return;
-      try {
-        await instance.get(`/room-member/leave/${chat.chatRoomId}`);
-        fetchChatList();
-      } catch (error) {
-        console.log(error);
-      }
+  const onClickChatroom = async (chat) => {
+    if (!authUniv) {
+      window.confirm('학생 인증 후 이용해주세요.') && navigate('/verify/univ');
     } else {
-      navigate(`/chat/${chat.chatRoomId}`, {
-        state: {
-          myId: memberId,
-          opponentId: chat.opponentMemberId,
-          roomId: chat.chatRoomId,
-        },
-      });
+      if (chat.opponentMemberId === null) {
+        const res = window.confirm('정말로 나가시겠습니까?');
+        console.log(res);
+        if (!res) return;
+        try {
+          await instance.get(`/room-member/leave/${chat.chatRoomId}`);
+          fetchChatList();
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        navigate(`/chat/${chat.chatRoomId}`, {
+          state: {
+            myId: memberId,
+            opponentId: chat.opponentMemberId,
+            roomId: chat.chatRoomId,
+          },
+        });
+      }
     }
   };
 
@@ -157,11 +130,7 @@ const ChatIndexPage = () => {
             <WrapInboxButton>
               <InboxButton
                 onClick={() => {
-                  navigate('/inbox', {
-                    state: {
-                      inboxList: inboxList,
-                    },
-                  });
+                  navigate('/inbox');
                 }}
               >
                 <div>
@@ -173,9 +142,16 @@ const ChatIndexPage = () => {
                 <img src="/assets/arrow-pink-right.svg" alt="화살표 아이콘" />
               </InboxButton>
             </WrapInboxButton>
-            {chatList.length !== 0 ? (
+            {chatList && chatList.length === 0 ? (
+              <EmptyContainer>
+                <div className="wrap">
+                  <img src={'/assets/empty-icon.svg'} alt="empty icon" />
+                  <div>채팅을 시작해보세요!</div>
+                </div>
+              </EmptyContainer>
+            ) : (
+              chatList &&
               chatList.map((chat) => {
-                const roomNameParts = parseRoomName(chat.roomName);
                 const timeDisplay = chat.modifyDt
                   ? formatTime(chat.modifyDt)
                   : '(알수없음)';
@@ -183,7 +159,7 @@ const ChatIndexPage = () => {
                 return (
                   <ChatRoomContainer
                     key={chat.chatRoomId}
-                    onClick={() => goOutChatroom(chat)}
+                    onClick={() => onClickChatroom(chat)}
                   >
                     <div className="left-section">
                       <CharacterBackground $character={chat.memberCharacter}>
@@ -196,9 +172,9 @@ const ChatIndexPage = () => {
                     </div>
                     <div className="profile-section">
                       <Profile>
-                        <div className="cover">{roomNameParts?.department}</div>
-                        {roomNameParts?.department}
-                        <Badge>{roomNameParts?.mbti}</Badge>
+                        <div className="cover">{chat.department}</div>
+                        {chat.department}
+                        {chat.mbti && <Badge>{chat.mbti}</Badge>}
                       </Profile>
                       <Message>{chat.lastMessage}</Message>
                     </div>
@@ -214,13 +190,6 @@ const ChatIndexPage = () => {
                   </ChatRoomContainer>
                 );
               })
-            ) : (
-              <EmptyContainer>
-                <div className="wrap">
-                  <img src={'/assets/empty-icon.svg'} alt="empty icon" />
-                  <div>채팅을 시작해보세요!</div>
-                </div>
-              </EmptyContainer>
             )}
           </>
         )
@@ -312,8 +281,9 @@ const Profile = styled.div`
   .cover {
     width: 100%;
     position: absolute;
-    background-image: linear-gradient(90deg, transparent 80%, white 100%);
+    background-image: linear-gradient(90deg, transparent 80%, #fbfbfb 100%);
     z-index: 99;
+    color: transparent;
   }
 `;
 

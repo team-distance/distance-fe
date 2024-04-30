@@ -22,19 +22,12 @@ const Header = () => {
 
     try {
       await instance.get('/member/logout');
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('memberId');
-      localStorage.removeItem('clientToken');
       setIsLoggedIn(false);
       navigate('/');
     } catch (error) {
       console.log(error);
     } finally {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('memberId');
-      localStorage.removeItem('clientToken');
+      localStorage.clear();
       modalRef.current.close();
       navigate('/');
     }

@@ -87,6 +87,8 @@ const ResetPassword = () => {
       toast.success('인증되었습니다.', { id: toastId });
     } catch (error) {
       toast.error('인증번호가 틀렸습니다.', { id: toastId });
+      setFormActive((prev) => ({ ...prev, isSendVerifyNum: false }));
+      setFormFlags((prev) => ({ ...prev, telNumValid: true }));
       console.log(error);
     }
   };

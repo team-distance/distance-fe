@@ -70,7 +70,7 @@ const UserRegisterPage = () => {
     }
   };
 
-  const sendMessage = async () => {
+  const sendMessage = () => {
     if (verifyButtonLabel === '재전송') {
       setVerifyNumFlag(true);
       setVerify(false);
@@ -112,6 +112,8 @@ const UserRegisterPage = () => {
       setCheckPhoneFlag(true);
     } catch (error) {
       toast.error('인증번호가 틀렸습니다.');
+      setVerifyNumFlag(false);
+      setCheckPhoneFlag(false);
       console.log();
     }
   };
@@ -205,6 +207,7 @@ const UserRegisterPage = () => {
               pwFlag || !registerData.agreeTerms || !registerData.agreePrivacy
             }
             onClick={() => {
+              toast.dismiss();
               navigate('/register/univ');
             }}
           >

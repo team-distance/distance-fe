@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import HeaderPrev from '../../components/common/HeaderPrev';
 import TextInput from '../../components/register/TextInput';
+import toast, { Toaster } from 'react-hot-toast';
+import { useEffect } from 'react';
 
 const AccountEditPage = () => {
   const navigate = useNavigate();
@@ -18,19 +20,17 @@ const AccountEditPage = () => {
   const verifyPassword = async (e) => {
     e.preventDefault();
 
-    //비밀번호 확인
-    await instance
-      .post('/member/check/password', {
+    try {
+      //비밀번호 확인
+      await instance.post('/member/check/password', {
         password: oldPassword,
-      })
-      .then(() => {
-        setIsVerifyPassword(true);
-        alert('인증되었습니다');
-      })
-      .catch((error) => {
-        console.log(error.response.data.code);
-        alert('비밀번호가 일치하지 않습니다.');
       });
+      setIsVerifyPassword(true);
+      toast.success('인증되었습니다');
+    } catch (error) {
+      console.log(error.response.data.code);
+      toast.error('비밀번호가 일치하지 않습니다.');
+    }
   };
 
   const handleChange = (e) => {
@@ -63,43 +63,52 @@ const AccountEditPage = () => {
       });
   };
 
+  useEffect(() => {
+    return () => {
+      toast.dismiss();
+    };
+  }, []);
+
   return (
-    <WrapContent>
-      <HeaderPrev title="계정 관리" navigateTo={-1} />
+    <>
+      <Toaster position="bottom-center" />
+      <WrapContent>
+        <HeaderPrev title="계정 관리" navigateTo={-1} />
 
-      <form>
-        <TextInput
-          label="현재 비밀번호"
-          name="password"
-          type="password"
-          placeholder="숫자로만 6자리 이상"
-          buttonLabel="인증하기"
-          buttonClickHandler={verifyPassword}
-          buttonDisabled={verifyPasswordFlag}
-          onChange={handleChange}
-        />
-      </form>
-
-      {isVerifyPassword && (
-        <WrapForm onSubmit={handleSubmit}>
+        <form>
           <TextInput
-            label="변경할 비밀번호"
-            name="changePassword"
+            label="현재 비밀번호"
+            name="password"
             type="password"
             placeholder="숫자로만 6자리 이상"
+            buttonLabel="인증하기"
+            buttonClickHandler={verifyPassword}
+            buttonDisabled={verifyPasswordFlag}
             onChange={handleChange}
           />
-          <Button size="large" type="submit" disabled={isDisabled}>
-            수정하기
-          </Button>
-        </WrapForm>
-      )}
+        </form>
 
-      <DropoutButton onClick={() => navigate('/mypage/account/dropout')}>
-        <img src="/assets/dropout-icon.svg" alt="로그아웃" />
-        <div>회원탈퇴</div>
-      </DropoutButton>
-    </WrapContent>
+        {isVerifyPassword && (
+          <WrapForm onSubmit={handleSubmit}>
+            <TextInput
+              label="변경할 비밀번호"
+              name="changePassword"
+              type="password"
+              placeholder="숫자로만 6자리 이상"
+              onChange={handleChange}
+            />
+            <Button size="large" type="submit" disabled={isDisabled}>
+              수정하기
+            </Button>
+          </WrapForm>
+        )}
+
+        <DropoutButton onClick={() => navigate('/mypage/account/dropout')}>
+          <img src="/assets/dropout-icon.svg" alt="로그아웃" />
+          <div>회원탈퇴</div>
+        </DropoutButton>
+      </WrapContent>
+    </>
   );
 };
 export default AccountEditPage;

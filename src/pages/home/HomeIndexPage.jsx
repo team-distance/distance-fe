@@ -19,7 +19,7 @@ const HomeIndexPage = () => {
   const navigate = useNavigate();
 
   const memberId = localStorage.getItem('memberId');
-  const [memberState, setMemberState] = useState([]);
+  const [memberState, setMemberState] = useState();
 
   const [isReloadButtonDisabled, setIsReloadButtonDisabled] = useState(false);
   const [remainingTimeToReload, setRemainingTimeToReload] = useState(0);
@@ -40,8 +40,8 @@ const HomeIndexPage = () => {
   const reloadMembers = async () => {
     try {
       setLoading(true);
-      setIsReloadButtonDisabled(true); // 버튼 비활성화
-      setRemainingTimeToReload(3); // 초기 남은 시간 설정
+      setIsReloadButtonDisabled(true);
+      setRemainingTimeToReload(3);
 
       const res = await instance.get('/gps/matching');
       setMemberState(res.data.matchedUsers);
@@ -50,8 +50,8 @@ const HomeIndexPage = () => {
       const intervalId = setInterval(() => {
         setRemainingTimeToReload((prevTime) => {
           if (prevTime <= 1) {
-            clearInterval(intervalId); // 남은 시간이 0이 되면 인터벌 정지
-            setIsReloadButtonDisabled(false); // 버튼 활성화
+            clearInterval(intervalId);
+            setIsReloadButtonDisabled(false);
             return 0;
           }
           return prevTime - 1;
@@ -59,7 +59,7 @@ const HomeIndexPage = () => {
       }, 1000);
     } catch (error) {
       console.log(error);
-      setIsReloadButtonDisabled(false); // 에러 발생 시 버튼 활성화
+      setIsReloadButtonDisabled(false);
     } finally {
       setLoading(false);
     }
@@ -67,6 +67,7 @@ const HomeIndexPage = () => {
 
   useEffect(() => {
     fetchMembers();
+    toast.dismiss();
 
     if ('Notification' in window && Notification.permission !== 'granted') {
       toast.error((t) => (
@@ -157,21 +158,31 @@ const HomeIndexPage = () => {
           </div>
         )} */}
 
-        <ProfileContainer>
-          {loading ? (
-            <LoaderContainer>
-              <ClipLoader color={'#FF625D'} loading={loading} size={50} />
-            </LoaderContainer>
-          ) : (
-            memberState.map((profile, index) => (
-              <Profile
-                key={index}
-                profile={profile}
-                onClick={() => handleSelectProfile(profile)}
-              />
-            ))
-          )}
-        </ProfileContainer>
+        {memberState && memberState.length === 0 ? (
+          <EmptyContainer>
+            <div className="wrap">
+              <img src={'/assets/empty-home.svg'} alt="empty icon" />
+              <div>현재 근처에 있는 사람이 없어요!</div>
+            </div>
+          </EmptyContainer>
+        ) : (
+          <ProfileContainer>
+            {loading ? (
+              <LoaderContainer>
+                <ClipLoader color={'#FF625D'} loading={loading} size={50} />
+              </LoaderContainer>
+            ) : (
+              memberState &&
+              memberState.map((profile, index) => (
+                <Profile
+                  key={index}
+                  profile={profile}
+                  onClick={() => handleSelectProfile(profile)}
+                />
+              ))
+            )}
+          </ProfileContainer>
+        )}
         <ReloadButton onClick={reloadMembers} disabled={isReloadButtonDisabled}>
           {isReloadButtonDisabled && (
             <div className="time-remaining">{remainingTimeToReload}</div>
@@ -327,6 +338,29 @@ const TagContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 4px;
+`;
+
+const EmptyContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 64vh;
+
+  > .wrap {
+    text-align: center; // 텍스트를 중앙 정렬합니다.
+
+    > img {
+      margin-bottom: 1rem; // 아이콘과 텍스트 사이의 간격을 조정합니다.
+    }
+
+    > div {
+      color: #333333;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+  }
 `;
 
 export default HomeIndexPage;
