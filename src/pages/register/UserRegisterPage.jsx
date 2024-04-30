@@ -112,6 +112,8 @@ const UserRegisterPage = () => {
       setCheckPhoneFlag(true);
     } catch (error) {
       toast.error('인증번호가 틀렸습니다.');
+      setVerifyNumFlag(false);
+      setCheckPhoneFlag(false);
       console.log();
     }
   };
