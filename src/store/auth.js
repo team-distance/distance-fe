@@ -1,6 +1,7 @@
 import { atom } from 'recoil';
 import { instance } from '../api/instance';
 import axios from 'axios';
+import { baseURL } from '../constants/baseURL';
 
 export const isLoggedInState = atom({
   key: 'isLoggedInState',
@@ -21,7 +22,7 @@ export const login = async (value) => {
 };
 
 export const refresh = async (value) => {
-  const response = await axios.post('https://api.dis-tance.com/api/refresh', {
+  const response = await axios.post(`${baseURL}/refresh`, {
     refreshToken: value.refreshToken,
   });
 
