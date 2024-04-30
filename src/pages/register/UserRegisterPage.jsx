@@ -118,13 +118,6 @@ const UserRegisterPage = () => {
     }
   };
 
-  useEffect(() => {
-    return () => {
-      // 컴포넌트가 언마운트될 때 모든 토스트 메시지를 닫음
-      toast.dismiss();
-    };
-  }, []);
-
   return (
     <>
       <Toaster position="bottom-center" />

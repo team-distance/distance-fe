@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import HomeIndexPage from './pages/home/HomeIndexPage';
 import ChatIndexPage from './pages/chat/ChatIndexPage';
 import FestivalIndexPage from './pages/festival/FestivalIndexPage';
@@ -44,10 +44,15 @@ import { instance } from './api/instance';
 function App() {
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const currentLocation = useGPS(isLoggedIn);
+  const navigate = useNavigate();
 
   useEffect(() => {
     registerServiceWorker();
   }, []);
+
+  useEffect(() => {
+    toast.dismiss();
+  }, [navigate]);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -77,60 +82,58 @@ function App() {
   }, [currentLocation]);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/password" element={<ResetPassword />} />
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/password" element={<ResetPassword />} />
 
-        <Route path="/notification" element={<NotificationSolutionPage />} />
+      <Route path="/notification" element={<NotificationSolutionPage />} />
 
-        <Route path="/register/user" element={<UserRegisterPage />} />
-        <Route path="/register/univ" element={<UnivRegisterPage />} />
-        <Route path="/register/profile" element={<ProfileRegisterPage />} />
-        <Route path="/register/done" element={<DonePage />} />
+      <Route path="/register/user" element={<UserRegisterPage />} />
+      <Route path="/register/univ" element={<UnivRegisterPage />} />
+      <Route path="/register/profile" element={<ProfileRegisterPage />} />
+      <Route path="/register/done" element={<DonePage />} />
 
-        <Route path="/verify/univ" element={<VerifyOptionsPage />} />
-        <Route path="/verify/univ/mobileid" element={<VerifyMobileIdPage />} />
-        <Route path="/verify/univ/email" element={<VerifyEmailPage />} />
-        <Route path="/verify/univ/id" element={<VerifyIdPage />} />
+      <Route path="/verify/univ" element={<VerifyOptionsPage />} />
+      <Route path="/verify/univ/mobileid" element={<VerifyMobileIdPage />} />
+      <Route path="/verify/univ/email" element={<VerifyEmailPage />} />
+      <Route path="/verify/univ/id" element={<VerifyIdPage />} />
 
-        <Route element={<NavLayout />}>
-          <Route path="/" element={<HomeIndexPage />} />
+      <Route element={<NavLayout />}>
+        <Route path="/" element={<HomeIndexPage />} />
 
-          <Route path="/chat" element={<ChatIndexPage />} />
-          <Route path="/inbox" element={<ChatInboxPage />} />
+        <Route path="/chat" element={<ChatIndexPage />} />
+        <Route path="/inbox" element={<ChatInboxPage />} />
 
-          <Route element={<FestivalIndexPage />}>
-            <Route path="/festival/program" element={<Program />} />
-            <Route path="/festival/foodtruck" element={<FoodTruck />} />
-          </Route>
-
-          <Route path="/mypage" element={<MyIndexPage />} />
+        <Route element={<FestivalIndexPage />}>
+          <Route path="/festival/program" element={<Program />} />
+          <Route path="/festival/foodtruck" element={<FoodTruck />} />
         </Route>
 
-        <Route path="/mypage/profile" element={<ProfileEditPage />} />
-        <Route path="/mypage/account" element={<AccountEditPage />} />
-        <Route path="/mypage/account/dropout" element={<DropoutPage />} />
+        <Route path="/mypage" element={<MyIndexPage />} />
+      </Route>
 
-        <Route path="/festival/detail/0" element={<FestivalDetailPage0 />} />
-        <Route path="/festival/detail/1" element={<FestivalDetailPage1 />} />
-        <Route path="/festival/detail/2" element={<FestivalDetailPage2 />} />
-        <Route path="/festival/detail/3" element={<FestivalDetailPage3 />} />
+      <Route path="/mypage/profile" element={<ProfileEditPage />} />
+      <Route path="/mypage/account" element={<AccountEditPage />} />
+      <Route path="/mypage/account/dropout" element={<DropoutPage />} />
 
-        <Route path="/festival/foodtruck/0" element={<FoodTruckPage0 />} />
-        <Route path="/festival/foodtruck/1" element={<FoodTruckPage1 />} />
-        <Route path="/festival/foodtruck/2" element={<FoodTruckPage2 />} />
-        <Route path="/festival/foodtruck/3" element={<FoodTruckPage3 />} />
+      <Route path="/festival/detail/0" element={<FestivalDetailPage0 />} />
+      <Route path="/festival/detail/1" element={<FestivalDetailPage1 />} />
+      <Route path="/festival/detail/2" element={<FestivalDetailPage2 />} />
+      <Route path="/festival/detail/3" element={<FestivalDetailPage3 />} />
 
-        <Route path="/chat/:chatRoomId" element={<ChatPage />} />
+      <Route path="/festival/foodtruck/0" element={<FoodTruckPage0 />} />
+      <Route path="/festival/foodtruck/1" element={<FoodTruckPage1 />} />
+      <Route path="/festival/foodtruck/2" element={<FoodTruckPage2 />} />
+      <Route path="/festival/foodtruck/3" element={<FoodTruckPage3 />} />
 
-        <Route path="/kakaotalk-fallback" element={<KakaotalkFallback />} />
+      <Route path="/chat/:chatRoomId" element={<ChatPage />} />
 
-        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+      <Route path="/kakaotalk-fallback" element={<KakaotalkFallback />} />
 
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </BrowserRouter>
+      <Route path="/privacy" element={<PrivacyPolicyPage />} />
+
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
   );
 }
 
