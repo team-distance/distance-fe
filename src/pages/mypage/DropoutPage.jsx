@@ -65,7 +65,7 @@ const DropoutPage = () => {
           <TextInput
             label="비밀번호 입력"
             name="verifyPassword"
-            type="text"
+            type="password"
             placeholder="숫자로만 6자리 이상"
             buttonLabel={'인증하기'}
             buttonClickHandler={verifyPassword}

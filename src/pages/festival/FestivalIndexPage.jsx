@@ -24,6 +24,29 @@ const Tab = styled.div`
   transition: all 200ms;
 `;
 
+const EmptyContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 72vh;
+
+  > .wrap {
+    text-align: center;
+
+    > img {
+      margin-bottom: 1rem;
+    }
+
+    > div {
+      color: #333333;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+  }
+`;
+
 const FestivalIndexPage = () => {
   const navigate = useNavigate();
   const [tabMenuState, setTabMenuState] = useState(0);
@@ -48,7 +71,13 @@ const FestivalIndexPage = () => {
           푸드트럭
         </Tab>
       </TabMenu>
-      <Outlet />
+      <EmptyContainer>
+        <div className="wrap">
+          <img src={'/assets/empty-icon.svg'} alt="empty icon" />
+          <div>축제페이지는 준비중입니다.</div>
+        </div>
+      </EmptyContainer>
+      {/* <Outlet /> */}
     </FestivalContainer>
   );
 };
