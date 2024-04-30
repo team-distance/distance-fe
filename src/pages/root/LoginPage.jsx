@@ -87,7 +87,6 @@ const LoginPage = () => {
     // clientToken 가져오기를 시도
     // 브라우저에서 최초로 앱을 실행할 때, clientToken이 없을 수 있음
     // 그래서 1회 시도 후 실패하면 다시 시도
-    console.log('로그인');
     try {
       clientToken = await onGetToken();
       localStorage.setItem('clientToken', clientToken);
