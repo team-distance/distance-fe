@@ -229,9 +229,9 @@ const ChatPage = () => {
     } catch (error) {
       console.log('error', error);
       //401에러
-      window.confirm('학생 인증 후 이용해주세요.')
-        ? navigateToVerify()
-        : navigateToBack();
+      // window.confirm('학생 인증 후 이용해주세요.')
+      //   ? navigateToVerify()
+      //   : navigateToBack();
     }
   };
 

@@ -17,6 +17,7 @@ const ChatIndexPage = () => {
   const [loading, setLoading] = useState(false);
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const [waitingCount, setWaitingCount] = useState(0);
+  const [authUniv, setAuthUniv] = useState(false);
 
   const fetchChatList = async () => {
     try {
@@ -49,9 +50,21 @@ const ChatIndexPage = () => {
     }
   };
 
+  const checkVerified = async () => {
+    try {
+      const authUniv = await instance.get('/member/check/university');
+      if (authUniv.data === 'SUCCESS') {
+        setAuthUniv(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchChatList();
     fetchChatWaiting();
+    checkVerified();
   }, []);
 
   const formatTime = (time) => {
@@ -78,6 +91,20 @@ const ChatIndexPage = () => {
   };
 
   const goOutChatroom = async (chat) => {
+    console.log('authUniv', authUniv);
+
+    if (!authUniv) {
+      window.confirm('학생 인증 후 이용해주세요.') && navigate('/verify/univ');
+    } else {
+      navigate(`/chat/${chat.chatRoomId}`, {
+        state: {
+          myId: memberId,
+          opponentId: chat.opponentMemberId,
+          roomId: chat.chatRoomId,
+        },
+      });
+    }
+
     if (chat.opponentMemberId === null) {
       const res = window.confirm('정말로 나가시겠습니까?');
       if (!res) return;
@@ -87,14 +114,6 @@ const ChatIndexPage = () => {
       } catch (error) {
         console.log(error);
       }
-    } else {
-      navigate(`/chat/${chat.chatRoomId}`, {
-        state: {
-          myId: memberId,
-          opponentId: chat.opponentMemberId,
-          roomId: chat.chatRoomId,
-        },
-      });
     }
   };
 
