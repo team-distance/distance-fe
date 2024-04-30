@@ -35,7 +35,7 @@ const DonePage = () => {
         clientToken = await onGetToken();
         localStorage.setItem('clientToken', clientToken);
       } catch (err) {
-        clientToken = await onGetToken();
+        clientToken = await onGetToken().catch((error) => console.log(error));
         localStorage.setItem('clientToken', clientToken);
       }
 
