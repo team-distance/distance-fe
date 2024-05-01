@@ -1,6 +1,6 @@
 {
   "short_name": "distance",
-  "name": "축제를 200% 즐기는 법, distance💕",
+  "name": "distance",
   "icons": [
     {
       "src": "./icons/favicon.ico",
@@ -57,5 +57,5 @@
   "orientation": "portrait",
   "display": "standalone",
   "theme_color": "#ffffff",
-  "background_color": "#ff625d"
+  "background_color": "#ffffff"
 }

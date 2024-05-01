@@ -30,6 +30,10 @@ const UnivRegisterPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    setDepartment('');
+  }, [college]);
+
   const isDisabled = !registerData.college || !registerData.department;
 
   const COLLEGE_PLACEHOLDER = '단과대학을 선택해주세요.';
@@ -174,17 +178,18 @@ const UnivRegisterPage = () => {
           name="college"
           placeholder={COLLEGE_PLACEHOLDER}
           types={COLLEGE_STATE.map((item) => item.college)}
-          setState={setCollege}
+          value={college}
+          setValue={setCollege}
         />
         <Dropdown
           label="학과"
-          college={college}
           name="department"
           placeholder={DEPARTMENT_PLACEHOLDER}
           types={
             COLLEGE_STATE.find((c) => c.college === college)?.department || []
           }
-          setState={setDepartment}
+          value={department}
+          setValue={setDepartment}
         />
         <Button
           size="large"
