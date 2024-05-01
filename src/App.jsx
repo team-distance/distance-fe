@@ -40,6 +40,7 @@ import { useRecoilValue } from 'recoil';
 import { isLoggedInState } from './store/auth';
 import toast from 'react-hot-toast';
 import { instance } from './api/instance';
+import TeamIntroductionPage from './pages/mypage/TeamIntroductionPage';
 
 function App() {
   const isLoggedIn = useRecoilValue(isLoggedInState);
@@ -110,6 +111,7 @@ function App() {
         </Route>
 
         <Route path="/mypage" element={<MyIndexPage />} />
+        <Route path="/team-introduction" element={<TeamIntroductionPage />} />
       </Route>
 
       <Route path="/mypage/profile" element={<ProfileEditPage />} />
