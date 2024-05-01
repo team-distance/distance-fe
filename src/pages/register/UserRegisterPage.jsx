@@ -105,7 +105,7 @@ const UserRegisterPage = () => {
   const verifyTelNum = async () => {
     try {
       await instance.post('/member/authenticate', {
-        authenticateNum: verifyNum,
+        authenticateNum: verifyNum.trim(),
       });
       setVerify(true);
       setVerifyNumFlag(true);
@@ -120,7 +120,12 @@ const UserRegisterPage = () => {
 
   return (
     <>
-      <Toaster position="bottom-center" />
+      <Toaster
+        position="bottom-center"
+        containerStyle={{
+          bottom: 104,
+        }}
+      />
       <WrapHeader>
         <ProgressBar progress={1} />
         <p>전화번호를 인증해주세요</p>

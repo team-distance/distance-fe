@@ -132,7 +132,7 @@ const VerifyMobileIdPage = () => {
           <Example>
             <div className="example-image">
               <img
-                src="/assets/id-examples/mobileid1.svg"
+                src="/assets/id-examples/mobileid1.png"
                 alt="모바일 학생증 예시1"
               />
             </div>

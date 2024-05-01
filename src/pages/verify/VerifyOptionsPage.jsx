@@ -1,14 +1,16 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { instance } from '../../api/instance';
 
 const VerifyOptionsPage = () => {
   const navigate = useNavigate();
+  const [authUnivState, setAuthUnivState] = useState('');
 
   const checkVerified = async () => {
     try {
       const authUniv = await instance.get('/member/check/university');
+      setAuthUnivState(authUniv.data);
       if (authUniv.data === 'SUCCESS') {
         alert('이미 인증되었어요!');
         navigate('/mypage');
@@ -33,6 +35,16 @@ const VerifyOptionsPage = () => {
         <br />
         인증이 완료되면 불이 들어옵니다.
       </p>
+
+      {authUnivState === 'FAILED_2' && (
+        <FailedMessage>사진이 흔들렸습니다!</FailedMessage>
+      )}
+      {authUnivState === 'FAILED_3' && (
+        <FailedMessage>해당 학교 학생증이 아닙니다!</FailedMessage>
+      )}
+      {authUnivState === 'FAILED_4' && (
+        <FailedMessage>사용자가 등록한 성별과 다릅니다!</FailedMessage>
+      )}
 
       <WrapButton>
         <ButtonDiv
@@ -74,6 +86,11 @@ const WrapContent = styled.div`
     margin-bottom: 3rem;
     font-size: 0.8rem;
   }
+`;
+
+const FailedMessage = styled.div`
+  color: red;
+  margin-bottom: 1rem;
 `;
 
 const LogoImage = styled.img`

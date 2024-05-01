@@ -53,7 +53,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    toast.dismiss();
+    toast.remove();
   }, [navigate]);
 
   useEffect(() => {
@@ -89,6 +89,23 @@ function App() {
           });
           console.log(err);
         });
+    }
+
+    if ('Notification' in window && Notification.permission !== 'granted') {
+      toast.error(
+        (t) => (
+          <>
+            <span style={{ marginRight: '8px' }}>알림 설정이 꺼져있어요!</span>
+            <Link to="/notification" style={{ color: '#0096FF' }}>
+              해결하기
+            </Link>
+          </>
+        ),
+        {
+          id: 'notification-disabled',
+          position: 'bottom-center',
+        }
+      );
     }
   }, [currentLocation]);
 

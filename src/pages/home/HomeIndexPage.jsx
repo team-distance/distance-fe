@@ -8,7 +8,7 @@ import { CHARACTERS, COLORS } from '../../constants/character';
 import Header from '../../components/common/Header';
 import Profile from '../../components/home/Profile';
 import Modal from '../../components/common/Modal';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Badge from '../../components/common/Badge';
 
@@ -67,23 +67,6 @@ const HomeIndexPage = () => {
 
   useEffect(() => {
     fetchMembers();
-
-    if ('Notification' in window && Notification.permission !== 'granted') {
-      toast.error(
-        (t) => (
-          <>
-            <span style={{ marginRight: '8px' }}>알림 설정이 꺼져있어요!</span>
-            <Link to="/notification" style={{ color: '#0096FF' }}>
-              해결하기
-            </Link>
-          </>
-        ),
-        {
-          id: 'notification-disabled',
-          position: 'bottom-center',
-        }
-      );
-    }
   }, []);
 
   const handleSelectProfile = (profile) => {
@@ -110,12 +93,18 @@ const HomeIndexPage = () => {
         switch (error.response.data.code) {
           case 'TOO_MANY_MY_CHATROOM':
             toast.error(
-              '이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요.'
+              '이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요.',
+              {
+                position: 'bottom-center',
+              }
             );
             break;
           case 'TOO_MANY_OPPONENT_CHATROOM':
             toast.error(
-              '상대방이 이미 생성된 채팅방 3개입니다. 상대방이 수락하면 알려드릴게요!'
+              '상대방이 이미 생성된 채팅방 3개입니다. 상대방이 수락하면 알려드릴게요!',
+              {
+                position: 'bottom-center',
+              }
             );
             break;
           case 'NOT_AUTHENTICATION_STUDENT':
@@ -123,10 +112,14 @@ const HomeIndexPage = () => {
               navigate('/verify/univ');
             break;
           case 'NOT_EXIST_GPS':
-            toast.error('상대방의 위치정보가 없어 채팅을 할 수 없어요!');
+            toast.error('상대방의 위치정보가 없어 채팅을 할 수 없어요!', {
+              position: 'bottom-center',
+            });
             break;
           default:
-            toast.error('로그인 후 이용해주세요.');
+            toast.error('로그인 후 이용해주세요.', {
+              position: 'bottom-center',
+            });
             break;
         }
       });

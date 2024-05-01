@@ -133,7 +133,7 @@ const VerifyMobileIdPage = () => {
         <ExamplesContainer>
           <Example>
             <div className="example-image">
-              <img src="/assets/id-examples/id1.svg" alt="학생증 예시1" />
+              <img src="/assets/id-examples/id1.png" alt="학생증 예시1" />
             </div>
             <img src="/assets/icon-correct.png" alt="correct" />
             <p>학번/이름 식별 가능</p>
