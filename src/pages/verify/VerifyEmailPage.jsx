@@ -15,8 +15,8 @@ const VerifyEmailPage = () => {
   const [verifyDisabled, setVerifyDisabled] = useState(true);
   const [isSendEmail, setIsSendEmail] = useState(false);
 
-  // 서비스 개시 전까지는 사용하지 않음
-  // const regex = /^[a-zA-Z0-9-_]{4,20}$/;
+  //서비스 개시 전까지는 사용하지 않음
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   const handleChangeEmail = (e) => {
     setSchoolEmail(e.target.value);
@@ -37,12 +37,15 @@ const VerifyEmailPage = () => {
   };
 
   const sendEmail = async () => {
-    const email = schoolEmail.includes('@')
+    let baseEmail = schoolEmail.replace(/@sch\.ac\.kr/g, '');
+    setSchoolEmail(baseEmail);
+
+    const fullEmail = schoolEmail.endsWith('@sch.ac.kr')
       ? schoolEmail
-      : schoolEmail + '@sch.ac.kr';
+      : `${schoolEmail}@sch.ac.kr`;
 
     const response = instance.post('/univ/send/email', {
-      schoolEmail: email,
+      schoolEmail: fullEmail,
     });
 
     toast.promise(response, {
@@ -51,7 +54,13 @@ const VerifyEmailPage = () => {
         setIsSendEmail(true);
         return '인증메일이 전송되었습니다.';
       },
-      error: '인증을 다시 시도해주세요.',
+      error: () => {
+        if (!emailRegex.test(fullEmail)) {
+          return '이메일 형식이 아닙니다.';
+        } else {
+          return '인증을 다시 시도해주세요.';
+        }
+      },
     });
   };
 
@@ -63,7 +72,8 @@ const VerifyEmailPage = () => {
           ? schoolEmail
           : schoolEmail + '@sch.ac.kr',
       });
-      window.confirm('인증되었습니다.') && navigate('/');
+      alert('인증되었습니다.');
+      navigate('/');
     } catch (error) {
       toast.error('인증번호가 일치하지 않습니다.');
     }
@@ -87,6 +97,7 @@ const VerifyEmailPage = () => {
             name="schoolEmail"
             value={schoolEmail}
             onChange={handleChangeEmail}
+            placeholder="@ 앞 글자만 입력"
           />
           <SCHDomain>@sch.ac.kr</SCHDomain>
           <div>
@@ -95,7 +106,13 @@ const VerifyEmailPage = () => {
             </Button>
           </div>
         </InputWrapper>
-        <WrapButton>
+        <WrapButton
+          onClick={() =>
+            window.open(
+              'https://pyrite-cookie-104.notion.site/541aa66232df4d8d8022b4f722c73d53'
+            )
+          }
+        >
           <p>'학생 메일'로 인증하는 방법</p>
           <img src="/assets/arrow-pink-button.png" alt="way to verify email" />
         </WrapButton>
