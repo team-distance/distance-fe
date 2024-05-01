@@ -74,10 +74,15 @@ const FestivalIndexPage = () => {
     const today = new Date();
     const target = new Date(targetDate);
     const difference = target - today;
-    const days = Math.ceil(difference / (1000 * 60 * 60 * 24));
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+
+    if (days < 1) {
+      return 'Day';
+    }
 
     return days;
   };
+
   const dDay = calculateDDay('2024-05-07');
 
   return (
