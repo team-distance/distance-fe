@@ -16,7 +16,7 @@ const VerifyEmailPage = () => {
   const [isSendEmail, setIsSendEmail] = useState(false);
 
   //서비스 개시 전까지는 사용하지 않음
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   const handleChangeEmail = (e) => {
     setSchoolEmail(e.target.value);
@@ -54,9 +54,11 @@ const VerifyEmailPage = () => {
         setIsSendEmail(true);
         return '인증메일이 전송되었습니다.';
       },
-      error: () => {
-        if (!emailRegex.test(fullEmail)) {
-          return '이메일 형식이 아닙니다.';
+      error: (err) => {
+        if (err.response.data.code === 'INVALID_EMAIL_FORMAT') {
+          return '이메일 형식이 올바르지 않습니다.';
+        } else if (err.response.data.code === 'EXIST_EMAIL') {
+          return '이미 존재하는 이메일 입니다.';
         } else {
           return '인증을 다시 시도해주세요.';
         }
