@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-const NotificationSolutionPage = () => {
+const GPSSolutionPage = () => {
   const [selectedTab, setSelectedTab] = useState('Safari');
 
   const handleClickTab = (e) => {
     setSelectedTab(e.target.id);
   };
-
   return (
     <WrapPage>
       <WrapHeader>
-        <div className="title-big">알림 문제 해결</div>
+        <div className="title-big">GPS 문제 해결</div>
         <div className="title-small">
-          알림을 허용해서 채팅을 실시간으로 확인해보세요.
+          위치 접근을 허용해서 주변 이성과 채팅해보세요.
         </div>
       </WrapHeader>
       <TabMenu>
@@ -43,31 +42,41 @@ const NotificationSolutionPage = () => {
       {selectedTab === 'Safari' && (
         <WrapBox>
           <div>
-            1. 설정 접속 후 <strong>distance</strong>를 찾아 주세요
+            1. 설정 접속 후 <strong>Safari</strong>를 찾아 주세요
           </div>
           <ImageAlign>
             <img
-              src="/assets/notification-troubleshooting/safari-1.png"
-              alt="사파리1"
+              src="/assets/gps-troubleshooting/ios-1.png"
+              alt="iOS1"
               width={48}
             />
             <img
-              src="/assets/notification-troubleshooting/safari-2.png"
-              alt="사파리2"
+              src="/assets/gps-troubleshooting/ios-2.png"
+              alt="iOS2"
               width={200}
             />
           </ImageAlign>
           <div>
-            2. 알림을 <strong>허용</strong>해주세요
+            2. <strong>위치</strong>를 찾아주세요
           </div>
           <ImageAlign>
             <img
-              src="/assets/notification-troubleshooting/safari-3.png"
-              alt="사파리3"
+              src="/assets/gps-troubleshooting/ios-3.png"
+              alt="iOS3"
               width={250}
             />
           </ImageAlign>
-          <div>3. distance 앱을 종료 후 재로그인해주세요</div>
+          <div>
+            3. 위치 접근을 <strong>허용</strong>해주세요
+          </div>
+          <ImageAlign>
+            <img
+              src="/assets/gps-troubleshooting/ios-4.png"
+              alt="iOS4"
+              width={250}
+            />
+          </ImageAlign>
+          <div>4. distance 앱을 종료 후 재로그인해주세요</div>
         </WrapBox>
       )}
 
@@ -78,55 +87,50 @@ const NotificationSolutionPage = () => {
           </div>
           <ImageAlign>
             <img
-              src="/assets/notification-troubleshooting/chrome-1.png"
+              src="/assets/gps-troubleshooting/chrome-1.png"
               alt="크롬1"
               width={48}
             />
             <img
-              src="/assets/notification-troubleshooting/chrome-2.png"
+              src="/assets/gps-troubleshooting/chrome-2.png"
               alt="크롬2"
               width={200}
             />
           </ImageAlign>
           <div>
-            2. 설정에 들어가 <strong>알림 메뉴</strong>를 클릭해주세요
+            2. 설정에 들어가 <strong>사이트 설정 메뉴</strong>를 클릭해주세요
           </div>
           <ImageAlign>
             <img
-              src="/assets/notification-troubleshooting/chrome-3.png"
+              src="/assets/gps-troubleshooting/chrome-3.png"
               alt="크롬3"
               width={112}
             />
             <img
-              src="/assets/notification-troubleshooting/chrome-4.png"
+              src="/assets/gps-troubleshooting/chrome-4.png"
               alt="크롬4"
               width={180}
             />
           </ImageAlign>
           <div>
-            3. <strong>앱 알림 상세 설정</strong>에 들어갑니다
+            3. <strong>위치</strong>에 들어갑니다
           </div>
           <ImageAlign>
             <img
-              src="/assets/notification-troubleshooting/chrome-5.png"
+              src="/assets/gps-troubleshooting/chrome-5.png"
               alt="크롬5"
               width={250}
             />
           </ImageAlign>
           <div>
-            4. <strong>dis-tance.com</strong>에 들어가 알림을 허용해주세요
+            4. <strong>dis-tance.com</strong>에 들어가 위치 접근을 허용해주세요
           </div>
 
           <ImageAlign>
             <img
-              src="/assets/notification-troubleshooting/chrome-6.png"
+              src="/assets/gps-troubleshooting/chrome-6.png"
               alt="크롬6"
-              width={144}
-            />
-            <img
-              src="/assets/notification-troubleshooting/chrome-7.png"
-              alt="크롬7"
-              width={144}
+              width={250}
             />
           </ImageAlign>
 
@@ -141,12 +145,12 @@ const NotificationSolutionPage = () => {
           </div>
           <ImageAlign>
             <img
-              src="/assets/notification-troubleshooting/samsung-1.png"
+              src="/assets/gps-troubleshooting/samsung-1.png"
               alt="삼성1"
               width={48}
             />
             <img
-              src="/assets/notification-troubleshooting/samsung-2.png"
+              src="/assets/gps-troubleshooting/samsung-2.png"
               alt="삼성2"
               width={200}
             />
@@ -156,12 +160,12 @@ const NotificationSolutionPage = () => {
           </div>
           <ImageAlign>
             <img
-              src="/assets/notification-troubleshooting/samsung-3.png"
+              src="/assets/gps-troubleshooting/samsung-3.png"
               alt="삼성3"
               width={144}
             />
             <img
-              src="/assets/notification-troubleshooting/samsung-4.png"
+              src="/assets/gps-troubleshooting/samsung-4.png"
               alt="삼성4"
               width={144}
             />
@@ -171,7 +175,7 @@ const NotificationSolutionPage = () => {
           </div>
           <ImageAlign>
             <img
-              src="/assets/notification-troubleshooting/samsung-5.png"
+              src="/assets/gps-troubleshooting/samsung-5.png"
               alt="삼성5"
               width={250}
             />
@@ -181,7 +185,7 @@ const NotificationSolutionPage = () => {
           </div>
           <ImageAlign>
             <img
-              src="/assets/notification-troubleshooting/samsung-6.png"
+              src="/assets/gps-troubleshooting/samsung-6.png"
               alt="삼성6"
               width={250}
             />
@@ -193,7 +197,7 @@ const NotificationSolutionPage = () => {
   );
 };
 
-export default NotificationSolutionPage;
+export default GPSSolutionPage;
 
 const WrapHeader = styled.header`
   margin-bottom: 2rem;
@@ -219,7 +223,6 @@ const WrapBox = styled.div`
   display: grid;
   gap: 1rem;
 `;
-
 const ImageAlign = styled.div`
   display: flex;
   justify-content: center;
