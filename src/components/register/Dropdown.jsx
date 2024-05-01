@@ -1,21 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import useDetectClose from '../../hooks/useDetectClose';
 
-const Dropdown = ({ label, placeholder, types, setState }) => {
-  const [selected, setSelected] = useState('');
+const Dropdown = ({ label, placeholder, types, value, setValue }) => {
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useDetectClose(dropdownRef, false);
-
-  useEffect(() => {
-    setState(selected);
-  }, [selected]);
 
   return (
     <div ref={dropdownRef}>
       <Label>{label}</Label>
       <DropdownButton onClick={() => setIsOpen(!isOpen)} $isOpen={isOpen}>
-        {selected || placeholder}
+        {value || placeholder}
         <img
           src={isOpen ? '/assets/drop-up.png' : '/assets/drop-down.png'}
           alt="드롭다운 아이콘"
@@ -27,7 +22,7 @@ const Dropdown = ({ label, placeholder, types, setState }) => {
                 <DropdownItem
                   key={type}
                   onClick={() => {
-                    setSelected(type);
+                    setValue(type);
                     setIsOpen(false);
                   }}
                 >
