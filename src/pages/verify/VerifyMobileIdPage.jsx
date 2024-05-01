@@ -121,7 +121,7 @@ const VerifyMobileIdPage = () => {
       </Button>
 
       <NoticeDiv>
-        <h3>모바일 학생증 예시</h3>
+        <h3>학생증 정보가 모두 보여야 해요!</h3>
         <hr />
         <p>
           전송된 이미지는 학생 인증 용도로만 활용되며 <br />
@@ -130,12 +130,22 @@ const VerifyMobileIdPage = () => {
 
         <ExamplesContainer>
           <Example>
-            <div className="example-image" />
+            <div className="example-image">
+              <img
+                src="/assets/id-examples/mobileid1.svg"
+                alt="모바일 학생증 예시1"
+              />
+            </div>
             <img src="/assets/icon-correct.png" alt="correct" />
             <p>학번/이름 식별 가능</p>
           </Example>
           <Example>
-            <div className="example-image" />
+            <div className="example-image">
+              <img
+                src="/assets/id-examples/mobileid2.png"
+                alt="모바일 학생증 예시1"
+              />
+            </div>
             <img src="/assets/icon-wrong.png" alt="wrong" />
             <p>학번/이름 식별 불가능</p>
           </Example>
@@ -216,9 +226,14 @@ const ExamplesContainer = styled.div`
 const Example = styled.div`
   flex: 1;
   .example-image {
-    height: 90px;
+    padding: 0.3rem;
     background-color: #d9d9d9;
     border-radius: 10px;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
   }
   img {
     padding: 0.5rem 0;
