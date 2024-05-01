@@ -76,11 +76,23 @@ const MyIndexPage = () => {
                 <div>팀 소개</div>
                 <img src="/assets/mypage/arrow-gray-button.png" alt="팀 소개" />
               </div>
-              <div className="menu">
+              <a
+                className="menu"
+                href="https://open.kakao.com/o/szlVYjpg"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                <div>문의하기</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="문의하기"
+                />
+              </a>
+              <div className="menu border">
                 <div>버전</div>
                 <div className="version">1.0.0</div>
               </div>
-              <div className="menu border" onClick={handleLogout}>
+              <div className="menu" onClick={handleLogout}>
                 <div>로그아웃</div>
               </div>
             </WrapButton>
@@ -121,6 +133,8 @@ const WrapButton = styled.div`
     align-items: center;
     font-size: 1rem;
     padding: 0.8rem 0;
+    text-decoration: none;
+    color: #000000;
 
     img {
       height: 1rem;
@@ -130,10 +144,8 @@ const WrapButton = styled.div`
       color: #b9b9b9;
     }
   }
-
   .border {
     border-top: 1px solid #f0f0f0;
-    padding: 1.3rem 0;
   }
 `;
 
