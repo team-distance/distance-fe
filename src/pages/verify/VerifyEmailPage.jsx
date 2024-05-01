@@ -16,7 +16,7 @@ const VerifyEmailPage = () => {
   const [isSendEmail, setIsSendEmail] = useState(false);
 
   //서비스 개시 전까지는 사용하지 않음
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   const handleChangeEmail = (e) => {
     setSchoolEmail(e.target.value);
