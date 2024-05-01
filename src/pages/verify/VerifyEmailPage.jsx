@@ -69,7 +69,7 @@ const VerifyEmailPage = () => {
   const verifyEmail = async () => {
     try {
       await instance.post('/univ/certificate/email', {
-        number: verifyNum,
+        number: verifyNum.trim(),
         schoolEmail: schoolEmail.includes('@')
           ? schoolEmail
           : schoolEmail + '@sch.ac.kr',
