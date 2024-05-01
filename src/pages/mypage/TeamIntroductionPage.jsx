@@ -189,6 +189,9 @@ const Profile = styled.div`
   }
 
   .profile {
+    display: flex;
+    align-items: end;
+    gap: 0.2rem;
     .name {
       font-size: 20px;
       font-weight: 900;

@@ -67,17 +67,22 @@ const HomeIndexPage = () => {
 
   useEffect(() => {
     fetchMembers();
-    toast.dismiss();
 
     if ('Notification' in window && Notification.permission !== 'granted') {
-      toast.error((t) => (
-        <>
-          <span style={{ marginRight: '8px' }}>알림 설정이 꺼져있어요!</span>
-          <Link to="/notification" style={{ color: '#0096FF' }}>
-            해결하기
-          </Link>
-        </>
-      ));
+      toast.error(
+        (t) => (
+          <>
+            <span style={{ marginRight: '8px' }}>알림 설정이 꺼져있어요!</span>
+            <Link to="/notification" style={{ color: '#0096FF' }}>
+              해결하기
+            </Link>
+          </>
+        ),
+        {
+          id: 'notification-disabled',
+          position: 'bottom-center',
+        }
+      );
     }
   }, []);
 
@@ -132,32 +137,6 @@ const HomeIndexPage = () => {
     <>
       <HomeContainer>
         <Header />
-
-        {/* clientToken 임시적으로 홈화면에 표시 */}
-        {/* {localStorage.getItem('clientToken') && (
-          <div>
-            <div
-              style={{
-                width: '100%',
-                background: 'yellow',
-                overflow: 'scroll',
-              }}
-            >
-              토큰값: {localStorage.getItem('clientToken')}
-            </div>
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(
-                  localStorage.getItem('clientToken')
-                );
-                toast.success('클립보드에 복사되었습니다.');
-              }}
-            >
-              복사
-            </button>
-          </div>
-        )} */}
-
         {memberState && memberState.length === 0 ? (
           <EmptyContainer>
             <div className="wrap">

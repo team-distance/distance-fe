@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Link, Route, Routes, useNavigate } from 'react-router-dom';
 import HomeIndexPage from './pages/home/HomeIndexPage';
 import ChatIndexPage from './pages/chat/ChatIndexPage';
 import FestivalIndexPage from './pages/festival/FestivalIndexPage';
@@ -41,6 +41,7 @@ import { isLoggedInState } from './store/auth';
 import toast from 'react-hot-toast';
 import { instance } from './api/instance';
 import TeamIntroductionPage from './pages/mypage/TeamIntroductionPage';
+import GPSSolutionPage from './pages/root/GPSSolutionPage';
 
 function App() {
   const isLoggedIn = useRecoilValue(isLoggedInState);
@@ -60,9 +61,18 @@ function App() {
 
     if (currentLocation.error) {
       toast.error(
-        '위치 정보를 가져오는데 실패했어요! 설정에서 위치 정보를 허용해주세요.',
+        (t) => (
+          <>
+            <span style={{ marginRight: '8px' }}>
+              위치 접근 설정이 꺼져있어요!
+            </span>
+            <Link to="/gps" style={{ color: '#0096FF' }}>
+              해결하기
+            </Link>
+          </>
+        ),
         {
-          id: 'gps-error',
+          id: 'gps-disabled',
           position: 'bottom-center',
         }
       );
@@ -88,6 +98,7 @@ function App() {
       <Route path="/password" element={<ResetPassword />} />
 
       <Route path="/notification" element={<NotificationSolutionPage />} />
+      <Route path="/gps" element={<GPSSolutionPage />} />
 
       <Route path="/register/user" element={<UserRegisterPage />} />
       <Route path="/register/univ" element={<UnivRegisterPage />} />
