@@ -15,6 +15,7 @@ import useGroupedMessages from '../../hooks/useGroupedMessages';
 import Modal from '../../components/common/Modal';
 import Tooltip from '../../components/common/Tooltip';
 import { getByteLength } from '../../utils/getByteLength';
+import useDetectClose from '../../hooks/useDetectClose';
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
@@ -26,6 +27,12 @@ const ChatPage = () => {
   const [isOpponentOut, setIsOpponentOut] = useState(false);
   const [reportMessage, setReportMessage] = useState('');
   const [bothAgreed, setBothAgreed] = useState(false);
+
+  const tooltipRef = useRef();
+  const [isCallTooltipVisible, setIsCallTooltipVisible] = useDetectClose(
+    tooltipRef,
+    false
+  );
 
   const reportModalRef = useRef();
   const callModalRef = useRef();
@@ -320,6 +327,7 @@ const ChatPage = () => {
         setTimeout(() => {
           setIsShowLottie(false);
         }, 4000);
+        setIsCallTooltipVisible(false);
       }
     }
   }, [isCallActive]);
@@ -392,8 +400,18 @@ const ChatPage = () => {
                   <img src="/assets/callicon-active.svg" alt="전화버튼" />
                 </div>
               ) : (
-                <div>
+                <div
+                  ref={tooltipRef}
+                  onClick={() => setIsCallTooltipVisible(!isCallTooltipVisible)}
+                  style={{ position: 'relative' }}
+                >
                   <img src="/assets/callicon.svg" alt="전화버튼" />
+                  {isCallTooltipVisible && (
+                    <TooltipMessage>
+                      <TooltipTail />
+                      상대방과 더 대화해보세요!
+                    </TooltipMessage>
+                  )}
                 </div>
               )}
             </CallButton>
@@ -598,4 +616,32 @@ const LottieContainer = styled.div`
     }
   }
 `;
+
+const TooltipMessage = styled.div`
+  position: absolute;
+  font-weight: 700;
+  font-size: 10px;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  padding: 10px;
+  background-color: #333333;
+  color: #ffffff;
+  white-space: nowrap;
+  border-radius: 12px;
+`;
+
+const TooltipTail = styled.div`
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #333333;
+`;
+
 export default ChatPage;
