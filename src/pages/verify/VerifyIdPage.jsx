@@ -132,12 +132,16 @@ const VerifyMobileIdPage = () => {
 
         <ExamplesContainer>
           <Example>
-            <div className="example-image" />
+            <div className="example-image">
+              <img src="/assets/id-examples/id1.svg" alt="학생증 예시1" />
+            </div>
             <img src="/assets/icon-correct.png" alt="correct" />
             <p>학번/이름 식별 가능</p>
           </Example>
           <Example>
-            <div className="example-image" />
+            <div className="example-image">
+              <img src="/assets/id-examples/id2.png" alt="학생증 예시2" />
+            </div>
             <img src="/assets/icon-wrong.png" alt="wrong" />
             <p>학번/이름 식별 불가능</p>
           </Example>
@@ -217,14 +221,23 @@ const ExamplesContainer = styled.div`
 
 const Example = styled.div`
   flex: 1;
+
   .example-image {
-    height: 90px;
+    padding: 0.3rem;
     background-color: #d9d9d9;
     border-radius: 10px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
   }
+
   img {
     padding: 0.5rem 0;
   }
+
   p {
     margin: 0;
   }
