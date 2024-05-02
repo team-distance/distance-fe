@@ -76,6 +76,20 @@ const MyIndexPage = () => {
                 <div>팀 소개</div>
                 <img src="/assets/mypage/arrow-gray-button.png" alt="팀 소개" />
               </div>
+              <div className="menu" onClick={() => navigate('/notification')}>
+                <div>PUSH 알림 문제 해결</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="PUSH 알림 문제 해결"
+                />
+              </div>
+              <div className="menu" onClick={() => navigate('/gps')}>
+                <div>GPS 문제 해결</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="GPS 문제 해결"
+                />
+              </div>
               <a
                 className="menu"
                 href="https://open.kakao.com/o/szlVYjpg"

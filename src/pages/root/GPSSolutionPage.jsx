@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import HeaderPrev from '../../components/common/HeaderPrev';
 import styled from 'styled-components';
 
 const GPSSolutionPage = () => {
@@ -9,12 +10,12 @@ const GPSSolutionPage = () => {
   };
   return (
     <WrapPage>
-      <WrapHeader>
-        <div className="title-big">GPS 문제 해결</div>
-        <div className="title-small">
-          위치 접근을 허용해서 주변 이성과 채팅해보세요.
-        </div>
-      </WrapHeader>
+      <HeaderPrev
+        title="GPS 문제 해결"
+        navigateTo={-1}
+        text="위치 접근을 허용해서 주변 이성과 채팅해보세요."
+      />
+      <br />
       <TabMenu>
         <Tab
           id="Safari"
@@ -76,7 +77,9 @@ const GPSSolutionPage = () => {
               width={250}
             />
           </ImageAlign>
-          <div>4. distance 앱을 종료 후 재로그인해주세요</div>
+          <div>
+            4. distance 앱을 <strong>종료 후 재로그인</strong>해주세요
+          </div>
         </WrapBox>
       )}
 
@@ -134,7 +137,9 @@ const GPSSolutionPage = () => {
             />
           </ImageAlign>
 
-          <div>5. distance 앱을 종료 후 재로그인해주세요</div>
+          <div>
+            5. distance 앱을 <strong>종료 후 재로그인</strong>해주세요
+          </div>
         </WrapBox>
       )}
 
@@ -190,7 +195,9 @@ const GPSSolutionPage = () => {
               width={250}
             />
           </ImageAlign>
-          <div>5. distance 앱을 종료 후 재로그인해주세요</div>
+          <div>
+            5. distance 앱을 <strong>종료 후 재로그인</strong>해주세요
+          </div>
         </WrapBox>
       )}
     </WrapPage>
@@ -198,19 +205,6 @@ const GPSSolutionPage = () => {
 };
 
 export default GPSSolutionPage;
-
-const WrapHeader = styled.header`
-  margin-bottom: 2rem;
-  .title-big {
-    font-size: 2rem;
-    font-weight: 700;
-  }
-  .title-small {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #979797;
-  }
-`;
 
 const WrapPage = styled.div`
   padding: 2rem;
