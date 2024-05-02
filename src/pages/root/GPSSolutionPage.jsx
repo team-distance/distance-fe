@@ -15,6 +15,9 @@ const GPSSolutionPage = () => {
         navigateTo={-1}
         text="위치 접근을 허용해서 주변 이성과 채팅해보세요."
       />
+      <div style={{ color: 'red', fontWeight: '600', fontSize: '12px' }}>
+        위치 정보가 없으면 다른 이성에게 내 프로필이 보이지 않아요!
+      </div>
       <br />
       <TabMenu>
         <Tab
