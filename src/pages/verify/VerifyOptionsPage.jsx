@@ -36,6 +36,9 @@ const VerifyOptionsPage = () => {
         인증이 완료되면 불이 들어옵니다.
       </p>
 
+      {authUnivState === 'FAILED_1' && (
+        <FailedMessage>학생증 인증이 안되었습니다!</FailedMessage>
+      )}
       {authUnivState === 'FAILED_2' && (
         <FailedMessage>사진이 흔들렸습니다!</FailedMessage>
       )}
