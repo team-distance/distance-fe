@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import Button from '../../components/common/Button';
 import { instance } from '../../api/instance';
 import { useNavigate } from 'react-router-dom';
+import { ClipLoader } from 'react-spinners';
 
 const VerifyMobileIdPage = () => {
   const navigate = useNavigate();
@@ -13,11 +14,14 @@ const VerifyMobileIdPage = () => {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [file, setFile] = useState(null);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onChangeImage = (e) => {
     const file = e.target.files[0];
+
     if (file) {
       setIsDisabled(false);
+
       if (!file.type.startsWith('image/')) {
         alert('이미지 파일만 업로드 가능합니다.');
         return;
@@ -73,12 +77,17 @@ const VerifyMobileIdPage = () => {
     formData.append('studentcard', file);
 
     try {
+      setIsLoading(true);
+      setIsDisabled(true);
       await instance.post('/studentcard/send', formData);
       window.confirm(
         '인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.'
       ) && navigate('/');
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
+      setIsDisabled(false);
     }
   };
 
@@ -117,7 +126,21 @@ const VerifyMobileIdPage = () => {
         </UploadDiv>
       )}
       <Button size={'large'} onClick={sendStudentId} disabled={isDisabled}>
-        이미지 전송하기
+        {isLoading ? (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              color: '#fff',
+            }}
+          >
+            <ClipLoader color={'#fff'} loading={true} size={16} />
+            <div>전송 중...</div>
+          </div>
+        ) : (
+          <div>이미지 전송하기</div>
+        )}
       </Button>
 
       <NoticeDiv>
