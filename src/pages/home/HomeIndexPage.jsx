@@ -130,6 +130,13 @@ const HomeIndexPage = () => {
     <>
       <HomeContainer>
         <Header />
+
+        <Banner>
+          <div>
+            📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입
+            <em>100건 돌파</em>
+          </div>
+        </Banner>
         {memberState && memberState.length === 0 ? (
           <EmptyContainer>
             <div className="wrap">
@@ -207,6 +214,55 @@ const HomeIndexPage = () => {
 
 const HomeContainer = styled.section`
   padding: 2rem 1.5rem;
+`;
+
+const Banner = styled.div`
+  display: flex;
+  padding: 9px 27px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  border-radius: 8px;
+  background: var(--white, #fff);
+  box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+
+  @keyframes bannerani {
+    from {
+      transform: translateX(200%);
+    }
+    to {
+      transform: translateX(-200%);
+    }
+  }
+
+  @keyframes blink {
+    0% {
+      color: black;
+    }
+    50% {
+      color: #ff625d;
+    }
+  }
+
+  div {
+    display: flex;
+    text-align: center;
+    font-size: 0.6rem;
+    font-weight: 600;
+    white-space: nowrap;
+    align-items: center;
+    color: black;
+    animation: bannerani 13s linear infinite;
+
+    em {
+      font-style: normal;
+      padding-left: 0.1rem;
+      padding-top: 0.1rem;
+      animation: blink 1s steps(1, end) infinite;
+    }
+  }
 `;
 
 const ProfileContainer = styled.div`
