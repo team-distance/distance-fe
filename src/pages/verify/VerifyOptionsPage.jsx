@@ -36,9 +36,6 @@ const VerifyOptionsPage = () => {
         인증이 완료되면 불이 들어옵니다.
       </p>
 
-      {authUnivState === 'FAILED_1' && (
-        <FailedMessage>학생증 인증이 안되었습니다!</FailedMessage>
-      )}
       {authUnivState === 'FAILED_2' && (
         <FailedMessage>사진이 흔들렸습니다!</FailedMessage>
       )}
@@ -46,7 +43,17 @@ const VerifyOptionsPage = () => {
         <FailedMessage>해당 학교 학생증이 아닙니다!</FailedMessage>
       )}
       {authUnivState === 'FAILED_4' && (
-        <FailedMessage>사용자가 등록한 성별과 다릅니다!</FailedMessage>
+        <FailedMessage>
+          성별이 다릅니다! 회원 탈퇴 후 다시 가입해주세요.
+        </FailedMessage>
+      )}
+      {authUnivState === 'FAILED_5' && (
+        <FailedMessage>
+          학과가 다릅니다! 회원 탈퇴 후 다시 가입해주세요.
+        </FailedMessage>
+      )}
+      {authUnivState === 'FAILED_6' && (
+        <FailedMessage>사진이 가려져 식별이 불가능합니다!</FailedMessage>
       )}
 
       <WrapButton>
