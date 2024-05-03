@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import HeaderPrev from '../../components/common/HeaderPrev';
 
 const NotificationSolutionPage = () => {
   const [selectedTab, setSelectedTab] = useState('Safari');
@@ -10,12 +11,12 @@ const NotificationSolutionPage = () => {
 
   return (
     <WrapPage>
-      <WrapHeader>
-        <div className="title-big">알림 문제 해결</div>
-        <div className="title-small">
-          알림을 허용해서 채팅을 실시간으로 확인해보세요.
-        </div>
-      </WrapHeader>
+      <HeaderPrev
+        title="PUSH 알림 문제 해결"
+        navigateTo={-1}
+        text="알림을 허용해서 채팅을 실시간으로 확인해보세요."
+      />
+      <br />
       <TabMenu>
         <Tab
           id="Safari"
@@ -67,7 +68,9 @@ const NotificationSolutionPage = () => {
               width={250}
             />
           </ImageAlign>
-          <div>3. distance 앱을 종료 후 재로그인해주세요</div>
+          <div>
+            3. distance 앱을 <strong>종료 후 재로그인</strong>해주세요
+          </div>
         </WrapBox>
       )}
 
@@ -130,7 +133,9 @@ const NotificationSolutionPage = () => {
             />
           </ImageAlign>
 
-          <div>5. distance 앱을 종료 후 재로그인해주세요</div>
+          <div>
+            5. distance 앱을 <strong>종료 후 재로그인</strong>해주세요
+          </div>
         </WrapBox>
       )}
 
@@ -186,7 +191,9 @@ const NotificationSolutionPage = () => {
               width={250}
             />
           </ImageAlign>
-          <div>5. distance 앱을 종료 후 재로그인해주세요</div>
+          <div>
+            5. distance 앱을 <strong>종료 후 재로그인</strong>해주세요
+          </div>
         </WrapBox>
       )}
     </WrapPage>
@@ -194,19 +201,6 @@ const NotificationSolutionPage = () => {
 };
 
 export default NotificationSolutionPage;
-
-const WrapHeader = styled.header`
-  margin-bottom: 2rem;
-  .title-big {
-    font-size: 2rem;
-    font-weight: 700;
-  }
-  .title-small {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #979797;
-  }
-`;
 
 const WrapPage = styled.div`
   padding: 2rem;

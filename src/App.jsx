@@ -76,6 +76,8 @@ function App() {
           position: 'bottom-center',
         }
       );
+    } else if (currentLocation.lat === 0 || currentLocation.lng === 0) {
+      return;
     } else {
       instance
         .post('/gps/update', {
