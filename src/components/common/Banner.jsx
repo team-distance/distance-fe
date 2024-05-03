@@ -20,7 +20,7 @@ export default Banner;
 
 const WrapBanner = styled.div`
   display: flex;
-  padding: 9px 10px;
+  padding: 9px 0;
   justify-content: center;
   align-items: center;
   margin-bottom: 1rem;
