@@ -244,7 +244,7 @@ const BannerText = styled.div`
   align-items: center;
   color: black;
 
-  animation: rollingleft 18s linear infinite;
+  animation: rollingleft 25s linear infinite;
 
   em {
     font-style: normal;
@@ -255,6 +255,21 @@ const BannerText = styled.div`
 
   @media (max-width: 400px) {
     .banner-text-2 {
+      display: flex;
+      text-align: center;
+      font-size: 0.6rem;
+      font-weight: 600;
+      white-space: nowrap;
+      align-items: center;
+      color: black;
+
+      em {
+        font-style: normal;
+        padding-left: 0.1rem;
+        padding-top: 0.1rem;
+        animation: blink 1s steps(1, end) infinite;
+      }
+
       padding-left: 60%;
     }
 
@@ -270,6 +285,20 @@ const BannerText = styled.div`
 
   @media (min-width: 401px) {
     .banner-text-2 {
+      display: flex;
+      text-align: center;
+      font-size: 0.6rem;
+      font-weight: 600;
+      white-space: nowrap;
+      align-items: center;
+      color: black;
+
+      em {
+        font-style: normal;
+        padding-left: 0.1rem;
+        padding-top: 0.1rem;
+        animation: blink 1s steps(1, end) infinite;
+      }
       padding-left: 100%;
     }
 
