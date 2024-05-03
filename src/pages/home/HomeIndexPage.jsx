@@ -244,7 +244,7 @@ const BannerText = styled.div`
   align-items: center;
   color: black;
 
-  animation: rollingleft 25s linear infinite;
+  animation: rollingleft 14s linear infinite;
 
   em {
     font-style: normal;
