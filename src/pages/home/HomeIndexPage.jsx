@@ -132,10 +132,16 @@ const HomeIndexPage = () => {
         <Header />
 
         <Banner>
-          <div>
-            📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입
-            <em>100건 돌파</em>
-          </div>
+          <BannerText>
+            <div className="banner-text-1">
+              📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입
+              <em>150건 돌파</em>
+            </div>
+            <div className="banner-text-2">
+              📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입
+              <em>150건 돌파</em>
+            </div>
+          </BannerText>
         </Banner>
         {memberState && memberState.length === 0 ? (
           <EmptyContainer>
@@ -227,13 +233,53 @@ const Banner = styled.div`
   background: var(--white, #fff);
   box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+`;
 
-  @keyframes bannerani {
-    from {
-      transform: translateX(200%);
+const BannerText = styled.div`
+  display: flex;
+  text-align: center;
+  font-size: 0.6rem;
+  font-weight: 600;
+  white-space: nowrap;
+  align-items: center;
+  color: black;
+
+  animation: rollingleft 18s linear infinite;
+
+  em {
+    font-style: normal;
+    padding-left: 0.1rem;
+    padding-top: 0.1rem;
+    animation: blink 1s steps(1, end) infinite;
+  }
+
+  @media (max-width: 400px) {
+    .banner-text-2 {
+      padding-left: 60%;
     }
-    to {
-      transform: translateX(-200%);
+
+    @keyframes rollingleft {
+      0% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(-140%);
+      }
+    }
+  }
+
+  @media (min-width: 401px) {
+    .banner-text-2 {
+      padding-left: 100%;
+    }
+
+    @keyframes rollingleft {
+      0% {
+        transform: translateX(150%);
+      }
+      100% {
+        transform: translateX(-250%);
+      }
     }
   }
 
@@ -243,24 +289,6 @@ const Banner = styled.div`
     }
     50% {
       color: #ff625d;
-    }
-  }
-
-  div {
-    display: flex;
-    text-align: center;
-    font-size: 0.6rem;
-    font-weight: 600;
-    white-space: nowrap;
-    align-items: center;
-    color: black;
-    animation: bannerani 13s linear infinite;
-
-    em {
-      font-style: normal;
-      padding-left: 0.1rem;
-      padding-top: 0.1rem;
-      animation: blink 1s steps(1, end) infinite;
     }
   }
 `;
