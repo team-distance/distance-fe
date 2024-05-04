@@ -1,8 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-// import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 import Header from '../../components/common/Header';
 
@@ -24,38 +23,6 @@ const Tab = styled.div`
   transition: all 200ms;
 `;
 
-const EmptyContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 65vh;
-
-  > .wrap {
-    text-align: center;
-
-    > img {
-      margin-bottom: 1rem;
-    }
-
-    > div {
-      color: #333333;
-      text-align: center;
-      font-size: 1.2rem;
-      font-weight: 800;
-    }
-
-    > span {
-      background: linear-gradient(#ff3f38 0%, #ffb1ae 100%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-      font-size: 2rem;
-      font-weight: 600;
-    }
-  }
-`;
-
 const FestivalIndexPage = () => {
   const navigate = useNavigate();
 
@@ -70,20 +37,6 @@ const FestivalIndexPage = () => {
     setTabMenuState(1);
   };
 
-  const calculateDDay = (targetDate) => {
-    const today = new Date();
-    const target = new Date(targetDate);
-    const daysLeft = target.getDate() - today.getDate();
-
-    if (daysLeft < 1) {
-      return 'Day';
-    }
-
-    return daysLeft;
-  };
-
-  const dDay = calculateDDay('2024-05-07');
-
   return (
     <FestivalContainer>
       <Header />
@@ -95,14 +48,7 @@ const FestivalIndexPage = () => {
           푸드트럭
         </Tab>
       </TabMenu>
-      <EmptyContainer>
-        <div className="wrap">
-          <img src={'/assets/empty-festival.svg'} alt="empty icon" />
-          <div>피닉시아 축제까지</div>
-          <span>D-{dDay}</span>
-        </div>
-      </EmptyContainer>
-      {/* <Outlet /> */}
+      <Outlet />
     </FestivalContainer>
   );
 };
