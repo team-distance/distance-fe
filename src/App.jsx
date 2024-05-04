@@ -23,10 +23,7 @@ import VerifyEmailPage from './pages/verify/VerifyEmailPage';
 import VerifyIdPage from './pages/verify/VerifyIdPage';
 import NotificationSolutionPage from './pages/root/NotificationSolutionPage';
 import FoodTruck from './components/festival/FoodTruck';
-import FoodTruckPage0 from './pages/festival/FoodTruckPage0';
-import FoodTruckPage1 from './pages/festival/FoodTruckPage1';
-import FoodTruckPage2 from './pages/festival/FoodTruckPage2';
-import FoodTruckPage3 from './pages/festival/FoodTruckPage3';
+import FoodTruckPage from './pages/festival/FoodTruckPage';
 import KakaotalkFallback from './pages/root/KakaotalkFallback';
 import AccountEditPage from './pages/mypage/AccountEditPage';
 import DropoutPage from './pages/mypage/DropoutPage';
@@ -153,10 +150,7 @@ function App() {
       <Route path="/festival/detail/2" element={<FestivalDetailPage2 />} />
       <Route path="/festival/detail/3" element={<FestivalDetailPage3 />} />
 
-      <Route path="/festival/foodtruck/0" element={<FoodTruckPage0 />} />
-      <Route path="/festival/foodtruck/1" element={<FoodTruckPage1 />} />
-      <Route path="/festival/foodtruck/2" element={<FoodTruckPage2 />} />
-      <Route path="/festival/foodtruck/3" element={<FoodTruckPage3 />} />
+      <Route path="/festival/foodtruck/:id" element={<FoodTruckPage />} />
 
       <Route path="/chat/:chatRoomId" element={<ChatPage />} />
 
