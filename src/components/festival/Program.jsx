@@ -36,34 +36,6 @@ const Program = () => {
   useEffect(() => {
     fetchProgramInfo();
   }, []);
-  const content = [
-    {
-      title: '개회식',
-      img: '/assets/festival/contentsImg/opening.jpeg',
-      date: '2024.03.24 (토) 14:00',
-      place: '카카오 AI 캠퍼스 1층 그로잉 홀',
-    },
-    {
-      title: '야식제공',
-      img: '/assets/festival/contentsImg/chicken.jpeg',
-      date: '2024.03.24 (일) 01:00~02:00',
-      place: '카카오 AI 캠퍼스 1층 그로잉 홀',
-    },
-    {
-      title: '시상식 및 럭키드로우',
-      img: '/assets/festival/contentsImg/awards.jpeg',
-      date: '2024.03.24(일) 07:00~09:10',
-      place: '카카오 AI 캠퍼스 1층 그로잉 홀',
-    },
-    {
-      title: '데모부스',
-      img: '/assets/festival/contentsImg/demobooth.jpeg',
-      date: '2024.03.24(일) 16:30~17:00',
-      place: '카카오 AI 캠퍼스 1층 그로잉 홀',
-    },
-  ];
-
-  const navigate = useNavigate();
 
   return (
     <>
