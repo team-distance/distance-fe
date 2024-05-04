@@ -60,7 +60,7 @@ const ProgramCard = ({ content }) => {
         <div className="date">{formattedDate}</div>
         <br />
         <div className="location">
-          <img src="/assets/festival/icon-location.svg" />
+          <img src="/assets/festival/icon-location.svg" alt="location-icon" />
           순천향대학교 소운동장
         </div>
       </TextDiv>
