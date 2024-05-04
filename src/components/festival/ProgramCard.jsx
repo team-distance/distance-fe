@@ -11,16 +11,19 @@ const WrapCard = styled.div`
   box-shadow: 0px 5px 10px 1px rgba(51, 51, 51, 0.2);
   overflow: hidden;
 
-  img {
-    width: 100px;
+  .singer {
+    min-width: 100px;
+    max-width: 100px;
+    width: 100%;
     height: 100%;
     object-fit: cover;
   }
 `;
 
 const TextDiv = styled.div`
-  width: 100%;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
 
   .title {
     color: #000000;
@@ -46,17 +49,19 @@ const TextDiv = styled.div`
   }
 `;
 
-const ProgramCard = ({ onClick, content }) => {
+const ProgramCard = ({ content }) => {
+  let formattedDate = content.startAt.substring(0, 10).replaceAll('-', '.');
+
   return (
-    <WrapCard onClick={onClick}>
-      <img src={content.img} alt="festival" />
+    <WrapCard>
+      <img className="singer" src={content.artistImageUrl} alt="festival" />
       <TextDiv>
-        <div className="title">{content.title}</div>
-        <div className="date">{content.date}</div>
+        <div className="title">{content.artistName}</div>
+        <div className="date">{formattedDate}</div>
         <br />
         <div className="location">
-          <img src="/assets/festival/icon-location.svg" alt="location icon" />
-          {content.place}
+          <img src="/assets/festival/icon-location.svg" />
+          순천향대학교 소운동장
         </div>
       </TextDiv>
     </WrapCard>

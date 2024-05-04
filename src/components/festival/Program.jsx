@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import ProgramCard from './ProgramCard';
+import { useEffect, useState } from 'react';
+import { instance } from '../../api/instance';
 
 const Title = styled.div`
   font-size: 36px;
@@ -9,7 +11,7 @@ const Title = styled.div`
 const Date = styled.div`
   font-size: 1rem;
   font-weight: 600;
-  padding: 1.5rem 0;
+  padding: 1.5rem 0 0.8rem 0;
 `;
 const WrapCards = styled.div`
   display: flex;
@@ -18,6 +20,22 @@ const WrapCards = styled.div`
 `;
 
 const Program = () => {
+  const [programList, setProgramList] = useState([]);
+
+  const fetchProgramInfo = async () => {
+    let school = '순천향대학교';
+    try {
+      const res = await instance.get(`/performance?school=${school}`);
+      setProgramList(res.data);
+      console.log('res', res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProgramInfo();
+  }, []);
   const content = [
     {
       title: '개회식',
@@ -49,28 +67,33 @@ const Program = () => {
 
   return (
     <>
-      <Title>구름대학교</Title>
-      <Date>3월 23일</Date>
+      <Title>순천향대학교</Title>
+      <Date>5월 7일</Date>
       <WrapCards>
-        <ProgramCard
-          onClick={() => navigate('/festival/detail/0')}
-          content={content[0]}
-        />
-        <ProgramCard
-          onClick={() => navigate('/festival/detail/1')}
-          content={content[1]}
-        />
+        {programList.map(
+          (program) =>
+            program.startAt.startsWith('2024-05-07') && (
+              <ProgramCard content={program} />
+            )
+        )}
       </WrapCards>
-      <Date className="cardsDate">3월 24일</Date>
+      <Date className="cardsDate">5월 8일</Date>
       <WrapCards>
-        <ProgramCard
-          onClick={() => navigate('/festival/detail/2')}
-          content={content[2]}
-        />
-        <ProgramCard
-          onClick={() => navigate('/festival/detail/3')}
-          content={content[3]}
-        />
+        {programList.map(
+          (program) =>
+            program.startAt.startsWith('2024-05-08') && (
+              <ProgramCard content={program} />
+            )
+        )}
+      </WrapCards>
+      <Date className="cardsDate">5월 9일</Date>
+      <WrapCards>
+        {programList.map(
+          (program) =>
+            program.startAt.startsWith('2024-05-09') && (
+              <ProgramCard content={program} />
+            )
+        )}
       </WrapCards>
     </>
   );
