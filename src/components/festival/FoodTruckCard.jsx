@@ -22,7 +22,6 @@ const WrapCard = styled.div`
 
 const TextDiv = styled.div`
   width: 100%;
-  align-items: center;
 
   .title {
     color: #000000;
@@ -51,7 +50,12 @@ const TextDiv = styled.div`
   }
 `;
 
-const FoodTruckCard = ({ foodTruckImage, foodTruckName, onClick }) => {
+const FoodTruckCard = ({
+  foodTruckImage,
+  foodTruckName,
+  description,
+  onClick,
+}) => {
   return (
     <WrapCard onClick={onClick}>
       <img className="truck" src={foodTruckImage} alt="food truck" />
@@ -59,6 +63,7 @@ const FoodTruckCard = ({ foodTruckImage, foodTruckName, onClick }) => {
         <div className="title">{foodTruckName}</div>
         <div className="menus">
           <img src="/assets/festival/icon-truck.svg" alt="truck icon" />
+          <div>{description}</div>
         </div>
         <br />
       </TextDiv>

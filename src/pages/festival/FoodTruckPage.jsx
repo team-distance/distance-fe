@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Header from '../../components/common/Header';
+import { instance } from '../../api/instance';
 
 const DetailContainer = styled.section`
   padding: 2rem 1.5rem 8rem 1.5rem;
@@ -47,15 +48,14 @@ const MenuCard = styled.div`
   border-radius: 20px;
   display: flex;
   flex-direction: column;
-  resize: both;
   overflow: hidden;
+  background-color: #fcfcfc;
 
   .image-container {
     width: 100%;
     height: 0;
     padding-top: 100%;
     position: relative;
-    background-color: #f3f3f3; // 이미지 배경 확인을 위한 색상
     overflow: hidden;
 
     img {
@@ -87,12 +87,13 @@ const MenuCard = styled.div`
 const FoodTruckPage = () => {
   const navigate = useNavigate();
   const foodTruckId = useParams();
-  // const [foodTruck, setFoodTruck] = useState(null);
+  const [foodTruckMenus, setFoodTruckMenus] = useState([]);
+  const [foodTruckName, setFoodTruckName] = useState('');
 
-  const fetchFoodTruck = async () => {
+  const fetchFoodTruckMenus = async () => {
     try {
-      // const res = instance.get(`/food-truck/${foodTruckId.id}`);
-      // setFoodTruck(res.data);
+      const res = await instance.get(`/truck-menu/${foodTruckId.id}`);
+      setFoodTruckMenus(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -103,8 +104,8 @@ const FoodTruckPage = () => {
     if (navigator.share) {
       navigator
         .share({
-          title: '타코야',
-          text: '타코야의 푸드트럭 메뉴를 확인하세요.',
+          title: foodTruckName,
+          text: `${foodTruckName}의 푸드트럭 메뉴를 확인하세요.`,
           url: window.location.href,
         })
         .then(() => alert('공유가 성공적으로 완료되었습니다.'))
@@ -122,15 +123,25 @@ const FoodTruckPage = () => {
   };
 
   useEffect(() => {
-    fetchFoodTruck();
+    fetchFoodTruckMenus();
   }, [foodTruckId]);
+
+  useEffect(() => {
+    if (foodTruckMenus) {
+      if (foodTruckMenus?.length !== 0) {
+        const truckName = foodTruckMenus[0].truckName;
+        setFoodTruckName(truckName);
+      }
+    }
+    console.log(foodTruckMenus);
+  }, [foodTruckMenus]);
 
   return (
     <DetailContainer>
       <Header />
       <TextDiv>
         <div className="title">
-          타코야
+          {foodTruckName}
           <div>
             <img
               className="copy-button"
@@ -149,42 +160,18 @@ const FoodTruckPage = () => {
       </TextDiv>
       <br />
       <MenuCardContainer>
-        <MenuCard>
-          <div className="image-container">
-            <img src="/assets/festival/contentsImg/chicken.jpeg" alt="치킨" />
-          </div>
-          <div className="menu-info">
-            <div className="name">통귤탕후루</div>
-            <div className="price">3,000원</div>
-          </div>
-        </MenuCard>
-        <MenuCard>
-          <div className="image-container">
-            <img src="/assets/festival/contentsImg/chicken.jpeg" alt="치킨" />
-          </div>
-          <div className="menu-info">
-            <div className="name">통귤탕후루</div>
-            <div className="price">3,000원</div>
-          </div>
-        </MenuCard>
-        <MenuCard>
-          <div className="image-container">
-            <img src="/assets/festival/contentsImg/chicken.jpeg" alt="치킨" />
-          </div>
-          <div className="menu-info">
-            <div className="name">통귤탕후루</div>
-            <div className="price">3,000원</div>
-          </div>
-        </MenuCard>
-        <MenuCard>
-          <div className="image-container">
-            <img src="/assets/festival/contentsImg/chicken.jpeg" alt="치킨" />
-          </div>
-          <div className="menu-info">
-            <div className="name">통귤탕후루</div>
-            <div className="price">3,000원</div>
-          </div>
-        </MenuCard>
+        {foodTruckMenus &&
+          foodTruckMenus.map((menu) => (
+            <MenuCard key={menu.truckMenuId}>
+              <div className="image-container">
+                <img src={menu.menuImageUrl} alt={menu.menu} />
+              </div>
+              <div className="menu-info">
+                <div className="name">{menu.menu}</div>
+                <div className="price">{menu.price?.toLocaleString()}원</div>
+              </div>
+            </MenuCard>
+          ))}
       </MenuCardContainer>
       <PrevButton
         src="/assets/festival/prev-button.png"

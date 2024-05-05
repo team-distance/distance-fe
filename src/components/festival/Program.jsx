@@ -44,7 +44,7 @@ const Program = () => {
         {programList.map(
           (program) =>
             program.startAt.startsWith('2024-05-07') && (
-              <ProgramCard content={program} />
+              <ProgramCard key={program.artistId} content={program} />
             )
         )}
       </WrapCards>
@@ -53,7 +53,7 @@ const Program = () => {
         {programList.map(
           (program) =>
             program.startAt.startsWith('2024-05-08') && (
-              <ProgramCard content={program} />
+              <ProgramCard key={program.artistId} content={program} />
             )
         )}
       </WrapCards>
@@ -62,7 +62,7 @@ const Program = () => {
         {programList.map(
           (program) =>
             program.startAt.startsWith('2024-05-09') && (
-              <ProgramCard content={program} />
+              <ProgramCard key={program.artistId} content={program} />
             )
         )}
       </WrapCards>
