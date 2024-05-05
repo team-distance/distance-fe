@@ -39,8 +39,10 @@ import toast from 'react-hot-toast';
 import { instance } from './api/instance';
 import TeamIntroductionPage from './pages/mypage/TeamIntroductionPage';
 import GPSSolutionPage from './pages/root/GPSSolutionPage';
+import useRouteChangeTrack from './hooks/useRouteChangeTrack';
 
 function App() {
+  useRouteChangeTrack();
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const currentLocation = useGPS(isLoggedIn);
   const navigate = useNavigate();

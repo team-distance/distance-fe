@@ -6,7 +6,13 @@ import { RecoilRoot } from 'recoil';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { AwsRumProvider } from 'aws-rum-react';
+import ReactGA from 'react-ga4';
 
+const gaTrackingId = process.env.REACT_APP_GA_TRACKING_ID;
+
+if (gaTrackingId) {
+  ReactGA.initialize(gaTrackingId, { debug: true });
+}
 const rootElement = document.getElementById('root');
 
 const app = (
