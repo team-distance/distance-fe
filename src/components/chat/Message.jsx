@@ -319,6 +319,7 @@ const MessageByOther = styled.div`
         color: black;
         line-height: 1.5;
         overflow-wrap: break-word;
+        word-break: break-word;
 
         a {
           color: white;
@@ -382,6 +383,7 @@ const MessageByMe = styled.div`
       color: white;
       line-height: 1.5;
       overflow-wrap: break-word;
+      word-break: break-word;
 
       .link {
         text-decoration: underline;
