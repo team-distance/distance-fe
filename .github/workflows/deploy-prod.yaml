@@ -29,6 +29,9 @@ jobs:
           echo "REACT_APP_FIREBASE_APP_ID=${{ secrets.REACT_APP_FIREBASE_APP_ID }}" >> .env
           echo "REACT_APP_FIREBASE_MEASUREMENT_ID=${{ secrets.REACT_APP_FIREBASE_MEASUREMENT_ID }}" >> .env
           echo "REACT_APP_FIREBASE_VAPID_KEY=${{ secrets.REACT_APP_FIREBASE_VAPID_KEY }}" >> .env
+          echo "REACT_APP_AWS_RUM_ID=${{ secrets.REACT_APP_AWS_RUM_ID }}" >> .env
+          echo "REACT_APP_AWS_IDENTITY_POOL_ID=${{ secrets.REACT_APP_AWS_IDENTITY_POOL_ID }}" >> .env
+          echo "REACT_APP_GA_TRACKING_ID=${{ secrets.REACT_APP_GA_TRACKING_ID }}" >> .env
 
       - name: Replace environment variables in firebase-messaging-sw.js
         run: node src/replaceEnvForSW.js
