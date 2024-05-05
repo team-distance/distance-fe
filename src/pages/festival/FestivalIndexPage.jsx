@@ -1,9 +1,10 @@
 import React from 'react';
-import { useState } from 'react';
 import styled from 'styled-components';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 
 import Header from '../../components/common/Header';
+import { tabState } from '../../store/tabState';
 
 const FestivalContainer = styled.div`
   padding: 2rem 1.5rem;
@@ -26,7 +27,7 @@ const Tab = styled.div`
 const FestivalIndexPage = () => {
   const navigate = useNavigate();
 
-  const [tabMenuState, setTabMenuState] = useState(0);
+  const [tabMenuState, setTabMenuState] = useRecoilState(tabState);
 
   const handleClickProgram = () => {
     navigate('/festival/program');
