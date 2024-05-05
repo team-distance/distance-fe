@@ -1,9 +1,15 @@
-// import React, { useEffect, useState } from 'react';
+
+import React from 'react';
 import styled from 'styled-components';
-// import FoodTruckCard from './FoodTruckCard';
+// // import FoodTruckCard from './FoodTruckCard';
 // import { useNavigate } from 'react-router-dom';
 // import { instance } from '../../api/instance';
-// import ClipLoader from 'react-spinners/ClipLoader';
+
+// const WrapCards = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   gap: 1rem;
+// `;
 
 const FoodTruck = () => {
   // const navigate = useNavigate();
@@ -28,7 +34,6 @@ const FoodTruck = () => {
   //   fetchFoodtruckInfo();
   // }, []);
 
-  //디데이
   const calculateDDay = (targetDate) => {
     const today = new Date();
     const target = new Date(targetDate);
