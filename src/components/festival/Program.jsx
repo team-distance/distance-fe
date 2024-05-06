@@ -14,7 +14,7 @@ const Program = () => {
       setLoading(true);
       const res = await instance.get(`/performance?school=${school}`);
       setProgramList(res.data);
-      console.log('res', res.data);
+      // console.log('res', res.data);
     } catch (error) {
       console.log(error);
     } finally {

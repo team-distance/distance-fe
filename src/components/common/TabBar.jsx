@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
+import { tabState } from '../../store/tabState';
 
 /**
  * @todo 사용하지 않는 아이콘 svg 파일 제거
@@ -11,7 +13,10 @@ const BottomNavBar = () => {
   const userAgent = navigator.userAgent.toLowerCase();
   const isIphone = userAgent.includes('iphone');
 
+  const [tabMenuState, setTabMenuState] = useRecoilState(tabState);
+
   useEffect(() => {
+    console.log('tab>>>>>>>>>>', tabMenuState);
     setCurrentPage(location.pathname);
   }, [location]);
 
@@ -48,7 +53,13 @@ const BottomNavBar = () => {
     <StyledNav $isPhone={isIphone}>
       <WrapItem>
         {menus.map((item) => (
-          <NavItem to={item.path} key={item.name}>
+          <NavItem
+            to={item.path}
+            key={item.name}
+            onClick={() => {
+              setTabMenuState(0);
+            }}
+          >
             <img
               src={
                 currentPage === item.path || currentPage === item?.alternative
