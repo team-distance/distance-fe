@@ -282,6 +282,7 @@ const ProfileEditPage = () => {
 };
 
 const Wrapper = styled.div`
+  max-height: 100vh;
   overflow-y: scroll;
 `;
 
