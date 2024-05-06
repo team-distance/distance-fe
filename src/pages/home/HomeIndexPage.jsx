@@ -127,14 +127,29 @@ const HomeIndexPage = () => {
     profileModal.current.close();
   };
 
+  const alertTextList = [
+    {
+      text1: '📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입',
+      em: '200건 돌파',
+      text2: '',
+    },
+    {
+      text1: '📢 채팅방에서 새로 업데이트 된 👤',
+      em: '상대방 프로필 조회 기능',
+      text2: '을 확인해보세요!',
+    },
+    {
+      text1: '📢 ',
+      em: '알림/GPS 활성화 방법',
+      text2: '은 마이페이지에서 확인하실 수 있습니다.',
+    },
+  ];
+
   return (
     <>
       <HomeContainer>
         <Header />
-        <Banner
-          text1={'📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입'}
-          text2={'150건 돌파'}
-        />
+        <Banner alertText={alertTextList} />
         {memberState && memberState.length === 0 ? (
           <EmptyContainer>
             <div className="wrap">

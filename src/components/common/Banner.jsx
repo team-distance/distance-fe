@@ -1,16 +1,24 @@
 import styled from 'styled-components';
 import Marquee from 'react-fast-marquee';
 
-const Banner = ({ text1, text2 }) => {
+const Banner = ({ alertText }) => {
   return (
     <WrapBanner>
       <Marquee speed="90">
         <BannerText>
-          <div className="text">
-            {text1}
-            <em>{text2}</em>
-          </div>
-          <div className="text-invisible">{text1}</div>
+          {alertText.map((alert) => (
+            <>
+              <div className="text">
+                {alert.text1}
+                <em>{alert.em}</em>
+                {alert.text2}
+              </div>
+              <div className="text-invisible">
+                {/* 여백용 텍스트 */}
+                📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입
+              </div>
+            </>
+          ))}
         </BannerText>
       </Marquee>
     </WrapBanner>
