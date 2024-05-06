@@ -55,6 +55,7 @@ const FoodTruck = () => {
               key={foodTruck.foodTruckId}
               foodTruckImage={foodTruck.foodTruckImageUrl}
               foodTruckName={foodTruck.truckName}
+              description={foodTruck.description}
               onClick={() =>
                 navigate(`/festival/foodtruck/${foodTruck.foodTruckId}`)
               }
