@@ -16,7 +16,6 @@ const BottomNavBar = () => {
   const [tabMenuState, setTabMenuState] = useRecoilState(tabState);
 
   useEffect(() => {
-    console.log('tab>>>>>>>>>>', tabMenuState);
     setCurrentPage(location.pathname);
   }, [location]);
 
