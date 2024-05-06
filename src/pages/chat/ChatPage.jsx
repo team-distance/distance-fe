@@ -16,6 +16,8 @@ import Modal from '../../components/common/Modal';
 import Tooltip from '../../components/common/Tooltip';
 import { getByteLength } from '../../utils/getByteLength';
 import useDetectClose from '../../hooks/useDetectClose';
+import { CHARACTERS, COLORS } from '../../constants/character';
+import Badge from '../../components/common/Badge';
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
@@ -27,6 +29,7 @@ const ChatPage = () => {
   const [isOpponentOut, setIsOpponentOut] = useState(false);
   const [reportMessage, setReportMessage] = useState('');
   const [bothAgreed, setBothAgreed] = useState(false);
+  const [opponentProfile, setOpponentProfile] = useState(null);
 
   const tooltipRef = useRef();
   const [isCallTooltipVisible, setIsCallTooltipVisible] = useDetectClose(
@@ -34,6 +37,7 @@ const ChatPage = () => {
     false
   );
 
+  const profileModalRef = useRef();
   const reportModalRef = useRef();
   const callModalRef = useRef();
   const viewportRef = useRef();
@@ -62,6 +66,10 @@ const ChatPage = () => {
 
   const closeCallModal = () => {
     callModalRef.current.close();
+  };
+
+  const openProfileModal = () => {
+    profileModalRef.current.open();
   };
 
   const navigateToVerify = () => {
@@ -264,8 +272,21 @@ const ChatPage = () => {
     }
   };
 
+  const fetchOpponentProfile = async () => {
+    try {
+      const opponentProfile = await instance
+        .get(`/member/profile/${opponentId}`)
+        .then((res) => res.data);
+      setOpponentProfile(opponentProfile);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   // STOMP 클라이언트 생성
   useEffect(() => {
+    fetchOpponentProfile();
+
     const newClient = new Client({
       brokerURL: 'wss://api.dis-tance.com/meet',
       connectHeaders: {
@@ -429,6 +450,10 @@ const ChatPage = () => {
           groupedMessages={groupedMessages}
           myId={myId}
           responseCall={responseCall}
+          openProfileModal={openProfileModal}
+          opponentMemberCharacter={
+            opponentProfile && opponentProfile.memberCharacter
+          }
         />
 
         <MessageInput
@@ -501,6 +526,30 @@ const ChatPage = () => {
             </>
           )}
         </CallModalContent>
+      </Modal>
+      <Modal ref={profileModalRef}>
+        {opponentProfile && (
+          <WrapContent>
+            <CharacterBackground $character={opponentProfile.memberCharacter}>
+              <StyledImage
+                src={CHARACTERS[opponentProfile.memberCharacter]}
+                alt={opponentProfile.memberCharacter}
+              />
+            </CharacterBackground>
+            <TextDiv>
+              <MBTI>{opponentProfile.mbti}</MBTI>
+              <Major>{opponentProfile.department}</Major>
+            </TextDiv>
+            <TagContainer>
+              {opponentProfile.memberHobbyDto.map((hobby, index) => (
+                <Badge key={index}>#{hobby.hobby}</Badge>
+              ))}
+              {opponentProfile.memberTagDto.map((tag, index) => (
+                <Badge key={index}>#{tag.tag}</Badge>
+              ))}
+            </TagContainer>
+          </WrapContent>
+        )}
       </Modal>
     </Wrapper>
   );
@@ -642,6 +691,57 @@ const TooltipTail = styled.div`
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
   border-bottom: 10px solid #333333;
+`;
+
+const WrapContent = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 32px 0;
+  gap: 12px;
+`;
+
+const CharacterBackground = styled.div`
+  position: relative;
+  width: 60%;
+  height: 0;
+  padding-bottom: 60%;
+  border-radius: 50%;
+  background-color: ${(props) => COLORS[props.$character]};
+`;
+
+const StyledImage = styled.img`
+  position: absolute;
+  width: 60%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const TextDiv = styled.div`
+  width: 100%;
+  text-align: center;
+  color: #333333;
+`;
+
+const Major = styled.div`
+  font-size: 24px;
+  font-weight: 700;
+  white-space: nowrap;
+`;
+
+const MBTI = styled.div`
+  color: #000000;
+  font-size: 14px;
+`;
+
+const TagContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
 `;
 
 export default ChatPage;

@@ -63,13 +63,15 @@ const Modal = forwardRef(
             alt="Close"
           />
           {children}
-          <Button
-            size={'medium'}
-            onClick={buttonClickHandler}
-            backgroundColor={buttonColor}
-          >
-            {buttonLabel}
-          </Button>
+          {buttonLabel && (
+            <Button
+              size={'medium'}
+              onClick={buttonClickHandler}
+              backgroundColor={buttonColor}
+            >
+              {buttonLabel}
+            </Button>
+          )}
         </StyledDialog>
       </>,
       document.getElementById('modal')

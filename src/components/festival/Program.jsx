@@ -1,6 +1,73 @@
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import ProgramCard from './ProgramCard';
+import { useEffect, useState } from 'react';
+import { instance } from '../../api/instance';
+import ClipLoader from 'react-spinners/ClipLoader';
+
+const Program = () => {
+  const [programList, setProgramList] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchProgramInfo = async () => {
+    let school = '순천향대학교';
+    try {
+      setLoading(true);
+      const res = await instance.get(`/performance?school=${school}`);
+      setProgramList(res.data);
+      console.log('res', res.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProgramInfo();
+  }, []);
+
+  return (
+    <>
+      {loading ? (
+        <LoaderContainer>
+          <ClipLoader color={'#FF625D'} loading={loading} size={50} />
+        </LoaderContainer>
+      ) : (
+        <>
+          <Title>순천향대학교</Title>
+          <Date>5월 7일</Date>
+          <WrapCards>
+            {programList.map(
+              (program) =>
+                program.startAt.startsWith('2024-05-07') && (
+                  <ProgramCard key={program.artistId} content={program} />
+                )
+            )}
+          </WrapCards>
+          <Date className="cardsDate">5월 8일</Date>
+          <WrapCards>
+            {programList.map(
+              (program) =>
+                program.startAt.startsWith('2024-05-08') && (
+                  <ProgramCard key={program.artistId} content={program} />
+                )
+            )}
+          </WrapCards>
+          <Date className="cardsDate">5월 9일</Date>
+          <WrapCards>
+            {programList.map(
+              (program) =>
+                program.startAt.startsWith('2024-05-09') && (
+                  <ProgramCard key={program.artistId} content={program} />
+                )
+            )}
+          </WrapCards>
+        </>
+      )}
+    </>
+  );
+};
+export default Program;
 
 const Title = styled.div`
   font-size: 36px;
@@ -9,7 +76,7 @@ const Title = styled.div`
 const Date = styled.div`
   font-size: 1rem;
   font-weight: 600;
-  padding: 1.5rem 0;
+  padding: 1.5rem 0 0.8rem 0;
 `;
 const WrapCards = styled.div`
   display: flex;
@@ -17,62 +84,14 @@ const WrapCards = styled.div`
   gap: 1rem;
 `;
 
-const Program = () => {
-  const content = [
-    {
-      title: '개회식',
-      img: '/assets/festival/contentsImg/opening.jpeg',
-      date: '2024.03.24 (토) 14:00',
-      place: '카카오 AI 캠퍼스 1층 그로잉 홀',
-    },
-    {
-      title: '야식제공',
-      img: '/assets/festival/contentsImg/chicken.jpeg',
-      date: '2024.03.24 (일) 01:00~02:00',
-      place: '카카오 AI 캠퍼스 1층 그로잉 홀',
-    },
-    {
-      title: '시상식 및 럭키드로우',
-      img: '/assets/festival/contentsImg/awards.jpeg',
-      date: '2024.03.24(일) 07:00~09:10',
-      place: '카카오 AI 캠퍼스 1층 그로잉 홀',
-    },
-    {
-      title: '데모부스',
-      img: '/assets/festival/contentsImg/demobooth.jpeg',
-      date: '2024.03.24(일) 16:30~17:00',
-      place: '카카오 AI 캠퍼스 1층 그로잉 홀',
-    },
-  ];
-
-  const navigate = useNavigate();
-
-  return (
-    <>
-      <Title>구름대학교</Title>
-      <Date>3월 23일</Date>
-      <WrapCards>
-        <ProgramCard
-          onClick={() => navigate('/festival/detail/0')}
-          content={content[0]}
-        />
-        <ProgramCard
-          onClick={() => navigate('/festival/detail/1')}
-          content={content[1]}
-        />
-      </WrapCards>
-      <Date className="cardsDate">3월 24일</Date>
-      <WrapCards>
-        <ProgramCard
-          onClick={() => navigate('/festival/detail/2')}
-          content={content[2]}
-        />
-        <ProgramCard
-          onClick={() => navigate('/festival/detail/3')}
-          content={content[3]}
-        />
-      </WrapCards>
-    </>
-  );
-};
-export default Program;
+const LoaderContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+`;

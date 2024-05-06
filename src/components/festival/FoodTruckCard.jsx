@@ -11,8 +11,10 @@ const WrapCard = styled.div`
   box-shadow: 0px 5px 10px 1px rgba(51, 51, 51, 0.2);
   overflow: hidden;
 
-  img {
-    width: 100px;
+  .truck {
+    min-width: 100px;
+    max-width: 100px;
+    width: 100%;
     height: 100%;
     object-fit: cover;
   }
@@ -20,7 +22,6 @@ const WrapCard = styled.div`
 
 const TextDiv = styled.div`
   width: 100%;
-  align-items: center;
 
   .title {
     color: #000000;
@@ -49,15 +50,20 @@ const TextDiv = styled.div`
   }
 `;
 
-const FoodTruckCard = ({ onClick, content }) => {
+const FoodTruckCard = ({
+  foodTruckImage,
+  foodTruckName,
+  description,
+  onClick,
+}) => {
   return (
     <WrapCard onClick={onClick}>
-      <img src={content.img} alt="food truck" />
+      <img className="truck" src={foodTruckImage} alt="food truck" />
       <TextDiv>
-        <div className="title">{content.title}</div>
+        <div className="title">{foodTruckName}</div>
         <div className="menus">
           <img src="/assets/festival/icon-truck.svg" alt="truck icon" />
-          {content.foods}
+          <div>{description}</div>
         </div>
         <br />
       </TextDiv>

@@ -70,10 +70,10 @@ const Header = () => {
             <Major>{myData.department}</Major>
           </TextDiv>
           <TagContainer>
-            {myData.memberHobbyDto.map((hobby, index) => (
+            {myData?.memberHobbyDto?.map((hobby, index) => (
               <Badge key={index}>#{hobby.hobby}</Badge>
             ))}
-            {myData.memberTagDto.map((tag, index) => (
+            {myData?.memberTagDto?.map((tag, index) => (
               <Badge key={index}>#{tag.tag}</Badge>
             ))}
           </TagContainer>

@@ -2,51 +2,15 @@ import React, { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import TabBar from '../components/common/TabBar';
 import styled from 'styled-components';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isLoggedInState } from '../store/auth';
-import { instance } from '../api/instance';
 import toast, { Toaster } from 'react-hot-toast';
-import { myDataState } from '../store/myData';
 import { onMessage } from 'firebase/messaging';
 import { messaging } from '../firebaseConfig';
 import PWAInstallPrompt from '../components/common/PWAInstallPrompt';
 
 const NavLayout = () => {
-  const setMyData = useSetRecoilState(myDataState);
-  const isLoggedIn = useRecoilValue(isLoggedInState);
   const navigate = useNavigate();
   const userAgent = navigator.userAgent.toLowerCase();
   const isIphone = userAgent.includes('iphone');
-
-  const getMemberId = async () => {
-    await instance
-      .get('/member/id')
-      .then((res) => {
-        localStorage.setItem('memberId', res.data);
-      })
-      .catch((err) => {
-        toast.error('회원 정보를 가져오는데 실패했어요!', {
-          id: 'member-id-error',
-          position: 'bottom-center',
-        });
-        console.log(err);
-      });
-  };
-
-  const getMyData = async () => {
-    await instance
-      .get('/member/profile')
-      .then((res) => {
-        setMyData(res.data);
-      })
-      .catch((err) => {
-        toast.error('프로필 정보를 가져오는데 실패했어요!', {
-          id: 'my-data-error',
-          position: 'bottom-center',
-        });
-        console.log(err);
-      });
-  };
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
@@ -103,17 +67,6 @@ const NavLayout = () => {
       });
     }
   }, []);
-
-  useEffect(() => {
-    if (!isLoggedIn) return;
-
-    const fetchMemberIdAndMyData = async () => {
-      await getMemberId();
-      await getMyData();
-    };
-
-    fetchMemberIdAndMyData();
-  }, [isLoggedIn]);
 
   return (
     <>
