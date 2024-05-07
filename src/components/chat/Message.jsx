@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { parseTime } from '../../utils/parseTime';
 import Button from '../common/Button';
@@ -27,13 +27,23 @@ const Message = memo(
   }) => {
     const navigate = useNavigate();
 
+    // const isValidUrl = (url) => {
+    //   try {
+    //     new URL(url);
+    //     return true;
+    //   } catch (e) {
+    //     return false;
+    //   }
+    // };
+
     const isValidUrl = (url) => {
-      try {
-        new URL(url);
+      if (
+        url.includes('https://dis-tance.com') ||
+        url.includes('https://alpha.dis-tance.com')
+      ) {
         return true;
-      } catch (e) {
-        return false;
       }
+      return false;
     };
 
     switch (senderType) {
@@ -166,23 +176,9 @@ const Message = memo(
               <div className="tail"></div>
               <div className="message">
                 {isValidUrl(content) ? (
-                  content.startsWith('https://dis-tance.com') ? (
-                    <div
-                      className="link"
-                      onClick={() => {
-                        const url = new URL(content);
-                        navigate(url.pathname);
-                      }}
-                    >
-                      {content}
-                    </div>
-                  ) : (
-                    <a href={content} target="_blank" rel="noopener noreferrer">
-                      {content}
-                    </a>
-                  )
+                  <LinkByMe to={content.split('.com')[1]} />
                 ) : (
-                  content
+                  { content }
                 )}
               </div>
             </div>
@@ -205,25 +201,9 @@ const Message = memo(
                 <div className="tail"></div>
                 <div className="message">
                   {isValidUrl(content) ? (
-                    content.startsWith('https://dis-tance.com') ? (
-                      <a
-                        href={content}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {content}
-                      </a>
-                    ) : (
-                      <a
-                        href={content}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {content}
-                      </a>
-                    )
+                    <LinkByOpponent to={content.split('.com')[1]} />
                   ) : (
-                    content
+                    { content }
                   )}
                 </div>
                 <div className="wrapper">
@@ -239,6 +219,14 @@ const Message = memo(
     }
   }
 );
+
+const LinkByMe = styled(Link)`
+  color: white;
+`;
+
+const LinkByOpponent = styled(Link)`
+  color: black;
+`;
 
 const Announcement = styled.div`
   display: flex;
@@ -322,7 +310,7 @@ const MessageByOther = styled.div`
         word-break: break-word;
 
         a {
-          color: white;
+          color: black;
         }
       }
 
