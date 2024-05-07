@@ -99,9 +99,7 @@ const FoodTruckPage = () => {
                   </div>
                   <div className="menu-info">
                     <div className="name">{menu.menu}</div>
-                    <div className="price">
-                      {menu.price?.toLocaleString()}원
-                    </div>
+                    <div className="price">{menu.price}</div>
                   </div>
                 </MenuCard>
               ))}
