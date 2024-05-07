@@ -1,5 +1,4 @@
 import React, { memo } from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { parseTime } from '../../utils/parseTime';
 import Button from '../common/Button';
@@ -25,25 +24,6 @@ const Message = memo(
     openProfileModal,
     opponentMemberCharacter,
   }) => {
-    // const isValidUrl = (url) => {
-    //   try {
-    //     new URL(url);
-    //     return true;
-    //   } catch (e) {
-    //     return false;
-    //   }
-    // };
-
-    const isValidUrl = (url) => {
-      if (
-        url.includes('https://dis-tance.com/') ||
-        url.includes('https://alpha.dis-tance.com/')
-      ) {
-        return true;
-      }
-      return false;
-    };
-
     switch (senderType) {
       case 'SYSTEM':
         return (
@@ -172,15 +152,7 @@ const Message = memo(
                 <div className="time">{parseTime(time)}</div>
               </div>
               <div className="tail"></div>
-              <div className="message">
-                {isValidUrl(content) ? (
-                  <LinkByMe to={content.split('.com').at(-1)}>
-                    {content}
-                  </LinkByMe>
-                ) : (
-                  content
-                )}
-              </div>
+              <div className="message">{content}</div>
             </div>
           </MessageByMe>
         ) : (
@@ -199,15 +171,7 @@ const Message = memo(
               <div className="nickname">{nickname}</div>
               <div className="message-container">
                 <div className="tail"></div>
-                <div className="message">
-                  {isValidUrl(content) ? (
-                    <LinkByOpponent to={content.split('.com').at(-1)}>
-                      {content}
-                    </LinkByOpponent>
-                  ) : (
-                    content
-                  )}
-                </div>
+                <div className="message">{content}</div>
                 <div className="wrapper">
                   <div className="read">{read !== 0 ? read : ''}</div>
                   <div className="time">{parseTime(time)}</div>
@@ -221,14 +185,6 @@ const Message = memo(
     }
   }
 );
-
-const LinkByMe = styled(Link)`
-  color: white;
-`;
-
-const LinkByOpponent = styled(Link)`
-  color: black;
-`;
 
 const Announcement = styled.div`
   display: flex;
