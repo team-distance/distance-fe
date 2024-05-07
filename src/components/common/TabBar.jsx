@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { tabState } from '../../store/tabState';
 
@@ -13,10 +13,9 @@ const BottomNavBar = () => {
   const userAgent = navigator.userAgent.toLowerCase();
   const isIphone = userAgent.includes('iphone');
 
-  const [tabMenuState, setTabMenuState] = useRecoilState(tabState);
+  const setTabMenuState = useSetRecoilState(tabState);
 
   useEffect(() => {
-    console.log('tab>>>>>>>>>>', tabMenuState);
     setCurrentPage(location.pathname);
   }, [location]);
 

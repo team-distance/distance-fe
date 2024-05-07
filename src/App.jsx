@@ -12,11 +12,7 @@ import NavLayout from './layouts/NavLayout';
 import LoginPage from './pages/root/LoginPage';
 import ProfileEditPage from './pages/mypage/ProfileEditPage';
 import ChatInboxPage from './pages/chat/ChatInboxPage';
-import FestivalDetailPage0 from './pages/festival/FestivalDetailPage0';
 import Program from './components/festival/Program';
-import FestivalDetailPage1 from './pages/festival/FestivalDetailPage1';
-import FestivalDetailPage2 from './pages/festival/FestivalDetailPage2';
-import FestivalDetailPage3 from './pages/festival/FestivalDetailPage3';
 import VerifyMobileIdPage from './pages/verify/VerifyMobileIdPage';
 import VerifyOptionsPage from './pages/verify/VerifyOptionsPage';
 import VerifyEmailPage from './pages/verify/VerifyEmailPage';
@@ -189,11 +185,6 @@ function App() {
       <Route path="/mypage/profile" element={<ProfileEditPage />} />
       <Route path="/mypage/account" element={<AccountEditPage />} />
       <Route path="/mypage/account/dropout" element={<DropoutPage />} />
-
-      <Route path="/festival/detail/0" element={<FestivalDetailPage0 />} />
-      <Route path="/festival/detail/1" element={<FestivalDetailPage1 />} />
-      <Route path="/festival/detail/2" element={<FestivalDetailPage2 />} />
-      <Route path="/festival/detail/3" element={<FestivalDetailPage3 />} />
 
       <Route path="/festival/foodtruck/:id" element={<FoodTruckPage />} />
 

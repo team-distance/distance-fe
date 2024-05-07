@@ -110,35 +110,36 @@ const ProfileEditPage = () => {
   }, []);
 
   return (
-    <div>
+    <Wrapper>
       <Toaster position="bottom-center" />
       <WrapContent>
-        <HeaderPrev title="프로필 수정하기" navigateTo={-1} />
-        <Label>캐릭터 선택하기</Label>
-
-        <ProfileContainer onClick={openCharacterModal}>
-          <img
-            className="side-image-left"
-            src="/assets/profile-register-leftimg.png"
-            alt="profile register button"
-          />
-          {selectedAnimal === '' ? (
+        <div>
+          <HeaderPrev title="프로필 수정하기" navigateTo={-1} />
+          <Label>캐릭터 선택하기</Label>
+          <ProfileContainer onClick={openCharacterModal}>
             <img
-              src="/assets/profile-register-plusbutton.png"
+              className="side-image-left"
+              src="/assets/profile-register-leftimg.png"
               alt="profile register button"
             />
-          ) : (
+            {selectedAnimal === '' ? (
+              <img
+                src="/assets/profile-register-plusbutton.png"
+                alt="profile register button"
+              />
+            ) : (
+              <img
+                src={CHOOSE_CHARACTERS[selectedAnimal]}
+                alt="selected profile"
+              />
+            )}
             <img
-              src={CHOOSE_CHARACTERS[selectedAnimal]}
-              alt="selected profile"
+              className="side-image-right"
+              src="/assets/profile-register-rightimg.png"
+              alt="profile register button"
             />
-          )}
-          <img
-            className="side-image-right"
-            src="/assets/profile-register-rightimg.png"
-            alt="profile register button"
-          />
-        </ProfileContainer>
+          </ProfileContainer>
+        </div>
 
         <BlankModal ref={characterModalRef}>
           <ModalTitle>
@@ -187,7 +188,7 @@ const ProfileEditPage = () => {
               </Badge>
             ))}
           </BadgeContainer>
-
+          <br />
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div>저는 이런 취미가 있어요!</div>
             <AddButton onClick={openHobbyModal}>+ 추가하기</AddButton>
@@ -276,9 +277,14 @@ const ProfileEditPage = () => {
           수정하기
         </Button>
       </WrapContent>
-    </div>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  max-height: 100vh;
+  overflow-y: scroll;
+`;
 
 const Badge = styled.div`
   height: fit-content;
@@ -296,7 +302,6 @@ const BadgeContainer = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   background-image: linear-gradient(180deg, #fff 0%, #f2f2f2 100%);
-  margin-bottom: 1.5rem;
 `;
 
 const WrapContent = styled.div`
@@ -350,7 +355,6 @@ const ProfileContainer = styled.div`
   display: flex;
   align-items: baseline;
   justify-content: center;
-  padding-top: 1rem;
   position: relative;
   width: 100%;
 
