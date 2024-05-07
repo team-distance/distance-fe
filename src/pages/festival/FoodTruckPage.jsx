@@ -99,7 +99,12 @@ const FoodTruckPage = () => {
                   </div>
                   <div className="menu-info">
                     <div className="name">{menu.menu}</div>
-                    <div className="price">{menu.price}</div>
+                    {menu.price.split(',').map((m, index) => (
+                      <div key={index} className="price">
+                        {m}
+                        <br />
+                      </div>
+                    ))}
                   </div>
                 </MenuCard>
               ))}
