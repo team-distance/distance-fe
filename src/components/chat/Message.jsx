@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { parseTime } from '../../utils/parseTime';
 import Button from '../common/Button';
@@ -25,8 +25,6 @@ const Message = memo(
     openProfileModal,
     opponentMemberCharacter,
   }) => {
-    const navigate = useNavigate();
-
     // const isValidUrl = (url) => {
     //   try {
     //     new URL(url);
@@ -38,8 +36,8 @@ const Message = memo(
 
     const isValidUrl = (url) => {
       if (
-        url.includes('https://dis-tance.com') ||
-        url.includes('https://alpha.dis-tance.com')
+        url.includes('https://dis-tance.com/') ||
+        url.includes('https://alpha.dis-tance.com/')
       ) {
         return true;
       }
@@ -176,9 +174,11 @@ const Message = memo(
               <div className="tail"></div>
               <div className="message">
                 {isValidUrl(content) ? (
-                  <LinkByMe to={content.split('.com')[1]} />
+                  <LinkByMe to={content.split('.com').at(-1)}>
+                    {content}
+                  </LinkByMe>
                 ) : (
-                  { content }
+                  content
                 )}
               </div>
             </div>
@@ -201,9 +201,11 @@ const Message = memo(
                 <div className="tail"></div>
                 <div className="message">
                   {isValidUrl(content) ? (
-                    <LinkByOpponent to={content.split('.com')[1]} />
+                    <LinkByOpponent to={content.split('.com').at(-1)}>
+                      {content}
+                    </LinkByOpponent>
                   ) : (
-                    { content }
+                    content
                   )}
                 </div>
                 <div className="wrapper">
