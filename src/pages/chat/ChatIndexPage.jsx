@@ -191,6 +191,19 @@ const ChatIndexPage = () => {
                 );
               })
             )}
+            <SurveyLinkContainer
+              onClick={() => window.open('https://forms.gle/6ZgZvLD2iSM5LVuEA')}
+            >
+              <SurveyContentBox>
+                <img src={'/assets/chicken.png'} alt="chicken" />
+                <div>
+                  <div className="big-font">
+                    <em>설문</em>하고 <br />
+                  </div>
+                  치킨받으러가기
+                </div>
+              </SurveyContentBox>
+            </SurveyLinkContainer>
           </>
         )
       ) : (
@@ -361,6 +374,46 @@ const EmptyContainer = styled.div`
       text-align: center;
       font-size: 18px;
       font-weight: 700;
+    }
+  }
+`;
+
+const SurveyLinkContainer = styled.div`
+  width: 100%;
+  height: 80px;
+  position: absolute;
+  bottom: 15%;
+  left: 0;
+  right: 0;
+  background-color: #f3f3f3;
+  text-decoration: none;
+  color: black;
+
+  display: flex;
+`;
+
+const SurveyContentBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 200;
+
+  img {
+    height: 80px;
+  }
+  div {
+    padding-right: 3rem;
+
+    .big-font {
+      font-size: 1.5rem;
+    }
+
+    em {
+      font-style: normal;
+      font-weight: 600;
     }
   }
 `;

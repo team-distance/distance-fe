@@ -130,7 +130,7 @@ const HomeIndexPage = () => {
   const alertTextList = [
     {
       text1: '📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입',
-      em: '200건 돌파',
+      em: '400건 돌파',
       text2: '',
     },
     {
