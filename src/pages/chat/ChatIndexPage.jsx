@@ -191,7 +191,9 @@ const ChatIndexPage = () => {
                 );
               })
             )}
-            <SurveyLinkContainer to={'https://forms.gle/6ZgZvLD2iSM5LVuEA'}>
+            <SurveyLinkContainer
+              onClick={() => window.open('https://forms.gle/6ZgZvLD2iSM5LVuEA')}
+            >
               <SurveyContentBox>
                 <img src={'/assets/chicken.png'} alt="chicken" />
                 <div>
@@ -376,7 +378,7 @@ const EmptyContainer = styled.div`
   }
 `;
 
-const SurveyLinkContainer = styled(Link)`
+const SurveyLinkContainer = styled.div`
   width: 100%;
   height: 80px;
   position: absolute;
