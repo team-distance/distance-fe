@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../components/common/Header';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import { parseTime } from '../../utils/parseTime';
 import { CHARACTERS, COLORS } from '../../constants/character';
@@ -191,7 +191,7 @@ const ChatIndexPage = () => {
                 );
               })
             )}
-            <SurveyContainer>
+            <SurveyLinkContainer to={'https://forms.gle/6ZgZvLD2iSM5LVuEA'}>
               <SurveyContentBox>
                 <img src={'/assets/chicken.png'} alt="chicken" />
                 <div>
@@ -201,7 +201,7 @@ const ChatIndexPage = () => {
                   치킨받으러가기
                 </div>
               </SurveyContentBox>
-            </SurveyContainer>
+            </SurveyLinkContainer>
           </>
         )
       ) : (
@@ -376,13 +376,15 @@ const EmptyContainer = styled.div`
   }
 `;
 
-const SurveyContainer = styled.div`
+const SurveyLinkContainer = styled(Link)`
   width: 100%;
   height: 10%;
   position: absolute;
   bottom: 15%;
   left: 0;
   background-color: #f3f3f3;
+  text-decoration: none;
+  color: black;
 `;
 
 const SurveyContentBox = styled.div`
