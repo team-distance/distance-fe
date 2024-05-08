@@ -378,13 +378,16 @@ const EmptyContainer = styled.div`
 
 const SurveyLinkContainer = styled(Link)`
   width: 100%;
-  height: 10%;
+  height: 80px;
   position: absolute;
   bottom: 15%;
   left: 0;
+  right: 0;
   background-color: #f3f3f3;
   text-decoration: none;
   color: black;
+
+  display: flex;
 `;
 
 const SurveyContentBox = styled.div`
@@ -392,11 +395,12 @@ const SurveyContentBox = styled.div`
   align-items: center;
   justify-content: space-between;
 
+  width: 100%;
   font-size: 1rem;
   font-weight: 200;
 
   img {
-    width: 50%;
+    height: 80px;
   }
   div {
     padding-right: 3rem;
