@@ -5,7 +5,6 @@ import { instance } from '../../api/instance';
 import Button from '../../components/common/Button';
 import TextInput from '../../components/register/TextInput';
 import toast, { Toaster } from 'react-hot-toast';
-import Dropdown from '../../components/register/Dropdown';
 import { useEffect } from 'react';
 
 const VerifyEmailPage = () => {
