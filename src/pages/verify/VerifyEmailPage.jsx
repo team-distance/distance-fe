@@ -6,13 +6,11 @@ import Button from '../../components/common/Button';
 import TextInput from '../../components/register/TextInput';
 import toast, { Toaster } from 'react-hot-toast';
 import Dropdown from '../../components/register/Dropdown';
-import { SCHOOL_EMAIL } from '../../constants/schoolEmail';
 import { useEffect } from 'react';
 
 const VerifyEmailPage = () => {
   const navigate = useNavigate();
 
-  const [university, setUniversity] = useState('');
   const [schoolEmail, setSchoolEmail] = useState('');
   const [domain, setDomain] = useState('');
   const [verifyNum, setVerifyNum] = useState('');
@@ -85,14 +83,20 @@ const VerifyEmailPage = () => {
   };
 
   useEffect(() => {
-    setDomain(
-      SCHOOL_EMAIL.filter((item) => item.name === university)
-        .flatMap(({ email }) => email)
-        .toString()
-    );
-  }, [university]);
+    const getDomain = async () => {
+      try {
+        const res = await instance.get('/univ/check/univ-domain');
+        setDomain(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getDomain();
+  }, []);
 
-  const UNIVERSITY_PLACEHOLDER = '대학을 선택해주세요.';
+  useEffect(() => {
+    console.log(domain);
+  }, [domain]);
 
   return (
     <WrapContent>
@@ -104,15 +108,6 @@ const VerifyEmailPage = () => {
         </p>
       </div>
 
-      <Dropdown
-        label="대학교"
-        name="university"
-        placeholder={UNIVERSITY_PLACEHOLDER}
-        types={SCHOOL_EMAIL.map((item) => item.name)}
-        value={university}
-        setValue={setUniversity}
-      />
-
       <div>
         <Label>학생메일 인증하기</Label>
         <InputWrapper>
@@ -123,7 +118,7 @@ const VerifyEmailPage = () => {
             onChange={handleChangeEmail}
             placeholder="@ 앞 글자만 입력"
           />
-          <SCHDomain>{domain}</SCHDomain>
+          <SchoolDomain>{domain}</SchoolDomain>
           <div>
             <Button size="small" disabled={emailDisabled} onClick={sendEmail}>
               메일 보내기
@@ -226,7 +221,7 @@ const InputWrapper = styled.div`
   }
 `;
 
-const SCHDomain = styled.div`
+const SchoolDomain = styled.div`
   margin-right: 1rem;
   font-weight: 600;
   color: #777;
