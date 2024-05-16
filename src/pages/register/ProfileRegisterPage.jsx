@@ -57,6 +57,7 @@ const ProfileRegisterPage = () => {
       .post('/member/signup', {
         telNum: registerData.telNum,
         password: registerData.password,
+        school: registerData.school,
         college: registerData.college,
         department: registerData.department,
         gender: registerData.gender,

@@ -10,14 +10,14 @@ import { UNIV_STATE } from '../../constants/collegeState';
 
 const UnivRegisterPage = () => {
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
-  const [university, setUniversity] = useState('');
+  const [school, setSchool] = useState('');
   const [college, setCollege] = useState('');
   const [department, setDepartment] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    setRegisterData((prev) => ({ ...prev, university, college, department }));
-  }, [university, college, department]);
+    setRegisterData((prev) => ({ ...prev, school, college, department }));
+  }, [school, college, department]);
 
   // 새로고침하여 데이터가 사라졌을 때, 다시 회원가입 페이지로 이동
   useEffect(() => {
@@ -34,13 +34,14 @@ const UnivRegisterPage = () => {
 
   useEffect(() => {
     setCollege('');
-  }, [university]);
+  }, [school]);
 
   useEffect(() => {
     setDepartment('');
   }, [college]);
 
-  const isDisabled = !registerData.college || !registerData.department;
+  const isDisabled =
+    !registerData.school || !registerData.college || !registerData.department;
 
   const UNIVERSITY_PLACEHOLDER = '대학을 선택해주세요.';
   const COLLEGE_PLACEHOLDER = '단과대학을 선택해주세요.';
@@ -56,17 +57,17 @@ const UnivRegisterPage = () => {
       <WrapContent>
         <Dropdown
           label="대학교"
-          name="university"
+          name="school"
           placeholder={UNIVERSITY_PLACEHOLDER}
           types={UNIV_STATE.map((item) => item.name)}
-          value={university}
-          setValue={setUniversity}
+          value={school}
+          setValue={setSchool}
         />
         <Dropdown
           label="단과대학"
           name="college"
           placeholder={COLLEGE_PLACEHOLDER}
-          types={UNIV_STATE.filter(({ name }) => name === university).flatMap(
+          types={UNIV_STATE.filter(({ name }) => name === school).flatMap(
             ({ state }) => state.map(({ college }) => college)
           )}
           value={college}

@@ -7,6 +7,7 @@ export const registerDataState = atom({
     verifyNum: '',
     password: '',
     gender: '',
+    school: '',
     college: '',
     department: '',
     mbti: '',
