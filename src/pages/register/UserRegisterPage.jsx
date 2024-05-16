@@ -125,6 +125,11 @@ const UserRegisterPage = () => {
         containerStyle={{
           bottom: 104,
         }}
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
       />
       <WrapHeader>
         <ProgressBar progress={1} />

@@ -53,7 +53,14 @@ const DropoutPage = () => {
 
   return (
     <>
-      <Toaster position="bottom-center" />
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
+      />
       <WrapContent>
         <HeaderPrev
           title="회원 탈퇴"

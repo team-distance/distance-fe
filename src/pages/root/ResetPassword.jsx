@@ -118,7 +118,14 @@ const ResetPassword = () => {
 
   return (
     <>
-      <Toaster position="bottom-center" />
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
+      />
       <WrapForm onSubmit={handleSubmit}>
         <WrapContent>
           <h2>비밀번호 재설정하기</h2>

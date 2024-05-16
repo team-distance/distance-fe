@@ -146,7 +146,14 @@ const ProfileRegisterPage = () => {
 
   return (
     <div>
-      <Toaster position="bottom-center" />
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
+      />
       <WrapHeader>
         <ProgressBar progress={4} />
         <p>프로필을 등록해주세요</p>

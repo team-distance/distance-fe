@@ -83,7 +83,14 @@ const VerifyEmailPage = () => {
 
   return (
     <WrapContent>
-      <Toaster position="bottom-center" />
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
+      />
       <div>
         <h2>'학생 메일'로 인증하기</h2>
         <p>
