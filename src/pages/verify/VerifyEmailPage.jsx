@@ -5,11 +5,16 @@ import { instance } from '../../api/instance';
 import Button from '../../components/common/Button';
 import TextInput from '../../components/register/TextInput';
 import toast, { Toaster } from 'react-hot-toast';
+import Dropdown from '../../components/register/Dropdown';
+import { SCHOOL_EMAIL } from '../../constants/schoolEmail';
+import { useEffect } from 'react';
 
 const VerifyEmailPage = () => {
   const navigate = useNavigate();
 
+  const [university, setUniversity] = useState('');
   const [schoolEmail, setSchoolEmail] = useState('');
+  const [domain, setDomain] = useState('');
   const [verifyNum, setVerifyNum] = useState('');
   const [emailDisabled, setEmailDisabled] = useState(true);
   const [verifyDisabled, setVerifyDisabled] = useState(true);
@@ -37,17 +42,15 @@ const VerifyEmailPage = () => {
   };
 
   const sendEmail = async () => {
-    let baseEmail = schoolEmail.replace(/@sch\.ac\.kr/g, '');
+    let baseEmail = schoolEmail.replace(/@.*/, '');
     setSchoolEmail(baseEmail);
-
-    const fullEmail = schoolEmail.endsWith('@sch.ac.kr')
+    const fullEmail = schoolEmail.endsWith(domain)
       ? schoolEmail
-      : `${schoolEmail}@sch.ac.kr`;
+      : baseEmail + domain;
 
     const response = instance.post('/univ/send/email', {
       schoolEmail: fullEmail,
     });
-
     toast.promise(response, {
       loading: '전송 중...',
       success: () => {
@@ -72,7 +75,7 @@ const VerifyEmailPage = () => {
         number: verifyNum.trim(),
         schoolEmail: schoolEmail.includes('@')
           ? schoolEmail
-          : schoolEmail + '@sch.ac.kr',
+          : schoolEmail + domain,
       });
       alert('인증되었습니다.');
       navigate('/');
@@ -80,6 +83,16 @@ const VerifyEmailPage = () => {
       toast.error('인증번호가 일치하지 않습니다.');
     }
   };
+
+  useEffect(() => {
+    setDomain(
+      SCHOOL_EMAIL.filter((item) => item.name === university)
+        .flatMap(({ email }) => email)
+        .toString()
+    );
+  }, [university]);
+
+  const UNIVERSITY_PLACEHOLDER = '대학을 선택해주세요.';
 
   return (
     <WrapContent>
@@ -91,6 +104,15 @@ const VerifyEmailPage = () => {
         </p>
       </div>
 
+      <Dropdown
+        label="대학교"
+        name="university"
+        placeholder={UNIVERSITY_PLACEHOLDER}
+        types={SCHOOL_EMAIL.map((item) => item.name)}
+        value={university}
+        setValue={setUniversity}
+      />
+
       <div>
         <Label>학생메일 인증하기</Label>
         <InputWrapper>
@@ -101,7 +123,7 @@ const VerifyEmailPage = () => {
             onChange={handleChangeEmail}
             placeholder="@ 앞 글자만 입력"
           />
-          <SCHDomain>@sch.ac.kr</SCHDomain>
+          <SCHDomain>{domain}</SCHDomain>
           <div>
             <Button size="small" disabled={emailDisabled} onClick={sendEmail}>
               메일 보내기

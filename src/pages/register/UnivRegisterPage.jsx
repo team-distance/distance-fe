@@ -21,15 +21,15 @@ const UnivRegisterPage = () => {
 
   // 새로고침하여 데이터가 사라졌을 때, 다시 회원가입 페이지로 이동
   useEffect(() => {
-    // if (
-    //   !registerData.agreeTerms ||
-    //   !registerData.agreePrivacy ||
-    //   registerData.telNum === '' ||
-    //   registerData.verifyNum === '' ||
-    //   registerData.password === ''
-    // ) {
-    //   navigate('/register/user');
-    // }
+    if (
+      !registerData.agreeTerms ||
+      !registerData.agreePrivacy ||
+      registerData.telNum === '' ||
+      registerData.verifyNum === '' ||
+      registerData.password === ''
+    ) {
+      navigate('/register/user');
+    }
   }, []);
 
   useEffect(() => {
