@@ -56,7 +56,14 @@ const DonePage = () => {
 
   return (
     <Background>
-      <Toaster position="bottom-center" />
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
+      />
       <WrapContent>
         <WrapMessage>
           <div style={{ fontSize: '60px' }}>🎊</div>

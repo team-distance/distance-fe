@@ -111,7 +111,14 @@ const ProfileEditPage = () => {
 
   return (
     <Wrapper>
-      <Toaster position="bottom-center" />
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
+      />
       <WrapContent>
         <div>
           <HeaderPrev title="프로필 수정하기" navigateTo={-1} />

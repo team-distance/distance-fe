@@ -367,6 +367,11 @@ const ChatPage = () => {
     <Wrapper>
       <Toaster
         position="bottom-center"
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
         containerStyle={{
           bottom: 104,
         }}

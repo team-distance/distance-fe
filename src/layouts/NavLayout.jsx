@@ -76,6 +76,11 @@ const NavLayout = () => {
       </Padding>
       <TabBar />
       <Toaster
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
         containerStyle={{
           bottom: isIphone ? '116px' : '96px',
         }}
