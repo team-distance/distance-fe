@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Header from '../../components/common/Header';
 import { instance } from '../../api/instance';
 import { useNavigate } from 'react-router-dom';
 import { CHARACTERS, COLORS } from '../../constants/character';
 import Badge from '../../components/common/Badge';
 
-/**
- * @todo 채팅 요청함 API 응답 수정되면 myRoomName을 department, mbti로 수정
- */
 const ChatInboxPage = () => {
   const [inboxList, setInboxList] = useState([]);
   const navigate = useNavigate();
@@ -73,8 +69,7 @@ const ChatInboxPage = () => {
   }, []);
 
   return (
-    <PagePadding>
-      <Header />
+    <>
       <Title>요청함</Title>
       {inboxList.length !== 0 ? (
         inboxList.map((inbox) => {
@@ -135,15 +130,11 @@ const ChatInboxPage = () => {
           </div>
         </EmptyContainer>
       )}
-    </PagePadding>
+    </>
   );
 };
 
 export default ChatInboxPage;
-
-const PagePadding = styled.div`
-  padding: 2rem 1.5rem;
-`;
 
 const InboxContainer = styled.div`
   display: flex;
