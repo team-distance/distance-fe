@@ -10,6 +10,7 @@ import { useEffect, useRef } from 'react';
 import Badge from './Badge';
 import { instance } from '../../api/instance';
 import toast from 'react-hot-toast';
+import AuthUnivState from './AuthUnivState';
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
@@ -55,14 +56,20 @@ const Header = () => {
       <WrapHeader>
         <img src="/assets/logo-pink.png" alt="디스턴스 로고" />
         {isLoggedIn ? (
-          <ProfileIcon
-            $character={myData.memberCharacter}
-            onClick={() => {
-              modalRef.current.open();
-            }}
-          >
-            <img src={CHARACTERS[myData.memberCharacter]} alt="프로필 이미지" />
-          </ProfileIcon>
+          <ProfileWrapper>
+            <AuthUnivState />
+            <ProfileIcon
+              $character={myData.memberCharacter}
+              onClick={() => {
+                modalRef.current.open();
+              }}
+            >
+              <img
+                src={CHARACTERS[myData.memberCharacter]}
+                alt="프로필 이미지"
+              />
+            </ProfileIcon>
+          </ProfileWrapper>
         ) : (
           <StyledLink to="/login">로그인</StyledLink>
         )}
@@ -115,6 +122,12 @@ const WrapHeader = styled.header`
   img {
     width: 8rem;
   }
+`;
+
+const ProfileWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 `;
 
 const StyledLink = styled(Link)`
