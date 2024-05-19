@@ -42,6 +42,7 @@ const Modal = forwardRef(
         },
         close() {
           dialog.current.close();
+          document.body.style = `overflow: scroll`;
         },
         scrollToTop() {
           dialog.current.scrollTo(0, 0);
