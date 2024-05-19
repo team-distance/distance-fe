@@ -14,7 +14,7 @@ const Program = () => {
     const getDomain = async () => {
       try {
         const res = await instance.get('/univ/check/univ-domain');
-        UNIV_STATE.map((univ) => {
+        UNIV_STATE.forEach((univ) => {
           if (res.data.includes(univ.id)) setSchool(univ.name);
         });
       } catch (error) {
@@ -53,24 +53,6 @@ const Program = () => {
             {programList.map(
               (program) =>
                 program.startAt.startsWith('2024-05-07') && (
-                  <ProgramCard key={program.artistId} content={program} />
-                )
-            )}
-          </WrapCards>
-          <Date className="cardsDate">5월 8일</Date>
-          <WrapCards>
-            {programList.map(
-              (program) =>
-                program.startAt.startsWith('2024-05-08') && (
-                  <ProgramCard key={program.artistId} content={program} />
-                )
-            )}
-          </WrapCards>
-          <Date className="cardsDate">5월 9일</Date>
-          <WrapCards>
-            {programList.map(
-              (program) =>
-                program.startAt.startsWith('2024-05-09') && (
                   <ProgramCard key={program.artistId} content={program} />
                 )
             )}
