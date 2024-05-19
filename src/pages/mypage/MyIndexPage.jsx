@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../components/common/Header';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
 import { myDataState } from '../../store/myData';
@@ -29,8 +28,7 @@ const MyIndexPage = () => {
   };
 
   return (
-    <MyPageContainer>
-      <Header />
+    <>
       {isLoggedIn ? (
         <>
           <WrapMenu>
@@ -123,15 +121,11 @@ const MyIndexPage = () => {
           </div>
         </EmptyContainer>
       )}
-    </MyPageContainer>
+    </>
   );
 };
 
 export default MyIndexPage;
-
-const MyPageContainer = styled.section`
-  padding: 2rem 1.5rem;
-`;
 
 const WrapMenu = styled.nav`
   padding: 1.5rem 0;

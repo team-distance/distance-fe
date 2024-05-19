@@ -5,7 +5,6 @@ import { instance } from '../../api/instance';
 import ClipLoader from 'react-spinners/ClipLoader';
 
 import { CHARACTERS, COLORS } from '../../constants/character';
-import Header from '../../components/common/Header';
 import Profile from '../../components/home/Profile';
 import Modal from '../../components/common/Modal';
 import { useNavigate } from 'react-router-dom';
@@ -128,11 +127,11 @@ const HomeIndexPage = () => {
   };
 
   const alertTextList = [
-    {
-      text1: '📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입',
-      em: '400건 돌파',
-      text2: '',
-    },
+    // {
+    //   text1: '📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입',
+    //   em: '400건 돌파',
+    //   text2: '',
+    // },
     {
       text1: '📢 채팅방에서 새로 업데이트 된 👤',
       em: '상대방 프로필 조회 기능',
@@ -147,41 +146,38 @@ const HomeIndexPage = () => {
 
   return (
     <>
-      <HomeContainer>
-        <Header />
-        <Banner alertText={alertTextList} />
-        {memberState && memberState.length === 0 ? (
-          <EmptyContainer>
-            <div className="wrap">
-              <img src={'/assets/empty-home.svg'} alt="empty icon" />
-              <div>현재 근처에 있는 사람이 없어요!</div>
-            </div>
-          </EmptyContainer>
-        ) : (
-          <ProfileContainer>
-            {loading ? (
-              <LoaderContainer>
-                <ClipLoader color={'#FF625D'} loading={loading} size={50} />
-              </LoaderContainer>
-            ) : (
-              memberState &&
-              memberState.map((profile, index) => (
-                <Profile
-                  key={index}
-                  profile={profile}
-                  onClick={() => handleSelectProfile(profile)}
-                />
-              ))
-            )}
-          </ProfileContainer>
-        )}
-        <ReloadButton onClick={reloadMembers} disabled={isReloadButtonDisabled}>
-          {isReloadButtonDisabled && (
-            <div className="time-remaining">{remainingTimeToReload}</div>
+      <Banner alertText={alertTextList} />
+      {memberState && memberState.length === 0 ? (
+        <EmptyContainer>
+          <div className="wrap">
+            <img src={'/assets/empty-home.svg'} alt="empty icon" />
+            <div>현재 근처에 있는 사람이 없어요!</div>
+          </div>
+        </EmptyContainer>
+      ) : (
+        <ProfileContainer>
+          {loading ? (
+            <LoaderContainer>
+              <ClipLoader color={'#FF625D'} loading={loading} size={50} />
+            </LoaderContainer>
+          ) : (
+            memberState &&
+            memberState.map((profile, index) => (
+              <Profile
+                key={index}
+                profile={profile}
+                onClick={() => handleSelectProfile(profile)}
+              />
+            ))
           )}
-          <img src="/assets/home/reload-button.png" alt="Reload button" />
-        </ReloadButton>
-      </HomeContainer>
+        </ProfileContainer>
+      )}
+      <ReloadButton onClick={reloadMembers} disabled={isReloadButtonDisabled}>
+        {isReloadButtonDisabled && (
+          <div className="time-remaining">{remainingTimeToReload}</div>
+        )}
+        <img src="/assets/home/reload-button.png" alt="Reload button" />
+      </ReloadButton>
 
       <Modal
         ref={profileModal}
@@ -224,10 +220,6 @@ const HomeIndexPage = () => {
     </>
   );
 };
-
-const HomeContainer = styled.section`
-  padding: 2rem 1.5rem;
-`;
 
 const ProfileContainer = styled.div`
   display: grid;

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../../components/common/Header';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
@@ -117,9 +116,7 @@ const ChatIndexPage = () => {
   };
 
   return (
-    <PagePadding>
-      <Header />
-
+    <>
       {isLoggedIn ? (
         loading ? (
           <LoaderContainer>
@@ -214,13 +211,9 @@ const ChatIndexPage = () => {
           </div>
         </EmptyContainer>
       )}
-    </PagePadding>
+    </>
   );
 };
-
-const PagePadding = styled.div`
-  padding: 2rem 1.5rem;
-`;
 
 const ChatRoomContainer = styled.div`
   display: flex;

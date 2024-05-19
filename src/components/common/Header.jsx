@@ -36,6 +36,7 @@ const Header = () => {
   };
 
   const getMyData = async () => {
+    if (!isLoggedIn) return;
     try {
       const res = await instance.get('/member/profile');
       setMyData(res.data);
