@@ -1,4 +1,5 @@
 const SCH_COLLEGE_STATE = {
+  id: 'sch',
   name: '순천향대학교',
   state: [
     { college: '의과대학', department: ['의예과', '의학과', '간호학과'] },
@@ -129,6 +130,7 @@ const SCH_COLLEGE_STATE = {
 };
 
 const KHU_COLLEGE_STATE = {
+  id: 'khu',
   name: '경희대학교',
   state: [
     {
@@ -313,4 +315,83 @@ const KHU_COLLEGE_STATE = {
   ],
 };
 
-export const UNIV_STATE = [SCH_COLLEGE_STATE, KHU_COLLEGE_STATE];
+const SWU_COLLEGE_STATE = {
+  id: 'swu',
+  name: '서울여자대학교',
+  state: [
+    {
+      college: '인문대학',
+      department: [
+        '메타버스융합콘텐츠전공',
+        '프랑스문화콘텐츠전공',
+        '독일문화콘텐츠전공',
+        '국어국문학과',
+        '영어영문학과',
+        '중어중문학과',
+        '일어일문학과',
+        '사학과',
+        '기독교학과',
+        '불어불문학과',
+        '독어독문학과',
+      ],
+    },
+    {
+      college: '사회과학대학',
+      department: [
+        '경제학과',
+        '문헌정보학과',
+        '사회복지학과',
+        '아동학과',
+        '행정학과',
+        '언론영상학부',
+        '심리인지과학학부',
+        '스포츠운동과학과',
+      ],
+    },
+    {
+      college: '과학기술융합대학',
+      department: [
+        '수학과',
+        '화학과',
+        '생명환경공학과',
+        '바이오헬스융합학과',
+        '원예생명조경학과',
+        '식품공학과',
+        '식품영양학과',
+        '화학생명환경과학부',
+        '식품응용시스템학부',
+      ],
+    },
+    {
+      college: '미래산업융합대학',
+      department: [
+        '경영학과',
+        '패션산업학과',
+        '디지털미디어학과',
+        '정보보호학부',
+        '소프트웨어융합학과',
+        '데이터사이언스학과',
+        '산업디자인학과',
+      ],
+    },
+    {
+      college: '아트앤디자인스쿨',
+      department: [
+        '현대미술전공',
+        '공예전공',
+        '시각디자인전공',
+        '첨단미디어디자인전공',
+      ],
+    },
+    {
+      college: '자율전공학부',
+      department: ['자율전공'],
+    },
+  ],
+};
+
+export const UNIV_STATE = [
+  SCH_COLLEGE_STATE,
+  KHU_COLLEGE_STATE,
+  SWU_COLLEGE_STATE,
+];
