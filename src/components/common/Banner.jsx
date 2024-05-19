@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Marquee from 'react-fast-marquee';
+import React from 'react';
 
 const Banner = ({ alertText }) => {
   return (
@@ -7,7 +8,7 @@ const Banner = ({ alertText }) => {
       <Marquee speed="90">
         <BannerText>
           {alertText.map((alert) => (
-            <>
+            <React.Fragment key={alert.index}>
               <div className="text">
                 {alert.text1}
                 <em>{alert.em}</em>
@@ -17,7 +18,7 @@ const Banner = ({ alertText }) => {
                 {/* 여백용 텍스트 */}
                 📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입
               </div>
-            </>
+            </React.Fragment>
           ))}
         </BannerText>
       </Marquee>
