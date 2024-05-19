@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { isLoggedInState } from '../../store/auth';
 import { Link } from 'react-router-dom';
@@ -6,13 +6,14 @@ import { myDataState } from '../../store/myData';
 import { CHARACTERS, COLORS } from '../../constants/character';
 import { useNavigate } from 'react-router-dom';
 import Modal from './Modal';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Badge from './Badge';
 import { instance } from '../../api/instance';
+import toast from 'react-hot-toast';
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
-  const myData = useRecoilValue(myDataState);
+  const [myData, setMyData] = useRecoilState(myDataState);
   const modalRef = useRef();
   const navigate = useNavigate();
 
@@ -33,6 +34,22 @@ const Header = () => {
     }
   };
 
+  const getMyData = async () => {
+    try {
+      const res = await instance.get('/member/profile');
+      setMyData(res.data);
+    } catch (error) {
+      toast.error('프로필 정보를 가져오는데 실패했어요!', {
+        id: 'my-data-error',
+        position: 'bottom-center',
+      });
+    }
+  };
+
+  useEffect(() => {
+    getMyData();
+  }, []);
+
   return (
     <>
       <WrapHeader>
@@ -50,6 +67,7 @@ const Header = () => {
           <StyledLink to="/login">로그인</StyledLink>
         )}
       </WrapHeader>
+
       <Modal
         ref={modalRef}
         buttonLabel="프로필 수정하기"
