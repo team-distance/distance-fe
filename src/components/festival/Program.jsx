@@ -3,28 +3,41 @@ import ProgramCard from './ProgramCard';
 import { useEffect, useState } from 'react';
 import { instance } from '../../api/instance';
 import ClipLoader from 'react-spinners/ClipLoader';
+import { UNIV_STATE } from '../../constants/collegeState';
 
 const Program = () => {
   const [programList, setProgramList] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const fetchProgramInfo = async () => {
-    let school = '순천향대학교';
-    try {
-      setLoading(true);
-      const res = await instance.get(`/performance?school=${school}`);
-      setProgramList(res.data);
-      // console.log('res', res.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [school, setSchool] = useState('');
 
   useEffect(() => {
-    fetchProgramInfo();
+    const getDomain = async () => {
+      try {
+        const res = await instance.get('/univ/check/univ-domain');
+        UNIV_STATE.map((univ) => {
+          if (res.data.includes(univ.id)) setSchool(univ.name);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getDomain();
   }, []);
+
+  useEffect(() => {
+    const fetchProgramInfo = async () => {
+      try {
+        setLoading(true);
+        const res = await instance.get(`/performance?school=${school}`);
+        setProgramList(res.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProgramInfo();
+  }, [school]);
 
   return (
     <>
@@ -34,7 +47,7 @@ const Program = () => {
         </LoaderContainer>
       ) : (
         <>
-          <Title>순천향대학교</Title>
+          <Title>{school}</Title>
           <Date>5월 7일</Date>
           <WrapCards>
             {programList.map(

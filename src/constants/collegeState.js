@@ -1,4 +1,5 @@
 const SCH_COLLEGE_STATE = {
+  id: 'sch',
   name: '순천향대학교',
   state: [
     { college: '의과대학', department: ['의예과', '의학과', '간호학과'] },
@@ -129,6 +130,7 @@ const SCH_COLLEGE_STATE = {
 };
 
 const KHU_COLLEGE_STATE = {
+  id: 'khu',
   name: '경희대학교',
   state: [
     {
@@ -313,7 +315,8 @@ const KHU_COLLEGE_STATE = {
   ],
 };
 
-const SWC_COLLEGE_STATE = {
+const SWU_COLLEGE_STATE = {
+  id: 'swu',
   name: '서울여자대학교',
   state: [
     {
@@ -390,5 +393,5 @@ const SWC_COLLEGE_STATE = {
 export const UNIV_STATE = [
   SCH_COLLEGE_STATE,
   KHU_COLLEGE_STATE,
-  SWC_COLLEGE_STATE,
+  SWU_COLLEGE_STATE,
 ];
