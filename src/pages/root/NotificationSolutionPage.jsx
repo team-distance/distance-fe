@@ -44,7 +44,7 @@ const NotificationSolutionPage = () => {
       {selectedTab === 'Safari' && (
         <WrapBox>
           <div>
-            1. 설정 접속 후 <strong>distance</strong>를 찾아 주세요
+            1. 설정 접속 후 <strong>distance</strong>를 찾아주세요.
           </div>
           <ImageAlign>
             <img
@@ -59,7 +59,7 @@ const NotificationSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            2. 알림을 <strong>허용</strong>해주세요
+            2. 알림을 <strong>허용</strong>해주세요.
           </div>
           <ImageAlign>
             <img
@@ -69,7 +69,7 @@ const NotificationSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            3. distance 앱을 <strong>종료 후 재로그인</strong>해주세요
+            3. distance 앱을 <strong>종료 후 재로그인</strong>해주세요.
           </div>
         </WrapBox>
       )}
@@ -77,7 +77,7 @@ const NotificationSolutionPage = () => {
       {selectedTab === 'Chrome' && (
         <WrapBox>
           <div>
-            1. Chrome에 접속해 상단의 <strong>... 버튼</strong>을 눌러주세요
+            1. Chrome에 접속해 상단의 <strong>... 버튼</strong>을 눌러주세요.
           </div>
           <ImageAlign>
             <img
@@ -92,7 +92,7 @@ const NotificationSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            2. 설정에 들어가 <strong>알림 메뉴</strong>를 클릭해주세요
+            2. 설정에 들어가 <strong>알림 메뉴</strong>를 클릭해주세요.
           </div>
           <ImageAlign>
             <img
@@ -107,7 +107,7 @@ const NotificationSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            3. <strong>앱 알림 상세 설정</strong>에 들어갑니다
+            3. <strong>앱 알림 상세 설정</strong>을 찾아주세요.
           </div>
           <ImageAlign>
             <img
@@ -117,7 +117,7 @@ const NotificationSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            4. <strong>dis-tance.com</strong>에 들어가 알림을 허용해주세요
+            4. <strong>dis-tance.com</strong>에 들어가 알림을 허용해주세요.
           </div>
 
           <ImageAlign>
@@ -134,7 +134,7 @@ const NotificationSolutionPage = () => {
           </ImageAlign>
 
           <div>
-            5. distance 앱을 <strong>종료 후 재로그인</strong>해주세요
+            5. distance 앱을 <strong>종료 후 재로그인</strong>해주세요.
           </div>
         </WrapBox>
       )}
@@ -142,7 +142,7 @@ const NotificationSolutionPage = () => {
       {selectedTab === 'Samsung Internet' && (
         <WrapBox>
           <div>
-            1. 삼성 인터넷에 들어가 하단의 <strong>메뉴</strong>를 누릅니다
+            1. 삼성 인터넷에 들어가 하단의 <strong>메뉴</strong>를 눌러주세요.
           </div>
           <ImageAlign>
             <img
@@ -157,7 +157,7 @@ const NotificationSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            2. 설정에 들어가 <strong>인터넷 사용 기록</strong>에 들어갑니다
+            2. 설정에 들어가 <strong>인터넷 사용 기록</strong>을 찾아주세요.
           </div>
           <ImageAlign>
             <img
@@ -172,7 +172,7 @@ const NotificationSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            3. <strong>인터넷 사용 기록 삭제</strong>에 들어갑니다
+            3. <strong>인터넷 사용 기록 삭제</strong>를 눌러주세요.
           </div>
           <ImageAlign>
             <img
@@ -182,7 +182,7 @@ const NotificationSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            4. 데이터를 <strong>삭제</strong>합니다
+            4. 데이터를 <strong>삭제</strong>해주세요.
           </div>
           <ImageAlign>
             <img
@@ -192,7 +192,7 @@ const NotificationSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            5. distance 앱을 <strong>종료 후 재로그인</strong>해주세요
+            5. distance 앱을 <strong>종료 후 재로그인</strong>해주세요.
           </div>
         </WrapBox>
       )}

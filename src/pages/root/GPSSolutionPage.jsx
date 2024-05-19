@@ -8,6 +8,7 @@ const GPSSolutionPage = () => {
   const handleClickTab = (e) => {
     setSelectedTab(e.target.id);
   };
+
   return (
     <WrapPage>
       <HeaderPrev
@@ -46,7 +47,7 @@ const GPSSolutionPage = () => {
       {selectedTab === 'Safari' && (
         <WrapBox>
           <div>
-            1. 설정 접속 후 <strong>Safari</strong>를 찾아 주세요
+            1. 설정 접속 후 <strong>개인정보 보호 및 보안</strong>을 찾아주세요.
           </div>
           <ImageAlign>
             <img
@@ -61,7 +62,7 @@ const GPSSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            2. <strong>위치</strong>를 찾아주세요
+            2. <strong>위치 서비스</strong>를 눌러주세요.
           </div>
           <ImageAlign>
             <img
@@ -71,7 +72,7 @@ const GPSSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            3. 위치 접근을 <strong>허용</strong>해주세요
+            3. <strong>위치 서비스</strong>를 켜 주세요.
           </div>
           <ImageAlign>
             <img
@@ -81,7 +82,58 @@ const GPSSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            4. distance 앱을 <strong>종료 후 재로그인</strong>해주세요
+            4. 아래로 스크롤해 <strong>Safari 웹 사이트</strong>를 눌러주세요.
+          </div>
+          <ImageAlign>
+            <img
+              src="/assets/gps-troubleshooting/ios-5.png"
+              alt="iOS4"
+              width={250}
+            />
+          </ImageAlign>
+          <div>
+            5. 위치 접근 허용을 <strong>앱을 사용하는 동안</strong>으로
+            바꿔주세요.
+          </div>
+          <ImageAlign>
+            <img
+              src="/assets/gps-troubleshooting/ios-6.png"
+              alt="iOS4"
+              width={250}
+            />
+          </ImageAlign>
+          <div>
+            6. 설정 홈으로 나가 <strong>Safari</strong>를 찾아주세요.
+          </div>
+          <ImageAlign>
+            <img
+              src="/assets/gps-troubleshooting/ios-7.png"
+              alt="iOS4"
+              width={250}
+            />
+          </ImageAlign>
+          <div>
+            7. 아래로 스크롤해 <strong>위치</strong>를 찾아주세요.
+          </div>
+          <ImageAlign>
+            <img
+              src="/assets/gps-troubleshooting/ios-8.png"
+              alt="iOS4"
+              width={250}
+            />
+          </ImageAlign>
+          <div>
+            8. 위치 접근을 <strong>허용</strong>해주세요.
+          </div>
+          <ImageAlign>
+            <img
+              src="/assets/gps-troubleshooting/ios-9.png"
+              alt="iOS4"
+              width={250}
+            />
+          </ImageAlign>
+          <div>
+            9. distance 앱을 <strong>종료 후 재로그인</strong>해주세요.
           </div>
         </WrapBox>
       )}
@@ -89,7 +141,7 @@ const GPSSolutionPage = () => {
       {selectedTab === 'Chrome' && (
         <WrapBox>
           <div>
-            1. Chrome에 접속해 상단의 <strong>... 버튼</strong>을 눌러주세요
+            1. Chrome에 접속해 상단의 <strong>... 버튼</strong>을 눌러주세요.
           </div>
           <ImageAlign>
             <img
@@ -104,7 +156,7 @@ const GPSSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            2. 설정에 들어가 <strong>사이트 설정 메뉴</strong>를 클릭해주세요
+            2. 설정에 들어가 <strong>사이트 설정 메뉴</strong>를 클릭해주세요.
           </div>
           <ImageAlign>
             <img
@@ -119,7 +171,7 @@ const GPSSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            3. <strong>위치</strong>에 들어갑니다
+            3. <strong>위치</strong>를 찾아주세요.
           </div>
           <ImageAlign>
             <img
@@ -129,7 +181,7 @@ const GPSSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            4. <strong>dis-tance.com</strong>에 들어가 위치 접근을 허용해주세요
+            4. <strong>dis-tance.com</strong>에 들어가 위치 접근을 허용해주세요.
           </div>
 
           <ImageAlign>
@@ -141,7 +193,7 @@ const GPSSolutionPage = () => {
           </ImageAlign>
 
           <div>
-            5. distance 앱을 <strong>종료 후 재로그인</strong>해주세요
+            5. distance 앱을 <strong>종료 후 재로그인</strong>해주세요.
           </div>
         </WrapBox>
       )}
@@ -149,7 +201,7 @@ const GPSSolutionPage = () => {
       {selectedTab === 'Samsung Internet' && (
         <WrapBox>
           <div>
-            1. 삼성 인터넷에 들어가 하단의 <strong>메뉴</strong>를 누릅니다
+            1. 삼성 인터넷에 들어가 하단의 <strong>메뉴</strong>를 눌러주세요.
           </div>
           <ImageAlign>
             <img
@@ -164,7 +216,7 @@ const GPSSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            2. 설정에 들어가 <strong>인터넷 사용 기록</strong>에 들어갑니다
+            2. 설정에 들어가 <strong>인터넷 사용 기록</strong>을 찾아주세요.
           </div>
           <ImageAlign>
             <img
@@ -179,7 +231,7 @@ const GPSSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            3. <strong>인터넷 사용 기록 삭제</strong>에 들어갑니다
+            3. <strong>인터넷 사용 기록 삭제</strong>를 눌러주세요.
           </div>
           <ImageAlign>
             <img
@@ -189,7 +241,7 @@ const GPSSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            4. 데이터를 <strong>삭제</strong>합니다
+            4. 데이터를 <strong>삭제</strong>해주세요.
           </div>
           <ImageAlign>
             <img
@@ -199,7 +251,7 @@ const GPSSolutionPage = () => {
             />
           </ImageAlign>
           <div>
-            5. distance 앱을 <strong>종료 후 재로그인</strong>해주세요
+            5. distance 앱을 <strong>종료 후 재로그인</strong>해주세요.
           </div>
         </WrapBox>
       )}
