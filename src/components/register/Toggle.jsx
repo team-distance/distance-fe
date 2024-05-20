@@ -25,6 +25,12 @@ const ToggleSwitch = ({ options = ['남', '여'], setState, univ }) => {
     setState(activeIndex === 1 ? 'F' : 'M');
   }, [setState, activeIndex]);
 
+  useEffect(() => {
+    if (univ === '서울여자대학교') {
+      setState('F');
+    }
+  }, [univ]);
+
   return (
     <>
       {univ === '서울여자대학교' ? (

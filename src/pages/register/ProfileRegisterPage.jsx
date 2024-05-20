@@ -221,12 +221,7 @@ const ProfileRegisterPage = () => {
 
         <div>
           <Label>성별 선택하기</Label>
-          <Toggle
-            univ={registerData.school}
-            setState={setToggleState}
-            registerData={registerData}
-            setRegisterData={setRegisterData}
-          />
+          <Toggle univ={registerData.school} setState={setToggleState} />
         </div>
 
         <div>
