@@ -136,8 +136,9 @@ function App() {
         </Route>
 
         <Route path="/mypage" element={<MyIndexPage />} />
-        <Route path="/team-introduction" element={<TeamIntroductionPage />} />
       </Route>
+
+      <Route path="/team-introduction" element={<TeamIntroductionPage />} />
 
       <Route path="/mypage/profile" element={<ProfileEditPage />} />
       <Route path="/mypage/account" element={<AccountEditPage />} />
