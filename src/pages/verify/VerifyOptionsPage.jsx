@@ -17,6 +17,9 @@ const VerifyOptionsPage = () => {
       if (authUniv.data === 'SUCCESS') {
         alert('이미 인증되었어요!');
         navigate('/mypage');
+      } else if (authUniv.data === 'PENDING') {
+        alert('심사중입니다.');
+        navigate('/mypage');
       }
     } catch (error) {
       console.log(error);
