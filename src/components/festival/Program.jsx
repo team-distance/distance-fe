@@ -9,6 +9,8 @@ const Program = () => {
   const [programList, setProgramList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [school, setSchool] = useState('');
+  const [sortedList, setSortedList] = useState([]);
+  const dateList = new Set();
 
   useEffect(() => {
     const getDomain = async () => {
@@ -26,10 +28,16 @@ const Program = () => {
 
   useEffect(() => {
     const fetchProgramInfo = async () => {
+      if (school === '') return;
       try {
         setLoading(true);
         const res = await instance.get(`/performance?school=${school}`);
         setProgramList(res.data);
+        res.data.forEach((date) => dateList.add(date.startAt.split('T')[0]));
+        setSortedList(
+          [...dateList].sort((a, b) => new window.Date(a) - new window.Date(b))
+        );
+        // console.log(sortedList);
       } catch (error) {
         console.log(error);
       } finally {
@@ -48,15 +56,24 @@ const Program = () => {
       ) : (
         <>
           <Title>{school}</Title>
-          <Date>5월 7일</Date>
-          <WrapCards>
-            {programList.map(
-              (program) =>
-                program.startAt.startsWith('2024-05-07') && (
-                  <ProgramCard key={program.artistId} content={program} />
-                )
-            )}
-          </WrapCards>
+          {sortedList &&
+            sortedList.map((date) => (
+              <div key={date}>
+                <Date>
+                  {date.split('-')[1]}월 {date.split('-')[2]}일
+                </Date>
+                <WrapCards>
+                  {programList.map(
+                    (program) =>
+                      program.startAt.startsWith(date) && (
+                        <ProgramCard key={program.artistId} content={program} />
+                      )
+                  )}
+                </WrapCards>
+              </div>
+            ))}
+          <br />
+          <br />
         </>
       )}
     </>
@@ -77,6 +94,7 @@ const WrapCards = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-bottom: 1rem;
 `;
 
 const LoaderContainer = styled.div`
