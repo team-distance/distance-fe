@@ -13,7 +13,7 @@ const BlankModal = forwardRef(({ children }, ref) => {
       },
       close() {
         modalRef.current.close();
-        document.body.style = `overflow: scroll`;
+        document.body.style = `overflow: auto`;
       },
     };
   });

@@ -27,6 +27,14 @@ const CloseButton = styled.img`
   right: 32px;
 `;
 
+const WrapContent = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
 const Modal = forwardRef(
   (
     { children, buttonLabel, buttonClickHandler, buttonColor = '#FF625D' },
@@ -42,7 +50,7 @@ const Modal = forwardRef(
         },
         close() {
           dialog.current.close();
-          document.body.style = `overflow: scroll`;
+          document.body.style = `overflow: auto`;
         },
         scrollToTop() {
           dialog.current.scrollTo(0, 0);
@@ -58,21 +66,23 @@ const Modal = forwardRef(
     return createPortal(
       <>
         <StyledDialog ref={dialog}>
-          <CloseButton
-            onClick={handleCloseModal}
-            src={'/assets/cancel-button-gray.svg'}
-            alt="Close"
-          />
-          {children}
-          {buttonLabel && (
-            <Button
-              size={'medium'}
-              onClick={buttonClickHandler}
-              backgroundColor={buttonColor}
-            >
-              {buttonLabel}
-            </Button>
-          )}
+          <WrapContent>
+            <CloseButton
+              onClick={handleCloseModal}
+              src={'/assets/cancel-button-gray.svg'}
+              alt="Close"
+            />
+            {children}
+            {buttonLabel && (
+              <Button
+                size={'medium'}
+                onClick={buttonClickHandler}
+                backgroundColor={buttonColor}
+              >
+                {buttonLabel}
+              </Button>
+            )}
+          </WrapContent>
         </StyledDialog>
       </>,
       document.getElementById('modal')

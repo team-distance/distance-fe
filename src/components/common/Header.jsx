@@ -176,10 +176,11 @@ const ProfileIcon = styled.div`
 
 const WrapContent = styled.div`
   display: flex;
+  width: 100%;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin: 32px 0;
+  padding: 32px 0;
   gap: 12px;
 `;
 
@@ -201,15 +202,15 @@ const StyledImage = styled.img`
 `;
 
 const TextDiv = styled.div`
-  width: 100%;
   text-align: center;
   color: #333333;
+  width: 100%;
+  text-align: center;
 `;
 
 const Major = styled.div`
   font-size: 24px;
   font-weight: 700;
-  white-space: nowrap;
 `;
 
 const MBTI = styled.div`
