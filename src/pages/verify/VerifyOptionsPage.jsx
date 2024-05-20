@@ -2,10 +2,13 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { instance } from '../../api/instance';
+import { UNIV_STATE } from '../../constants/collegeState';
 
 const VerifyOptionsPage = () => {
   const navigate = useNavigate();
   const [authUnivState, setAuthUnivState] = useState('');
+  const [university, setUniversity] = useState('');
+  const [universityLogo, setUniversityLogo] = useState('');
 
   const checkVerified = async () => {
     try {
@@ -22,14 +25,29 @@ const VerifyOptionsPage = () => {
     }
   };
 
+  const fetchSchool = async () => {
+    try {
+      const res = await instance.get('/univ/check/univ-domain');
+      UNIV_STATE.forEach((univ) => {
+        if (res.data.includes(univ.id)) {
+          setUniversity(univ.name);
+          setUniversityLogo(univ.logo);
+        }
+      });
+    } catch (error) {}
+  };
+
   useEffect(() => {
     checkVerified();
+    fetchSchool();
   }, []);
 
   return (
     <WrapContent>
-      <LogoImage src="/assets/univ-logo.png" alt="logo image" />
-      <h2>교내 학생임을 인증해주세요</h2>
+      <h2>
+        교내 학생임을 인증해주세요
+        <LogoImage src={universityLogo} alt={university} />
+      </h2>
       <p>
         세 가지 방법 중 하나를 택해 인증해주세요
         <br />
@@ -86,11 +104,12 @@ export default VerifyOptionsPage;
 
 const WrapContent = styled.div`
   display: grid;
-  padding: 4rem 2rem;
+  padding: 5rem 2rem;
 
   h2 {
     position: relative;
   }
+
   p {
     margin-top: 0;
     margin-bottom: 3rem;
@@ -105,9 +124,11 @@ const FailedMessage = styled.div`
 
 const LogoImage = styled.img`
   position: absolute;
-  top: 3rem;
+  bottom: 1rem;
+  left: 0;
   z-index: -1;
-  width: 40%;
+  width: 30%;
+  opacity: 0.2;
 `;
 
 const WrapButton = styled.div`

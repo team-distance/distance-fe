@@ -1,6 +1,7 @@
 const SCH_COLLEGE_STATE = {
   id: 'sch',
   name: '순천향대학교',
+  logo: '/assets/univ-logo/SCH.svg',
   state: [
     { college: '의과대학', department: ['의예과', '의학과', '간호학과'] },
     {
@@ -132,6 +133,7 @@ const SCH_COLLEGE_STATE = {
 const KHU_COLLEGE_STATE = {
   id: 'khu',
   name: '경희대학교',
+  logo: '/assets/univ-logo/KHU.svg',
   state: [
     {
       college: '후마니타스컬리지',
@@ -318,6 +320,7 @@ const KHU_COLLEGE_STATE = {
 const SWU_COLLEGE_STATE = {
   id: 'swu',
   name: '서울여자대학교',
+  logo: '/assets/univ-logo/SWU.svg',
   state: [
     {
       college: '인문대학',
