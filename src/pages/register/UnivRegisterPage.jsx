@@ -17,11 +17,6 @@ const UnivRegisterPage = () => {
 
   useEffect(() => {
     setRegisterData((prev) => ({ ...prev, school, college, department }));
-    // console.log(
-    //   UNIV_STATE.flatMap(({ state, name }) => name === school && state)
-    //     .filter(({ college: c }) => c === college)
-    //     .flatMap(({ department }) => department)
-    // );
   }, [school, college, department]);
 
   // 새로고침하여 데이터가 사라졌을 때, 다시 회원가입 페이지로 이동

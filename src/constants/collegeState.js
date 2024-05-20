@@ -137,7 +137,7 @@ const KHU_COLLEGE_STATE = {
   state: [
     {
       college: '후마니타스컬리지',
-      department: ['서울캠퍼스', '국제캠퍼스'],
+      department: ['후마니타스컬리지'],
     },
     {
       college: '문과대학',
@@ -215,7 +215,7 @@ const KHU_COLLEGE_STATE = {
     },
     {
       college: '간호과학대학',
-      department: ['간화학과'],
+      department: ['간호학과'],
     },
     {
       college: '음악대학',
