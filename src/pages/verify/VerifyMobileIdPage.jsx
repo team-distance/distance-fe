@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Button from '../../components/common/Button';
 import { instance } from '../../api/instance';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ const VerifyMobileIdPage = () => {
   const [file, setFile] = useState(null);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [schoolId, setSchoolId] = useState('');
 
   const onChangeImage = (e) => {
     const file = e.target.files[0];
@@ -95,6 +96,19 @@ const VerifyMobileIdPage = () => {
     }
   };
 
+  useEffect(() => {
+    const getDomain = async () => {
+      try {
+        const res = await instance.get('/univ/check/univ-domain');
+        let domain = res.data.replace('@', '');
+        setSchoolId(domain.split('.')[0]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getDomain();
+  }, []);
+
   return (
     <WrapContent>
       <h2>'모바일 학생증'으로 인증하기</h2>
@@ -159,7 +173,7 @@ const VerifyMobileIdPage = () => {
           <Example>
             <div className="example-image">
               <img
-                src="/assets/id-examples/mobileid1.png"
+                src={`/assets/id-examples/mobileid1-${schoolId}.png`}
                 alt="모바일 학생증 예시1"
               />
             </div>
@@ -169,7 +183,7 @@ const VerifyMobileIdPage = () => {
           <Example>
             <div className="example-image">
               <img
-                src="/assets/id-examples/mobileid2.png"
+                src={`/assets/id-examples/mobileid2-${schoolId}.png`}
                 alt="모바일 학생증 예시1"
               />
             </div>
