@@ -18,7 +18,6 @@ const HomeIndexPage = () => {
   const [selectedProfile, setSelectedProfile] = useState();
   const navigate = useNavigate();
 
-  const memberId = localStorage.getItem('memberId');
   const [memberState, setMemberState] = useState();
 
   const [isReloadButtonDisabled, setIsReloadButtonDisabled] = useState(false);
@@ -81,13 +80,7 @@ const HomeIndexPage = () => {
       })
       .then((res) => {
         const createdChatRoom = res.data;
-        navigate(`/chat/${createdChatRoom}`, {
-          state: {
-            myId: memberId,
-            opponentId: opponentMemberId,
-            roomId: createdChatRoom,
-          },
-        });
+        navigate(`/chat/${createdChatRoom}`);
       })
       .catch((error) => {
         switch (error.response.data.code) {
