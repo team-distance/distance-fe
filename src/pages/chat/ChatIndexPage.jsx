@@ -163,8 +163,8 @@ const ChatIndexPage = () => {
                     <div className="profile-section">
                       <Profile>
                         <div className="cover">{chat.department}</div>
-                        {chat.department}
-                        {chat.mbti && <Badge>{chat.mbti}</Badge>}
+                        <div className="department">{chat.department}</div>
+                        <div>{chat.mbti && <Badge>{chat.mbti}</Badge>}</div>
                       </Profile>
                       <Message>{chat.lastMessage}</Message>
                     </div>
@@ -270,7 +270,9 @@ const CharacterBackground = styled.div`
 `;
 
 const Profile = styled.div`
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 4px;
   color: #000000;
   font-size: 18px;
@@ -283,6 +285,13 @@ const Profile = styled.div`
     background-image: linear-gradient(90deg, transparent 80%, #fbfbfb 100%);
     z-index: 99;
     color: transparent;
+  }
+
+  .department {
+    max-width: 80%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 `;
 

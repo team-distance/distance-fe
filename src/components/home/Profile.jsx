@@ -15,10 +15,10 @@ const Profile = ({ profile, onClick }) => {
             alt={profile.memberProfileDto.memberCharacter}
           />
         </CharacterBackground>
-        <div>
+        <WrapText>
           <MBTI>{profile.memberProfileDto.mbti}</MBTI>
           <Department>{profile.memberProfileDto.department}</Department>
-        </div>
+        </WrapText>
         <TagContainer>
           {profile.memberProfileDto.memberHobbyDto.map((tag, index) => (
             <Badge key={index}>#{tag.hobby}</Badge>
@@ -73,14 +73,20 @@ const StyledImage = styled.img`
   transform: translate(-50%, -50%);
 `;
 
+const WrapText = styled.div`
+  width: 90%;
+`;
+
 const Department = styled.div`
-  white-space: nowrap;
   font-weight: 700;
   color: #000000;
   text-align: center;
   font-size: 14px;
   font-style: normal;
   line-height: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const MBTI = styled.div`
