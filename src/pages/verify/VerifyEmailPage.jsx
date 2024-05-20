@@ -13,6 +13,7 @@ const VerifyEmailPage = () => {
 
   const [schoolEmail, setSchoolEmail] = useState('');
   const [domain, setDomain] = useState('');
+  const [school, setSchool] = useState('');
   const [webMailLink, setWebMailLink] = useState('');
   const [verifyNum, setVerifyNum] = useState('');
   const [emailDisabled, setEmailDisabled] = useState(true);
@@ -91,11 +92,17 @@ const VerifyEmailPage = () => {
         const res = await instance.get('/univ/check/univ-domain');
         setDomain(res.data);
         let subLink = res.data.replace('@', '');
-        setWebMailLink(
-          UNIV_STATE.filter((item) => item.webMail.includes(subLink))
-            .map((item) => item.webMail)
-            .toString()
+
+        const filteredUniv = UNIV_STATE.filter((item) =>
+          item.webMail.includes(subLink)
         );
+        const webMailLinks = filteredUniv
+          .map((item) => item.webMail)
+          .toString();
+        setWebMailLink(webMailLinks);
+
+        const schoolNames = filteredUniv.map((item) => item.name).toString();
+        setSchool(schoolNames);
       } catch (error) {
         console.log(error);
       }
@@ -142,7 +149,7 @@ const VerifyEmailPage = () => {
           </div>
         </InputWrapper>
         <WrapButton onClick={() => window.open(webMailLink)}>
-          <p>'학생 메일'로 인증하는 방법</p>
+          <p>{school} 웹메일 바로 가기</p>
           <img src="/assets/arrow-pink-button.png" alt="way to verify email" />
         </WrapButton>
       </div>
