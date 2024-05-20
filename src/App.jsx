@@ -51,21 +51,6 @@ function App() {
     toast.remove();
   }, [navigate]);
 
-  const getMemberId = async () => {
-    await instance
-      .get('/member/id')
-      .then((res) => {
-        localStorage.setItem('memberId', res.data);
-      })
-      .catch((err) => {
-        toast.error('회원 정보를 가져오는데 실패했어요!', {
-          id: 'member-id-error',
-          position: 'bottom-center',
-        });
-        console.log(err);
-      });
-  };
-
   useEffect(() => {
     if (!isLoggedIn) return;
 
@@ -120,12 +105,6 @@ function App() {
       );
     }
   }, [currentLocation]);
-
-  useEffect(() => {
-    if (!isLoggedIn) return;
-
-    getMemberId();
-  }, [isLoggedIn]);
 
   return (
     <Routes>

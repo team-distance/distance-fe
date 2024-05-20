@@ -12,7 +12,6 @@ import Badge from '../../components/common/Badge';
 const ChatIndexPage = () => {
   const navigate = useNavigate();
   const [chatList, setChatList] = useState();
-  const memberId = localStorage.getItem('memberId');
   const [loading, setLoading] = useState(false);
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const [waitingCount, setWaitingCount] = useState(0);
@@ -104,13 +103,7 @@ const ChatIndexPage = () => {
           console.log(error);
         }
       } else {
-        navigate(`/chat/${chat.chatRoomId}`, {
-          state: {
-            myId: memberId,
-            opponentId: chat.opponentMemberId,
-            roomId: chat.chatRoomId,
-          },
-        });
+        navigate(`/chat/${chat.chatRoomId}`);
       }
     }
   };
