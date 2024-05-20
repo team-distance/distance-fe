@@ -45,6 +45,8 @@ const VerifyEmailPage = () => {
       ? schoolEmail
       : baseEmail + domain;
 
+    console.log(fullEmail);
+
     const response = instance.post('/univ/send/email', {
       schoolEmail: fullEmail,
     });
