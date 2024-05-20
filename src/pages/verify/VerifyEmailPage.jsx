@@ -6,12 +6,15 @@ import Button from '../../components/common/Button';
 import TextInput from '../../components/register/TextInput';
 import toast, { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
+import { UNIV_STATE } from '../../constants/collegeState';
 
 const VerifyEmailPage = () => {
   const navigate = useNavigate();
 
   const [schoolEmail, setSchoolEmail] = useState('');
   const [domain, setDomain] = useState('');
+  const [school, setSchool] = useState('');
+  const [webMailLink, setWebMailLink] = useState('');
   const [verifyNum, setVerifyNum] = useState('');
   const [emailDisabled, setEmailDisabled] = useState(true);
   const [verifyDisabled, setVerifyDisabled] = useState(true);
@@ -88,6 +91,18 @@ const VerifyEmailPage = () => {
       try {
         const res = await instance.get('/univ/check/univ-domain');
         setDomain(res.data);
+        let subLink = res.data.replace('@', '');
+
+        const filteredUniv = UNIV_STATE.filter((item) =>
+          item.webMail.includes(subLink)
+        );
+        const webMailLinks = filteredUniv
+          .map((item) => item.webMail)
+          .toString();
+        setWebMailLink(webMailLinks);
+
+        const schoolNames = filteredUniv.map((item) => item.name).toString();
+        setSchool(schoolNames);
       } catch (error) {
         console.log(error);
       }
@@ -133,14 +148,8 @@ const VerifyEmailPage = () => {
             </Button>
           </div>
         </InputWrapper>
-        <WrapButton
-          onClick={() =>
-            window.open(
-              'https://pyrite-cookie-104.notion.site/541aa66232df4d8d8022b4f722c73d53'
-            )
-          }
-        >
-          <p>'학생 메일'로 인증하는 방법</p>
+        <WrapButton onClick={() => window.open(webMailLink)}>
+          <p>{school} 웹메일 바로 가기</p>
           <img src="/assets/arrow-pink-button.png" alt="way to verify email" />
         </WrapButton>
       </div>
