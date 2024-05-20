@@ -52,7 +52,7 @@ const ChatIndexPage = () => {
   const checkVerified = async () => {
     try {
       const authUniv = await instance.get('/member/check/university');
-      if (authUniv.data === 'SUCCESS') {
+      if (authUniv.data === 'SUCCESS' || authUniv.data === 'PENDING') {
         setAuthUniv(true);
       }
     } catch (error) {
