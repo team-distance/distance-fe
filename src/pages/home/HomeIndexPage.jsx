@@ -11,17 +11,13 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Badge from '../../components/common/Badge';
 import Banner from '../../components/common/Banner';
+import ReloadButton from '../../components/home/ReloadButton';
 
 const HomeIndexPage = () => {
   const profileModal = useRef();
-
   const [selectedProfile, setSelectedProfile] = useState();
   const navigate = useNavigate();
-
   const [memberState, setMemberState] = useState();
-
-  const [isReloadButtonDisabled, setIsReloadButtonDisabled] = useState(false);
-  const [remainingTimeToReload, setRemainingTimeToReload] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const fetchMembers = async () => {
@@ -31,34 +27,6 @@ const HomeIndexPage = () => {
       setMemberState(res.data.matchedUsers);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const reloadMembers = async () => {
-    try {
-      setLoading(true);
-      setIsReloadButtonDisabled(true);
-      setRemainingTimeToReload(3);
-
-      const res = await instance.get('/gps/matching');
-      setMemberState(res.data.matchedUsers);
-
-      // 매초마다 남은 시간 업데이트
-      const intervalId = setInterval(() => {
-        setRemainingTimeToReload((prevTime) => {
-          if (prevTime <= 1) {
-            clearInterval(intervalId);
-            setIsReloadButtonDisabled(false);
-            return 0;
-          }
-          return prevTime - 1;
-        });
-      }, 1000);
-    } catch (error) {
-      console.log(error);
-      setIsReloadButtonDisabled(false);
     } finally {
       setLoading(false);
     }
@@ -167,12 +135,7 @@ const HomeIndexPage = () => {
           )}
         </ProfileContainer>
       )}
-      <ReloadButton onClick={reloadMembers} disabled={isReloadButtonDisabled}>
-        {isReloadButtonDisabled && (
-          <div className="time-remaining">{remainingTimeToReload}</div>
-        )}
-        <img src="/assets/home/reload-button.png" alt="Reload button" />
-      </ReloadButton>
+      <ReloadButton onClick={fetchMembers} />
 
       <Modal
         ref={profileModal}
@@ -220,40 +183,6 @@ const ProfileContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-`;
-
-const ReloadButton = styled.button`
-  position: fixed;
-  right: 1.5rem;
-  bottom: 7rem;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: none;
-  background-color: #ffffff;
-  box-shadow: 0px 4px 10px 0px #0000001a;
-  transition: 0.3s;
-
-  > .time-remaining {
-    position: absolute;
-    z-index: 9999;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #000000;
-  }
-
-  > img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  &:disabled {
-    filter: brightness(0.6);
-  }
 `;
 
 const WrapContent = styled.div`
