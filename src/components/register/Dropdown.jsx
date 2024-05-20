@@ -73,7 +73,7 @@ const fadeIn = keyframes`
 
 const DropdownContent = styled.div`
   width: 100%;
-  max-height: 256px;
+  max-height: 220px;
   color: #000000;
   position: absolute;
   top: 3.5rem;
@@ -81,6 +81,7 @@ const DropdownContent = styled.div`
   overflow: auto;
   background-color: #ffffff;
   z-index: 1;
+  border-radius: 8px;
 `;
 
 const WrapItems = styled.div`
