@@ -4,29 +4,45 @@ import FoodTruckCard from './FoodTruckCard';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import ClipLoader from 'react-spinners/ClipLoader';
+import { UNIV_STATE } from '../../constants/collegeState';
 
 const FoodTruck = () => {
   const navigate = useNavigate();
   const [foodTruckList, setFoodTruckList] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const fetchFoodtruckInfo = async () => {
-    let school = '순천향대학교';
-    try {
-      setLoading(true);
-      const res = await instance.get(`/food-truck?school=${school}`);
-      setFoodTruckList(res.data);
-      console.log('res', res.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [school, setSchool] = useState('');
 
   useEffect(() => {
-    fetchFoodtruckInfo();
+    const getDomain = async () => {
+      try {
+        const res = await instance.get('/univ/check/univ-domain');
+        UNIV_STATE.forEach((univ) => {
+          if (res.data.includes(univ.id)) setSchool(univ.name);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getDomain();
   }, []);
+
+  useEffect(() => {
+    const fetchFoodtruckInfo = async () => {
+      if (school === '') return;
+      try {
+        setLoading(true);
+        const res = await instance.get(`/food-truck?school=${school}`);
+        setFoodTruckList(res.data);
+        console.log('res', res.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFoodtruckInfo();
+  }, [school]);
 
   // const calculateDDay = (targetDate) => {
   //   const today = new Date();
