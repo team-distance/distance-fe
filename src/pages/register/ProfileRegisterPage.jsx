@@ -237,6 +237,7 @@ const ProfileRegisterPage = () => {
             {attractiveness.map((value, index) => (
               <Badge key={index} onClick={handleClickAttractiveness}>
                 {value}
+                <img src="/assets/cancel-button.png" alt="cancel" />
               </Badge>
             ))}
           </BadgeContainer>
@@ -249,6 +250,7 @@ const ProfileRegisterPage = () => {
             {hobby.map((value, index) => (
               <Badge key={index} onClick={handleClickHobby}>
                 {value}
+                <img src="/assets/cancel-button.png" alt="cancel" />
               </Badge>
             ))}
           </BadgeContainer>
@@ -378,12 +380,17 @@ const Badge = styled.div`
   padding: 0.5rem 1rem;
   color: #ffffff;
   border-radius: 12px;
+
+  img {
+    width: 13px;
+    padding-left: 0.5rem;
+  }
 `;
 
 const BadgeContainer = styled.div`
   display: flex;
   align-items: center;
-  height: 96px;
+  min-height: 96px;
   padding: 0.5rem;
   gap: 0.5rem;
   justify-content: center;
