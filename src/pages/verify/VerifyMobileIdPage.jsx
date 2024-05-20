@@ -79,10 +79,14 @@ const VerifyMobileIdPage = () => {
     try {
       setIsLoading(true);
       setIsDisabled(true);
-      await instance.post('/studentcard/send', formData);
-      window.confirm(
-        '인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.'
-      ) && navigate('/');
+      if (
+        window.confirm(
+          '인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.'
+        )
+      ) {
+        await instance.post('/studentcard/send', formData);
+        navigate('/');
+      }
     } catch (error) {
       console.log(error);
     } finally {
