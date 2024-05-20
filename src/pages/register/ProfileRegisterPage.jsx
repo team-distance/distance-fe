@@ -390,7 +390,7 @@ const Badge = styled.div`
 const BadgeContainer = styled.div`
   display: flex;
   align-items: center;
-  height: 96px;
+  min-height: 96px;
   padding: 0.5rem;
   gap: 0.5rem;
   justify-content: center;
