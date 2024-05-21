@@ -18,6 +18,7 @@ import { getByteLength } from '../../utils/getByteLength';
 import useDetectClose from '../../hooks/useDetectClose';
 import { CHARACTERS, COLORS } from '../../constants/character';
 import Badge from '../../components/common/Badge';
+import { ClipLoader } from 'react-spinners';
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
@@ -31,6 +32,7 @@ const ChatPage = () => {
   const [bothAgreed, setBothAgreed] = useState(false);
   const [opponentProfile, setOpponentProfile] = useState(null);
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const param = useParams();
 
@@ -121,17 +123,20 @@ const ChatPage = () => {
       return;
     }
 
-    client.publish({
-      destination: `/app/chat/${roomId}`,
-      body: JSON.stringify({
-        chatMessage: draftMessage,
-        senderId: opponentMemberId,
-        receiverId: myMemberId,
-        publishType: 'USER',
-      }),
-    });
-
-    setDraftMessage('');
+    try {
+      client.publish({
+        destination: `/app/chat/${roomId}`,
+        body: JSON.stringify({
+          chatMessage: draftMessage,
+          senderId: opponentMemberId,
+          receiverId: myMemberId,
+          publishType: 'USER',
+        }),
+      });
+      setDraftMessage('');
+    } catch (error) {
+      toast.error('잠시 후 다시 시도해주세요!');
+    }
   };
 
   // 방 나가기
@@ -139,48 +144,61 @@ const ChatPage = () => {
     const res = window.confirm('정말로 나가시겠습니까?');
     if (!res) return;
 
-    client.publish({
-      destination: `/app/chat/${roomId}`,
-      body: JSON.stringify({
-        chatMessage: 'LEAVE',
-        senderId: opponentMemberId,
-        receiverId: myMemberId,
-        publishType: 'LEAVE',
-      }),
-    });
-    if (localStorage.getItem('staleMessages') !== null) {
-      const staleMessages = JSON.parse(localStorage.getItem('staleMessages'));
-      delete staleMessages[roomId];
-      localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
-    }
+    try {
+      client.publish({
+        destination: `/app/chat/${roomId}`,
+        body: JSON.stringify({
+          chatMessage: 'LEAVE',
+          senderId: opponentMemberId,
+          receiverId: myMemberId,
+          publishType: 'LEAVE',
+        }),
+      });
 
-    navigate('/');
+      if (localStorage.getItem('staleMessages') !== null) {
+        const staleMessages = JSON.parse(localStorage.getItem('staleMessages'));
+        delete staleMessages[roomId];
+        localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
+      }
+
+      navigate('/');
+    } catch (error) {
+      toast.error('잠시 후 다시 시도해주세요!');
+    }
   };
 
   // 통화 요청 메시지 전송
   const requestCall = () => {
-    client.publish({
-      destination: `/app/chat/${roomId}`,
-      body: JSON.stringify({
-        chatMessage: '통화를 요청하셨어요!',
-        senderId: opponentMemberId,
-        receiverId: myMemberId,
-        publishType: 'CALL_REQUEST',
-      }),
-    });
+    try {
+      client.publish({
+        destination: `/app/chat/${roomId}`,
+        body: JSON.stringify({
+          chatMessage: '통화를 요청하셨어요!',
+          senderId: opponentMemberId,
+          receiverId: myMemberId,
+          publishType: 'CALL_REQUEST',
+        }),
+      });
+    } catch (error) {
+      toast.error('잠시 후 다시 시도해주세요!');
+    }
   };
 
   // 통화 요청 수락 메시지 전송
   const responseCall = () => {
-    client.publish({
-      destination: `/app/chat/${roomId}`,
-      body: JSON.stringify({
-        chatMessage: '통화 요청을 수락했어요!',
-        senderId: opponentMemberId,
-        receiverId: myMemberId,
-        publishType: 'CALL_RESPONSE',
-      }),
-    });
+    try {
+      client.publish({
+        destination: `/app/chat/${roomId}`,
+        body: JSON.stringify({
+          chatMessage: '통화 요청을 수락했어요!',
+          senderId: opponentMemberId,
+          receiverId: myMemberId,
+          publishType: 'CALL_RESPONSE',
+        }),
+      });
+    } catch (error) {
+      toast.error('잠시 후 다시 시도해주세요!');
+    }
   };
 
   // STOMP 메시지 수신 시 작동하는 콜백 함수
@@ -325,6 +343,7 @@ const ChatPage = () => {
           console.log(str);
         },
         onConnect: (frame) => {
+          setIsLoading(false);
           console.log('Connected: ' + frame);
           newClient.subscribe(`/topic/chatroom/${roomId}`, subscritionCallback);
         },
@@ -483,23 +502,31 @@ const ChatPage = () => {
           </div>
         </TopBar>
 
-        <Messages
-          groupedMessages={groupedMessages}
-          myId={myMemberId}
-          responseCall={responseCall}
-          openProfileModal={openProfileModal}
-          opponentMemberCharacter={
-            opponentProfile && opponentProfile.memberCharacter
-          }
-        />
+        {isLoading ? (
+          <LoaderContainer>
+            <ClipLoader color="#FF625D" size={50} />
+          </LoaderContainer>
+        ) : (
+          <>
+            <Messages
+              groupedMessages={groupedMessages}
+              myId={myMemberId}
+              responseCall={responseCall}
+              openProfileModal={openProfileModal}
+              opponentMemberCharacter={
+                opponentProfile && opponentProfile.memberCharacter
+              }
+            />
 
-        <MessageInput
-          value={draftMessage}
-          buttonClickHandler={openReportModal}
-          changeHandler={handleChangeMessage}
-          submitHandler={sendMessage}
-          isOpponentOut={isOpponentOut}
-        />
+            <MessageInput
+              value={draftMessage}
+              buttonClickHandler={openReportModal}
+              changeHandler={handleChangeMessage}
+              submitHandler={sendMessage}
+              isOpponentOut={isOpponentOut}
+            />
+          </>
+        )}
       </Container>
 
       <BlankModal ref={reportModalRef}>
@@ -779,6 +806,18 @@ const TagContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 4px;
+`;
+
+const LoaderContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 `;
 
 export default ChatPage;
