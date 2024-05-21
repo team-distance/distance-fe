@@ -315,7 +315,7 @@ const ChatPage = () => {
       fetchOpponentProfile();
 
       const newClient = new Client({
-        brokerURL: 'wss://api.dis-tance.com/meet',
+        brokerURL: 'wss://dev.dis-tance.com/meet',
         connectHeaders: {
           chatRoomId: roomId,
           memberId: myMemberId,
