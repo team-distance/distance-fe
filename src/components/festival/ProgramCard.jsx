@@ -59,10 +59,10 @@ const ProgramCard = ({ content }) => {
         <div className="title">{content.artistName}</div>
         <div className="date">{formattedDate}</div>
         <br />
-        <div className="location">
+        {/* <div className="location">
           <img src="/assets/festival/icon-location.svg" alt="location-icon" />
-          순천향대학교 소운동장
-        </div>
+          만주벌판
+        </div> */}
       </TextDiv>
     </WrapCard>
   );
