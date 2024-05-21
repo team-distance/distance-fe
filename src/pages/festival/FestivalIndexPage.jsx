@@ -2,19 +2,15 @@ import React from 'react';
 import styled from 'styled-components';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-
-import Header from '../../components/common/Header';
 import { tabState } from '../../store/tabState';
 
-const FestivalContainer = styled.div`
-  padding: 2rem 1.5rem;
-`;
 const TabMenu = styled.nav`
   display: flex;
   gap: 1.5rem;
   align-items: center;
   margin-bottom: 1.5rem;
 `;
+
 const Tab = styled.div`
   font-size: 20px;
   font-weight: 600;
@@ -39,8 +35,7 @@ const FestivalIndexPage = () => {
   };
 
   return (
-    <FestivalContainer>
-      <Header />
+    <>
       <TabMenu>
         <Tab $isSelected={tabMenuState === 0} onClick={handleClickProgram}>
           프로그램
@@ -50,7 +45,7 @@ const FestivalIndexPage = () => {
         </Tab>
       </TabMenu>
       <Outlet />
-    </FestivalContainer>
+    </>
   );
 };
 

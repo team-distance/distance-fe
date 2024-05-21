@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { isLoggedInState } from '../../store/auth';
 import { Link } from 'react-router-dom';
@@ -6,13 +6,15 @@ import { myDataState } from '../../store/myData';
 import { CHARACTERS, COLORS } from '../../constants/character';
 import { useNavigate } from 'react-router-dom';
 import Modal from './Modal';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Badge from './Badge';
 import { instance } from '../../api/instance';
+import toast from 'react-hot-toast';
+import AuthUnivState from './AuthUnivState';
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
-  const myData = useRecoilValue(myDataState);
+  const [myData, setMyData] = useRecoilState(myDataState);
   const modalRef = useRef();
   const navigate = useNavigate();
 
@@ -33,23 +35,47 @@ const Header = () => {
     }
   };
 
+  const getMyData = async () => {
+    if (!isLoggedIn) return;
+    try {
+      const res = await instance.get('/member/profile');
+      setMyData(res.data);
+    } catch (error) {
+      toast.error('프로필 정보를 가져오는데 실패했어요!', {
+        id: 'my-data-error',
+        position: 'bottom-center',
+      });
+    }
+  };
+
+  useEffect(() => {
+    getMyData();
+  }, []);
+
   return (
     <>
       <WrapHeader>
         <img src="/assets/logo-pink.png" alt="디스턴스 로고" />
         {isLoggedIn ? (
-          <ProfileIcon
-            $character={myData.memberCharacter}
-            onClick={() => {
-              modalRef.current.open();
-            }}
-          >
-            <img src={CHARACTERS[myData.memberCharacter]} alt="프로필 이미지" />
-          </ProfileIcon>
+          <ProfileWrapper>
+            <AuthUnivState />
+            <ProfileIcon
+              $character={myData.memberCharacter}
+              onClick={() => {
+                modalRef.current.open();
+              }}
+            >
+              <img
+                src={CHARACTERS[myData.memberCharacter]}
+                alt="프로필 이미지"
+              />
+            </ProfileIcon>
+          </ProfileWrapper>
         ) : (
           <StyledLink to="/login">로그인</StyledLink>
         )}
       </WrapHeader>
+
       <Modal
         ref={modalRef}
         buttonLabel="프로필 수정하기"
@@ -99,6 +125,12 @@ const WrapHeader = styled.header`
   }
 `;
 
+const ProfileWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
 const StyledLink = styled(Link)`
   font-weight: 600;
   color: #ff625d;
@@ -144,10 +176,11 @@ const ProfileIcon = styled.div`
 
 const WrapContent = styled.div`
   display: flex;
+  width: 100%;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin: 32px 0;
+  padding: 32px 0;
   gap: 12px;
 `;
 
@@ -169,15 +202,15 @@ const StyledImage = styled.img`
 `;
 
 const TextDiv = styled.div`
-  width: 100%;
   text-align: center;
   color: #333333;
+  width: 100%;
+  text-align: center;
 `;
 
 const Major = styled.div`
   font-size: 24px;
   font-weight: 700;
-  white-space: nowrap;
 `;
 
 const MBTI = styled.div`

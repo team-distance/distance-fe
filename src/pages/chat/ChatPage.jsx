@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Messages from '../../components/chat/Messages';
 import MessageInput from '../../components/chat/MessageInput';
 import styled from 'styled-components';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
 import { instance } from '../../api/instance';
 import toast, { Toaster } from 'react-hot-toast';
@@ -30,6 +30,9 @@ const ChatPage = () => {
   const [reportMessage, setReportMessage] = useState('');
   const [bothAgreed, setBothAgreed] = useState(false);
   const [opponentProfile, setOpponentProfile] = useState(null);
+  const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
+
+  const param = useParams();
 
   const tooltipRef = useRef();
   const [isCallTooltipVisible, setIsCallTooltipVisible] = useDetectClose(
@@ -43,11 +46,10 @@ const ChatPage = () => {
   const viewportRef = useRef();
 
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const myId = location.state.myId;
-  const opponentId = location.state.opponentId;
-  const roomId = location.state.roomId;
+  const [myMemberId, setMyMemberId] = useState(0);
+  const [opponentMemberId, setOpponentMemberId] = useState(0);
+  const roomId = parseInt(param?.chatRoomId);
 
   const groupedMessages = useGroupedMessages(messages);
 
@@ -123,8 +125,8 @@ const ChatPage = () => {
       destination: `/app/chat/${roomId}`,
       body: JSON.stringify({
         chatMessage: draftMessage,
-        senderId: opponentId,
-        receiverId: myId,
+        senderId: opponentMemberId,
+        receiverId: myMemberId,
         publishType: 'USER',
       }),
     });
@@ -141,8 +143,8 @@ const ChatPage = () => {
       destination: `/app/chat/${roomId}`,
       body: JSON.stringify({
         chatMessage: 'LEAVE',
-        senderId: opponentId,
-        receiverId: myId,
+        senderId: opponentMemberId,
+        receiverId: myMemberId,
         publishType: 'LEAVE',
       }),
     });
@@ -160,8 +162,8 @@ const ChatPage = () => {
       destination: `/app/chat/${roomId}`,
       body: JSON.stringify({
         chatMessage: '통화를 요청하셨어요!',
-        senderId: opponentId,
-        receiverId: myId,
+        senderId: opponentMemberId,
+        receiverId: myMemberId,
         publishType: 'CALL_REQUEST',
       }),
     });
@@ -173,8 +175,8 @@ const ChatPage = () => {
       destination: `/app/chat/${roomId}`,
       body: JSON.stringify({
         chatMessage: '통화 요청을 수락했어요!',
-        senderId: opponentId,
-        receiverId: myId,
+        senderId: opponentMemberId,
+        receiverId: myMemberId,
         publishType: 'CALL_RESPONSE',
       }),
     });
@@ -194,6 +196,20 @@ const ChatPage = () => {
       }
       return [...oldMessages, parsedMessage.body];
     });
+  };
+
+  const fetchMemberIds = async () => {
+    try {
+      const response = await instance.get(`/room-member/${roomId}`);
+      const { memberId, opponentId } = response.data;
+      setMyMemberId(memberId);
+      setOpponentMemberId(opponentId);
+      setIsMemberIdsFetched(true);
+    } catch (error) {
+      toast.error('방 정보를 가져오는데 실패했어요! ', {
+        position: 'bottom-center',
+      });
+    }
   };
 
   // 전화 버튼 클릭 시
@@ -251,7 +267,7 @@ const ChatPage = () => {
     try {
       await instance.post('/report', {
         declareContent: reportMessage,
-        opponentId,
+        opponentId: opponentMemberId,
       });
       alert('신고가 완료되었어요!');
     } catch (error) {
@@ -272,10 +288,11 @@ const ChatPage = () => {
     }
   };
 
+  // 상대방 프로필 정보 불러오기
   const fetchOpponentProfile = async () => {
     try {
       const opponentProfile = await instance
-        .get(`/member/profile/${opponentId}`)
+        .get(`/member/profile/${opponentMemberId}`)
         .then((res) => res.data);
       setOpponentProfile(opponentProfile);
     } catch (error) {
@@ -283,41 +300,52 @@ const ChatPage = () => {
     }
   };
 
+  // 자신/상대방의 memberId 불러오기
+  useEffect(() => {
+    const initializeChat = async () => {
+      await fetchMemberIds();
+    };
+
+    initializeChat();
+  }, []);
+
   // STOMP 클라이언트 생성
   useEffect(() => {
-    fetchOpponentProfile();
+    if (isMemberIdsFetched) {
+      fetchOpponentProfile();
 
-    const newClient = new Client({
-      brokerURL: 'wss://api.dis-tance.com/meet',
-      connectHeaders: {
-        chatRoomId: roomId,
-        memberId: myId,
-      },
-      debug: function (str) {
-        console.log(str);
-      },
-      onConnect: (frame) => {
-        console.log('Connected: ' + frame);
-        newClient.subscribe(`/topic/chatroom/${roomId}`, subscritionCallback);
-      },
-      reconnectDelay: 100,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-    });
+      const newClient = new Client({
+        brokerURL: 'wss://api.dis-tance.com/meet',
+        connectHeaders: {
+          chatRoomId: roomId,
+          memberId: myMemberId,
+        },
+        debug: function (str) {
+          console.log(str);
+        },
+        onConnect: (frame) => {
+          console.log('Connected: ' + frame);
+          newClient.subscribe(`/topic/chatroom/${roomId}`, subscritionCallback);
+        },
+        reconnectDelay: 50,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+      });
 
-    const staleMessages = fetchStaleMessagesFromLocal();
-    if (staleMessages.length === 0) fetchAllMessagesFromServer();
-    else fetchUnreadMessagesFromServer();
+      const staleMessages = fetchStaleMessagesFromLocal();
+      if (staleMessages.length === 0) fetchAllMessagesFromServer();
+      else fetchUnreadMessagesFromServer();
 
-    fetchDistance();
+      fetchDistance();
 
-    newClient.activate();
-    setClient(newClient);
+      newClient.activate();
+      setClient(newClient);
 
-    return () => {
-      newClient.deactivate();
-    };
-  }, []);
+      return () => {
+        newClient.deactivate();
+      };
+    }
+  }, [isMemberIdsFetched]);
 
   // 메시지가 업데이트 될 때마다 상대방이 나갔는지 확인
   // 메시지가 업데이트 될 때마다 로컬 스토리지에 저장
@@ -367,6 +395,11 @@ const ChatPage = () => {
     <Wrapper>
       <Toaster
         position="bottom-center"
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
         containerStyle={{
           bottom: 104,
         }}
@@ -448,7 +481,7 @@ const ChatPage = () => {
 
         <Messages
           groupedMessages={groupedMessages}
-          myId={myId}
+          myId={myMemberId}
           responseCall={responseCall}
           openProfileModal={openProfileModal}
           opponentMemberCharacter={
@@ -493,7 +526,7 @@ const ChatPage = () => {
             ? async () => {
                 try {
                   const res = await instance.get(
-                    `/member/tel-num?memberId=${opponentId}&chatRoomId=${roomId}`
+                    `/member/tel-num?memberId=${opponentMemberId}&chatRoomId=${roomId}`
                   );
                   window.location.href = `tel:${res.data.telNum}`;
                 } catch (error) {

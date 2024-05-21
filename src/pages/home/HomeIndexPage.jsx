@@ -5,25 +5,19 @@ import { instance } from '../../api/instance';
 import ClipLoader from 'react-spinners/ClipLoader';
 
 import { CHARACTERS, COLORS } from '../../constants/character';
-import Header from '../../components/common/Header';
 import Profile from '../../components/home/Profile';
 import Modal from '../../components/common/Modal';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Badge from '../../components/common/Badge';
 import Banner from '../../components/common/Banner';
+import ReloadButton from '../../components/home/ReloadButton';
 
 const HomeIndexPage = () => {
   const profileModal = useRef();
-
   const [selectedProfile, setSelectedProfile] = useState();
   const navigate = useNavigate();
-
-  const memberId = localStorage.getItem('memberId');
   const [memberState, setMemberState] = useState();
-
-  const [isReloadButtonDisabled, setIsReloadButtonDisabled] = useState(false);
-  const [remainingTimeToReload, setRemainingTimeToReload] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const fetchMembers = async () => {
@@ -33,34 +27,6 @@ const HomeIndexPage = () => {
       setMemberState(res.data.matchedUsers);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const reloadMembers = async () => {
-    try {
-      setLoading(true);
-      setIsReloadButtonDisabled(true);
-      setRemainingTimeToReload(3);
-
-      const res = await instance.get('/gps/matching');
-      setMemberState(res.data.matchedUsers);
-
-      // 매초마다 남은 시간 업데이트
-      const intervalId = setInterval(() => {
-        setRemainingTimeToReload((prevTime) => {
-          if (prevTime <= 1) {
-            clearInterval(intervalId);
-            setIsReloadButtonDisabled(false);
-            return 0;
-          }
-          return prevTime - 1;
-        });
-      }, 1000);
-    } catch (error) {
-      console.log(error);
-      setIsReloadButtonDisabled(false);
     } finally {
       setLoading(false);
     }
@@ -82,13 +48,7 @@ const HomeIndexPage = () => {
       })
       .then((res) => {
         const createdChatRoom = res.data;
-        navigate(`/chat/${createdChatRoom}`, {
-          state: {
-            myId: memberId,
-            opponentId: opponentMemberId,
-            roomId: createdChatRoom,
-          },
-        });
+        navigate(`/chat/${createdChatRoom}`);
       })
       .catch((error) => {
         switch (error.response.data.code) {
@@ -128,17 +88,19 @@ const HomeIndexPage = () => {
   };
 
   const alertTextList = [
+    // {
+    //   text1: '📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입',
+    //   em: '400건 돌파',
+    //   text2: '',
+    // },
     {
-      text1: '📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입',
-      em: '400건 돌파',
-      text2: '',
-    },
-    {
+      index: 1,
       text1: '📢 채팅방에서 새로 업데이트 된 👤',
       em: '상대방 프로필 조회 기능',
       text2: '을 확인해보세요!',
     },
     {
+      index: 2,
       text1: '📢 ',
       em: '알림/GPS 활성화 방법',
       text2: '은 마이페이지에서 확인하실 수 있습니다.',
@@ -147,41 +109,33 @@ const HomeIndexPage = () => {
 
   return (
     <>
-      <HomeContainer>
-        <Header />
-        <Banner alertText={alertTextList} />
-        {memberState && memberState.length === 0 ? (
-          <EmptyContainer>
-            <div className="wrap">
-              <img src={'/assets/empty-home.svg'} alt="empty icon" />
-              <div>현재 근처에 있는 사람이 없어요!</div>
-            </div>
-          </EmptyContainer>
-        ) : (
-          <ProfileContainer>
-            {loading ? (
-              <LoaderContainer>
-                <ClipLoader color={'#FF625D'} loading={loading} size={50} />
-              </LoaderContainer>
-            ) : (
-              memberState &&
-              memberState.map((profile, index) => (
-                <Profile
-                  key={index}
-                  profile={profile}
-                  onClick={() => handleSelectProfile(profile)}
-                />
-              ))
-            )}
-          </ProfileContainer>
-        )}
-        <ReloadButton onClick={reloadMembers} disabled={isReloadButtonDisabled}>
-          {isReloadButtonDisabled && (
-            <div className="time-remaining">{remainingTimeToReload}</div>
+      <Banner alertText={alertTextList} />
+      {memberState && memberState.length === 0 ? (
+        <EmptyContainer>
+          <div className="wrap">
+            <img src={'/assets/empty-home.svg'} alt="empty icon" />
+            <div>현재 근처에 있는 사람이 없어요!</div>
+          </div>
+        </EmptyContainer>
+      ) : (
+        <ProfileContainer>
+          {loading ? (
+            <LoaderContainer>
+              <ClipLoader color={'#FF625D'} loading={loading} size={50} />
+            </LoaderContainer>
+          ) : (
+            memberState &&
+            memberState.map((profile, index) => (
+              <Profile
+                key={index}
+                profile={profile}
+                onClick={() => handleSelectProfile(profile)}
+              />
+            ))
           )}
-          <img src="/assets/home/reload-button.png" alt="Reload button" />
-        </ReloadButton>
-      </HomeContainer>
+        </ProfileContainer>
+      )}
+      <ReloadButton onClick={fetchMembers} />
 
       <Modal
         ref={profileModal}
@@ -225,48 +179,10 @@ const HomeIndexPage = () => {
   );
 };
 
-const HomeContainer = styled.section`
-  padding: 2rem 1.5rem;
-`;
-
 const ProfileContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-`;
-
-const ReloadButton = styled.button`
-  position: fixed;
-  right: 1.5rem;
-  bottom: 7rem;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: none;
-  background-color: #ffffff;
-  box-shadow: 0px 4px 10px 0px #0000001a;
-  transition: 0.3s;
-
-  > .time-remaining {
-    position: absolute;
-    z-index: 9999;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #000000;
-  }
-
-  > img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  &:disabled {
-    filter: brightness(0.6);
-  }
 `;
 
 const WrapContent = styled.div`
@@ -304,7 +220,6 @@ const TextDiv = styled.div`
 const Major = styled.div`
   font-size: 24px;
   font-weight: 700;
-  white-space: nowrap;
 `;
 
 const MBTI = styled.div`

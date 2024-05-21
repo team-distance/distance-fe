@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../../components/common/Header';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
@@ -13,7 +12,6 @@ import Badge from '../../components/common/Badge';
 const ChatIndexPage = () => {
   const navigate = useNavigate();
   const [chatList, setChatList] = useState();
-  const memberId = localStorage.getItem('memberId');
   const [loading, setLoading] = useState(false);
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const [waitingCount, setWaitingCount] = useState(0);
@@ -53,7 +51,7 @@ const ChatIndexPage = () => {
   const checkVerified = async () => {
     try {
       const authUniv = await instance.get('/member/check/university');
-      if (authUniv.data === 'SUCCESS') {
+      if (authUniv.data === 'SUCCESS' || authUniv.data === 'PENDING') {
         setAuthUniv(true);
       }
     } catch (error) {
@@ -105,21 +103,13 @@ const ChatIndexPage = () => {
           console.log(error);
         }
       } else {
-        navigate(`/chat/${chat.chatRoomId}`, {
-          state: {
-            myId: memberId,
-            opponentId: chat.opponentMemberId,
-            roomId: chat.chatRoomId,
-          },
-        });
+        navigate(`/chat/${chat.chatRoomId}`);
       }
     }
   };
 
   return (
-    <PagePadding>
-      <Header />
-
+    <>
       {isLoggedIn ? (
         loading ? (
           <LoaderContainer>
@@ -173,8 +163,8 @@ const ChatIndexPage = () => {
                     <div className="profile-section">
                       <Profile>
                         <div className="cover">{chat.department}</div>
-                        {chat.department}
-                        {chat.mbti && <Badge>{chat.mbti}</Badge>}
+                        <div className="department">{chat.department}</div>
+                        <div>{chat.mbti && <Badge>{chat.mbti}</Badge>}</div>
                       </Profile>
                       <Message>{chat.lastMessage}</Message>
                     </div>
@@ -214,13 +204,9 @@ const ChatIndexPage = () => {
           </div>
         </EmptyContainer>
       )}
-    </PagePadding>
+    </>
   );
 };
-
-const PagePadding = styled.div`
-  padding: 2rem 1.5rem;
-`;
 
 const ChatRoomContainer = styled.div`
   display: flex;
@@ -284,7 +270,9 @@ const CharacterBackground = styled.div`
 `;
 
 const Profile = styled.div`
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 4px;
   color: #000000;
   font-size: 18px;
@@ -297,6 +285,13 @@ const Profile = styled.div`
     background-image: linear-gradient(90deg, transparent 80%, #fbfbfb 100%);
     z-index: 99;
     color: transparent;
+  }
+
+  .department {
+    max-width: 80%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 `;
 

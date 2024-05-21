@@ -5,11 +5,16 @@ import { instance } from '../../api/instance';
 import Button from '../../components/common/Button';
 import TextInput from '../../components/register/TextInput';
 import toast, { Toaster } from 'react-hot-toast';
+import { useEffect } from 'react';
+import { UNIV_STATE } from '../../constants/collegeState';
 
 const VerifyEmailPage = () => {
   const navigate = useNavigate();
 
   const [schoolEmail, setSchoolEmail] = useState('');
+  const [domain, setDomain] = useState('');
+  const [school, setSchool] = useState('');
+  const [webMailLink, setWebMailLink] = useState('');
   const [verifyNum, setVerifyNum] = useState('');
   const [emailDisabled, setEmailDisabled] = useState(true);
   const [verifyDisabled, setVerifyDisabled] = useState(true);
@@ -37,17 +42,17 @@ const VerifyEmailPage = () => {
   };
 
   const sendEmail = async () => {
-    let baseEmail = schoolEmail.replace(/@sch\.ac\.kr/g, '');
+    let baseEmail = schoolEmail.replace(/@.*/, '');
     setSchoolEmail(baseEmail);
-
-    const fullEmail = schoolEmail.endsWith('@sch.ac.kr')
+    const fullEmail = schoolEmail.endsWith(domain)
       ? schoolEmail
-      : `${schoolEmail}@sch.ac.kr`;
+      : baseEmail + domain;
+
+    console.log(fullEmail);
 
     const response = instance.post('/univ/send/email', {
       schoolEmail: fullEmail,
     });
-
     toast.promise(response, {
       loading: '전송 중...',
       success: () => {
@@ -72,7 +77,7 @@ const VerifyEmailPage = () => {
         number: verifyNum.trim(),
         schoolEmail: schoolEmail.includes('@')
           ? schoolEmail
-          : schoolEmail + '@sch.ac.kr',
+          : schoolEmail + domain,
       });
       alert('인증되었습니다.');
       navigate('/');
@@ -81,9 +86,44 @@ const VerifyEmailPage = () => {
     }
   };
 
+  useEffect(() => {
+    const getDomain = async () => {
+      try {
+        const res = await instance.get('/univ/check/univ-domain');
+        setDomain(res.data);
+        let subLink = res.data.replace('@', '');
+
+        const filteredUniv = UNIV_STATE.filter((item) =>
+          item.webMail.includes(subLink)
+        );
+        const webMailLinks = filteredUniv
+          .map((item) => item.webMail)
+          .toString();
+        setWebMailLink(webMailLinks);
+
+        const schoolNames = filteredUniv.map((item) => item.name).toString();
+        setSchool(schoolNames);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getDomain();
+  }, []);
+
+  useEffect(() => {
+    console.log(domain);
+  }, [domain]);
+
   return (
     <WrapContent>
-      <Toaster position="bottom-center" />
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
+      />
       <div>
         <h2>'학생 메일'로 인증하기</h2>
         <p>
@@ -101,21 +141,15 @@ const VerifyEmailPage = () => {
             onChange={handleChangeEmail}
             placeholder="@ 앞 글자만 입력"
           />
-          <SCHDomain>@sch.ac.kr</SCHDomain>
+          <SchoolDomain>{domain}</SchoolDomain>
           <div>
             <Button size="small" disabled={emailDisabled} onClick={sendEmail}>
               메일 보내기
             </Button>
           </div>
         </InputWrapper>
-        <WrapButton
-          onClick={() =>
-            window.open(
-              'https://pyrite-cookie-104.notion.site/541aa66232df4d8d8022b4f722c73d53'
-            )
-          }
-        >
-          <p>'학생 메일'로 인증하는 방법</p>
+        <WrapButton onClick={() => window.open(webMailLink)}>
+          <p>{school} 웹메일 바로 가기</p>
           <img src="/assets/arrow-pink-button.png" alt="way to verify email" />
         </WrapButton>
       </div>
@@ -204,7 +238,7 @@ const InputWrapper = styled.div`
   }
 `;
 
-const SCHDomain = styled.div`
+const SchoolDomain = styled.div`
   margin-right: 1rem;
   font-weight: 600;
   color: #777;

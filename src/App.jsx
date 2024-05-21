@@ -29,18 +29,16 @@ import PrivacyPolicyPage from './pages/root/PrivacyPolicyPage';
 import ResetPassword from './pages/root/ResetPassword';
 import NotFoundPage from './pages/root/NotFoundPage';
 import useGPS from './hooks/useGPS';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { isLoggedInState } from './store/auth';
 import toast from 'react-hot-toast';
 import { instance } from './api/instance';
 import TeamIntroductionPage from './pages/mypage/TeamIntroductionPage';
 import GPSSolutionPage from './pages/root/GPSSolutionPage';
 import useRouteChangeTrack from './hooks/useRouteChangeTrack';
-import { myDataState } from './store/myData';
 
 function App() {
   useRouteChangeTrack();
-  const setMyData = useSetRecoilState(myDataState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const currentLocation = useGPS(isLoggedIn);
   const navigate = useNavigate();
@@ -52,36 +50,6 @@ function App() {
   useEffect(() => {
     toast.remove();
   }, [navigate]);
-
-  const getMemberId = async () => {
-    await instance
-      .get('/member/id')
-      .then((res) => {
-        localStorage.setItem('memberId', res.data);
-      })
-      .catch((err) => {
-        toast.error('회원 정보를 가져오는데 실패했어요!', {
-          id: 'member-id-error',
-          position: 'bottom-center',
-        });
-        console.log(err);
-      });
-  };
-
-  const getMyData = async () => {
-    await instance
-      .get('/member/profile')
-      .then((res) => {
-        setMyData(res.data);
-      })
-      .catch((err) => {
-        toast.error('프로필 정보를 가져오는데 실패했어요!', {
-          id: 'my-data-error',
-          position: 'bottom-center',
-        });
-        console.log(err);
-      });
-  };
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -138,17 +106,6 @@ function App() {
     }
   }, [currentLocation]);
 
-  useEffect(() => {
-    if (!isLoggedIn) return;
-
-    const fetchMemberIdAndMyData = async () => {
-      await getMemberId();
-      await getMyData();
-    };
-
-    fetchMemberIdAndMyData();
-  }, [isLoggedIn]);
-
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
@@ -179,8 +136,9 @@ function App() {
         </Route>
 
         <Route path="/mypage" element={<MyIndexPage />} />
-        <Route path="/team-introduction" element={<TeamIntroductionPage />} />
       </Route>
+
+      <Route path="/team-introduction" element={<TeamIntroductionPage />} />
 
       <Route path="/mypage/profile" element={<ProfileEditPage />} />
       <Route path="/mypage/account" element={<AccountEditPage />} />

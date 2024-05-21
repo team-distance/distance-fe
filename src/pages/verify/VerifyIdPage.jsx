@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Button from '../../components/common/Button';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
@@ -15,6 +15,7 @@ const VerifyMobileIdPage = () => {
   const [file, setFile] = useState(null);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [schoolId, setSchoolId] = useState('');
 
   const onChangeImage = (e) => {
     const file = e.target.files[0];
@@ -79,10 +80,14 @@ const VerifyMobileIdPage = () => {
     try {
       setIsLoading(true);
       setIsDisabled(true);
-      await instance.post('/studentcard/send', formData);
-      window.confirm(
-        '인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.'
-      ) && navigate('/');
+      if (
+        window.confirm(
+          '인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.'
+        )
+      ) {
+        await instance.post('/studentcard/send', formData);
+        navigate('/');
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -90,6 +95,19 @@ const VerifyMobileIdPage = () => {
       setIsDisabled(false);
     }
   };
+
+  useEffect(() => {
+    const getDomain = async () => {
+      try {
+        const res = await instance.get('/univ/check/univ-domain');
+        let domain = res.data.replace('@', '');
+        setSchoolId(domain.split('.')[0]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getDomain();
+  }, []);
 
   return (
     <WrapContent>
@@ -154,14 +172,20 @@ const VerifyMobileIdPage = () => {
         <ExamplesContainer>
           <Example>
             <div className="example-image">
-              <img src="/assets/id-examples/id1.png" alt="학생증 예시1" />
+              <img
+                src={`/assets/id-examples/id1-${schoolId}.png`}
+                alt="학생증 예시1"
+              />
             </div>
             <img src="/assets/icon-correct.png" alt="correct" />
             <p>학번/이름 식별 가능</p>
           </Example>
           <Example>
             <div className="example-image">
-              <img src="/assets/id-examples/id2.png" alt="학생증 예시2" />
+              <img
+                src={`/assets/id-examples/id2-${schoolId}.png`}
+                alt="학생증 예시2"
+              />
             </div>
             <img src="/assets/icon-wrong.png" alt="wrong" />
             <p>학번/이름 식별 불가능</p>

@@ -71,7 +71,14 @@ const AccountEditPage = () => {
 
   return (
     <>
-      <Toaster position="bottom-center" />
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
+      />
       <WrapContent>
         <HeaderPrev title="계정 관리" navigateTo={-1} />
 

@@ -57,6 +57,7 @@ const ProfileRegisterPage = () => {
       .post('/member/signup', {
         telNum: registerData.telNum,
         password: registerData.password,
+        school: registerData.school,
         college: registerData.college,
         department: registerData.department,
         gender: registerData.gender,
@@ -146,7 +147,14 @@ const ProfileRegisterPage = () => {
 
   return (
     <div>
-      <Toaster position="bottom-center" />
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
+      />
       <WrapHeader>
         <ProgressBar progress={4} />
         <p>프로필을 등록해주세요</p>
@@ -213,11 +221,7 @@ const ProfileRegisterPage = () => {
 
         <div>
           <Label>성별 선택하기</Label>
-          <Toggle
-            setState={setToggleState}
-            registerData={registerData}
-            setRegisterData={setRegisterData}
-          />
+          <Toggle univ={registerData.school} setState={setToggleState} />
         </div>
 
         <div>
@@ -233,6 +237,7 @@ const ProfileRegisterPage = () => {
             {attractiveness.map((value, index) => (
               <Badge key={index} onClick={handleClickAttractiveness}>
                 {value}
+                <img src="/assets/cancel-button.png" alt="cancel" />
               </Badge>
             ))}
           </BadgeContainer>
@@ -245,6 +250,7 @@ const ProfileRegisterPage = () => {
             {hobby.map((value, index) => (
               <Badge key={index} onClick={handleClickHobby}>
                 {value}
+                <img src="/assets/cancel-button.png" alt="cancel" />
               </Badge>
             ))}
           </BadgeContainer>
@@ -374,12 +380,17 @@ const Badge = styled.div`
   padding: 0.5rem 1rem;
   color: #ffffff;
   border-radius: 12px;
+
+  img {
+    width: 13px;
+    padding-left: 0.5rem;
+  }
 `;
 
 const BadgeContainer = styled.div`
   display: flex;
   align-items: center;
-  height: 96px;
+  min-height: 96px;
   padding: 0.5rem;
   gap: 0.5rem;
   justify-content: center;

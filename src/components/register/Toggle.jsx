@@ -18,28 +18,52 @@ const ToggleOption = styled.div`
     $option === '남' ? '20px 0 0 20px' : '0 20px 20px 0'};
 `;
 
-const ToggleSwitch = ({ options = ['남', '여'], setState }) => {
+const ToggleSwitch = ({ options = ['남', '여'], setState, univ }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     setState(activeIndex === 1 ? 'F' : 'M');
   }, [setState, activeIndex]);
 
+  useEffect(() => {
+    if (univ === '서울여자대학교') {
+      setState('F');
+    }
+  }, [univ]);
+
   return (
-    <div>
-      <ToggleContainer>
-        {options.map((option, index) => (
-          <ToggleOption
-            key={index}
-            $isActive={index === activeIndex}
-            $option={option}
-            onClick={() => setActiveIndex(index)}
-          >
-            {option}
-          </ToggleOption>
-        ))}
-      </ToggleContainer>
-    </div>
+    <>
+      {univ === '서울여자대학교' ? (
+        <div>
+          <ToggleContainer>
+            {options.map((option, index) => (
+              <ToggleOption
+                key={index}
+                $isActive={index === 1}
+                $option={option}
+              >
+                {option}
+              </ToggleOption>
+            ))}
+          </ToggleContainer>
+        </div>
+      ) : (
+        <div>
+          <ToggleContainer>
+            {options.map((option, index) => (
+              <ToggleOption
+                key={index}
+                $isActive={index === activeIndex}
+                $option={option}
+                onClick={() => setActiveIndex(index)}
+              >
+                {option}
+              </ToggleOption>
+            ))}
+          </ToggleContainer>
+        </div>
+      )}
+    </>
   );
 };
 

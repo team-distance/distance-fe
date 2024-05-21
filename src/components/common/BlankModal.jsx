@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useRef, forwardRef, useImperativeHandle } from 'react';
+import { createPortal } from 'react-dom';
 
 const BlankModal = forwardRef(({ children }, ref) => {
   const modalRef = useRef();
@@ -8,14 +9,21 @@ const BlankModal = forwardRef(({ children }, ref) => {
     return {
       open() {
         modalRef.current.showModal();
+        document.body.style = `overflow: hidden`;
       },
       close() {
         modalRef.current.close();
+        document.body.style = `overflow: auto`;
       },
     };
   });
 
-  return <StyledDialog ref={modalRef}>{children}</StyledDialog>;
+  return createPortal(
+    <>
+      <StyledDialog ref={modalRef}>{children}</StyledDialog>
+    </>,
+    document.getElementById('modal')
+  );
 });
 
 export default BlankModal;
@@ -33,4 +41,9 @@ const StyledDialog = styled.dialog`
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
+
+  &[open]::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+  }
 `;

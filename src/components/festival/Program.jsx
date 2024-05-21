@@ -3,28 +3,49 @@ import ProgramCard from './ProgramCard';
 import { useEffect, useState } from 'react';
 import { instance } from '../../api/instance';
 import ClipLoader from 'react-spinners/ClipLoader';
+import { UNIV_STATE } from '../../constants/collegeState';
 
 const Program = () => {
   const [programList, setProgramList] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const fetchProgramInfo = async () => {
-    let school = '순천향대학교';
-    try {
-      setLoading(true);
-      const res = await instance.get(`/performance?school=${school}`);
-      setProgramList(res.data);
-      // console.log('res', res.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [school, setSchool] = useState('');
+  const [sortedList, setSortedList] = useState([]);
+  const dateList = new Set();
 
   useEffect(() => {
-    fetchProgramInfo();
+    const getDomain = async () => {
+      try {
+        const res = await instance.get('/univ/check/univ-domain');
+        UNIV_STATE.forEach((univ) => {
+          if (res.data.includes(univ.id)) setSchool(univ.name);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getDomain();
   }, []);
+
+  useEffect(() => {
+    const fetchProgramInfo = async () => {
+      if (school === '') return;
+      try {
+        setLoading(true);
+        const res = await instance.get(`/performance?school=${school}`);
+        setProgramList(res.data);
+        res.data.forEach((date) => dateList.add(date.startAt.split('T')[0]));
+        setSortedList(
+          [...dateList].sort((a, b) => new window.Date(a) - new window.Date(b))
+        );
+        // console.log(sortedList);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProgramInfo();
+  }, [school]);
 
   return (
     <>
@@ -34,34 +55,25 @@ const Program = () => {
         </LoaderContainer>
       ) : (
         <>
-          <Title>순천향대학교</Title>
-          <Date>5월 7일</Date>
-          <WrapCards>
-            {programList.map(
-              (program) =>
-                program.startAt.startsWith('2024-05-07') && (
-                  <ProgramCard key={program.artistId} content={program} />
-                )
-            )}
-          </WrapCards>
-          <Date className="cardsDate">5월 8일</Date>
-          <WrapCards>
-            {programList.map(
-              (program) =>
-                program.startAt.startsWith('2024-05-08') && (
-                  <ProgramCard key={program.artistId} content={program} />
-                )
-            )}
-          </WrapCards>
-          <Date className="cardsDate">5월 9일</Date>
-          <WrapCards>
-            {programList.map(
-              (program) =>
-                program.startAt.startsWith('2024-05-09') && (
-                  <ProgramCard key={program.artistId} content={program} />
-                )
-            )}
-          </WrapCards>
+          <Title>{school}</Title>
+          {sortedList &&
+            sortedList.map((date) => (
+              <div key={date}>
+                <Date>
+                  {date.split('-')[1]}월 {date.split('-')[2]}일
+                </Date>
+                <WrapCards>
+                  {programList.map(
+                    (program) =>
+                      program.startAt.startsWith(date) && (
+                        <ProgramCard key={program.artistId} content={program} />
+                      )
+                  )}
+                </WrapCards>
+              </div>
+            ))}
+          <br />
+          <br />
         </>
       )}
     </>
@@ -82,6 +94,7 @@ const WrapCards = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-bottom: 1rem;
 `;
 
 const LoaderContainer = styled.div`

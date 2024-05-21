@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Button from '../../components/common/Button';
 import { instance } from '../../api/instance';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ const VerifyMobileIdPage = () => {
   const [file, setFile] = useState(null);
   const [isDisabled, setIsDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [schoolId, setSchoolId] = useState('');
 
   const onChangeImage = (e) => {
     const file = e.target.files[0];
@@ -79,10 +80,14 @@ const VerifyMobileIdPage = () => {
     try {
       setIsLoading(true);
       setIsDisabled(true);
-      await instance.post('/studentcard/send', formData);
-      window.confirm(
-        '인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.'
-      ) && navigate('/');
+      if (
+        window.confirm(
+          '인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.'
+        )
+      ) {
+        await instance.post('/studentcard/send', formData);
+        navigate('/');
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -90,6 +95,19 @@ const VerifyMobileIdPage = () => {
       setIsDisabled(false);
     }
   };
+
+  useEffect(() => {
+    const getDomain = async () => {
+      try {
+        const res = await instance.get('/univ/check/univ-domain');
+        let domain = res.data.replace('@', '');
+        setSchoolId(domain.split('.')[0]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getDomain();
+  }, []);
 
   return (
     <WrapContent>
@@ -155,7 +173,7 @@ const VerifyMobileIdPage = () => {
           <Example>
             <div className="example-image">
               <img
-                src="/assets/id-examples/mobileid1.png"
+                src={`/assets/id-examples/mobileid1-${schoolId}.png`}
                 alt="모바일 학생증 예시1"
               />
             </div>
@@ -165,7 +183,7 @@ const VerifyMobileIdPage = () => {
           <Example>
             <div className="example-image">
               <img
-                src="/assets/id-examples/mobileid2.png"
+                src={`/assets/id-examples/mobileid2-${schoolId}.png`}
                 alt="모바일 학생증 예시1"
               />
             </div>

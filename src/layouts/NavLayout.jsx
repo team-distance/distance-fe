@@ -6,6 +6,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { onMessage } from 'firebase/messaging';
 import { messaging } from '../firebaseConfig';
 import PWAInstallPrompt from '../components/common/PWAInstallPrompt';
+import Header from '../components/common/Header';
 
 const NavLayout = () => {
   const navigate = useNavigate();
@@ -72,10 +73,16 @@ const NavLayout = () => {
     <>
       <PWAInstallPrompt />
       <Padding $isIphone={isIphone}>
+        <Header />
         <Outlet />
       </Padding>
       <TabBar />
       <Toaster
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+          },
+        }}
         containerStyle={{
           bottom: isIphone ? '116px' : '96px',
         }}
@@ -85,6 +92,9 @@ const NavLayout = () => {
 };
 
 const Padding = styled.div`
+  padding-top: 2rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
   padding-bottom: ${(props) => (props.$isIphone ? '96px' : '74px')};
 `;
 
