@@ -140,46 +140,50 @@ const ChatIndexPage = () => {
                 </div>
               </EmptyContainer>
             ) : (
-              chatList &&
-              chatList.map((chat) => {
-                const timeDisplay = chat.modifyDt
-                  ? formatTime(chat.modifyDt)
-                  : '(알수없음)';
+              <ChatListContainer>
+                {chatList &&
+                  chatList.map((chat) => {
+                    const timeDisplay = chat.modifyDt
+                      ? formatTime(chat.modifyDt)
+                      : '(알수없음)';
 
-                return (
-                  <ChatRoomContainer
-                    key={chat.chatRoomId}
-                    onClick={() => onClickChatroom(chat)}
-                  >
-                    <div className="left-section">
-                      <CharacterBackground $character={chat.memberCharacter}>
-                        <img
-                          className="null-img"
-                          src={CHARACTERS[chat.memberCharacter]}
-                          alt={chat.memberCharacter}
-                        />
-                      </CharacterBackground>
-                    </div>
-                    <div className="profile-section">
-                      <Profile>
-                        <div className="cover">{chat.department}</div>
-                        <div className="department">{chat.department}</div>
-                        <div>{chat.mbti && <Badge>{chat.mbti}</Badge>}</div>
-                      </Profile>
-                      <Message>{chat.lastMessage}</Message>
-                    </div>
+                    return (
+                      <ChatRoomContainer
+                        key={chat.chatRoomId}
+                        onClick={() => onClickChatroom(chat)}
+                      >
+                        <div className="left-section">
+                          <CharacterBackground
+                            $character={chat.memberCharacter}
+                          >
+                            <img
+                              className="null-img"
+                              src={CHARACTERS[chat.memberCharacter]}
+                              alt={chat.memberCharacter}
+                            />
+                          </CharacterBackground>
+                        </div>
+                        <div className="profile-section">
+                          <Profile>
+                            <div className="cover">{chat.department}</div>
+                            <div className="department">{chat.department}</div>
+                            <div>{chat.mbti && <Badge>{chat.mbti}</Badge>}</div>
+                          </Profile>
+                          <Message>{chat.lastMessage}</Message>
+                        </div>
 
-                    <div className="right-section">
-                      <Time>{timeDisplay}</Time>
-                      {chat.askedCount > 0 ? (
-                        <UnreadCount>{chat.askedCount}</UnreadCount>
-                      ) : (
-                        <br />
-                      )}
-                    </div>
-                  </ChatRoomContainer>
-                );
-              })
+                        <div className="right-section">
+                          <Time>{timeDisplay}</Time>
+                          {chat.askedCount > 0 ? (
+                            <UnreadCount>{chat.askedCount}</UnreadCount>
+                          ) : (
+                            <br />
+                          )}
+                        </div>
+                      </ChatRoomContainer>
+                    );
+                  })}
+              </ChatListContainer>
             )}
             <SurveyLinkContainer
               onClick={() => window.open('https://forms.gle/6ZgZvLD2iSM5LVuEA')}
@@ -207,6 +211,10 @@ const ChatIndexPage = () => {
     </>
   );
 };
+
+const ChatListContainer = styled.div`
+  margin-bottom: 10rem;
+`;
 
 const ChatRoomContainer = styled.div`
   display: flex;
@@ -376,7 +384,8 @@ const EmptyContainer = styled.div`
 const SurveyLinkContainer = styled.div`
   width: 100%;
   height: 80px;
-  position: absolute;
+  position: fixed;
+  z-index: 999;
   bottom: 15%;
   left: 0;
   right: 0;
