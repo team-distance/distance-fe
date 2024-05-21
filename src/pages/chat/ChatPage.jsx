@@ -148,10 +148,11 @@ const ChatPage = () => {
         publishType: 'LEAVE',
       }),
     });
-
-    const staleMessages = JSON.parse(localStorage.getItem('staleMessages'));
-    delete staleMessages[roomId];
-    localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
+    if (localStorage.getItem('staleMessages') !== null) {
+      const staleMessages = JSON.parse(localStorage.getItem('staleMessages'));
+      delete staleMessages[roomId];
+      localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
+    }
 
     navigate('/');
   };
@@ -326,6 +327,9 @@ const ChatPage = () => {
         onConnect: (frame) => {
           console.log('Connected: ' + frame);
           newClient.subscribe(`/topic/chatroom/${roomId}`, subscritionCallback);
+        },
+        onStompError: (error) => {
+          console.log(error);
         },
         reconnectDelay: 50,
         heartbeatIncoming: 4000,
