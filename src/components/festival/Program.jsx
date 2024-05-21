@@ -33,6 +33,7 @@ const Program = () => {
         setLoading(true);
         const res = await instance.get(`/performance?school=${school}`);
         setProgramList(res.data);
+        // console.log(res.data);
         res.data.forEach((date) => dateList.add(date.startAt.split('T')[0]));
         setSortedList(
           [...dateList].sort((a, b) => new window.Date(a) - new window.Date(b))
