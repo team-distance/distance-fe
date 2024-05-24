@@ -54,7 +54,7 @@ const HomeIndexPage = () => {
         switch (error.response.data.code) {
           case 'TOO_MANY_MY_CHATROOM':
             toast.error(
-              '이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요.',
+              '이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.',
               {
                 position: 'bottom-center',
               }
@@ -62,7 +62,7 @@ const HomeIndexPage = () => {
             break;
           case 'TOO_MANY_OPPONENT_CHATROOM':
             toast.error(
-              '상대방이 이미 생성된 채팅방 3개입니다. 상대방이 수락하면 알려드릴게요!',
+              '상대방이 이미 생성된 채팅방 5개입니다. 상대방이 수락하면 알려드릴게요!',
               {
                 position: 'bottom-center',
               }
@@ -93,12 +93,6 @@ const HomeIndexPage = () => {
     //   em: '400건 돌파',
     //   text2: '',
     // },
-    {
-      index: 1,
-      text1: '📢 채팅방에서 새로 업데이트 된 👤',
-      em: '상대방 프로필 조회 기능',
-      text2: '을 확인해보세요!',
-    },
     {
       index: 2,
       text1: '📢 ',
