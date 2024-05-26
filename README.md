@@ -12,13 +12,9 @@
 ## 팀원 구성
 <div align="center">
 
-| **박솔미** |
-| :------: | 
-| [<img src="https://github.com/vple-remake/vple-frontend/assets/69065439/955fba59-371d-4c6b-b1fb-3679439c9ba2" height=150 width=150> <br/> @Parksolmi](https://github.com/Parksolmi) |
-
-| **노주영** |
-| :------: | 
-| [<img src="" height=150 width=150> <br/> @juyeongnoh](https://github.com/juyeongnoh) |
+| **박솔미** | **노주영** |
+| :------: | :------: | 
+| [<img src="https://github.com/vple-remake/vple-frontend/assets/69065439/955fba59-371d-4c6b-b1fb-3679439c9ba2" height=150 width=150> <br/> @Parksolmi](https://github.com/Parksolmi) |[<img src="" height=150 width=150> <br/> @juyeongnoh](https://github.com/juyeongnoh) |
 
 </div>
 </div>
