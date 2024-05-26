@@ -14,11 +14,11 @@
 
 | **박솔미** |
 | :------: | 
-| [<img src="https://github.com/vple-remake/vple-frontend/assets/69065439/955fba59-371d-4c6b-b1fb-3679439c9ba2" height=150 width=150> <br/> @Parksolmi](https://github.com/Parksolmi) |
+| [<img src="https://github.com/vple-remake/vple-frontend/assets/69065439/955fba59-371d-4c6b-b1fb-3679439c9ba2" height=150 width=150>  @Parksolmi](https://github.com/Parksolmi) |
 
 | **노주영** |
 | :------: | 
-| [<img src="" height=150 width=150> <br/> @juyeongnoh](https://github.com/juyeongnoh) |
+| [<img src="" height=150 width=150> @juyeongnoh](https://github.com/juyeongnoh) |
 
 </div>
 </div>
