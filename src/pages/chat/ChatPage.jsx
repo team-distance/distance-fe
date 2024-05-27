@@ -792,7 +792,6 @@ const TextDiv = styled.div`
 const Major = styled.div`
   font-size: 24px;
   font-weight: 700;
-  white-space: nowrap;
 `;
 
 const MBTI = styled.div`

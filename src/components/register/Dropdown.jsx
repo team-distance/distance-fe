@@ -23,15 +23,13 @@ const Dropdown = ({ label, placeholder, types, value, setValue }) => {
                   $type={type}
                   key={type}
                   onClick={() => {
-                    if (type !== '순천향대학교') {
+                    if (!type.includes('(')) {
                       setValue(type);
                       setIsOpen(false);
                     }
                   }}
                 >
-                  {type === '순천향대학교'
-                    ? `${type}  (5.7~5.9 축제 종료)`
-                    : type}
+                  {type}
                 </DropdownItem>
               ))}
             </WrapItems>
@@ -92,7 +90,7 @@ const WrapItems = styled.div`
 
 const DropdownItem = styled.div`
   padding: 0.75rem 1.25rem;
-  color: ${({ $type }) => ($type === '순천향대학교' ? '#b7b7b7' : 'black')};
+  color: ${({ $type }) => ($type.includes('(') ? '#b7b7b7' : 'black')};
   &:hover {
     background-color: #f1f1f1;
   }

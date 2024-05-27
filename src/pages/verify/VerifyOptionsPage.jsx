@@ -32,7 +32,7 @@ const VerifyOptionsPage = () => {
     try {
       const res = await instance.get('/univ/check/univ-domain');
       UNIV_STATE.forEach((univ) => {
-        if (res.data.includes(univ.id)) {
+        if (res.data.join('').includes(univ.id)) {
           setUniversity(univ.name);
           setUniversityLogo(univ.logo);
         }
@@ -130,7 +130,7 @@ const LogoImage = styled.img`
   bottom: 1rem;
   left: 0;
   z-index: -1;
-  width: 30%;
+  height: 250%;
   opacity: 0.2;
 `;
 

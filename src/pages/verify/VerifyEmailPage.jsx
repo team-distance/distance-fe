@@ -7,21 +7,20 @@ import TextInput from '../../components/register/TextInput';
 import toast, { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
 import { UNIV_STATE } from '../../constants/collegeState';
+import Checkbox from '../../components/common/Checkbox';
 
 const VerifyEmailPage = () => {
   const navigate = useNavigate();
 
-  const [schoolEmail, setSchoolEmail] = useState('');
-  const [domain, setDomain] = useState('');
+  const [schoolEmail, setSchoolEmail] = useState([]);
+  const [domain, setDomain] = useState([]);
+  const [domainIndex, setDomainIndex] = useState(0);
   const [school, setSchool] = useState('');
   const [webMailLink, setWebMailLink] = useState('');
   const [verifyNum, setVerifyNum] = useState('');
   const [emailDisabled, setEmailDisabled] = useState(true);
   const [verifyDisabled, setVerifyDisabled] = useState(true);
   const [isSendEmail, setIsSendEmail] = useState(false);
-
-  //서비스 개시 전까지는 사용하지 않음
-  // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   const handleChangeEmail = (e) => {
     setSchoolEmail(e.target.value);
@@ -42,11 +41,13 @@ const VerifyEmailPage = () => {
   };
 
   const sendEmail = async () => {
+    //입력 된 값에서 @뒤로 다 지우기
     let baseEmail = schoolEmail.replace(/@.*/, '');
     setSchoolEmail(baseEmail);
-    const fullEmail = schoolEmail.endsWith(domain)
+
+    const fullEmail = schoolEmail.endsWith(domain[domainIndex])
       ? schoolEmail
-      : baseEmail + domain;
+      : schoolEmail + domain[domainIndex];
 
     console.log(fullEmail);
 
@@ -75,9 +76,9 @@ const VerifyEmailPage = () => {
     try {
       await instance.post('/univ/certificate/email', {
         number: verifyNum.trim(),
-        schoolEmail: schoolEmail.includes('@')
+        schoolEmail: schoolEmail.endsWith(domain[domainIndex])
           ? schoolEmail
-          : schoolEmail + domain,
+          : schoolEmail + domain[domainIndex],
       });
       alert('인증되었습니다.');
       navigate('/');
@@ -86,12 +87,20 @@ const VerifyEmailPage = () => {
     }
   };
 
+  const handleCheckbox = (e) => {
+    let isCheck = e.target.checked;
+    if (isCheck) setDomainIndex(1);
+    else setDomainIndex(0);
+  };
+
   useEffect(() => {
     const getDomain = async () => {
       try {
         const res = await instance.get('/univ/check/univ-domain');
+        if (res.data[0].includes('edu'))
+          res.data[0] = res.data[0].replace('.ac.kr', '');
         setDomain(res.data);
-        let subLink = res.data.replace('@', '');
+        let subLink = res.data[0].replace('@', '');
 
         const filteredUniv = UNIV_STATE.filter((item) =>
           item.webMail.includes(subLink)
@@ -130,7 +139,12 @@ const VerifyEmailPage = () => {
           <strong>학교 도메인</strong>의 메일만 사용 가능해요
         </p>
       </div>
-
+      {domain.length > 1 && (
+        <Checkbox
+          label="@dgu.ac.kr로 인증하기"
+          onChange={handleCheckbox}
+        ></Checkbox>
+      )}
       <div>
         <Label>학생메일 인증하기</Label>
         <InputWrapper>
@@ -139,9 +153,9 @@ const VerifyEmailPage = () => {
             name="schoolEmail"
             value={schoolEmail}
             onChange={handleChangeEmail}
-            placeholder="@ 앞 글자만 입력"
+            placeholder="@ 앞 글자"
           />
-          <SchoolDomain>{domain}</SchoolDomain>
+          <SchoolDomain>{domain[domainIndex]}</SchoolDomain>
           <div>
             <Button size="small" disabled={emailDisabled} onClick={sendEmail}>
               메일 보내기
@@ -149,7 +163,7 @@ const VerifyEmailPage = () => {
           </div>
         </InputWrapper>
         <WrapButton onClick={() => window.open(webMailLink)}>
-          <p>{school} 웹메일 바로 가기</p>
+          <p>{school.replace(/\(.*/, '')} 웹메일 바로 가기</p>
           <img src="/assets/arrow-pink-button.png" alt="way to verify email" />
         </WrapButton>
       </div>
