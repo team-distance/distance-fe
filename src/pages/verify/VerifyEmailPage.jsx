@@ -153,7 +153,7 @@ const VerifyEmailPage = () => {
             name="schoolEmail"
             value={schoolEmail}
             onChange={handleChangeEmail}
-            placeholder="@ 앞 글자만 입력"
+            placeholder="@ 앞 글자"
           />
           <SchoolDomain>{domain[domainIndex]}</SchoolDomain>
           <div>
