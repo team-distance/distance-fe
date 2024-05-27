@@ -32,7 +32,7 @@ const VerifyOptionsPage = () => {
     try {
       const res = await instance.get('/univ/check/univ-domain');
       UNIV_STATE.forEach((univ) => {
-        if (res.data.includes(univ.id)) {
+        if (res.data.join('').includes(univ.id)) {
           setUniversity(univ.name);
           setUniversityLogo(univ.logo);
         }
