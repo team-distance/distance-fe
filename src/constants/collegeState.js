@@ -1,6 +1,6 @@
 const SCH_COLLEGE_STATE = {
   id: 'sch',
-  name: '순천향대학교',
+  name: '순천향대학교 (5.7~5.9 축제 종료)',
   logo: '/assets/univ-logo/SCH.svg',
   webMail: 'https://mail.sch.ac.kr/account/login.do',
   state: [
@@ -133,7 +133,7 @@ const SCH_COLLEGE_STATE = {
 
 const KHU_COLLEGE_STATE = {
   id: 'khu',
-  name: '경희대학교',
+  name: '경희대학교 (5.22~5.24 축제 종료)',
   logo: '/assets/univ-logo/KHU.svg',
   webMail: 'https://mail.khu.ac.kr/',
   state: [
@@ -321,7 +321,7 @@ const KHU_COLLEGE_STATE = {
 
 const SWU_COLLEGE_STATE = {
   id: 'swu',
-  name: '서울여자대학교',
+  name: '서울여자대학교 (5.22~5.24 축제 종료)',
   logo: '/assets/univ-logo/SWU.svg',
   webMail: 'https://mc183.mailplug.com/member/login?host_domain=swu.ac.kr',
   state: [
@@ -396,8 +396,22 @@ const SWU_COLLEGE_STATE = {
   ],
 };
 
+const DGU_COLLEGE_STATE = {
+  id: 'dgu',
+  name: '동국대학교',
+  logo: '/assets/univ-logo/DGU.svg',
+  webMail: 'https://mail.dongguk.edu/account/login.do',
+  state: [
+    {
+      college: '',
+      department: [''],
+    },
+  ],
+};
+
 export const UNIV_STATE = [
   SCH_COLLEGE_STATE,
   KHU_COLLEGE_STATE,
   SWU_COLLEGE_STATE,
+  DGU_COLLEGE_STATE,
 ];
