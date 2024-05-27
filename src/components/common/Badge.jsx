@@ -10,9 +10,11 @@ const Badge = ({ children }) => {
 };
 
 const Background = styled.span`
+  display: flex;
+  align-items: center;
   border-radius: 12px;
   background: #f0f0f0;
-  padding: 0 8px;
+  padding: 4px 8px;
   margin-left: 5px;
 `;
 

@@ -243,7 +243,6 @@ const ChatRoomContainer = styled.div`
       display: inline-block;
       overflow: hidden;
       white-space: nowrap;
-      /* text-overflow: ellipsis; */
     }
   }
 
