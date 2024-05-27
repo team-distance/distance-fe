@@ -403,8 +403,8 @@ const DGU_COLLEGE_STATE = {
   webMail: 'https://mail.dongguk.edu/account/login.do',
   state: [
     {
-      college: '',
-      department: [''],
+      college: '불교대학',
+      department: ['불교학부'],
     },
   ],
 };
