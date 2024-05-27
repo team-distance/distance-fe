@@ -130,7 +130,7 @@ const LogoImage = styled.img`
   bottom: 1rem;
   left: 0;
   z-index: -1;
-  width: 30%;
+  height: 250%;
   opacity: 0.2;
 `;
 

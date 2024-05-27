@@ -163,7 +163,7 @@ const VerifyEmailPage = () => {
           </div>
         </InputWrapper>
         <WrapButton onClick={() => window.open(webMailLink)}>
-          <p>{school} 웹메일 바로 가기</p>
+          <p>{school.replace(/\(.*/, '')} 웹메일 바로 가기</p>
           <img src="/assets/arrow-pink-button.png" alt="way to verify email" />
         </WrapButton>
       </div>
