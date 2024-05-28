@@ -32,7 +32,7 @@ const MyIndexPage = () => {
       navigator
         .share({
           title: '💕 distance 디스턴스',
-          text: '축제를 200% 즐기는 방법',
+          text: '축제를 200% 즐기는 방법, distance 💕',
           url: 'https://dis-tance.com',
         })
         .then(() => alert('공유가 성공적으로 완료되었습니다.'))
@@ -93,13 +93,13 @@ const MyIndexPage = () => {
                   alt="개인정보 처리방침"
                 />
               </div>
-              <div
+              {/* <div
                 className="menu"
                 onClick={() => navigate('/team-introduction')}
               >
                 <div>팀 소개</div>
                 <img src="/assets/mypage/arrow-gray-button.png" alt="팀 소개" />
-              </div>
+              </div> */}
               <div
                 className="menu border"
                 onClick={() => navigate('/notification')}
