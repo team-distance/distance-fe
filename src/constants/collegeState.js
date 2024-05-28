@@ -1,6 +1,6 @@
 const SCH_COLLEGE_STATE = {
   id: 'sch',
-  name: '순천향대학교 (5.7~5.9 축제 종료)',
+  name: '순천향대학교',
   logo: '/assets/univ-logo/SCH.svg',
   webMail: 'https://mail.sch.ac.kr/account/login.do',
   state: [
@@ -528,8 +528,8 @@ const DGU_COLLEGE_STATE = {
 };
 
 export const UNIV_STATE = [
+  DGU_COLLEGE_STATE,
   SCH_COLLEGE_STATE,
   KHU_COLLEGE_STATE,
   SWU_COLLEGE_STATE,
-  DGU_COLLEGE_STATE,
 ];
