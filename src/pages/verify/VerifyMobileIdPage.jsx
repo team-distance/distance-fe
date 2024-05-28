@@ -100,7 +100,7 @@ const VerifyMobileIdPage = () => {
     const getDomain = async () => {
       try {
         const res = await instance.get('/univ/check/univ-domain');
-        let domain = res.data.replace('@', '');
+        let domain = res.data[0].replace('@', '');
         setSchoolId(domain.split('.')[0]);
       } catch (error) {
         console.log(error);
