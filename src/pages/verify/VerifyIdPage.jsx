@@ -101,7 +101,9 @@ const VerifyMobileIdPage = () => {
       try {
         const res = await instance.get('/univ/check/univ-domain');
         let domain = res.data[0].replace('@', '');
-        setSchoolId(domain.split('.')[0]);
+        setSchoolId(
+          domain.startsWith('dongguk') ? 'dgu' : domain.split('.')[0]
+        );
       } catch (error) {
         console.log(error);
       }
