@@ -16,9 +16,12 @@ const Program = () => {
     const getDomain = async () => {
       try {
         const res = await instance.get('/univ/check/univ-domain');
-        UNIV_STATE.forEach((univ) => {
-          if (res.data.includes(univ.id)) setSchool(univ.name);
-        });
+        if (Array.isArray(res.data)) setSchool('동국대학교');
+        else {
+          UNIV_STATE.forEach((univ) => {
+            if (res.data.includes(univ.id)) setSchool(univ.name);
+          });
+        }
       } catch (error) {
         console.log(error);
       }
