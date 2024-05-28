@@ -119,7 +119,7 @@ const UserRegisterPage = () => {
   };
 
   return (
-    <>
+    <div style={{ position: 'relative' }}>
       <Toaster
         position="bottom-center"
         containerStyle={{
@@ -136,6 +136,37 @@ const UserRegisterPage = () => {
         <p>전화번호를 인증해주세요</p>
       </WrapHeader>
 
+      <div
+        style={{
+          position: 'absolute',
+          zIndex: '999',
+          background: '#ffffff',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '90%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
+        }}
+      >
+        금일 최대 가입인원이 초과되었어요!
+        <br />
+        내일(29일) 아침 9시에 다시 가입해주세요.
+        <br />
+        <br />
+        <div
+          style={{ fontWeight: '600', color: '#FF625d' }}
+          onClick={() => {
+            navigate('/');
+          }}
+        >
+          홈으로
+        </div>
+      </div>
       <WrapContent>
         <div>
           <TextInput
@@ -245,7 +276,7 @@ const UserRegisterPage = () => {
       >
         <PrivacyArticle />
       </Modal>
-    </>
+    </div>
   );
 };
 
