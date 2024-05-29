@@ -95,6 +95,8 @@ const UserRegisterPage = () => {
         const ERROR_CODE = error?.response?.data?.code;
         if (ERROR_CODE === 'EXIST_TEL_NUM') {
           return '이미 등록된 전화번호입니다. 다른 번호를 입력해주세요.';
+        } else if (ERROR_CODE === 'TOO_MANY_REQUEST') {
+          return '일일 최대 요청 수를 넘어갔습니다!';
         } else {
           return '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
         }
@@ -119,7 +121,7 @@ const UserRegisterPage = () => {
   };
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div>
       <Toaster
         position="bottom-center"
         containerStyle={{
@@ -136,37 +138,6 @@ const UserRegisterPage = () => {
         <p>전화번호를 인증해주세요</p>
       </WrapHeader>
 
-      <div
-        style={{
-          position: 'absolute',
-          zIndex: '999',
-          background: '#ffffff',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '90%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
-        }}
-      >
-        금일 최대 가입인원이 초과되었어요!
-        <br />
-        내일(29일) 아침 9시에 다시 가입해주세요.
-        <br />
-        <br />
-        <div
-          style={{ fontWeight: '600', color: '#FF625d' }}
-          onClick={() => {
-            navigate('/');
-          }}
-        >
-          홈으로
-        </div>
-      </div>
       <WrapContent>
         <div>
           <TextInput
