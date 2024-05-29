@@ -14,7 +14,8 @@
 
 | **박솔미** | **노주영** |
 | :------: | :------: | 
-| [<img src="https://github.com/vple-remake/vple-frontend/assets/69065439/955fba59-371d-4c6b-b1fb-3679439c9ba2" height=150 width=150> <br/> @Parksolmi](https://github.com/Parksolmi) |[<img src="" height=150 width=150> <br/> @juyeongnoh](https://github.com/juyeongnoh) |
+| [<img src="https://github.com/vple-remake/vple-frontend/assets/69065439/955fba59-371d-4c6b-b1fb-3679439c9ba2" height=150 width=150> <br/> @Parksolmi](https://github.com/Parksolmi) |[<img src="https://github.com/team-distance/distance-fe/assets/104883910/28e58c46-256d-4f5d-8dfd-f2767ed80eb9
+" height=150 width=150> <br/> @juyeongnoh](https://github.com/juyeongnoh) |
 
 </div>
 </div>
