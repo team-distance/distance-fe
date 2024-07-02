@@ -152,20 +152,16 @@ const ChatIndexPage = () => {
                         key={chat.chatRoomId}
                         onClick={() => onClickChatroom(chat)}
                       >
-                        <div className="left-section">
-                          <CharacterBackground
-                            $character={chat.memberCharacter}
-                          >
-                            <img
-                              className="null-img"
-                              src={CHARACTERS[chat.memberCharacter]}
-                              alt={chat.memberCharacter}
-                            />
-                          </CharacterBackground>
-                        </div>
+                        <CharacterBackground $character={chat.memberCharacter}>
+                          <img
+                            className="null-img"
+                            src={CHARACTERS[chat.memberCharacter]}
+                            alt={chat.memberCharacter}
+                          />
+                        </CharacterBackground>
+
                         <div className="profile-section">
                           <Profile>
-                            <div className="cover">{chat.department}</div>
                             <div className="department">{chat.department}</div>
                             <div>{chat.mbti && <Badge>{chat.mbti}</Badge>}</div>
                           </Profile>
@@ -219,39 +215,24 @@ const ChatListContainer = styled.div`
 const ChatRoomContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
   text-decoration-line: none;
   padding: 16px 0;
-  width: 100%;
-
-  > .left-section {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 0 0 auto;
-  }
 
   > .profile-section {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 0 15px;
-    flex: 1 1 auto;
+    padding: 0 16px;
     min-width: 0;
-
-    div {
-      display: inline-block;
-      overflow: hidden;
-      white-space: nowrap;
-    }
+    flex-grow: 1;
   }
 
   > .right-section {
     display: flex;
     gap: 12px;
     flex-direction: column;
+    flex-shrink: 0;
     align-items: flex-end;
-    flex: 0 0 auto;
   }
 `;
 
@@ -262,6 +243,7 @@ const CharacterBackground = styled.div`
   border-radius: 50%;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
   background-color: ${(props) => COLORS[props.$character]};
+  flex-shrink: 0;
 
   > img {
     position: absolute;
@@ -279,23 +261,13 @@ const CharacterBackground = styled.div`
 const Profile = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 4px;
   color: #000000;
   font-size: 18px;
   font-weight: 700;
   position: relative;
 
-  .cover {
-    width: 100%;
-    position: absolute;
-    background-image: linear-gradient(90deg, transparent 80%, #fbfbfb 100%);
-    z-index: 99;
-    color: transparent;
-  }
-
   .department {
-    max-width: 80%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -391,7 +363,6 @@ const SurveyLinkContainer = styled.div`
   background-color: #f3f3f3;
   text-decoration: none;
   color: black;
-
   display: flex;
 `;
 
