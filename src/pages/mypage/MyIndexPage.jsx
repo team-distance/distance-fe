@@ -44,100 +44,109 @@ const MyIndexPage = () => {
 
   return (
     <>
-      {/* {isLoggedIn ? ( */}
-      <>
-        <WrapMenu>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <Title>마이페이지</Title>
-            <ShareButton onClick={shareButtonHandler}>
-              친구에게 공유하기
-            </ShareButton>
-          </div>
-          <WrapButton>
+      {isLoggedIn ? (
+        <>
+          <WrapMenu>
             <div
-              className="menu"
-              onClick={() =>
-                navigate('/mypage/profile', { state: myData.contents })
-              }
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
             >
-              <div>프로필 수정</div>
-              <img
-                src="/assets/mypage/arrow-gray-button.png"
-                alt="프로필 수정"
-              />
+              <Title>마이페이지</Title>
+              <ShareButton onClick={shareButtonHandler}>
+                친구에게 공유하기
+              </ShareButton>
             </div>
-            <div className="menu" onClick={() => navigate('/mypage/account')}>
-              <div>계정 관리</div>
-              <img src="/assets/mypage/arrow-gray-button.png" alt="계정 관리" />
-            </div>
-            <div className="menu" onClick={() => navigate('/verify/univ')}>
-              <div>학생 인증</div>
-              <img src="/assets/mypage/arrow-gray-button.png" alt="학생 인증" />
-            </div>
-            <div className="menu border" onClick={() => navigate('/privacy')}>
-              <div>개인정보 처리방침</div>
-              <img
-                src="/assets/mypage/arrow-gray-button.png"
-                alt="개인정보 처리방침"
-              />
-            </div>
-            <div
-              className="menu"
-              onClick={() => navigate('/team-introduction')}
-            >
-              <div>팀 소개</div>
-              <img src="/assets/mypage/arrow-gray-button.png" alt="팀 소개" />
-            </div>
-            <div
-              className="menu border"
-              onClick={() => navigate('/notification')}
-            >
-              <div>PUSH 알림 문제 해결</div>
-              <img
-                src="/assets/mypage/arrow-gray-button.png"
-                alt="PUSH 알림 문제 해결"
-              />
-            </div>
-            <div className="menu" onClick={() => navigate('/gps')}>
-              <div>GPS 문제 해결</div>
-              <img
-                src="/assets/mypage/arrow-gray-button.png"
-                alt="GPS 문제 해결"
-              />
-            </div>
-            <a
-              className="menu"
-              href="https://open.kakao.com/o/szlVYjpg"
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              <div>문의하기</div>
-              <img src="/assets/mypage/arrow-gray-button.png" alt="문의하기" />
-            </a>
-            <div className="menu border">
-              <div>버전</div>
-              <div className="version">1.0.0</div>
-            </div>
-            <div className="menu" onClick={handleLogout}>
-              <div>로그아웃</div>
-            </div>
-          </WrapButton>
-        </WrapMenu>
-      </>
-      {/* ) : (
+            <WrapButton>
+              <div
+                className="menu"
+                onClick={() =>
+                  navigate('/mypage/profile', { state: myData.contents })
+                }
+              >
+                <div>프로필 수정</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="프로필 수정"
+                />
+              </div>
+              <div className="menu" onClick={() => navigate('/mypage/account')}>
+                <div>계정 관리</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="계정 관리"
+                />
+              </div>
+              <div className="menu" onClick={() => navigate('/verify/univ')}>
+                <div>학생 인증</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="학생 인증"
+                />
+              </div>
+              <div className="menu border" onClick={() => navigate('/privacy')}>
+                <div>개인정보 처리방침</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="개인정보 처리방침"
+                />
+              </div>
+              <div
+                className="menu"
+                onClick={() => navigate('/team-introduction')}
+              >
+                <div>팀 소개</div>
+                <img src="/assets/mypage/arrow-gray-button.png" alt="팀 소개" />
+              </div>
+              <div
+                className="menu border"
+                onClick={() => navigate('/notification')}
+              >
+                <div>PUSH 알림 문제 해결</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="PUSH 알림 문제 해결"
+                />
+              </div>
+              <div className="menu" onClick={() => navigate('/gps')}>
+                <div>GPS 문제 해결</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="GPS 문제 해결"
+                />
+              </div>
+              <a
+                className="menu"
+                href="https://open.kakao.com/o/szlVYjpg"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                <div>문의하기</div>
+                <img
+                  src="/assets/mypage/arrow-gray-button.png"
+                  alt="문의하기"
+                />
+              </a>
+              <div className="menu border">
+                <div>버전</div>
+                <div className="version">1.0.0</div>
+              </div>
+              <div className="menu" onClick={handleLogout}>
+                <div>로그아웃</div>
+              </div>
+            </WrapButton>
+          </WrapMenu>
+        </>
+      ) : (
         <EmptyContainer>
           <div className="wrap">
             <img src={'/assets/access-denied-mypage.svg'} alt="access denied" />
             <div>로그인 후 이용해주세요!</div>
           </div>
         </EmptyContainer>
-      )} */}
+      )}
     </>
   );
 };
