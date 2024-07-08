@@ -657,11 +657,13 @@ const WrapTitle = styled.div`
 
   > .title {
     font-size: 1rem;
+    line-height: 1.5;
   }
 
   > .subtitle {
     font-size: 0.8rem;
     color: #979797;
+    line-height: 1.5;
   }
 `;
 
@@ -703,6 +705,11 @@ const CallModalContent = styled.div`
   gap: 1rem;
   padding: 32px 0;
   text-align: center;
+  line-height: normal;
+
+  strong {
+    font-weight: 600;
+  }
 `;
 
 const LottieContainer = styled.div`
@@ -792,11 +799,13 @@ const TextDiv = styled.div`
 const Major = styled.div`
   font-size: 24px;
   font-weight: 700;
+  line-height: normal;
 `;
 
 const MBTI = styled.div`
   color: #000000;
   font-size: 14px;
+  line-height: normal;
 `;
 
 const TagContainer = styled.div`

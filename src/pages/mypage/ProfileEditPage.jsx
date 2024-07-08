@@ -329,8 +329,10 @@ const ModalTitle = styled.div`
   background-color: #ff625d;
   justify-content: space-between;
   gap: 3rem;
-  padding: 0.75rem 1.25rem;
+  padding: 22px 28px;
   color: white;
+  font-weight: 700;
+  font-size: 18px;
 `;
 
 const ListContainer = styled.div`
@@ -388,13 +390,12 @@ const AnimalListContainer = styled.div`
   grid-template-columns: repeat(4, 1fr);
   justify-items: center;
   overflow: auto;
+  padding: 40px;
   margin-top: 0.5rem;
-  padding: 1rem 1.3rem;
+  gap: 20px;
 `;
 
 const AnimalListItem = styled.div`
-  padding: 0.5rem 0.2rem;
-
   img {
     width: 3rem;
   }

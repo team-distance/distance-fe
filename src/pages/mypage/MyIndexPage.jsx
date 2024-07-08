@@ -93,13 +93,13 @@ const MyIndexPage = () => {
                   alt="개인정보 처리방침"
                 />
               </div>
-              {/* <div
+              <div
                 className="menu"
                 onClick={() => navigate('/team-introduction')}
               >
                 <div>팀 소개</div>
                 <img src="/assets/mypage/arrow-gray-button.png" alt="팀 소개" />
-              </div> */}
+              </div>
               <div
                 className="menu border"
                 onClick={() => navigate('/notification')}
@@ -131,7 +131,7 @@ const MyIndexPage = () => {
               </a>
               <div className="menu border">
                 <div>버전</div>
-                <div className="version">1.0.0</div>
+                <div className="version">1.1.0</div>
               </div>
               <div className="menu" onClick={handleLogout}>
                 <div>로그아웃</div>

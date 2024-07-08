@@ -172,7 +172,8 @@ const Wrapper = styled.div`
 const Paragraph = styled.p`
   font-size: 12px;
   font-weight: 200;
-  line-height: 20px;
+  line-height: 18px;
+  margin: 1rem 0;
 
   img {
     width: 56px;

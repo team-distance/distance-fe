@@ -221,7 +221,7 @@ const Character = styled.div`
 const MessageByOther = styled.div`
   display: flex;
   align-items: start;
-  gap: 0.5rem;
+  gap: 12px;
   margin: 16px;
 
   .profile-section {
@@ -269,6 +269,10 @@ const MessageByOther = styled.div`
 
         a {
           color: black;
+        }
+
+        strong {
+          font-weight: 600;
         }
       }
 
@@ -337,6 +341,10 @@ const MessageByMe = styled.div`
 
       a {
         color: white;
+      }
+
+      strong {
+        font-weight: 600;
       }
     }
   }

@@ -268,26 +268,33 @@ const Article = styled.article`
 const Heading2 = styled.h2`
   font-size: 18px;
   font-weight: 700;
+  margin: 1rem 0;
 `;
 
 const Paragraph = styled.p`
   font-size: 12px;
   font-weight: 200;
+  line-height: 18px;
 `;
 
 const UnorderedList = styled.ul`
   font-size: 12px;
   font-weight: 200;
   padding-left: 1rem;
+  line-height: 18px;
+  list-style-type: disc;
 `;
 
 const OrderedList = styled.ol`
   font-size: 12px;
   font-weight: 200;
   padding-left: 1rem;
+  line-height: 18px;
+  list-style-type: decimal;
 `;
 
 const ListItem = styled.li`
   font-size: 12px;
   font-weight: 200;
+  line-height: 18px;
 `;

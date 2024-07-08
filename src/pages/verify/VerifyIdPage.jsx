@@ -113,7 +113,7 @@ const VerifyMobileIdPage = () => {
 
   return (
     <WrapContent>
-      <h2>'학생증'으로 인증하기</h2>
+      <Heading2>'학생증'으로 인증하기</Heading2>
 
       {uploadedImage ? (
         <>
@@ -164,7 +164,7 @@ const VerifyMobileIdPage = () => {
       </Button>
 
       <NoticeDiv>
-        <h3>흔들린 사진은 심사가 어려워요!</h3>
+        <Heading3>흔들린 사진은 심사가 어려워요!</Heading3>
         <hr />
         <p>
           전송된 이미지는 학생 인증 용도로만 활용되며 <br />
@@ -204,6 +204,16 @@ const WrapContent = styled.div`
   display: grid;
   gap: 1rem;
   padding: 4rem 2rem 4rem 2rem;
+`;
+
+const Heading2 = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+`;
+
+const Heading3 = styled.h3`
+  font-weight: 700;
 `;
 
 const UploadedImageDiv = styled.img`

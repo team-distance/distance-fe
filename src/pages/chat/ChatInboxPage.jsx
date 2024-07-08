@@ -83,12 +83,10 @@ const ChatInboxPage = () => {
               </CharacterBackground>
 
               <div className="right-section">
-                <div className="upper-area">
-                  <Profile>
-                    {inbox.department}
-                    <Badge>{inbox.mbti}</Badge>
-                  </Profile>
-                </div>
+                <Profile>
+                  <div className="department">{inbox.department}</div>
+                  <Badge>{inbox.mbti}</Badge>
+                </Profile>
                 <div className="lower-area">
                   <AcceptButton
                     onClick={() => {
@@ -147,11 +145,6 @@ const InboxContainer = styled.div`
     flex: 1;
     gap: 0.5rem;
 
-    > .upper-area {
-      display: flex;
-      justify-content: space-between;
-    }
-
     > .lower-area {
       display: flex;
       gap: 0.5rem;
@@ -164,7 +157,6 @@ const InboxContainer = styled.div`
 `;
 
 const Title = styled.div`
-  color: #000000;
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 16px;
@@ -177,6 +169,7 @@ const CharacterBackground = styled.div`
   border-radius: 50%;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
   background-color: ${(props) => COLORS[props.$character]};
+  flex-shrink: 0;
 
   > img {
     position: absolute;
@@ -189,10 +182,17 @@ const CharacterBackground = styled.div`
 
 const Profile = styled.div`
   display: flex;
+  align-items: center;
   gap: 4px;
-  color: #000000;
   font-size: 18px;
   font-weight: 700;
+  min-width: 0;
+
+  .department {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 `;
 
 const AcceptButton = styled.button`
