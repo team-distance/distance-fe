@@ -1,27 +1,6 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
-const WrapHeader = styled.header`
-  display: flex;
-  flex-direction: column;
-  padding: 1rem 0;
-
-  p,
-  h2 {
-    margin: 0;
-  }
-`;
-const TitleContainer = styled.div`
-  display: flex;
-  gap: 1rem;
-  padding-bottom: 0.5rem;
-
-  img {
-    max-width: 1rem;
-    object-fit: contain;
-  }
-`;
-
 const HeaderPrev = ({ title, navigateTo, text }) => {
   const navigate = useNavigate();
 
@@ -33,11 +12,37 @@ const HeaderPrev = ({ title, navigateTo, text }) => {
           alt="Go Back"
           onClick={() => navigate(navigateTo)}
         />
-        <h2>{title}</h2>
+        <Title>{title}</Title>
       </TitleContainer>
-      <p className="text">{text}</p>
+      <Text>{text}</Text>
     </WrapHeader>
   );
 };
+
+const WrapHeader = styled.header`
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+`;
+
+const TitleContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+
+  img {
+    max-width: 1rem;
+    object-fit: contain;
+  }
+`;
+
+const Title = styled.h2`
+  font-weight: 700;
+  font-size: 1.5rem;
+`;
+
+const Text = styled.p`
+  margin-top: 0.5rem;
+`;
 
 export default HeaderPrev;

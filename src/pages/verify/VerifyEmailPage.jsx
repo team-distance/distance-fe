@@ -134,7 +134,7 @@ const VerifyEmailPage = () => {
         }}
       />
       <div>
-        <h2>'학생 메일'로 인증하기</h2>
+        <Heading2>'학생 메일'로 인증하기</Heading2>
         <p>
           <strong>학교 도메인</strong>의 메일만 사용 가능해요
         </p>
@@ -194,18 +194,22 @@ const WrapContent = styled.div`
   gap: 4rem;
   padding: 4rem 2rem 4rem 2rem;
 
-  h2 {
-    margin: 0;
-    padding: 0;
-  }
   p {
     margin: 0;
     padding: 0;
     font-weight: 200;
   }
+
   strong {
     color: #ff625d;
+    font-weight: 700;
   }
+`;
+
+const Heading2 = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
 `;
 
 const WrapButton = styled.div`

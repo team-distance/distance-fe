@@ -122,7 +122,7 @@ const LoginPage = () => {
         <WrapForm onSubmit={handleSubmit}>
           <WrapContent>
             {location.state?.alert && alert('로그인이 필요합니다.')}
-            <h2>전화번호로 로그인하기</h2>
+            <Heading2>전화번호로 로그인하기</Heading2>
 
             <div>
               <TextInput
@@ -186,6 +186,12 @@ const WrapContent = styled.div`
   display: grid;
   gap: 4rem;
   margin-bottom: 8rem;
+`;
+
+const Heading2 = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 1rem 0;
 `;
 
 const WrapText = styled.div`
