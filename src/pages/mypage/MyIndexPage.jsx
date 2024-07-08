@@ -131,7 +131,7 @@ const MyIndexPage = () => {
               </a>
               <div className="menu border">
                 <div>버전</div>
-                <div className="version">1.0.0</div>
+                <div className="version">1.1.0</div>
               </div>
               <div className="menu" onClick={handleLogout}>
                 <div>로그아웃</div>
