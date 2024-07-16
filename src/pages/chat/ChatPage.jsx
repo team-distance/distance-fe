@@ -16,7 +16,7 @@ import Modal from '../../components/common/Modal';
 import Tooltip from '../../components/common/Tooltip';
 import { getByteLength } from '../../utils/getByteLength';
 import useDetectClose from '../../hooks/useDetectClose';
-import { CHARACTERS, COLORS } from '../../constants/character';
+import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../../components/common/Badge';
 import { ClipLoader } from 'react-spinners';
 
@@ -594,10 +594,14 @@ const ChatPage = () => {
       <Modal ref={profileModalRef}>
         {opponentProfile && (
           <WrapContent>
-            <CharacterBackground $character={opponentProfile.memberCharacter}>
+            <CharacterBackground
+              backgroundColor={
+                CHARACTERS[opponentProfile.memberCharacter]?.color
+              }
+            >
               <StyledImage
-                src={CHARACTERS[opponentProfile.memberCharacter]}
-                alt={opponentProfile.memberCharacter}
+                $xPos={CHARACTERS[opponentProfile.memberCharacter]?.position[0]}
+                $yPos={CHARACTERS[opponentProfile.memberCharacter]?.position[1]}
               />
             </CharacterBackground>
             <TextDiv>
@@ -775,19 +779,24 @@ const WrapContent = styled.div`
 
 const CharacterBackground = styled.div`
   position: relative;
-  width: 60%;
-  height: 0;
-  padding-bottom: 60%;
-  border-radius: 50%;
-  background-color: ${(props) => COLORS[props.$character]};
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
+  background-color: ${(props) => props.backgroundColor};
 `;
 
-const StyledImage = styled.img`
+const StyledImage = styled.div`
   position: absolute;
-  width: 60%;
+  width: 60px;
+  height: 60px;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 60}px -${props.$yPos * 60}px`};
+  background-size: calc(100% * 4);
 `;
 
 const TextDiv = styled.div`

@@ -7,7 +7,7 @@ import Button from '../../components/common/Button';
 import HeaderPrev from '../../components/common/HeaderPrev';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
-import { CHOOSE_CHARACTERS } from '../../constants/character';
+import { CHARACTERS } from '../../constants/CHARACTERS';
 import toast, { Toaster } from 'react-hot-toast';
 
 const ProfileEditPage = () => {
@@ -108,7 +108,6 @@ const ProfileEditPage = () => {
 
     fetchProfile();
   }, []);
-
   return (
     <Wrapper>
       <Toaster
@@ -135,9 +134,9 @@ const ProfileEditPage = () => {
                 alt="profile register button"
               />
             ) : (
-              <img
-                src={CHOOSE_CHARACTERS[selectedAnimal]}
-                alt="selected profile"
+              <SelectedCharacter
+                $xPos={CHARACTERS[selectedAnimal]?.position[0]}
+                $yPos={CHARACTERS[selectedAnimal]?.position[1]}
               />
             )}
             <img
@@ -158,19 +157,22 @@ const ProfileEditPage = () => {
             />
           </ModalTitle>
           <AnimalListContainer>
-            {Object.entries(CHOOSE_CHARACTERS).map(([character, imageSrc]) => {
-              return (
-                <AnimalListItem
-                  key={character}
-                  onClick={() => {
-                    setSelectedAnimal(character);
-                    closeCharacterModal();
-                  }}
-                >
-                  <img src={imageSrc} alt={character} />
-                </AnimalListItem>
-              );
-            })}
+            {Object.entries(CHARACTERS).map(
+              ([character, characterProperties]) => {
+                const [xPos, yPos] = characterProperties.position;
+                return (
+                  <Character
+                    key={character}
+                    $xPos={xPos}
+                    $yPos={yPos}
+                    onClick={() => {
+                      setSelectedAnimal(character);
+                      closeCharacterModal();
+                    }}
+                  />
+                );
+              }
+            )}
           </AnimalListContainer>
         </BlankModal>
 
@@ -184,33 +186,35 @@ const ProfileEditPage = () => {
           <Tip>최소 3개, 최대 5개까지 고를 수 있어요!</Tip>
 
           <br />
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <WrapSmallTitle>
             <div>저는 이런 매력이 있어요!</div>
             <AddButton onClick={openAttractivenessModal}>+ 추가하기</AddButton>
-          </div>
+          </WrapSmallTitle>
           <BadgeContainer>
             {attractiveness.map((value, index) => (
               <Badge key={index} onClick={handleClickAttractiveness}>
                 {value}
+                <img src="/assets/cancel-button.png" alt="cancel" />
               </Badge>
             ))}
           </BadgeContainer>
           <br />
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <WrapSmallTitle>
             <div>저는 이런 취미가 있어요!</div>
             <AddButton onClick={openHobbyModal}>+ 추가하기</AddButton>
-          </div>
+          </WrapSmallTitle>
           <BadgeContainer>
             {hobby.map((value, index) => (
               <Badge key={index} onClick={handleClickHobby}>
                 {value}
+                <img src="/assets/cancel-button.png" alt="cancel" />
               </Badge>
             ))}
           </BadgeContainer>
 
           <BlankModal ref={attractivenessModalRef}>
             <ModalTitle>
-              <div>본인의 매력을 선택해주세요.</div>
+              <div>매력 선택하기</div>
               <img
                 src="/assets/cancel-button.png"
                 alt="닫기 버튼"
@@ -246,7 +250,7 @@ const ProfileEditPage = () => {
 
           <BlankModal ref={hobbyModalRef}>
             <ModalTitle>
-              <div>본인의 취미을 선택해주세요.</div>
+              <div>취미 선택하기</div>
               <img
                 src="/assets/cancel-button.png"
                 alt="닫기 버튼"
@@ -288,6 +292,24 @@ const ProfileEditPage = () => {
   );
 };
 
+const SelectedCharacter = styled.div`
+  width: 96px;
+  height: 96px;
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 96}px -${props.$yPos * 96}px`};
+  background-size: calc(100% * 4);
+`;
+
+const Character = styled.div`
+  width: 48px;
+  height: 48px;
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 48}px -${props.$yPos * 48}px`};
+  background-size: calc(100% * 4);
+`;
+
 const Wrapper = styled.div`
   max-height: 100vh;
   overflow-y: scroll;
@@ -299,6 +321,11 @@ const Badge = styled.div`
   padding: 0.5rem 1rem;
   color: #ffffff;
   border-radius: 12px;
+
+  img {
+    width: 13px;
+    padding-left: 0.5rem;
+  }
 `;
 
 const BadgeContainer = styled.div`
@@ -321,6 +348,17 @@ const Label = styled.label`
   display: block;
   font-weight: 600;
   margin-bottom: 16px;
+`;
+
+const WrapSmallTitle = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+
+  div {
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
 `;
 
 const ModalTitle = styled.div`
@@ -350,7 +388,6 @@ const Tip = styled.div`
   color: #90949b;
   font-size: 12px;
   margin-top: -1em;
-  font-weight: 600;
 `;
 
 const AddButton = styled.button`
@@ -393,12 +430,6 @@ const AnimalListContainer = styled.div`
   padding: 40px;
   margin-top: 0.5rem;
   gap: 20px;
-`;
-
-const AnimalListItem = styled.div`
-  img {
-    width: 3rem;
-  }
 `;
 
 export default ProfileEditPage;

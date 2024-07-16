@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { instance } from '../../api/instance';
 import ClipLoader from 'react-spinners/ClipLoader';
 
-import { CHARACTERS, COLORS } from '../../constants/character';
+import { CHARACTERS } from '../../constants/CHARACTERS';
 import Profile from '../../components/home/Profile';
 import Modal from '../../components/common/Modal';
 import { useNavigate } from 'react-router-dom';
@@ -101,6 +101,105 @@ const HomeIndexPage = () => {
     },
   ];
 
+  const profile = [
+    {
+      memberProfileDto: {
+        memberCharacter: 'KOALA',
+        mbti: 'ENFP',
+        department: '컴퓨터공학과',
+        memberHobbyDto: [
+          {
+            hobby: '운동',
+          },
+          {
+            hobby: '독서',
+          },
+        ],
+        memberTagDto: [
+          {
+            tag: '밝음',
+          },
+          {
+            tag: '친절함',
+          },
+        ],
+      },
+    },
+    {
+      memberProfileDto: {
+        memberCharacter: 'CAT',
+        mbti: 'INTJ',
+        department: '컴퓨터공학과',
+        memberHobbyDto: [
+          {
+            hobby: '운동',
+          },
+          {
+            hobby: '독서',
+          },
+        ],
+        memberTagDto: [
+          {
+            tag: '밝음',
+          },
+          {
+            tag: '친절함',
+          },
+        ],
+      },
+    },
+    {
+      memberProfileDto: {
+        memberCharacter: 'PENGUIN',
+        mbti: 'INTP',
+        department: '컴퓨터공학과',
+        memberHobbyDto: [
+          {
+            hobby: '운동',
+          },
+          {
+            hobby: '독서',
+          },
+        ],
+        memberTagDto: [
+          {
+            tag: '밝음',
+          },
+          {
+            tag: '친절함',
+          },
+        ],
+      },
+    },
+    {
+      memberProfileDto: {
+        memberCharacter: 'PANDA',
+        mbti: 'ISTJ',
+        department: '컴퓨터공학과',
+        memberHobbyDto: [
+          {
+            hobby: '운동',
+          },
+          {
+            hobby: '독서',
+          },
+        ],
+        memberTagDto: [
+          {
+            tag: '밝음',
+          },
+          {
+            tag: '친절함',
+          },
+        ],
+      },
+    },
+  ];
+
+  useEffect(() => {
+    setMemberState(profile);
+  }, []);
+
   return (
     <>
       <Banner alertText={alertTextList} />
@@ -141,13 +240,20 @@ const HomeIndexPage = () => {
         {selectedProfile && (
           <WrapContent>
             <CharacterBackground
-              $character={selectedProfile.memberProfileDto.memberCharacter}
+              backgroundColor={
+                CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
+                  ?.color
+              }
             >
               <StyledImage
-                src={
+                $xPos={
                   CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
+                    ?.position[0]
                 }
-                alt={selectedProfile.memberProfileDto.memberCharacter}
+                $yPos={
+                  CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
+                    ?.position[1]
+                }
               />
             </CharacterBackground>
             <TextDiv>
@@ -190,19 +296,24 @@ const WrapContent = styled.div`
 
 const CharacterBackground = styled.div`
   position: relative;
-  width: 60%;
-  height: 0;
-  padding-bottom: 60%;
-  border-radius: 50%;
-  background-color: ${(props) => COLORS[props.$character]};
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
+  background-color: ${(props) => props.backgroundColor};
 `;
 
-const StyledImage = styled.img`
+const StyledImage = styled.div`
   position: absolute;
-  width: 60%;
+  width: 60px;
+  height: 60px;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 60}px -${props.$yPos * 60}px`};
+  background-size: calc(100% * 4);
 `;
 
 const TextDiv = styled.div`

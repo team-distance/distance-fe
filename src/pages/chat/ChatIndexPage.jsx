@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import { parseTime } from '../../utils/parseTime';
-import { CHARACTERS, COLORS } from '../../constants/character';
+import { CHARACTERS } from '../../constants/CHARACTERS';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
@@ -148,15 +148,25 @@ const ChatIndexPage = () => {
                       : '(알수없음)';
 
                     return (
+                      // 탈퇴한 사용자의 경우 캐릭터가 "?"로 표시되어야 하나
+                      // 현재는 곰 캐릭터로 표시되도록 설정되어 있음
+                      // 추후 컴포넌트 분리할 때 이 부분도 같이 해결하겠슴다
                       <ChatRoomContainer
                         key={chat.chatRoomId}
                         onClick={() => onClickChatroom(chat)}
                       >
-                        <CharacterBackground $character={chat.memberCharacter}>
-                          <img
-                            className="null-img"
-                            src={CHARACTERS[chat.memberCharacter]}
-                            alt={chat.memberCharacter}
+                        <CharacterBackground
+                          backgroundColor={
+                            CHARACTERS[chat.memberCharacter]?.color
+                          }
+                        >
+                          <StyledImage
+                            $xPos={
+                              CHARACTERS[chat.memberCharacter]?.position[0]
+                            }
+                            $yPos={
+                              CHARACTERS[chat.memberCharacter]?.position[1]
+                            }
                           />
                         </CharacterBackground>
 
@@ -242,20 +252,22 @@ const CharacterBackground = styled.div`
   height: 60px;
   border-radius: 50%;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
-  background-color: ${(props) => COLORS[props.$character]};
+  background-color: ${(props) => props.backgroundColor};
   flex-shrink: 0;
+`;
 
-  > img {
-    position: absolute;
-    width: 70%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .null-img {
-    height: 50%;
-    object-fit: contain;
-  }
+const StyledImage = styled.div`
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 40}px -${props.$yPos * 40}px`};
+  background-size: calc(100% * 4);
 `;
 
 const Profile = styled.div`
