@@ -1,6 +1,69 @@
 import styled from 'styled-components';
 import Button from '../common/Button';
-import { useId, useState, useEffect } from 'react';
+import { useId } from 'react';
+
+const TextInput = ({
+  label,
+  buttonLabel,
+  disabled,
+  buttonClickHandler,
+  buttonDisabled,
+  timerState,
+  onTimerEnd,
+  register,
+  ...props
+}) => {
+  // 타이머
+  // const [timer, setTimer] = useState(timerState);
+
+  // useEffect(() => {
+  //   if (timer === 0) {
+  //     onTimerEnd();
+  //   } else {
+  //     const countdown = setTimeout(() => {
+  //       setTimer(timer - 1);
+  //     }, 1000);
+
+  //     return () => clearTimeout(countdown);
+  //   }
+  // }, [timer, onTimerEnd]);
+
+  // const minutes = Math.floor(timer / 60);
+  // const seconds = timer % 60;
+
+  const id = useId();
+
+  return (
+    <div>
+      {label && (
+        <Label htmlFor={id}>
+          {label}
+          {/* {timerState && (
+            <div className="time-remaining">
+              {`${minutes.toString().padStart(2, '0')}:${seconds
+                .toString()
+                .padStart(2, '0')}`}
+            </div>
+          )} */}
+        </Label>
+      )}
+      <InputWrapper>
+        <Input id={id} {...props} {...register} />
+        {buttonLabel && (
+          <div>
+            <Button
+              onClick={buttonClickHandler}
+              size="small"
+              disabled={buttonDisabled}
+            >
+              {buttonLabel}
+            </Button>
+          </div>
+        )}
+      </InputWrapper>
+    </div>
+  );
+};
 
 const Label = styled.label`
   font-weight: 700;
@@ -44,66 +107,5 @@ const InputWrapper = styled.div`
     border-bottom: 2px solid #ff625d;
   }
 `;
-
-const TextInput = ({
-  label,
-  buttonLabel,
-  disabled,
-  buttonClickHandler,
-  buttonDisabled,
-  timerState,
-  onTimerEnd,
-  ...props
-}) => {
-  const [timer, setTimer] = useState(timerState);
-
-  useEffect(() => {
-    if (timer === 0) {
-      onTimerEnd();
-    } else {
-      const countdown = setTimeout(() => {
-        setTimer(timer - 1);
-      }, 1000);
-
-      return () => clearTimeout(countdown);
-    }
-  }, [timer, onTimerEnd]);
-
-  const minutes = Math.floor(timer / 60);
-  const seconds = timer % 60;
-
-  const id = useId();
-
-  return (
-    <div>
-      {label && (
-        <Label htmlFor={id}>
-          {label}
-          {timerState && (
-            <div className="time-remaining">
-              {`${minutes.toString().padStart(2, '0')}:${seconds
-                .toString()
-                .padStart(2, '0')}`}
-            </div>
-          )}
-        </Label>
-      )}
-      <InputWrapper>
-        <Input id={id} {...props} />
-        {buttonLabel && (
-          <div>
-            <Button
-              size="small"
-              disabled={buttonDisabled}
-              onClick={buttonClickHandler}
-            >
-              {buttonLabel}
-            </Button>
-          </div>
-        )}
-      </InputWrapper>
-    </div>
-  );
-};
 
 export default TextInput;

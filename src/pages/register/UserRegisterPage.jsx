@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
 import { useRecoilState } from 'recoil';
@@ -12,19 +12,45 @@ import Checkbox from '../../components/common/Checkbox';
 import Modal from '../../components/common/Modal';
 import TermsOfServiceArticle from '../../components/register/TermsOfServiceArticle';
 import PrivacyArticle from '../../components/register/PrivacyArticle';
+import { useForm } from 'react-hook-form';
 
 const UserRegisterPage = () => {
-  const [registerData, setRegisterData] = useRecoilState(registerDataState);
-  const [checkPhoneFlag, setCheckPhoneFlag] = useState(true);
-  const [verifyNumFlag, setVerifyNumFlag] = useState(true);
-  const [pwFlag, setPwFlag] = useState(true);
-
-  const [isSendMessage, setIsSendMessage] = useState(false);
-  const [verifyButtonLabel, setVerifyButtonLabel] = useState('인증번호 전송');
-  const [verifyNum, setVerifyNum] = useState('');
-  const [verify, setVerify] = useState(false);
-
   const navigate = useNavigate();
+
+  const [registerData, setRegisterData] = useRecoilState(registerDataState);
+
+  const {
+    register: registerTelNum,
+    handleSubmit: submitTelNum,
+    formState: { isValid: telNumValid },
+    setError: setErrorTelNum,
+  } = useForm({
+    mode: 'onChange',
+    shouldUseNativeValidation: true,
+  });
+  const {
+    register: registerVerifyNum,
+    handleSubmit: submitVerifyNum,
+    formState: { isValid: verifyNumValid },
+    setError: setErrorVerifyNum,
+  } = useForm({
+    mode: 'onChange',
+    shouldUseNativeValidation: true,
+  });
+  const {
+    register: registerPassword,
+    handleSubmit: submitPassword,
+    formState: { isValid: passwordValid, errors: verifyPassword },
+    watch,
+  } = useForm({
+    mode: 'onChange',
+    shouldUseNativeValidation: true,
+  });
+  const passwordValue = watch('password');
+
+  const [verifyButtonLabel, setVerifyButtonLabel] = useState('인증번호 전송');
+  const [showVerifyNum, setShowVerifyNum] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const termsModalRef = useRef();
   const privacyModalRef = useRef();
@@ -34,61 +60,28 @@ const UserRegisterPage = () => {
     ref.current.scrollToTop();
   };
 
-  const handleChangeCheckbox = (e) => {
-    const { name, checked } = e.target;
-    setRegisterData({ ...registerData, [name]: checked });
-  };
-
-  const handleChangeInput = (e) => {
-    const { name, value } = e.target;
-    setRegisterData({ ...registerData, [name]: value });
-
-    if (name === 'telNum') {
-      if (value.length === 11) {
-        setCheckPhoneFlag(false);
-      } else {
-        setCheckPhoneFlag(true);
-      }
-    }
-
-    if (name === 'verifyNum') {
-      setVerifyNum(e.target.value);
-      if (value.length !== 0) {
-        setVerifyNumFlag(false);
-      } else {
-        setVerifyNumFlag(true);
-      }
-    }
-
-    if (name === 'password') {
-      const isNumeric = /^[0-9]+$/.test(value);
-      if (value.length >= 6 && isNumeric) {
-        setPwFlag(false);
-      } else {
-        setPwFlag(true);
-      }
-    }
-  };
-
-  const sendMessage = () => {
+  const handleSubmitTelNum = async (data) => {
     if (verifyButtonLabel === '재전송') {
-      setVerifyNumFlag(true);
-      setVerify(false);
-      setVerifyNum('');
+      // setVerifyNumFlag(true);
+      // setVerify(false);
+      // setVerifyNum('');
     }
-
     const response = instance.post('/member/send/sms', {
       telNum: registerData.telNum,
       type: 'SIGNUP',
     });
-
     toast.promise(response, {
       loading: '전송 중...',
       success: () => {
-        setIsSendMessage(true);
-        setVerify(false);
         setVerifyButtonLabel('재전송');
-        setCheckPhoneFlag(true);
+        setErrorTelNum('telNum');
+        setShowVerifyNum(true);
+
+        setRegisterData((prevData) => ({
+          ...prevData,
+          telNum: data.telNum,
+        }));
+
         return '인증번호가 전송되었습니다.';
       },
       error: (error) => {
@@ -104,20 +97,27 @@ const UserRegisterPage = () => {
     });
   };
 
-  const verifyTelNum = async () => {
+  const handleSubmitVerifyNum = async (data) => {
     try {
       await instance.post('/member/authenticate', {
-        authenticateNum: verifyNum.trim(),
+        authenticateNum: data.verifyNum,
       });
-      setVerify(true);
-      setVerifyNumFlag(true);
-      setCheckPhoneFlag(true);
+      setShowPassword(true);
+      setErrorVerifyNum('verifyNum');
     } catch (error) {
       toast.error('인증번호가 틀렸습니다.');
-      setVerifyNumFlag(false);
-      setCheckPhoneFlag(false);
-      console.log();
     }
+  };
+
+  const handleSubmitPassword = (data) => {
+    setRegisterData((prevData) => ({
+      ...prevData,
+      agreePrivacy: data.agreePrivacy,
+      agreeTerms: data.agreeTerms,
+    }));
+
+    toast.dismiss();
+    navigate('/register/univ');
   };
 
   return (
@@ -138,95 +138,100 @@ const UserRegisterPage = () => {
         <p>전화번호를 인증해주세요</p>
       </WrapHeader>
 
-      <WrapContent>
-        <div>
-          <TextInput
-            label="전화번호"
-            name="telNum"
-            type="text"
-            placeholder="'-' 없이 입력"
-            buttonLabel={verifyButtonLabel}
-            buttonClickHandler={sendMessage}
-            buttonDisabled={checkPhoneFlag}
-            value={registerData.telNum}
-            onChange={handleChangeInput}
-          />
-        </div>
+      <WrapForm $visible={true} onSubmit={submitTelNum(handleSubmitTelNum)}>
+        <TextInput
+          type="text"
+          label="전화번호"
+          placeholder="'-' 없이 입력"
+          buttonDisabled={!telNumValid}
+          buttonLabel={verifyButtonLabel}
+          register={registerTelNum('telNum', {
+            validate: (value) => value.length === 11 || '',
+          })}
+        />
+      </WrapForm>
 
-        <WrapVerifyPhone $visible={isSendMessage}>
-          <TextInput
-            label="인증번호"
-            name="verifyNum"
-            type="text"
-            timerState={180}
-            onTimerEnd={() => setIsSendMessage(false)}
-            placeholder="인증번호 입력"
-            buttonLabel="인증하기"
-            buttonClickHandler={verifyTelNum}
-            buttonDisabled={verifyNumFlag}
-            value={verifyNum}
-            onChange={handleChangeInput}
-          />
-          {verify && <Tip>인증되었습니다!</Tip>}
-        </WrapVerifyPhone>
+      <WrapForm
+        $visible={showVerifyNum}
+        onSubmit={submitVerifyNum(handleSubmitVerifyNum)}
+      >
+        <TextInput
+          type="text"
+          label="인증번호"
+          // timerState={180}
+          // onTimerEnd={() => setIsSendMessage(false)}
+          placeholder="인증번호 입력"
+          buttonLabel="인증하기"
+          buttonDisabled={!verifyNumValid}
+          register={registerVerifyNum('verifyNum', {
+            validate: (value) => value.length === 6 || '',
+          })}
+        />
+        {showPassword && <Tip>인증되었습니다!</Tip>}
+      </WrapForm>
 
-        <WrapPassword $visible={verify}>
-          <TextInput
-            label="비밀번호"
-            name="password"
-            type="password"
-            placeholder="숫자로만 6자리 이상"
-            value={registerData.password}
-            onChange={handleChangeInput}
-          />
-          {pwFlag && <Tip>숫자로만 구성된 6자리 이상이어야 합니다.</Tip>}
-        </WrapPassword>
+      <WrapForm
+        className="last-form"
+        $visible={showPassword}
+        onSubmit={submitPassword(handleSubmitPassword)}
+      >
+        <TextInput
+          label="비밀번호"
+          type="password"
+          placeholder="숫자로만 6자리 이상"
+          register={registerPassword('password', {
+            validate: (value) => value.length >= 6 || '',
+          })}
+        />
+        {passwordValue === undefined || passwordValue.length === 0 ? (
+          <Tip className="invalid">
+            숫자로만 구성된 6자리 이상이어야 합니다.
+          </Tip>
+        ) : verifyPassword.password ? (
+          <Tip className="invalid">
+            숫자로만 구성된 6자리 이상이어야 합니다.
+          </Tip>
+        ) : (
+          <Tip className="valid">사용가능합니다.</Tip>
+        )}
 
-        <WrapButton>
-          <WrapCheckbox>
-            <Checkbox
-              label="(필수) 서비스 이용약관 동의"
-              name="agreeTerms"
-              checked={registerData.agreeTerms}
-              onChange={handleChangeCheckbox}
-            />
-            <ShowDetail
-              onClick={() => {
-                handleOpenModal(termsModalRef);
-              }}
-            >
-              더보기
-            </ShowDetail>
-          </WrapCheckbox>
-          <WrapCheckbox>
-            <Checkbox
-              label="(필수) 개인정보 수집 및 이용 동의"
-              name="agreePrivacy"
-              checked={registerData.agreePrivacy}
-              onChange={handleChangeCheckbox}
-            />
-            <ShowDetail
-              onClick={() => {
-                handleOpenModal(privacyModalRef);
-              }}
-            >
-              더보기
-            </ShowDetail>
-          </WrapCheckbox>
-          <Button
-            size="large"
-            disabled={
-              pwFlag || !registerData.agreeTerms || !registerData.agreePrivacy
-            }
+        <WrapCheckbox className="first-checkbox">
+          <Checkbox
+            label="(필수) 서비스 이용약관 동의"
+            register={registerPassword('agreeTerms', {
+              validate: (value) => value === true || '',
+            })}
+          />
+          <ShowDetail
             onClick={() => {
-              toast.dismiss();
-              navigate('/register/univ');
+              handleOpenModal(termsModalRef);
             }}
           >
+            더보기
+          </ShowDetail>
+        </WrapCheckbox>
+        <WrapCheckbox>
+          <Checkbox
+            label="(필수) 개인정보 수집 및 이용 동의"
+            register={registerPassword('agreePrivacy', {
+              validate: (value) => value === true || '',
+            })}
+          />
+          <ShowDetail
+            onClick={() => {
+              handleOpenModal(privacyModalRef);
+            }}
+          >
+            더보기
+          </ShowDetail>
+        </WrapCheckbox>
+        <WrapButton>
+          <Button type="submit" size="large" disabled={!passwordValid}>
             학교 선택하기
           </Button>
         </WrapButton>
-      </WrapContent>
+      </WrapForm>
+
       <Modal
         ref={termsModalRef}
         buttonLabel="동의하기"
@@ -263,43 +268,53 @@ const WrapHeader = styled.div`
   }
 `;
 
-const WrapContent = styled.div`
-  display: grid;
-  gap: 2.5rem;
-  padding: 2rem;
-`;
-
-const WrapVerifyPhone = styled.div`
-  visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
-`;
-
-const WrapPassword = styled.div`
-  visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
-`;
-
-const WrapCheckbox = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const ShowDetail = styled.div`
-  font-size: 12px;
-  color: #90949b;
-  font-weight: 200;
-`;
-
-const WrapButton = styled.div`
+const WrapForm = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 5rem;
+  flex: 0 0 auto;
+  gap: 0.5rem;
+  padding: 1.5rem 2rem;
+  visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
 `;
 
 const Tip = styled.small`
   font-size: 12px;
   color: #90949b;
   font-weight: 700;
+
+  &.invalid {
+    color: #ff625d;
+  }
+  &.valid {
+    color: #1ebd18;
+  }
+`;
+
+const WrapButton = styled.div`
+  position: fixed;
+  bottom: 1.5rem;
+  right: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 2rem;
+`;
+
+const WrapCheckbox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &.first-checkbox {
+    margin-top: 0.5rem;
+  }
+`;
+
+const ShowDetail = styled.div`
+  font-size: 12px;
+  color: #90949b;
+  font-weight: 200;
 `;
 
 export default UserRegisterPage;
