@@ -120,10 +120,14 @@ const WrapContent = styled.div`
 `;
 
 const WrapButton = styled.div`
-  display: grid;
-  gap: 2rem;
+  position: fixed;
+  bottom: 1.5rem;
+  right: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   padding: 2rem;
-  margin-top: 1rem;
 `;
 
 export default UnivRegisterPage;
