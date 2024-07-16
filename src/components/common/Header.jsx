@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { isLoggedInState } from '../../store/auth';
 import { Link } from 'react-router-dom';
 import { myDataState } from '../../store/myData';
-import { CHARACTERS, COLORS } from '../../constants/character';
+import { CHARACTERS } from '../../constants/CHARACTERS';
 import { useNavigate } from 'react-router-dom';
 import Modal from './Modal';
 import { useEffect, useRef } from 'react';
@@ -59,17 +59,16 @@ const Header = () => {
         {isLoggedIn ? (
           <ProfileWrapper>
             <AuthUnivState />
-            <ProfileIcon
-              $character={myData.memberCharacter}
+            <ProfileRing
               onClick={() => {
                 modalRef.current.open();
               }}
             >
-              <img
-                src={CHARACTERS[myData.memberCharacter]}
-                alt="프로필 이미지"
+              <Character
+                $xPos={CHARACTERS[myData.memberCharacter]?.position[0]}
+                $yPos={CHARACTERS[myData.memberCharacter]?.position[1]}
               />
-            </ProfileIcon>
+            </ProfileRing>
           </ProfileWrapper>
         ) : (
           <StyledLink to="/login">로그인</StyledLink>
@@ -85,10 +84,12 @@ const Header = () => {
         }}
       >
         <WrapContent>
-          <CharacterBackground $character={myData.memberCharacter}>
+          <CharacterBackground
+            backgroundColor={CHARACTERS[myData.memberCharacter]?.color}
+          >
             <StyledImage
-              src={CHARACTERS[myData.memberCharacter]}
-              alt={myData.memberCharacter}
+              $xPos={CHARACTERS[myData.memberCharacter]?.position[0]}
+              $yPos={CHARACTERS[myData.memberCharacter]?.position[1]}
             />
           </CharacterBackground>
           <TextDiv>
@@ -146,7 +147,7 @@ const LogoutButton = styled.img`
   padding: 4px;
 `;
 
-const ProfileIcon = styled.div`
+const ProfileRing = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -155,11 +156,6 @@ const ProfileIcon = styled.div`
   align-items: center;
   background-color: white;
   position: relative;
-
-  img {
-    width: 32px;
-    height: 32px;
-  }
 
   &::before {
     content: '';
@@ -174,6 +170,15 @@ const ProfileIcon = styled.div`
   }
 `;
 
+const Character = styled.div`
+  width: 32px;
+  height: 32px;
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 32}px -${props.$yPos * 32}px`};
+  background-size: calc(100% * 4);
+`;
+
 const WrapContent = styled.div`
   display: flex;
   width: 100%;
@@ -186,19 +191,24 @@ const WrapContent = styled.div`
 
 const CharacterBackground = styled.div`
   position: relative;
-  width: 60%;
-  height: 0;
-  padding-bottom: 60%;
-  border-radius: 50%;
-  background-color: ${(props) => COLORS[props.$character]};
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
+  background-color: ${(props) => props.backgroundColor};
 `;
 
-const StyledImage = styled.img`
+const StyledImage = styled.div`
   position: absolute;
-  width: 60%;
+  width: 60px;
+  height: 60px;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 60}px -${props.$yPos * 60}px`};
+  background-size: calc(100% * 4);
 `;
 
 const TextDiv = styled.div`

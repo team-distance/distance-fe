@@ -5,7 +5,7 @@ import Toggle from '../../components/register/Toggle';
 import BlankModal from '../../components/common/BlankModal';
 import Button from '../../components/common/Button';
 import { ATTRACTIVENESS, HOBBY } from '../../constants/profile';
-import { CHOOSE_CHARACTERS } from '../../constants/character';
+import { CHARACTERS } from '../../constants/CHARACTERS';
 import { instance } from '../../api/instance';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -175,9 +175,9 @@ const ProfileRegisterPage = () => {
                 alt="profile register button"
               />
             ) : (
-              <img
-                src={CHOOSE_CHARACTERS[selectedAnimal]}
-                alt="selected profile"
+              <SelectedCharacter
+                $xPos={CHARACTERS[selectedAnimal]?.position[0]}
+                $yPos={CHARACTERS[selectedAnimal]?.position[1]}
               />
             )}
             <img
@@ -198,19 +198,22 @@ const ProfileRegisterPage = () => {
             />
           </ModalTitle>
           <AnimalListContainer>
-            {Object.entries(CHOOSE_CHARACTERS).map(([character, imageSrc]) => {
-              return (
-                <AnimalListItem
-                  key={character}
-                  onClick={() => {
-                    setSelectedAnimal(character);
-                    closeCharacterModal();
-                  }}
-                >
-                  <img src={imageSrc} alt={character} />
-                </AnimalListItem>
-              );
-            })}
+            {Object.entries(CHARACTERS).map(
+              ([character, characterProperties]) => {
+                const [xPos, yPos] = characterProperties.position;
+                return (
+                  <Character
+                    key={character}
+                    $xPos={xPos}
+                    $yPos={yPos}
+                    onClick={() => {
+                      setSelectedAnimal(character);
+                      closeCharacterModal();
+                    }}
+                  />
+                );
+              }
+            )}
           </AnimalListContainer>
         </BlankModal>
 
@@ -335,6 +338,24 @@ const ProfileRegisterPage = () => {
   );
 };
 
+const SelectedCharacter = styled.div`
+  width: 96px;
+  height: 96px;
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 96}px -${props.$yPos * 96}px`};
+  background-size: calc(100% * 4);
+`;
+
+const Character = styled.div`
+  width: 48px;
+  height: 48px;
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 48}px -${props.$yPos * 48}px`};
+  background-size: calc(100% * 4);
+`;
+
 const WrapHeader = styled.div`
   display: grid;
   padding: 2rem 2rem 3rem 2rem;
@@ -428,28 +449,20 @@ const ModalTitle = styled.div`
   background-color: #ff625d;
   justify-content: space-between;
   gap: 3rem;
-  padding: 1.2rem 1.3rem;
+  padding: 22px 28px;
   color: white;
-
-  div {
-    font-weight: 700;
-  }
+  font-weight: 700;
+  font-size: 18px;
 `;
+
 const AnimalListContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   justify-items: center;
   overflow: auto;
+  padding: 40px;
   margin-top: 0.5rem;
-  padding: 1rem 1.3rem;
-`;
-
-const AnimalListItem = styled.div`
-  padding: 0.5rem 0.2rem;
-
-  img {
-    width: 3rem;
-  }
+  gap: 20px;
 `;
 
 const ListContainer = styled.div`
@@ -467,7 +480,6 @@ const Tip = styled.div`
   color: #90949b;
   font-size: 12px;
   margin-top: -1em;
-  font-weight: 600;
 `;
 
 const AddButton = styled.button`

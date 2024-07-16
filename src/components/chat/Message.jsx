@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import styled from 'styled-components';
 import { parseTime } from '../../utils/parseTime';
 import Button from '../common/Button';
-import { CHARACTERS, COLORS } from '../../constants/character';
+import { CHARACTERS } from '../../constants/CHARACTERS';
 
 /**
  * @param {string} nickname - 메시지를 보낸 사람의 닉네임
@@ -49,15 +49,15 @@ const Message = memo(
           </MessageByMe>
         ) : (
           <MessageByOther>
-            <Character
-              $character={opponentMemberCharacter}
+            <CharacterBackground
+              backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
               onClick={openProfileModal}
             >
-              <img
-                src={CHARACTERS[opponentMemberCharacter]}
-                alt="opponentMemberCharacter"
+              <Character
+                $xPos={CHARACTERS[opponentMemberCharacter]?.position[0]}
+                $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
               />
-            </Character>
+            </CharacterBackground>
             <div className="message-section">
               <div className="nickname">{nickname}</div>
               <div className="message-container">
@@ -109,15 +109,15 @@ const Message = memo(
           </MessageByMe>
         ) : (
           <MessageByOther>
-            <Character
-              $character={opponentMemberCharacter}
+            <CharacterBackground
+              backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
               onClick={openProfileModal}
             >
-              <img
-                src={CHARACTERS[opponentMemberCharacter]}
-                alt="opponentMemberCharacter"
+              <Character
+                $xPos={CHARACTERS[opponentMemberCharacter]?.position[0]}
+                $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
               />
-            </Character>
+            </CharacterBackground>
             <div className="message-section">
               <div className="nickname">{nickname}</div>
               <div className="message-container">
@@ -157,15 +157,15 @@ const Message = memo(
           </MessageByMe>
         ) : (
           <MessageByOther>
-            <Character
-              $character={opponentMemberCharacter}
+            <CharacterBackground
+              backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
               onClick={openProfileModal}
             >
-              <img
-                src={CHARACTERS[opponentMemberCharacter]}
-                alt="opponentMemberCharacter"
+              <Character
+                $xPos={CHARACTERS[opponentMemberCharacter]?.position[0]}
+                $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
               />
-            </Character>
+            </CharacterBackground>
 
             <div className="message-section">
               <div className="nickname">{nickname}</div>
@@ -200,13 +200,13 @@ const Announcement = styled.div`
   }
 `;
 
-const Character = styled.div`
+const CharacterBackground = styled.div`
   position: relative;
   flex-shrink: 0;
   width: 36px;
   height: 36px;
   border-radius: 9999px;
-  background-color: ${(props) => COLORS[props.$character]};
+  background-color: ${(props) => props.backgroundColor};
 
   img {
     position: absolute;
@@ -216,6 +216,20 @@ const Character = styled.div`
     top: 50%;
     transform: translate(-50%, -50%);
   }
+`;
+
+const Character = styled.div`
+  width: 24px;
+  height: 24px;
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 24}px -${props.$yPos * 24}px`};
+  background-size: calc(100% * 4);
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const MessageByOther = styled.div`
