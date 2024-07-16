@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Checkbox = ({ label, ...props }) => {
+const Checkbox = ({ label, register, ...props }) => {
   return (
     <Label>
-      <Input type="checkbox" {...props} />
+      <Input type="checkbox" {...props} {...register} />
       {label}
     </Label>
   );
