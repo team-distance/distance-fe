@@ -10,13 +10,14 @@ import { checkCurse } from '../../utils/checkCurse';
 import Lottie from 'react-lottie-player';
 import callAnimation from '../../lottie/call-animation.json';
 import useGroupedMessages from '../../hooks/useGroupedMessages';
-import Modal from '../../components/common/Modal';
 import Tooltip from '../../components/common/Tooltip';
 import { getByteLength } from '../../utils/getByteLength';
 import useDetectClose from '../../hooks/useDetectClose';
 import { ClipLoader } from 'react-spinners';
 import ReportModal from '../../components/modal/ReportModal';
 import OpponentProfileModal from '../../components/modal/OpponentProfileModal';
+import CallModal from '../../components/modal/CallModal';
+import CallRequestModal from '../../components/modal/CallRequestModal';
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
@@ -34,6 +35,8 @@ const ChatPage = () => {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isOpponentProfileModalOpen, setIsOpponentProfileModalOpen] =
     useState(false);
+  const [isCallModalOpen, setIsCallModalOpen] = useState(false);
+  const [isCallRequestModalOpen, setIsCallRequestModalOpen] = useState(false);
 
   const param = useParams();
 
@@ -43,7 +46,6 @@ const ChatPage = () => {
     false
   );
 
-  const callModalRef = useRef();
   const viewportRef = useRef();
 
   const navigate = useNavigate();
@@ -53,14 +55,6 @@ const ChatPage = () => {
   const roomId = parseInt(param?.chatRoomId);
 
   const groupedMessages = useGroupedMessages(messages);
-
-  const openCallModal = () => {
-    callModalRef.current.open();
-  };
-
-  const closeCallModal = () => {
-    callModalRef.current.close();
-  };
 
   const navigateToVerify = () => {
     navigate('/verify/univ');
@@ -222,13 +216,13 @@ const ChatPage = () => {
     try {
       const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
       setBothAgreed(response.data);
+
+      bothAgreed ? isCallModalOpen(true) : isCallRequestModalOpen(true);
     } catch (error) {
       toast.error('방 상태를 가져오는데 실패했어요!', {
         position: 'bottom-center',
       });
     }
-
-    openCallModal();
   };
 
   // 서버에서 모든 메시지 불러오기
@@ -516,48 +510,25 @@ const ChatPage = () => {
         />
       )}
 
-      <Modal
-        ref={callModalRef}
-        buttonLabel={bothAgreed ? '통화하기' : '요청하기'}
-        buttonClickHandler={
-          bothAgreed
-            ? async () => {
-                try {
-                  const res = await instance.get(
-                    `/member/tel-num?memberId=${opponentMemberId}&chatRoomId=${roomId}`
-                  );
-                  window.location.href = `tel:${res.data.telNum}`;
-                } catch (error) {
-                  toast.error('상대방의 전화번호를 가져오는데 실패했어요!', {
-                    position: 'bottom-center',
-                  });
-                  console.log(error);
-                }
-              }
-            : () => {
-                requestCall();
-                closeCallModal();
-              }
-        }
-      >
-        <CallModalContent>
-          {bothAgreed ? (
-            <>
-              <strong>🎉 이제 통화할 수 있어요!</strong>
-              <div>아래 버튼을 눌러 통화해보세요.</div>
-            </>
-          ) : (
-            <>
-              <strong>📞 통화를 요청할까요?</strong>
-              <div>
-                상대방이 요청을 수락하면
-                <br />
-                서로의 번호로 통화할 수 있어요.
-              </div>
-            </>
-          )}
-        </CallModalContent>
-      </Modal>
+      {isCallModalOpen && (
+        <CallModal
+          isOpen={isCallModalOpen}
+          onClose={() => setIsCallModalOpen(false)}
+          opponentMemberId={opponentMemberId}
+          roomId={roomId}
+        />
+      )}
+
+      {isCallRequestModalOpen && (
+        <CallRequestModal
+          isOpen={isCallRequestModalOpen}
+          onClose={() => setIsCallRequestModalOpen(false)}
+          onClick={() => {
+            requestCall();
+            setIsCallRequestModalOpen(false);
+          }}
+        />
+      )}
     </Wrapper>
   );
 };
@@ -619,18 +590,6 @@ const TopBar = styled.div`
   justify-content: space-between;
   align-items: center;
   z-index: 1;
-`;
-
-const CallModalContent = styled.div`
-  display: grid;
-  gap: 1rem;
-  padding: 32px 0;
-  text-align: center;
-  line-height: normal;
-
-  strong {
-    font-weight: 600;
-  }
 `;
 
 const LottieContainer = styled.div`
