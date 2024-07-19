@@ -14,6 +14,10 @@ import CharacterModal from '../../components/modal/CharacterModal';
 import AttractivenessModal from '../../components/modal/AttractivenessModal';
 import HobbyModal from '../../components/modal/HobbyModal';
 
+/**
+ * @todo 코드 간소화를 위해 지역 상태를 제거하고 전역 상태를 직접 변이할지?
+ * @returns
+ */
 const ProfileRegisterPage = () => {
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
   const [selectedAnimal, setSelectedAnimal] = useState('');
@@ -101,16 +105,12 @@ const ProfileRegisterPage = () => {
       });
   };
 
-  const handleClickAttractiveness = (e) => {
-    setAttractiveness((prev) => {
-      return prev.filter((value) => value !== e.target.innerText);
-    });
+  const filterSelectedAttractiveness = (target) => {
+    setAttractiveness((prev) => prev.filter((value) => value !== target));
   };
 
-  const handleClickHobby = (e) => {
-    setHobby((prev) => {
-      return prev.filter((value) => value !== e.target.innerText);
-    });
+  const filterSelectedHobby = (target) => {
+    setHobby((prev) => prev.filter((value) => value !== target));
   };
 
   const isDisabled =
@@ -191,7 +191,10 @@ const ProfileRegisterPage = () => {
           </WrapSmallTitle>
           <BadgeContainer>
             {attractiveness.map((value, index) => (
-              <Badge key={index} onClick={handleClickAttractiveness}>
+              <Badge
+                key={index}
+                onClick={() => filterSelectedAttractiveness(value)}
+              >
                 {value}
                 <img src="/assets/cancel-button.png" alt="cancel" />
               </Badge>
@@ -206,7 +209,7 @@ const ProfileRegisterPage = () => {
           </WrapSmallTitle>
           <BadgeContainer>
             {hobby.map((value, index) => (
-              <Badge key={index} onClick={handleClickHobby}>
+              <Badge key={index} onClick={() => filterSelectedHobby(value)}>
                 {value}
                 <img src="/assets/cancel-button.png" alt="cancel" />
               </Badge>
