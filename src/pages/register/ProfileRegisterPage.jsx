@@ -4,7 +4,7 @@ import DropdownMBTI from '../../components/register/DropdownMBTI';
 import Toggle from '../../components/register/Toggle';
 import BlankModal from '../../components/common/BlankModal';
 import Button from '../../components/common/Button';
-import { ATTRACTIVENESS, HOBBY } from '../../constants/profile';
+import { HOBBY } from '../../constants/profile';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import { instance } from '../../api/instance';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ import { registerDataState } from '../../store/registerDataState';
 import ProgressBar from '../../components/register/ProgressBar';
 import toast, { Toaster } from 'react-hot-toast';
 import CharacterModal from '../../components/modal/CharacterModal';
+import AttractivenessModal from '../../components/modal/AttractivenessModal';
 
 const ProfileRegisterPage = () => {
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
@@ -25,6 +26,8 @@ const ProfileRegisterPage = () => {
 
   // 모달
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false);
+  const [isAttractivenessModalOpen, setIsAttractivenessModalOpen] =
+    useState(false);
 
   const navigate = useNavigate();
 
@@ -98,16 +101,7 @@ const ProfileRegisterPage = () => {
       });
   };
 
-  const attractivenessModalRef = useRef();
   const hobbyModalRef = useRef();
-
-  const openAttractivenessModal = () => {
-    attractivenessModalRef.current.open();
-  };
-
-  const closeAttractivenessModal = () => {
-    attractivenessModalRef.current.close();
-  };
 
   const openHobbyModal = () => {
     hobbyModalRef.current.open();
@@ -150,6 +144,21 @@ const ProfileRegisterPage = () => {
           },
         }}
       />
+
+      <CharacterModal
+        isOpen={isCharacterModalOpen}
+        onClose={() => setIsCharacterModalOpen(false)}
+        onClick={setSelectedAnimal}
+      />
+
+      <AttractivenessModal
+        isOpen={isAttractivenessModalOpen}
+        selectedList={attractiveness}
+        hashtagCount={hashtagCount}
+        onClose={() => setIsAttractivenessModalOpen(false)}
+        onClick={setAttractiveness}
+      />
+
       <WrapHeader>
         <ProgressBar progress={4} />
         <p>프로필을 등록해주세요</p>
@@ -183,12 +192,6 @@ const ProfileRegisterPage = () => {
           </ProfileContainer>
         </div>
 
-        <CharacterModal
-          isOpen={isCharacterModalOpen}
-          onClose={() => setIsCharacterModalOpen(false)}
-          onClick={setSelectedAnimal}
-        />
-
         <div>
           <Label>MBTI 선택하기</Label>
           <DropdownMBTI state={selectedMBTI} setState={setSelectedMBTI} />
@@ -206,7 +209,9 @@ const ProfileRegisterPage = () => {
           <br />
           <WrapSmallTitle>
             <div className="small-label">저는 이런 매력이 있어요!</div>
-            <AddButton onClick={openAttractivenessModal}>+ 추가하기</AddButton>
+            <AddButton onClick={() => setIsAttractivenessModalOpen(true)}>
+              + 추가하기
+            </AddButton>
           </WrapSmallTitle>
           <BadgeContainer>
             {attractiveness.map((value, index) => (
@@ -229,42 +234,6 @@ const ProfileRegisterPage = () => {
               </Badge>
             ))}
           </BadgeContainer>
-
-          <BlankModal ref={attractivenessModalRef}>
-            <ModalTitle>
-              <div>매력 선택하기</div>
-              <img
-                src="/assets/cancel-button.png"
-                alt="닫기 버튼"
-                onClick={closeAttractivenessModal}
-              />
-            </ModalTitle>
-            <ListContainer>
-              {ATTRACTIVENESS.map((value, index) => (
-                <ListItem
-                  key={index}
-                  color={attractiveness.includes(value) ? '#FF0000' : 'black'}
-                  onClick={() => {
-                    if (hashtagCount >= 5) {
-                      toast.error('해시태그는 5개까지만 선택 가능해요!', {
-                        id: 'hashtag-limit',
-                      });
-                      return;
-                    } else if (attractiveness.includes(value)) {
-                      toast.error('이미 선택한 해시태그에요!', {
-                        id: 'hashtag-duplicate',
-                      });
-                      return;
-                    }
-                    setAttractiveness([...attractiveness, value]);
-                    closeAttractivenessModal();
-                  }}
-                >
-                  {value}
-                </ListItem>
-              ))}
-            </ListContainer>
-          </BlankModal>
 
           <BlankModal ref={hobbyModalRef}>
             <ModalTitle>
