@@ -14,10 +14,9 @@ import Modal from '../../components/common/Modal';
 import Tooltip from '../../components/common/Tooltip';
 import { getByteLength } from '../../utils/getByteLength';
 import useDetectClose from '../../hooks/useDetectClose';
-import { CHARACTERS } from '../../constants/CHARACTERS';
-import Badge from '../../components/common/Badge';
 import { ClipLoader } from 'react-spinners';
 import ReportModal from '../../components/modal/ReportModal';
+import OpponentProfileModal from '../../components/modal/OpponentProfileModal';
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
@@ -33,6 +32,8 @@ const ChatPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isOpponentProfileModalOpen, setIsOpponentProfileModalOpen] =
+    useState(false);
 
   const param = useParams();
 
@@ -42,8 +43,6 @@ const ChatPage = () => {
     false
   );
 
-  const profileModalRef = useRef();
-  const reportModalRef = useRef();
   const callModalRef = useRef();
   const viewportRef = useRef();
 
@@ -55,24 +54,12 @@ const ChatPage = () => {
 
   const groupedMessages = useGroupedMessages(messages);
 
-  const openReportModal = () => {
-    setIsReportModalOpen(true);
-  };
-
-  const closeReportModal = () => {
-    setIsReportModalOpen(false);
-  };
-
   const openCallModal = () => {
     callModalRef.current.open();
   };
 
   const closeCallModal = () => {
     callModalRef.current.close();
-  };
-
-  const openProfileModal = () => {
-    profileModalRef.current.open();
   };
 
   const navigateToVerify = () => {
@@ -278,21 +265,6 @@ const ChatPage = () => {
     } catch (error) {
       console.log('error', error);
     }
-  };
-
-  // 신고하기
-  const handleReportUser = async (reportMessage) => {
-    try {
-      await instance.post('/report', {
-        declareContent: reportMessage,
-        opponentId: opponentMemberId,
-      });
-      alert('신고가 완료되었어요!');
-    } catch (error) {
-      console.log(error);
-      alert('이미 신고한 사용자예요! 신고는 한 번만 가능해요.');
-    }
-    closeReportModal();
   };
 
   // 거리 불러오기
@@ -511,7 +483,7 @@ const ChatPage = () => {
               groupedMessages={groupedMessages}
               myId={myMemberId}
               responseCall={responseCall}
-              openProfileModal={openProfileModal}
+              openProfileModal={() => setIsOpponentProfileModalOpen(true)}
               opponentMemberCharacter={
                 opponentProfile && opponentProfile.memberCharacter
               }
@@ -519,7 +491,7 @@ const ChatPage = () => {
 
             <MessageInput
               value={draftMessage}
-              buttonClickHandler={openReportModal}
+              buttonClickHandler={() => setIsReportModalOpen(true)}
               changeHandler={handleChangeMessage}
               submitHandler={sendMessage}
               isOpponentOut={isOpponentOut}
@@ -533,6 +505,14 @@ const ChatPage = () => {
           isOpen={isReportModalOpen}
           onClose={() => setIsReportModalOpen(false)}
           opponentMemberId={opponentMemberId}
+        />
+      )}
+
+      {isOpponentProfileModalOpen && (
+        <OpponentProfileModal
+          isOpen={isOpponentProfileModalOpen}
+          onClose={() => setIsOpponentProfileModalOpen(false)}
+          opponentProfile={opponentProfile}
         />
       )}
 
@@ -577,34 +557,6 @@ const ChatPage = () => {
             </>
           )}
         </CallModalContent>
-      </Modal>
-      <Modal ref={profileModalRef}>
-        {opponentProfile && (
-          <WrapContent>
-            <CharacterBackground
-              backgroundColor={
-                CHARACTERS[opponentProfile.memberCharacter]?.color
-              }
-            >
-              <StyledImage
-                $xPos={CHARACTERS[opponentProfile.memberCharacter]?.position[0]}
-                $yPos={CHARACTERS[opponentProfile.memberCharacter]?.position[1]}
-              />
-            </CharacterBackground>
-            <TextDiv>
-              <MBTI>{opponentProfile.mbti}</MBTI>
-              <Major>{opponentProfile.department}</Major>
-            </TextDiv>
-            <TagContainer>
-              {opponentProfile.memberHobbyDto.map((hobby, index) => (
-                <Badge key={index}>#{hobby.hobby}</Badge>
-              ))}
-              {opponentProfile.memberTagDto.map((tag, index) => (
-                <Badge key={index}>#{tag.tag}</Badge>
-              ))}
-            </TagContainer>
-          </WrapContent>
-        )}
       </Modal>
     </Wrapper>
   );
@@ -669,11 +621,6 @@ const TopBar = styled.div`
   z-index: 1;
 `;
 
-const CancelButton = styled.button`
-  background: none;
-  border: none;
-`;
-
 const CallModalContent = styled.div`
   display: grid;
   gap: 1rem;
@@ -736,63 +683,6 @@ const TooltipTail = styled.div`
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
   border-bottom: 10px solid #333333;
-`;
-
-const WrapContent = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin: 32px 0;
-  gap: 12px;
-`;
-
-const CharacterBackground = styled.div`
-  position: relative;
-  width: 100px;
-  height: 100px;
-  border-radius: 100%;
-  background-color: ${(props) => props.backgroundColor};
-`;
-
-const StyledImage = styled.div`
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-
-  background-image: url('/assets/sp_character.png');
-  background-position: ${(props) =>
-    `-${props.$xPos * 60}px -${props.$yPos * 60}px`};
-  background-size: calc(100% * 4);
-`;
-
-const TextDiv = styled.div`
-  width: 100%;
-  text-align: center;
-  color: #333333;
-`;
-
-const Major = styled.div`
-  font-size: 24px;
-  font-weight: 700;
-  line-height: normal;
-`;
-
-const MBTI = styled.div`
-  color: #000000;
-  font-size: 14px;
-  line-height: normal;
-`;
-
-const TagContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
 `;
 
 const LoaderContainer = styled.div`
