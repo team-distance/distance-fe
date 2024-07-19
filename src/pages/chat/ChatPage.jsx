@@ -6,8 +6,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
 import { instance } from '../../api/instance';
 import toast, { Toaster } from 'react-hot-toast';
-import BlankModal from '../../components/common/BlankModal';
-import TextInput from '../../components/register/TextInput';
 import { checkCurse } from '../../utils/checkCurse';
 import Lottie from 'react-lottie-player';
 import callAnimation from '../../lottie/call-animation.json';
@@ -19,6 +17,7 @@ import useDetectClose from '../../hooks/useDetectClose';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../../components/common/Badge';
 import { ClipLoader } from 'react-spinners';
+import ReportModal from '../../components/modal/ReportModal';
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
@@ -28,11 +27,12 @@ const ChatPage = () => {
   const [isCallActive, setIsCallActive] = useState(false);
   const [isShowLottie, setIsShowLottie] = useState(false);
   const [isOpponentOut, setIsOpponentOut] = useState(false);
-  const [reportMessage, setReportMessage] = useState('');
   const [bothAgreed, setBothAgreed] = useState(false);
   const [opponentProfile, setOpponentProfile] = useState(null);
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   const param = useParams();
 
@@ -56,12 +56,11 @@ const ChatPage = () => {
   const groupedMessages = useGroupedMessages(messages);
 
   const openReportModal = () => {
-    reportModalRef.current.open();
+    setIsReportModalOpen(true);
   };
 
   const closeReportModal = () => {
-    setReportMessage('');
-    reportModalRef.current.close();
+    setIsReportModalOpen(false);
   };
 
   const openCallModal = () => {
@@ -282,7 +281,7 @@ const ChatPage = () => {
   };
 
   // 신고하기
-  const handleReportUser = async () => {
+  const handleReportUser = async (reportMessage) => {
     try {
       await instance.post('/report', {
         declareContent: reportMessage,
@@ -529,25 +528,13 @@ const ChatPage = () => {
         )}
       </Container>
 
-      <BlankModal ref={reportModalRef}>
-        <ReportModalContent>
-          <TextInput
-            label="사용자 신고하기"
-            placeholder="신고 내용을 입력해주세요."
-            value={reportMessage}
-            onChange={(e) => setReportMessage(e.target.value)}
-          />
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <ReportButton
-              disabled={reportMessage === ''}
-              onClick={handleReportUser}
-            >
-              신고하기
-            </ReportButton>
-            <CancelButton onClick={closeReportModal}>취소하기</CancelButton>
-          </div>
-        </ReportModalContent>
-      </BlankModal>
+      {isReportModalOpen && (
+        <ReportModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+          opponentMemberId={opponentMemberId}
+        />
+      )}
 
       <Modal
         ref={callModalRef}
@@ -680,23 +667,6 @@ const TopBar = styled.div`
   justify-content: space-between;
   align-items: center;
   z-index: 1;
-`;
-
-const ReportModalContent = styled.div`
-  display: grid;
-  gap: 1rem;
-  width: 250px;
-  padding: 1.25rem;
-`;
-
-const ReportButton = styled.button`
-  background: none;
-  border: none;
-  color: #ff625d;
-
-  &:disabled {
-    color: #e0e0e0;
-  }
 `;
 
 const CancelButton = styled.button`
