@@ -1,19 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import DropdownMBTI from '../../components/register/DropdownMBTI';
 import Toggle from '../../components/register/Toggle';
-import BlankModal from '../../components/common/BlankModal';
 import Button from '../../components/common/Button';
-import { HOBBY } from '../../constants/profile';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import { instance } from '../../api/instance';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { registerDataState } from '../../store/registerDataState';
 import ProgressBar from '../../components/register/ProgressBar';
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import CharacterModal from '../../components/modal/CharacterModal';
 import AttractivenessModal from '../../components/modal/AttractivenessModal';
+import HobbyModal from '../../components/modal/HobbyModal';
 
 const ProfileRegisterPage = () => {
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
@@ -28,6 +27,7 @@ const ProfileRegisterPage = () => {
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false);
   const [isAttractivenessModalOpen, setIsAttractivenessModalOpen] =
     useState(false);
+  const [isHobbyModalOpen, setIsHobbyModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -101,16 +101,6 @@ const ProfileRegisterPage = () => {
       });
   };
 
-  const hobbyModalRef = useRef();
-
-  const openHobbyModal = () => {
-    hobbyModalRef.current.open();
-  };
-
-  const closeHobbyModal = () => {
-    hobbyModalRef.current.close();
-  };
-
   const handleClickAttractiveness = (e) => {
     setAttractiveness((prev) => {
       return prev.filter((value) => value !== e.target.innerText);
@@ -143,20 +133,6 @@ const ProfileRegisterPage = () => {
             fontSize: '14px',
           },
         }}
-      />
-
-      <CharacterModal
-        isOpen={isCharacterModalOpen}
-        onClose={() => setIsCharacterModalOpen(false)}
-        onClick={setSelectedAnimal}
-      />
-
-      <AttractivenessModal
-        isOpen={isAttractivenessModalOpen}
-        selectedList={attractiveness}
-        hashtagCount={hashtagCount}
-        onClose={() => setIsAttractivenessModalOpen(false)}
-        onClick={setAttractiveness}
       />
 
       <WrapHeader>
@@ -224,7 +200,9 @@ const ProfileRegisterPage = () => {
 
           <WrapSmallTitle>
             <div className="small-label">저는 이런 취미가 있어요!</div>
-            <AddButton onClick={openHobbyModal}>+ 추가하기</AddButton>
+            <AddButton onClick={() => setIsHobbyModalOpen(true)}>
+              + 추가하기
+            </AddButton>
           </WrapSmallTitle>
           <BadgeContainer>
             {hobby.map((value, index) => (
@@ -234,47 +212,34 @@ const ProfileRegisterPage = () => {
               </Badge>
             ))}
           </BadgeContainer>
-
-          <BlankModal ref={hobbyModalRef}>
-            <ModalTitle>
-              <div>취미 선택하기</div>
-              <img
-                src="/assets/cancel-button.png"
-                alt="닫기 버튼"
-                onClick={closeHobbyModal}
-              />
-            </ModalTitle>
-            <ListContainer>
-              {HOBBY.map((value, index) => (
-                <ListItem
-                  key={index}
-                  color={hobby.includes(value) ? '#FF0000' : 'black'}
-                  onClick={() => {
-                    if (hashtagCount >= 5) {
-                      toast.error('해시태그는 5개까지만 선택 가능해요!', {
-                        id: 'hashtag-limit',
-                      });
-                      return;
-                    } else if (hobby.includes(value)) {
-                      toast.error('이미 선택한 해시태그에요!', {
-                        id: 'hashtag-duplicate',
-                      });
-                      return;
-                    }
-                    setHobby([...hobby, value]);
-                    closeHobbyModal();
-                  }}
-                >
-                  {value}
-                </ListItem>
-              ))}
-            </ListContainer>
-          </BlankModal>
         </div>
+
         <Button disabled={isDisabled} onClick={handleSubmit} size="large">
           가입 완료하기
         </Button>
       </WrapContent>
+
+      <CharacterModal
+        isOpen={isCharacterModalOpen}
+        onClose={() => setIsCharacterModalOpen(false)}
+        onClick={setSelectedAnimal}
+      />
+
+      <AttractivenessModal
+        isOpen={isAttractivenessModalOpen}
+        selectedList={attractiveness}
+        hashtagCount={hashtagCount}
+        onClose={() => setIsAttractivenessModalOpen(false)}
+        onClick={setAttractiveness}
+      />
+
+      <HobbyModal
+        isOpen={isHobbyModalOpen}
+        selectedList={hobby}
+        hashtagCount={hashtagCount}
+        onClose={() => setIsHobbyModalOpen(false)}
+        onClick={setHobby}
+      />
     </div>
   );
 };
@@ -373,29 +338,6 @@ const WrapSmallTitle = styled.div`
     font-size: 0.8rem;
     font-weight: 700;
   }
-`;
-
-const ModalTitle = styled.div`
-  display: flex;
-  align-items: center;
-  background-color: #ff625d;
-  justify-content: space-between;
-  gap: 3rem;
-  padding: 22px 28px;
-  color: white;
-  font-weight: 700;
-  font-size: 18px;
-`;
-
-const ListContainer = styled.div`
-  max-height: 256px;
-  overflow: auto;
-  margin-top: 0.5rem;
-`;
-
-const ListItem = styled.div`
-  color: ${(props) => props.color};
-  padding: 0.5rem 1.3rem;
 `;
 
 const Tip = styled.div`
