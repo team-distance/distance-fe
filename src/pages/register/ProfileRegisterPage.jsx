@@ -12,6 +12,7 @@ import { useRecoilState } from 'recoil';
 import { registerDataState } from '../../store/registerDataState';
 import ProgressBar from '../../components/register/ProgressBar';
 import toast, { Toaster } from 'react-hot-toast';
+import CharacterModal from '../../components/modal/CharacterModal';
 
 const ProfileRegisterPage = () => {
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
@@ -21,6 +22,9 @@ const ProfileRegisterPage = () => {
   const [hobby, setHobby] = useState([]);
   const [hashtagCount, setHashtagCount] = useState(0);
   const [toggleState, setToggleState] = useState('');
+
+  // 모달
+  const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -94,17 +98,8 @@ const ProfileRegisterPage = () => {
       });
   };
 
-  const characterModalRef = useRef();
   const attractivenessModalRef = useRef();
   const hobbyModalRef = useRef();
-
-  const openCharacterModal = () => {
-    characterModalRef.current.open();
-  };
-
-  const closeCharacterModal = () => {
-    characterModalRef.current.close();
-  };
 
   const openAttractivenessModal = () => {
     attractivenessModalRef.current.open();
@@ -163,7 +158,7 @@ const ProfileRegisterPage = () => {
       <WrapContent>
         <div>
           <Label>캐릭터 선택하기</Label>
-          <ProfileContainer onClick={openCharacterModal}>
+          <ProfileContainer onClick={() => setIsCharacterModalOpen(true)}>
             <img
               className="side-image-left"
               src="/assets/profile-register-leftimg.png"
@@ -188,34 +183,11 @@ const ProfileRegisterPage = () => {
           </ProfileContainer>
         </div>
 
-        <BlankModal ref={characterModalRef}>
-          <ModalTitle>
-            <div>캐릭터 선택하기</div>
-            <img
-              src="/assets/cancel-button.png"
-              alt="닫기 버튼"
-              onClick={closeCharacterModal}
-            />
-          </ModalTitle>
-          <AnimalListContainer>
-            {Object.entries(CHARACTERS).map(
-              ([character, characterProperties]) => {
-                const [xPos, yPos] = characterProperties.position;
-                return (
-                  <Character
-                    key={character}
-                    $xPos={xPos}
-                    $yPos={yPos}
-                    onClick={() => {
-                      setSelectedAnimal(character);
-                      closeCharacterModal();
-                    }}
-                  />
-                );
-              }
-            )}
-          </AnimalListContainer>
-        </BlankModal>
+        <CharacterModal
+          isOpen={isCharacterModalOpen}
+          onClose={() => setIsCharacterModalOpen(false)}
+          onClick={setSelectedAnimal}
+        />
 
         <div>
           <Label>MBTI 선택하기</Label>
@@ -347,15 +319,6 @@ const SelectedCharacter = styled.div`
   background-size: calc(100% * 4);
 `;
 
-const Character = styled.div`
-  width: 48px;
-  height: 48px;
-  background-image: url('/assets/sp_character.png');
-  background-position: ${(props) =>
-    `-${props.$xPos * 48}px -${props.$yPos * 48}px`};
-  background-size: calc(100% * 4);
-`;
-
 const WrapHeader = styled.div`
   display: grid;
   padding: 2rem 2rem 3rem 2rem;
@@ -453,16 +416,6 @@ const ModalTitle = styled.div`
   color: white;
   font-weight: 700;
   font-size: 18px;
-`;
-
-const AnimalListContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  justify-items: center;
-  overflow: auto;
-  padding: 40px;
-  margin-top: 0.5rem;
-  gap: 20px;
 `;
 
 const ListContainer = styled.div`
