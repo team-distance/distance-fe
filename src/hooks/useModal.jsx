@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const useModal = (initialState = false) => {
   const [isOpen, setIsOpen] = useState(initialState);
 
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'auto';
+  const openModal = () => {
+    setIsOpen(true);
+    document.body.style.overflow = 'hidden';
+  };
 
-    return () => (document.body.style.overflow = 'auto');
-  }, [isOpen]);
-
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  const closeModal = () => {
+    setIsOpen(false);
+    document.body.style.overflow = 'auto';
+  };
 
   return { isOpen, openModal, closeModal };
 };
