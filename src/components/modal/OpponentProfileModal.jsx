@@ -1,53 +1,50 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../common/Badge';
 
-const OpponentProfileModal = ({ isOpen, onClose, opponentProfile }) => {
-  if (!isOpen) {
-    document.body.style = 'overflow: auto';
-    return null;
-  } else {
-    document.body.style = 'overflow: hidden';
-    return createPortal(
-      <>
-        <Backdrop onClick={onClose} />
-        <Modal>
-          <CloseButton
-            src="/assets/cancel-button-gray.svg"
-            alt="닫기 버튼"
-            onClick={onClose}
-          />
-          <WrapContent>
-            <CharacterBackground
-              backgroundColor={
-                CHARACTERS[opponentProfile.memberCharacter]?.color
-              }
-            >
-              <Character
-                $xPos={CHARACTERS[opponentProfile.memberCharacter]?.position[0]}
-                $yPos={CHARACTERS[opponentProfile.memberCharacter]?.position[1]}
-              />
-            </CharacterBackground>
-            <TextDiv>
-              <MBTI>{opponentProfile.mbti}</MBTI>
-              <Major>{opponentProfile.department}</Major>
-            </TextDiv>
-            <TagContainer>
-              {opponentProfile.memberHobbyDto.map((hobby, index) => (
-                <Badge key={index}>#{hobby.hobby}</Badge>
-              ))}
-              {opponentProfile.memberTagDto.map((tag, index) => (
-                <Badge key={index}>#{tag.tag}</Badge>
-              ))}
-            </TagContainer>
-          </WrapContent>
-        </Modal>
-      </>,
-      document.getElementById('modal')
-    );
-  }
+const OpponentProfileModal = ({ closeModal, opponentProfile }) => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => (document.body.style.overflow = 'auto');
+  }, []);
+
+  return createPortal(
+    <>
+      <Backdrop onClick={closeModal} />
+      <Modal>
+        <CloseButton
+          src="/assets/cancel-button-gray.svg"
+          alt="닫기 버튼"
+          onClick={closeModal}
+        />
+        <WrapContent>
+          <CharacterBackground
+            backgroundColor={CHARACTERS[opponentProfile.memberCharacter]?.color}
+          >
+            <Character
+              $xPos={CHARACTERS[opponentProfile.memberCharacter]?.position[0]}
+              $yPos={CHARACTERS[opponentProfile.memberCharacter]?.position[1]}
+            />
+          </CharacterBackground>
+          <TextDiv>
+            <MBTI>{opponentProfile.mbti}</MBTI>
+            <Major>{opponentProfile.department}</Major>
+          </TextDiv>
+          <TagContainer>
+            {opponentProfile.memberHobbyDto.map((hobby, index) => (
+              <Badge key={index}>#{hobby.hobby}</Badge>
+            ))}
+            {opponentProfile.memberTagDto.map((tag, index) => (
+              <Badge key={index}>#{tag.tag}</Badge>
+            ))}
+          </TagContainer>
+        </WrapContent>
+      </Modal>
+    </>,
+    document.getElementById('modal')
+  );
 };
 
 export default OpponentProfileModal;

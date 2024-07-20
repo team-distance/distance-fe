@@ -76,8 +76,7 @@ const Header = () => {
 
       {isModalOpen && (
         <MyProfileModal
-          isOpen={true}
-          onClose={() => setIsModalOpen(false)}
+          closeModal={() => setIsModalOpen(false)}
           onClick={() => {
             navigate('/mypage/profile', { state: myData });
           }}

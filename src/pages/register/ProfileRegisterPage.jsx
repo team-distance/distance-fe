@@ -47,19 +47,19 @@ const ProfileRegisterPage = () => {
   }, [selectedAnimal, selectedMBTI, toggleState, attractiveness, hobby]);
 
   // 새로고침하여 데이터가 사라졌을 때, 다시 회원가입 페이지로 이동
-  useEffect(() => {
-    if (
-      !registerData.agreeTerms ||
-      !registerData.agreePrivacy ||
-      registerData.telNum === '' ||
-      registerData.verifyNum === '' ||
-      registerData.password === '' ||
-      registerData.college === '' ||
-      registerData.department === ''
-    ) {
-      navigate('/register/user');
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (
+  //     !registerData.agreeTerms ||
+  //     !registerData.agreePrivacy ||
+  //     registerData.telNum === '' ||
+  //     registerData.verifyNum === '' ||
+  //     registerData.password === '' ||
+  //     registerData.college === '' ||
+  //     registerData.department === ''
+  //   ) {
+  //     navigate('/register/user');
+  //   }
+  // }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -222,27 +222,30 @@ const ProfileRegisterPage = () => {
         </Button>
       </WrapContent>
 
-      <CharacterModal
-        isOpen={isCharacterModalOpen}
-        onClose={() => setIsCharacterModalOpen(false)}
-        onClick={setSelectedAnimal}
-      />
+      {isCharacterModalOpen && (
+        <CharacterModal
+          closeModal={() => setIsCharacterModalOpen(false)}
+          onClick={setSelectedAnimal}
+        />
+      )}
 
-      <AttractivenessModal
-        isOpen={isAttractivenessModalOpen}
-        selectedList={attractiveness}
-        hashtagCount={hashtagCount}
-        onClose={() => setIsAttractivenessModalOpen(false)}
-        onClick={setAttractiveness}
-      />
+      {isAttractivenessModalOpen && (
+        <AttractivenessModal
+          closeModal={() => setIsAttractivenessModalOpen(false)}
+          selectedList={attractiveness}
+          hashtagCount={hashtagCount}
+          onClick={setAttractiveness}
+        />
+      )}
 
-      <HobbyModal
-        isOpen={isHobbyModalOpen}
-        selectedList={hobby}
-        hashtagCount={hashtagCount}
-        onClose={() => setIsHobbyModalOpen(false)}
-        onClick={setHobby}
-      />
+      {isHobbyModalOpen && (
+        <HobbyModal
+          closeModal={() => setIsHobbyModalOpen(false)}
+          selectedList={hobby}
+          hashtagCount={hashtagCount}
+          onClick={setHobby}
+        />
+      )}
     </div>
   );
 };

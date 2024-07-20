@@ -1,51 +1,49 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Button from '../common/Button';
 import styled from 'styled-components';
 import { createPortal } from 'react-dom';
 import { instance } from '../../api/instance';
 import toast from 'react-hot-toast';
 
-const CallModal = ({ isOpen, onClose, opponentMemberId, roomId }) => {
-  if (!isOpen) {
-    document.body.style = 'overflow: auto';
-    return null;
-  } else {
-    document.body.style = 'overflow: hidden';
+const CallModal = ({ closeModal, opponentMemberId, roomId }) => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => (document.body.style.overflow = 'auto');
+  }, []);
 
-    const fetchOpponentTelNum = async () => {
-      try {
-        const res = await instance.get(
-          `/member/tel-num?memberId=${opponentMemberId}&chatRoomId=${roomId}`
-        );
-        window.location.href = `tel:${res.data.telNum}`;
-      } catch (error) {
-        toast.error('상대방의 전화번호를 가져오는데 실패했어요!', {
-          position: 'bottom-center',
-        });
-      }
-    };
+  const fetchOpponentTelNum = async () => {
+    try {
+      const res = await instance.get(
+        `/member/tel-num?memberId=${opponentMemberId}&chatRoomId=${roomId}`
+      );
+      window.location.href = `tel:${res.data.telNum}`;
+    } catch (error) {
+      toast.error('상대방의 전화번호를 가져오는데 실패했어요!', {
+        position: 'bottom-center',
+      });
+    }
+  };
 
-    return createPortal(
-      <>
-        <Backdrop onClick={onClose} />
-        <Modal>
-          <CloseButton
-            src="/assets/cancel-button-gray.svg"
-            alt="닫기 버튼"
-            onClick={onClose}
-          />
+  return createPortal(
+    <>
+      <Backdrop onClick={closeModal} />
+      <Modal>
+        <CloseButton
+          src="/assets/cancel-button-gray.svg"
+          alt="닫기 버튼"
+          onClick={closeModal}
+        />
 
-          <Title>🎉 이제 통화할 수 있어요!</Title>
-          <Content>아래 버튼을 눌러 통화해보세요.</Content>
+        <Title>🎉 이제 통화할 수 있어요!</Title>
+        <Content>아래 버튼을 눌러 통화해보세요.</Content>
 
-          <Button size="medium" onClick={fetchOpponentTelNum}>
-            통화하기
-          </Button>
-        </Modal>
-      </>,
-      document.getElementById('modal')
-    );
-  }
+        <Button size="medium" onClick={fetchOpponentTelNum}>
+          통화하기
+        </Button>
+      </Modal>
+    </>,
+    document.getElementById('modal')
+  );
 };
 
 export default CallModal;

@@ -1,39 +1,38 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Button from '../common/Button';
 import styled from 'styled-components';
 import { createPortal } from 'react-dom';
 
-const CallRequestModal = ({ isOpen, onClose, onClick }) => {
-  if (!isOpen) {
-    document.body.style = 'overflow: auto';
-    return null;
-  } else {
-    document.body.style = 'overflow: hidden';
-    return createPortal(
-      <>
-        <Backdrop onClick={onClose} />
-        <Modal>
-          <CloseButton
-            src="/assets/cancel-button-gray.svg"
-            alt="닫기 버튼"
-            onClick={onClose}
-          />
+const CallRequestModal = ({ closeModal, onClick }) => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => (document.body.style.overflow = 'auto');
+  }, []);
 
-          <Title>📞 통화를 요청할까요?</Title>
-          <Content>
-            상대방이 요청을 수락하면
-            <br />
-            서로의 번호로 통화할 수 있어요.
-          </Content>
+  return createPortal(
+    <>
+      <Backdrop onClick={closeModal} />
+      <Modal>
+        <CloseButton
+          src="/assets/cancel-button-gray.svg"
+          alt="닫기 버튼"
+          onClick={closeModal}
+        />
 
-          <Button size="medium" onClick={onClick}>
-            요청하기
-          </Button>
-        </Modal>
-      </>,
-      document.getElementById('modal')
-    );
-  }
+        <Title>📞 통화를 요청할까요?</Title>
+        <Content>
+          상대방이 요청을 수락하면
+          <br />
+          서로의 번호로 통화할 수 있어요.
+        </Content>
+
+        <Button size="medium" onClick={onClick}>
+          요청하기
+        </Button>
+      </Modal>
+    </>,
+    document.getElementById('modal')
+  );
 };
 
 export default CallRequestModal;

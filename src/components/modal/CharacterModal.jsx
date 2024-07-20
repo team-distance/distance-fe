@@ -1,46 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 
-const CharacterModal = ({ isOpen, onClose, onClick }) => {
-  if (!isOpen) {
-    document.body.style = 'overflow: auto';
-    return null;
-  } else {
-    document.body.style = 'overflow: hidden';
-    return createPortal(
-      <>
-        <Backdrop onClick={onClose} />
-        <Modal>
-          <Title>
-            <div>캐릭터 선택하기</div>
-            <img
-              src="/assets/cancel-button.png"
-              alt="닫기 버튼"
-              onClick={onClose}
-            />
-          </Title>
-          <Body>
-            {Object.entries(CHARACTERS).map(
-              ([character, characterProperties]) => (
-                <Character
-                  key={character}
-                  onClick={() => {
-                    onClick(character);
-                    onClose();
-                  }}
-                  $xPos={characterProperties?.position[0]}
-                  $yPos={characterProperties?.position[1]}
-                />
-              )
-            )}
-          </Body>
-        </Modal>
-      </>,
-      document.getElementById('modal')
-    );
-  }
+const CharacterModal = ({ closeModal, onClick }) => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => (document.body.style.overflow = 'auto');
+  }, []);
+
+  return createPortal(
+    <>
+      <Backdrop onClick={closeModal} />
+      <Modal>
+        <Title>
+          <div>캐릭터 선택하기</div>
+          <img
+            src="/assets/cancel-button.png"
+            alt="닫기 버튼"
+            onClick={closeModal}
+          />
+        </Title>
+        <Body>
+          {Object.entries(CHARACTERS).map(
+            ([character, characterProperties]) => (
+              <Character
+                key={character}
+                onClick={() => {
+                  onClick(character);
+                  closeModal();
+                }}
+                $xPos={characterProperties?.position[0]}
+                $yPos={characterProperties?.position[1]}
+              />
+            )
+          )}
+        </Body>
+      </Modal>
+    </>,
+    document.getElementById('modal')
+  );
 };
 
 export default CharacterModal;
@@ -52,7 +51,6 @@ const Backdrop = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  overflow: hidden;
   z-index: 100;
 `;
 

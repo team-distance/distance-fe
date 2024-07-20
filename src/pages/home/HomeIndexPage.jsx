@@ -229,8 +229,7 @@ const HomeIndexPage = () => {
 
       {isModalOpen && (
         <ProfileModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          closeModal={() => setIsModalOpen(false)}
           onClick={() => {
             handleCreateChatRoom(selectedProfile.memberId);
           }}

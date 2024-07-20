@@ -1,60 +1,59 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { createPortal } from 'react-dom';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
 
-const MyProfileModal = ({ isOpen, onClose, onClick, myData, handleLogout }) => {
-  if (!isOpen) {
-    document.body.style = 'overflow: auto';
-    return null;
-  } else {
-    document.body.style = 'overflow: hidden';
-    return createPortal(
-      <>
-        <Backdrop onClick={onClose} />
-        <Modal>
-          <LogoutButton
-            src="/assets/leave-button.svg"
-            alt="나가기 버튼"
-            onClick={handleLogout}
-          />
-          <CloseButton
-            src="/assets/cancel-button-gray.svg"
-            alt="닫기 버튼"
-            onClick={onClose}
-          />
-          <WrapContent>
-            <CharacterBackground
-              backgroundColor={CHARACTERS[myData.memberCharacter]?.color}
-            >
-              <Character
-                $xPos={CHARACTERS[myData.memberCharacter]?.position[0]}
-                $yPos={CHARACTERS[myData.memberCharacter]?.position[1]}
-              />
-            </CharacterBackground>
-            <TextDiv>
-              <MBTI>{myData.mbti}</MBTI>
-              <Major>{myData.department}</Major>
-            </TextDiv>
-            <TagContainer>
-              {myData?.memberHobbyDto?.map((hobby, index) => (
-                <Badge key={index}>#{hobby.hobby}</Badge>
-              ))}
-              {myData?.memberTagDto?.map((tag, index) => (
-                <Badge key={index}>#{tag.tag}</Badge>
-              ))}
-            </TagContainer>
-          </WrapContent>
-          <Button size="medium" onClick={onClick} backgroundColor="#FFAC0B">
-            프로필 수정하기
-          </Button>
-        </Modal>
-      </>,
-      document.getElementById('modal')
-    );
-  }
+const MyProfileModal = ({ closeModal, onClick, myData, handleLogout }) => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => (document.body.style.overflow = 'auto');
+  }, []);
+
+  return createPortal(
+    <>
+      <Backdrop onClick={closeModal} />
+      <Modal>
+        <LogoutButton
+          src="/assets/leave-button.svg"
+          alt="나가기 버튼"
+          onClick={handleLogout}
+        />
+        <CloseButton
+          src="/assets/cancel-button-gray.svg"
+          alt="닫기 버튼"
+          onClick={closeModal}
+        />
+        <WrapContent>
+          <CharacterBackground
+            backgroundColor={CHARACTERS[myData.memberCharacter]?.color}
+          >
+            <Character
+              $xPos={CHARACTERS[myData.memberCharacter]?.position[0]}
+              $yPos={CHARACTERS[myData.memberCharacter]?.position[1]}
+            />
+          </CharacterBackground>
+          <TextDiv>
+            <MBTI>{myData.mbti}</MBTI>
+            <Major>{myData.department}</Major>
+          </TextDiv>
+          <TagContainer>
+            {myData?.memberHobbyDto?.map((hobby, index) => (
+              <Badge key={index}>#{hobby.hobby}</Badge>
+            ))}
+            {myData?.memberTagDto?.map((tag, index) => (
+              <Badge key={index}>#{tag.tag}</Badge>
+            ))}
+          </TagContainer>
+        </WrapContent>
+        <Button size="medium" onClick={onClick} backgroundColor="#FFAC0B">
+          프로필 수정하기
+        </Button>
+      </Modal>
+    </>,
+    document.getElementById('modal')
+  );
 };
 
 export default MyProfileModal;

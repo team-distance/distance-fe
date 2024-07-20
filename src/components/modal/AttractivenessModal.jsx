@@ -1,63 +1,61 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ATTRACTIVENESS } from '../../constants/profile';
 import styled from 'styled-components';
 import toast from 'react-hot-toast';
 
 const AttractivenessModal = ({
-  isOpen,
-  onClose,
+  closeModal,
   selectedList,
   hashtagCount,
   onClick,
 }) => {
-  if (!isOpen) {
-    document.body.style = 'overflow: auto';
-    return null;
-  } else {
-    document.body.style = 'overflow: hidden';
-    return createPortal(
-      <>
-        <Backdrop onClick={onClose} />
-        <Modal>
-          <Title>
-            <div>매력 선택하기</div>
-            <img
-              src="/assets/cancel-button.png"
-              alt="닫기 버튼"
-              onClick={onClose}
-            />
-          </Title>
-          <Body>
-            {ATTRACTIVENESS.map((value) => (
-              <ListItem
-                key={value}
-                onClick={() => {
-                  if (hashtagCount >= 5) {
-                    toast.error('해시태그는 5개까지만 선택 가능해요!', {
-                      id: 'hashtag-limit',
-                    });
-                    return;
-                  } else if (selectedList.includes(value)) {
-                    toast.error('이미 선택한 해시태그에요!', {
-                      id: 'hashtag-duplicate',
-                    });
-                    return;
-                  }
-                  onClick([...selectedList, value]);
-                  onClose();
-                }}
-                color={selectedList.includes(value) ? '#FF625D' : 'black'}
-              >
-                {value}
-              </ListItem>
-            ))}
-          </Body>
-        </Modal>
-      </>,
-      document.getElementById('modal')
-    );
-  }
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => (document.body.style.overflow = 'auto');
+  }, []);
+
+  return createPortal(
+    <>
+      <Backdrop onClick={closeModal} />
+      <Modal>
+        <Title>
+          <div>매력 선택하기</div>
+          <img
+            src="/assets/cancel-button.png"
+            alt="닫기 버튼"
+            onClick={closeModal}
+          />
+        </Title>
+        <Body>
+          {ATTRACTIVENESS.map((value) => (
+            <ListItem
+              key={value}
+              onClick={() => {
+                if (hashtagCount >= 5) {
+                  toast.error('해시태그는 5개까지만 선택 가능해요!', {
+                    id: 'hashtag-limit',
+                  });
+                  return;
+                } else if (selectedList.includes(value)) {
+                  toast.error('이미 선택한 해시태그에요!', {
+                    id: 'hashtag-duplicate',
+                  });
+                  return;
+                }
+                onClick([...selectedList, value]);
+                closeModal();
+              }}
+              color={selectedList.includes(value) ? '#FF625D' : 'black'}
+            >
+              {value}
+            </ListItem>
+          ))}
+        </Body>
+      </Modal>
+    </>,
+    document.getElementById('modal')
+  );
 };
 
 export default AttractivenessModal;
@@ -69,7 +67,6 @@ const Backdrop = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  overflow: hidden;
   z-index: 100;
 `;
 

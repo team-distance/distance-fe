@@ -496,24 +496,21 @@ const ChatPage = () => {
 
       {isReportModalOpen && (
         <ReportModal
-          isOpen={isReportModalOpen}
-          onClose={() => setIsReportModalOpen(false)}
+          closeModal={() => setIsReportModalOpen(false)}
           opponentMemberId={opponentMemberId}
         />
       )}
 
       {isOpponentProfileModalOpen && (
         <OpponentProfileModal
-          isOpen={isOpponentProfileModalOpen}
-          onClose={() => setIsOpponentProfileModalOpen(false)}
+          closeModal={() => setIsOpponentProfileModalOpen(false)}
           opponentProfile={opponentProfile}
         />
       )}
 
       {isCallModalOpen && (
         <CallModal
-          isOpen={isCallModalOpen}
-          onClose={() => setIsCallModalOpen(false)}
+          closeModal={() => setIsCallModalOpen(false)}
           opponentMemberId={opponentMemberId}
           roomId={roomId}
         />
@@ -521,8 +518,7 @@ const ChatPage = () => {
 
       {isCallRequestModalOpen && (
         <CallRequestModal
-          isOpen={isCallRequestModalOpen}
-          onClose={() => setIsCallRequestModalOpen(false)}
+          closeModal={() => setIsCallRequestModalOpen(false)}
           onClick={() => {
             requestCall();
             setIsCallRequestModalOpen(false);
