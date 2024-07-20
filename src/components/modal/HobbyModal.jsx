@@ -1,15 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { createPortal } from 'react-dom';
 import { HOBBY } from '../../constants/profile';
 import styled from 'styled-components';
 import toast from 'react-hot-toast';
 
 const HobbyModal = ({ closeModal, selectedList, hashtagCount, onClick }) => {
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => (document.body.style.overflow = 'auto');
-  }, []);
-
   return createPortal(
     <>
       <Backdrop onClick={closeModal} />

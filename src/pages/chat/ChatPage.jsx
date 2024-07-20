@@ -18,6 +18,7 @@ import ReportModal from '../../components/modal/ReportModal';
 import OpponentProfileModal from '../../components/modal/OpponentProfileModal';
 import CallModal from '../../components/modal/CallModal';
 import CallRequestModal from '../../components/modal/CallRequestModal';
+import useModal from '../../hooks/useModal';
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
@@ -32,11 +33,29 @@ const ChatPage = () => {
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [isOpponentProfileModalOpen, setIsOpponentProfileModalOpen] =
-    useState(false);
-  const [isCallModalOpen, setIsCallModalOpen] = useState(false);
-  const [isCallRequestModalOpen, setIsCallRequestModalOpen] = useState(false);
+  const {
+    isOpen: isReportModalOpen,
+    openModal: openReportModal,
+    closeModal: closeReportModal,
+  } = useModal(false);
+
+  const {
+    isOpen: isOpponentProfileModalOpen,
+    openModal: openOpponentProfileModal,
+    closeModal: closeOpponentProfileModal,
+  } = useModal(false);
+
+  const {
+    isOpen: isCallModalOpen,
+    openModal: openCallModal,
+    closeModal: closeCallModal,
+  } = useModal(false);
+
+  const {
+    isOpen: isCallRequestModalOpen,
+    openModal: openCallRequestModal,
+    closeModal: closeCallRequestModal,
+  } = useModal(false);
 
   const param = useParams();
 
@@ -217,7 +236,7 @@ const ChatPage = () => {
       const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
       setBothAgreed(response.data);
 
-      bothAgreed ? isCallModalOpen(true) : isCallRequestModalOpen(true);
+      bothAgreed ? openCallModal() : openCallRequestModal();
     } catch (error) {
       toast.error('방 상태를 가져오는데 실패했어요!', {
         position: 'bottom-center',
@@ -477,7 +496,7 @@ const ChatPage = () => {
               groupedMessages={groupedMessages}
               myId={myMemberId}
               responseCall={responseCall}
-              openProfileModal={() => setIsOpponentProfileModalOpen(true)}
+              openProfileModal={openOpponentProfileModal}
               opponentMemberCharacter={
                 opponentProfile && opponentProfile.memberCharacter
               }
@@ -485,7 +504,7 @@ const ChatPage = () => {
 
             <MessageInput
               value={draftMessage}
-              buttonClickHandler={() => setIsReportModalOpen(true)}
+              buttonClickHandler={openReportModal}
               changeHandler={handleChangeMessage}
               submitHandler={sendMessage}
               isOpponentOut={isOpponentOut}
@@ -496,21 +515,21 @@ const ChatPage = () => {
 
       {isReportModalOpen && (
         <ReportModal
-          closeModal={() => setIsReportModalOpen(false)}
+          closeModal={closeReportModal}
           opponentMemberId={opponentMemberId}
         />
       )}
 
       {isOpponentProfileModalOpen && (
         <OpponentProfileModal
-          closeModal={() => setIsOpponentProfileModalOpen(false)}
+          closeModal={closeOpponentProfileModal}
           opponentProfile={opponentProfile}
         />
       )}
 
       {isCallModalOpen && (
         <CallModal
-          closeModal={() => setIsCallModalOpen(false)}
+          closeModal={closeCallModal}
           opponentMemberId={opponentMemberId}
           roomId={roomId}
         />
@@ -518,10 +537,10 @@ const ChatPage = () => {
 
       {isCallRequestModalOpen && (
         <CallRequestModal
-          closeModal={() => setIsCallRequestModalOpen(false)}
+          closeModal={closeCallRequestModal}
           onClick={() => {
             requestCall();
-            setIsCallRequestModalOpen(false);
+            closeCallRequestModal();
           }}
         />
       )}

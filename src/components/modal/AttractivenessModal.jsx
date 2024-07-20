@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { createPortal } from 'react-dom';
 import { ATTRACTIVENESS } from '../../constants/profile';
 import styled from 'styled-components';
@@ -10,11 +10,6 @@ const AttractivenessModal = ({
   hashtagCount,
   onClick,
 }) => {
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => (document.body.style.overflow = 'auto');
-  }, []);
-
   return createPortal(
     <>
       <Backdrop onClick={closeModal} />

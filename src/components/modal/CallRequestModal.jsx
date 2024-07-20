@@ -1,14 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Button from '../common/Button';
 import styled from 'styled-components';
 import { createPortal } from 'react-dom';
 
 const CallRequestModal = ({ closeModal, onClick }) => {
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => (document.body.style.overflow = 'auto');
-  }, []);
-
   return createPortal(
     <>
       <Backdrop onClick={closeModal} />

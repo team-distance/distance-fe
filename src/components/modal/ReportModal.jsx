@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import TextInput from '../register/TextInput';
@@ -6,11 +6,6 @@ import { instance } from '../../api/instance';
 
 const ReportModal = ({ closeModal, opponentMemberId }) => {
   const [reportMessage, setReportMessage] = useState('');
-
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => (document.body.style.overflow = 'auto');
-  }, []);
 
   const handleReportUser = async (reportMessage) => {
     try {

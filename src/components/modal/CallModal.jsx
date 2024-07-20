@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Button from '../common/Button';
 import styled from 'styled-components';
 import { createPortal } from 'react-dom';
@@ -6,11 +6,6 @@ import { instance } from '../../api/instance';
 import toast from 'react-hot-toast';
 
 const CallModal = ({ closeModal, opponentMemberId, roomId }) => {
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => (document.body.style.overflow = 'auto');
-  }, []);
-
   const fetchOpponentTelNum = async () => {
     try {
       const res = await instance.get(

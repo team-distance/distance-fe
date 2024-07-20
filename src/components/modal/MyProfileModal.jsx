@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { createPortal } from 'react-dom';
 import { CHARACTERS } from '../../constants/CHARACTERS';
@@ -6,11 +6,6 @@ import Badge from '../common/Badge';
 import Button from '../common/Button';
 
 const MyProfileModal = ({ closeModal, onClick, myData, handleLogout }) => {
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => (document.body.style.overflow = 'auto');
-  }, []);
-
   return createPortal(
     <>
       <Backdrop onClick={closeModal} />

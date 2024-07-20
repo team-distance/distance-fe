@@ -5,17 +5,23 @@ import { Link } from 'react-router-dom';
 import { myDataState } from '../../store/myData';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { instance } from '../../api/instance';
 import toast from 'react-hot-toast';
 import AuthUnivState from './AuthUnivState';
 import MyProfileModal from '../modal/MyProfileModal';
+import useModal from '../../hooks/useModal';
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
   const [myData, setMyData] = useRecoilState(myDataState);
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const {
+    isOpen: isMyProfileModalOpen,
+    openModal: openMyProfileModal,
+    closeModal: closeMyProfileModal,
+  } = useModal(false);
 
   const handleLogout = async () => {
     const confirmLogout = window.confirm('로그아웃 하시겠습니까?');
@@ -29,7 +35,7 @@ const Header = () => {
       console.log(error);
     } finally {
       localStorage.clear();
-      setIsModalOpen(false);
+      closeMyProfileModal();
       navigate('/');
     }
   };
@@ -58,11 +64,7 @@ const Header = () => {
         {isLoggedIn ? (
           <ProfileWrapper>
             <AuthUnivState />
-            <ProfileRing
-              onClick={() => {
-                setIsModalOpen(true);
-              }}
-            >
+            <ProfileRing onClick={openMyProfileModal}>
               <Character
                 $xPos={CHARACTERS[myData.memberCharacter]?.position[0]}
                 $yPos={CHARACTERS[myData.memberCharacter]?.position[1]}
@@ -74,9 +76,9 @@ const Header = () => {
         )}
       </WrapHeader>
 
-      {isModalOpen && (
+      {isMyProfileModalOpen && (
         <MyProfileModal
-          closeModal={() => setIsModalOpen(false)}
+          closeModal={closeMyProfileModal}
           onClick={() => {
             navigate('/mypage/profile', { state: myData });
           }}

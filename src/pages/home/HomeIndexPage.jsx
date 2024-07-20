@@ -9,13 +9,23 @@ import toast from 'react-hot-toast';
 import Banner from '../../components/common/Banner';
 import ReloadButton from '../../components/home/ReloadButton';
 import ProfileModal from '../../components/modal/ProfileModal';
+import useModal from '../../hooks/useModal';
 
 const HomeIndexPage = () => {
   const [selectedProfile, setSelectedProfile] = useState();
   const navigate = useNavigate();
   const [memberState, setMemberState] = useState();
   const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const {
+    isOpen: isProfileModalOpen,
+    openModal: openProfileModal,
+    closeModal: closeProfileModal,
+  } = useModal(false);
+
+  useEffect(() => {
+    fetchMembers();
+  }, []);
 
   const fetchMembers = async () => {
     try {
@@ -29,13 +39,9 @@ const HomeIndexPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchMembers();
-  }, []);
-
   const handleSelectProfile = (profile) => {
     setSelectedProfile(profile);
-    setIsModalOpen(true);
+    openProfileModal();
   };
 
   const handleCreateChatRoom = async (opponentMemberId) => {
@@ -81,7 +87,7 @@ const HomeIndexPage = () => {
             break;
         }
       });
-    isModalOpen(false);
+    isProfileModalOpen(false);
   };
 
   const alertTextList = [
@@ -227,9 +233,9 @@ const HomeIndexPage = () => {
       )}
       <ReloadButton onClick={fetchMembers} />
 
-      {isModalOpen && (
+      {isProfileModalOpen && (
         <ProfileModal
-          closeModal={() => setIsModalOpen(false)}
+          closeModal={closeProfileModal}
           onClick={() => {
             handleCreateChatRoom(selectedProfile.memberId);
           }}

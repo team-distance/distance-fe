@@ -13,6 +13,7 @@ import { Toaster } from 'react-hot-toast';
 import CharacterModal from '../../components/modal/CharacterModal';
 import AttractivenessModal from '../../components/modal/AttractivenessModal';
 import HobbyModal from '../../components/modal/HobbyModal';
+import useModal from '../../hooks/useModal';
 
 /**
  * @todo 코드 간소화를 위해 지역 상태를 제거하고 전역 상태를 직접 변이할지?
@@ -27,11 +28,23 @@ const ProfileRegisterPage = () => {
   const [hashtagCount, setHashtagCount] = useState(0);
   const [toggleState, setToggleState] = useState('');
 
-  // 모달
-  const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false);
-  const [isAttractivenessModalOpen, setIsAttractivenessModalOpen] =
-    useState(false);
-  const [isHobbyModalOpen, setIsHobbyModalOpen] = useState(false);
+  const {
+    isOpen: isCharacterModalOpen,
+    openModal: openCharacterModal,
+    closeModal: closeCharacterModal,
+  } = useModal(false);
+
+  const {
+    isOpen: isAttractivenessModalOpen,
+    openModal: openAttractivenessModal,
+    closeModal: closeAttractivenessModal,
+  } = useModal(false);
+
+  const {
+    isOpen: isHobbyModalOpen,
+    openModal: openHobbyModal,
+    closeModal: closeHobbyModal,
+  } = useModal(false);
 
   const navigate = useNavigate();
 
@@ -143,7 +156,7 @@ const ProfileRegisterPage = () => {
       <WrapContent>
         <div>
           <Label>캐릭터 선택하기</Label>
-          <ProfileContainer onClick={() => setIsCharacterModalOpen(true)}>
+          <ProfileContainer onClick={openCharacterModal}>
             <img
               className="side-image-left"
               src="/assets/profile-register-leftimg.png"
@@ -185,9 +198,7 @@ const ProfileRegisterPage = () => {
           <br />
           <WrapSmallTitle>
             <div className="small-label">저는 이런 매력이 있어요!</div>
-            <AddButton onClick={() => setIsAttractivenessModalOpen(true)}>
-              + 추가하기
-            </AddButton>
+            <AddButton onClick={openAttractivenessModal}>+ 추가하기</AddButton>
           </WrapSmallTitle>
           <BadgeContainer>
             {attractiveness.map((value, index) => (
@@ -203,9 +214,7 @@ const ProfileRegisterPage = () => {
 
           <WrapSmallTitle>
             <div className="small-label">저는 이런 취미가 있어요!</div>
-            <AddButton onClick={() => setIsHobbyModalOpen(true)}>
-              + 추가하기
-            </AddButton>
+            <AddButton onClick={openHobbyModal}>+ 추가하기</AddButton>
           </WrapSmallTitle>
           <BadgeContainer>
             {hobby.map((value, index) => (
@@ -224,14 +233,14 @@ const ProfileRegisterPage = () => {
 
       {isCharacterModalOpen && (
         <CharacterModal
-          closeModal={() => setIsCharacterModalOpen(false)}
+          closeModal={closeCharacterModal}
           onClick={setSelectedAnimal}
         />
       )}
 
       {isAttractivenessModalOpen && (
         <AttractivenessModal
-          closeModal={() => setIsAttractivenessModalOpen(false)}
+          closeModal={closeAttractivenessModal}
           selectedList={attractiveness}
           hashtagCount={hashtagCount}
           onClick={setAttractiveness}
@@ -240,7 +249,7 @@ const ProfileRegisterPage = () => {
 
       {isHobbyModalOpen && (
         <HobbyModal
-          closeModal={() => setIsHobbyModalOpen(false)}
+          closeModal={closeHobbyModal}
           selectedList={hobby}
           hashtagCount={hashtagCount}
           onClick={setHobby}
