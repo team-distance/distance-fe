@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
 import { useRecoilState } from 'recoil';
@@ -9,15 +9,36 @@ import { instance } from '../../api/instance';
 import ProgressBar from '../../components/register/ProgressBar';
 import toast, { Toaster } from 'react-hot-toast';
 import Checkbox from '../../components/common/Checkbox';
-import Modal from '../../components/common/Modal';
-import TermsOfServiceArticle from '../../components/register/TermsOfServiceArticle';
-import PrivacyArticle from '../../components/register/PrivacyArticle';
 import { useForm } from 'react-hook-form';
+import useModal from '../../hooks/useModal';
+import TermsModal from '../../components/modal/TermsModal';
+import PrivacyModal from '../../components/modal/PrivacyModal';
 
 const UserRegisterPage = () => {
   const navigate = useNavigate();
 
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
+
+  const { openModal: openTermsModal, closeModal: closeTermsModal } = useModal(
+    () => (
+      <TermsModal
+        closeModal={closeTermsModal}
+        onClick={() => {
+          setRegisterData({ ...registerData, agreeTerms: true });
+        }}
+      />
+    )
+  );
+
+  const { openModal: openPrivacyModal, closeModal: closePrivacyModal } =
+    useModal(() => (
+      <PrivacyModal
+        closeModal={closePrivacyModal}
+        onClick={() => {
+          setRegisterData({ ...registerData, agreePrivacy: true });
+        }}
+      />
+    ));
 
   const {
     register: registerTelNum,
@@ -51,14 +72,6 @@ const UserRegisterPage = () => {
   const [verifyButtonLabel, setVerifyButtonLabel] = useState('인증번호 전송');
   const [showVerifyNum, setShowVerifyNum] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  const termsModalRef = useRef();
-  const privacyModalRef = useRef();
-
-  const handleOpenModal = (ref) => {
-    ref.current.open();
-    ref.current.scrollToTop();
-  };
 
   const handleSubmitTelNum = async (data) => {
     if (verifyButtonLabel === '재전송') {
@@ -202,13 +215,7 @@ const UserRegisterPage = () => {
               validate: (value) => value === true || '',
             })}
           />
-          <ShowDetail
-            onClick={() => {
-              handleOpenModal(termsModalRef);
-            }}
-          >
-            더보기
-          </ShowDetail>
+          <ShowDetail onClick={openTermsModal}>더보기</ShowDetail>
         </WrapCheckbox>
         <WrapCheckbox>
           <Checkbox
@@ -217,13 +224,7 @@ const UserRegisterPage = () => {
               validate: (value) => value === true || '',
             })}
           />
-          <ShowDetail
-            onClick={() => {
-              handleOpenModal(privacyModalRef);
-            }}
-          >
-            더보기
-          </ShowDetail>
+          <ShowDetail onClick={openPrivacyModal}>더보기</ShowDetail>
         </WrapCheckbox>
         <WrapButton>
           <Button type="submit" size="large" disabled={!passwordValid}>
@@ -231,27 +232,6 @@ const UserRegisterPage = () => {
           </Button>
         </WrapButton>
       </WrapForm>
-
-      <Modal
-        ref={termsModalRef}
-        buttonLabel="동의하기"
-        buttonClickHandler={() => {
-          setRegisterData({ ...registerData, agreeTerms: true });
-          termsModalRef.current.close();
-        }}
-      >
-        <TermsOfServiceArticle />
-      </Modal>
-      <Modal
-        ref={privacyModalRef}
-        buttonLabel="동의하기"
-        buttonClickHandler={() => {
-          setRegisterData({ ...registerData, agreePrivacy: true });
-          privacyModalRef.current.close();
-        }}
-      >
-        <PrivacyArticle />
-      </Modal>
     </div>
   );
 };
