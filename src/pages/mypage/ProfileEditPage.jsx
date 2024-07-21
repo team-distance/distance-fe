@@ -1,14 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import DropdownMBTI from '../../components/register/DropdownMBTI';
-import BlankModal from '../../components/common/BlankModal';
-import { ATTRACTIVENESS, HOBBY } from '../../constants/profile';
 import Button from '../../components/common/Button';
 import HeaderPrev from '../../components/common/HeaderPrev';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import { CHARACTERS } from '../../constants/CHARACTERS';
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
+import useModal from '../../hooks/useModal';
+import CharacterModal from '../../components/modal/CharacterModal';
+import AttractivenessModal from '../../components/modal/AttractivenessModal';
+import HobbyModal from '../../components/modal/HobbyModal';
 
 const ProfileEditPage = () => {
   const navigate = useNavigate();
@@ -18,6 +20,37 @@ const ProfileEditPage = () => {
   const [attractiveness, setAttractiveness] = useState([]);
   const [hobby, setHobby] = useState([]);
   const [hashtagCount, setHashtagCount] = useState(0);
+
+  const { openModal: openCharacterModal, closeModal: closeCharacterModal } =
+    useModal(() => (
+      <CharacterModal
+        onClick={setSelectedAnimal}
+        closeModal={closeCharacterModal}
+      />
+    ));
+
+  const {
+    openModal: openAttractivenessModal,
+    closeModal: closeAttractivenessModal,
+  } = useModal(() => (
+    <AttractivenessModal
+      closeModal={closeAttractivenessModal}
+      selectedList={attractiveness}
+      hashtagCount={hashtagCount}
+      onClick={setAttractiveness}
+    />
+  ));
+
+  const { openModal: openHobbyModal, closeModal: closeHobbyModal } = useModal(
+    () => (
+      <HobbyModal
+        closeModal={closeHobbyModal}
+        selectedList={hobby}
+        hashtagCount={hashtagCount}
+        onClick={setHobby}
+      />
+    )
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,44 +74,12 @@ const ProfileEditPage = () => {
       });
   };
 
-  const characterModalRef = useRef();
-  const attractivenessModalRef = useRef();
-  const hobbyModalRef = useRef();
-
-  const openCharacterModal = () => {
-    characterModalRef.current.open();
+  const filterSelectedAttractiveness = (target) => {
+    setAttractiveness((prev) => prev.filter((value) => value !== target));
   };
 
-  const closeCharacterModal = () => {
-    characterModalRef.current.close();
-  };
-
-  const openAttractivenessModal = () => {
-    attractivenessModalRef.current.open();
-  };
-
-  const closeAttractivenessModal = () => {
-    attractivenessModalRef.current.close();
-  };
-
-  const openHobbyModal = () => {
-    hobbyModalRef.current.open();
-  };
-
-  const closeHobbyModal = () => {
-    hobbyModalRef.current.close();
-  };
-
-  const handleClickAttractiveness = (e) => {
-    setAttractiveness((prev) => {
-      return prev.filter((value) => value !== e.target.innerText);
-    });
-  };
-
-  const handleClickHobby = (e) => {
-    setHobby((prev) => {
-      return prev.filter((value) => value !== e.target.innerText);
-    });
+  const filterSelectedHobby = (target) => {
+    setHobby((prev) => prev.filter((value) => value !== target));
   };
 
   const isDisabled =
@@ -147,35 +148,6 @@ const ProfileEditPage = () => {
           </ProfileContainer>
         </div>
 
-        <BlankModal ref={characterModalRef}>
-          <ModalTitle>
-            <div>캐릭터 선택하기</div>
-            <img
-              src="/assets/cancel-button.png"
-              alt="닫기 버튼"
-              onClick={closeCharacterModal}
-            />
-          </ModalTitle>
-          <AnimalListContainer>
-            {Object.entries(CHARACTERS).map(
-              ([character, characterProperties]) => {
-                const [xPos, yPos] = characterProperties.position;
-                return (
-                  <Character
-                    key={character}
-                    $xPos={xPos}
-                    $yPos={yPos}
-                    onClick={() => {
-                      setSelectedAnimal(character);
-                      closeCharacterModal();
-                    }}
-                  />
-                );
-              }
-            )}
-          </AnimalListContainer>
-        </BlankModal>
-
         <div>
           <Label>MBTI 선택하기</Label>
           <DropdownMBTI state={selectedMBTI} setState={setSelectedMBTI} />
@@ -192,7 +164,10 @@ const ProfileEditPage = () => {
           </WrapSmallTitle>
           <BadgeContainer>
             {attractiveness.map((value, index) => (
-              <Badge key={index} onClick={handleClickAttractiveness}>
+              <Badge
+                key={index}
+                onClick={() => filterSelectedAttractiveness(value)}
+              >
                 {value}
                 <img src="/assets/cancel-button.png" alt="cancel" />
               </Badge>
@@ -205,84 +180,12 @@ const ProfileEditPage = () => {
           </WrapSmallTitle>
           <BadgeContainer>
             {hobby.map((value, index) => (
-              <Badge key={index} onClick={handleClickHobby}>
+              <Badge key={index} onClick={() => filterSelectedHobby(value)}>
                 {value}
                 <img src="/assets/cancel-button.png" alt="cancel" />
               </Badge>
             ))}
           </BadgeContainer>
-
-          <BlankModal ref={attractivenessModalRef}>
-            <ModalTitle>
-              <div>매력 선택하기</div>
-              <img
-                src="/assets/cancel-button.png"
-                alt="닫기 버튼"
-                onClick={closeAttractivenessModal}
-              />
-            </ModalTitle>
-            <ListContainer>
-              {ATTRACTIVENESS.map((value, index) => (
-                <ListItem
-                  key={index}
-                  color={attractiveness.includes(value) ? '#FF0000' : 'black'}
-                  onClick={() => {
-                    if (hashtagCount >= 5) {
-                      toast.error('해시태그는 5개까지만 선택 가능해요!', {
-                        id: 'hashtag-limit',
-                      });
-                      return;
-                    } else if (attractiveness.includes(value)) {
-                      toast.error('이미 선택한 해시태그에요!', {
-                        id: 'hashtag-duplicate',
-                      });
-                      return;
-                    }
-                    setAttractiveness([...attractiveness, value]);
-                    closeAttractivenessModal();
-                  }}
-                >
-                  {value}
-                </ListItem>
-              ))}
-            </ListContainer>
-          </BlankModal>
-
-          <BlankModal ref={hobbyModalRef}>
-            <ModalTitle>
-              <div>취미 선택하기</div>
-              <img
-                src="/assets/cancel-button.png"
-                alt="닫기 버튼"
-                onClick={closeHobbyModal}
-              />
-            </ModalTitle>
-            <ListContainer>
-              {HOBBY.map((value, index) => (
-                <ListItem
-                  key={index}
-                  color={hobby.includes(value) ? '#FF0000' : 'black'}
-                  onClick={() => {
-                    if (hashtagCount >= 5) {
-                      toast.error('해시태그는 5개까지만 선택 가능해요!', {
-                        id: 'hashtag-limit',
-                      });
-                      return;
-                    } else if (hobby.includes(value)) {
-                      toast.error('이미 선택한 해시태그에요!', {
-                        id: 'hashtag-duplicate',
-                      });
-                      return;
-                    }
-                    setHobby([...hobby, value]);
-                    closeHobbyModal();
-                  }}
-                >
-                  {value}
-                </ListItem>
-              ))}
-            </ListContainer>
-          </BlankModal>
         </div>
         <Button disabled={isDisabled} onClick={handleSubmit} size="large">
           수정하기
@@ -298,15 +201,6 @@ const SelectedCharacter = styled.div`
   background-image: url('/assets/sp_character.png');
   background-position: ${(props) =>
     `-${props.$xPos * 96}px -${props.$yPos * 96}px`};
-  background-size: calc(100% * 4);
-`;
-
-const Character = styled.div`
-  width: 48px;
-  height: 48px;
-  background-image: url('/assets/sp_character.png');
-  background-position: ${(props) =>
-    `-${props.$xPos * 48}px -${props.$yPos * 48}px`};
   background-size: calc(100% * 4);
 `;
 
@@ -361,29 +255,6 @@ const WrapSmallTitle = styled.div`
   }
 `;
 
-const ModalTitle = styled.div`
-  display: flex;
-  align-items: center;
-  background-color: #ff625d;
-  justify-content: space-between;
-  gap: 3rem;
-  padding: 22px 28px;
-  color: white;
-  font-weight: 700;
-  font-size: 18px;
-`;
-
-const ListContainer = styled.div`
-  max-height: 256px;
-  overflow: auto;
-`;
-
-const ListItem = styled.div`
-  color: ${(props) => props.color};
-  padding: 0.75rem 1.25rem;
-  border-bottom: 1px solid #e0e0e0;
-`;
-
 const Tip = styled.div`
   color: #90949b;
   font-size: 12px;
@@ -420,16 +291,6 @@ const ProfileContainer = styled.div`
     right: 12%;
     z-index: 1;
   }
-`;
-
-const AnimalListContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  justify-items: center;
-  overflow: auto;
-  padding: 40px;
-  margin-top: 0.5rem;
-  gap: 20px;
 `;
 
 export default ProfileEditPage;
