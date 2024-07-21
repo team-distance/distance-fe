@@ -128,7 +128,7 @@ const ResetPassword = () => {
       />
       <WrapForm onSubmit={handleSubmit}>
         <WrapContent>
-          <h2>비밀번호 재설정하기</h2>
+          <Heading2>비밀번호 재설정하기</Heading2>
           <div>
             <TextInput
               label="전화번호"
@@ -189,4 +189,10 @@ const WrapContent = styled.div`
   display: grid;
   gap: 4rem;
   margin-bottom: 8rem;
+`;
+
+const Heading2 = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 1rem 0;
 `;
