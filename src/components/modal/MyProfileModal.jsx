@@ -1,68 +1,52 @@
 import React from 'react';
 import styled from 'styled-components';
-import { createPortal } from 'react-dom';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
 
 const MyProfileModal = ({ closeModal, onClick, myData, handleLogout }) => {
-  return createPortal(
-    <>
-      <Backdrop onClick={closeModal} />
-      <Modal>
-        <LogoutButton
-          src="/assets/leave-button.svg"
-          alt="나가기 버튼"
-          onClick={handleLogout}
-        />
-        <CloseButton
-          src="/assets/cancel-button-gray.svg"
-          alt="닫기 버튼"
-          onClick={closeModal}
-        />
-        <WrapContent>
-          <CharacterBackground
-            backgroundColor={CHARACTERS[myData.memberCharacter]?.color}
-          >
-            <Character
-              $xPos={CHARACTERS[myData.memberCharacter]?.position[0]}
-              $yPos={CHARACTERS[myData.memberCharacter]?.position[1]}
-            />
-          </CharacterBackground>
-          <TextDiv>
-            <MBTI>{myData.mbti}</MBTI>
-            <Major>{myData.department}</Major>
-          </TextDiv>
-          <TagContainer>
-            {myData?.memberHobbyDto?.map((hobby, index) => (
-              <Badge key={index}>#{hobby.hobby}</Badge>
-            ))}
-            {myData?.memberTagDto?.map((tag, index) => (
-              <Badge key={index}>#{tag.tag}</Badge>
-            ))}
-          </TagContainer>
-        </WrapContent>
-        <Button size="medium" onClick={onClick} backgroundColor="#FFAC0B">
-          프로필 수정하기
-        </Button>
-      </Modal>
-    </>,
-    document.getElementById('modal')
+  return (
+    <Modal>
+      <LogoutButton
+        src="/assets/leave-button.svg"
+        alt="나가기 버튼"
+        onClick={handleLogout}
+      />
+      <CloseButton
+        src="/assets/cancel-button-gray.svg"
+        alt="닫기 버튼"
+        onClick={closeModal}
+      />
+      <WrapContent>
+        <CharacterBackground
+          backgroundColor={CHARACTERS[myData.memberCharacter]?.color}
+        >
+          <Character
+            $xPos={CHARACTERS[myData.memberCharacter]?.position[0]}
+            $yPos={CHARACTERS[myData.memberCharacter]?.position[1]}
+          />
+        </CharacterBackground>
+        <TextDiv>
+          <MBTI>{myData.mbti}</MBTI>
+          <Major>{myData.department}</Major>
+        </TextDiv>
+        <TagContainer>
+          {myData?.memberHobbyDto?.map((hobby, index) => (
+            <Badge key={index}>#{hobby.hobby}</Badge>
+          ))}
+          {myData?.memberTagDto?.map((tag, index) => (
+            <Badge key={index}>#{tag.tag}</Badge>
+          ))}
+        </TagContainer>
+      </WrapContent>
+      <Button size="medium" onClick={onClick} backgroundColor="#FFAC0B">
+        프로필 수정하기
+      </Button>
+    </Modal>
   );
 };
 
 export default MyProfileModal;
-
-const Backdrop = styled.div`
-  background: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-  z-index: 100;
-`;
 
 const Modal = styled.div`
   position: fixed;

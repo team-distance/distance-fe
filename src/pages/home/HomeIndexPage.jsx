@@ -17,11 +17,16 @@ const HomeIndexPage = () => {
   const [memberState, setMemberState] = useState();
   const [loading, setLoading] = useState(false);
 
-  const {
-    isOpen: isProfileModalOpen,
-    openModal: openProfileModal,
-    closeModal: closeProfileModal,
-  } = useModal(false);
+  const { openModal: openProfileModal, closeModal: closeProfileModal } =
+    useModal(() => (
+      <ProfileModal
+        closeModal={closeProfileModal}
+        onClick={() => {
+          handleCreateChatRoom(selectedProfile.memberId);
+        }}
+        selectedProfile={selectedProfile}
+      />
+    ));
 
   useEffect(() => {
     fetchMembers();
@@ -87,7 +92,7 @@ const HomeIndexPage = () => {
             break;
         }
       });
-    isProfileModalOpen(false);
+    closeProfileModal();
   };
 
   const alertTextList = [
@@ -232,16 +237,6 @@ const HomeIndexPage = () => {
         </ProfileContainer>
       )}
       <ReloadButton onClick={fetchMembers} />
-
-      {isProfileModalOpen && (
-        <ProfileModal
-          closeModal={closeProfileModal}
-          onClick={() => {
-            handleCreateChatRoom(selectedProfile.memberId);
-          }}
-          selectedProfile={selectedProfile}
-        />
-      )}
     </>
   );
 };

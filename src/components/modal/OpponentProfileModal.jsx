@@ -1,59 +1,43 @@
 import React from 'react';
-import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../common/Badge';
 
 const OpponentProfileModal = ({ closeModal, opponentProfile }) => {
-  return createPortal(
-    <>
-      <Backdrop onClick={closeModal} />
-      <Modal>
-        <CloseButton
-          src="/assets/cancel-button-gray.svg"
-          alt="닫기 버튼"
-          onClick={closeModal}
-        />
-        <WrapContent>
-          <CharacterBackground
-            backgroundColor={CHARACTERS[opponentProfile.memberCharacter]?.color}
-          >
-            <Character
-              $xPos={CHARACTERS[opponentProfile.memberCharacter]?.position[0]}
-              $yPos={CHARACTERS[opponentProfile.memberCharacter]?.position[1]}
-            />
-          </CharacterBackground>
-          <TextDiv>
-            <MBTI>{opponentProfile.mbti}</MBTI>
-            <Major>{opponentProfile.department}</Major>
-          </TextDiv>
-          <TagContainer>
-            {opponentProfile.memberHobbyDto.map((hobby, index) => (
-              <Badge key={index}>#{hobby.hobby}</Badge>
-            ))}
-            {opponentProfile.memberTagDto.map((tag, index) => (
-              <Badge key={index}>#{tag.tag}</Badge>
-            ))}
-          </TagContainer>
-        </WrapContent>
-      </Modal>
-    </>,
-    document.getElementById('modal')
+  return (
+    <Modal>
+      <CloseButton
+        src="/assets/cancel-button-gray.svg"
+        alt="닫기 버튼"
+        onClick={closeModal}
+      />
+      <WrapContent>
+        <CharacterBackground
+          backgroundColor={CHARACTERS[opponentProfile.memberCharacter]?.color}
+        >
+          <Character
+            $xPos={CHARACTERS[opponentProfile.memberCharacter]?.position[0]}
+            $yPos={CHARACTERS[opponentProfile.memberCharacter]?.position[1]}
+          />
+        </CharacterBackground>
+        <TextDiv>
+          <MBTI>{opponentProfile.mbti}</MBTI>
+          <Major>{opponentProfile.department}</Major>
+        </TextDiv>
+        <TagContainer>
+          {opponentProfile.memberHobbyDto.map((hobby, index) => (
+            <Badge key={index}>#{hobby.hobby}</Badge>
+          ))}
+          {opponentProfile.memberTagDto.map((tag, index) => (
+            <Badge key={index}>#{tag.tag}</Badge>
+          ))}
+        </TagContainer>
+      </WrapContent>
+    </Modal>
   );
 };
 
 export default OpponentProfileModal;
-
-const Backdrop = styled.div`
-  background: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-  z-index: 100;
-`;
 
 const Modal = styled.div`
   position: fixed;

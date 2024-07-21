@@ -1,53 +1,36 @@
 import React from 'react';
-import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 
 const CharacterModal = ({ closeModal, onClick }) => {
-  return createPortal(
-    <>
-      <Backdrop onClick={closeModal} />
-      <Modal>
-        <Title>
-          <div>캐릭터 선택하기</div>
-          <img
-            src="/assets/cancel-button.png"
-            alt="닫기 버튼"
-            onClick={closeModal}
+  return (
+    <Modal>
+      <Title>
+        <div>캐릭터 선택하기</div>
+        <img
+          src="/assets/cancel-button.png"
+          alt="닫기 버튼"
+          onClick={closeModal}
+        />
+      </Title>
+      <Body>
+        {Object.entries(CHARACTERS).map(([character, characterProperties]) => (
+          <Character
+            key={character}
+            onClick={() => {
+              onClick(character);
+              closeModal();
+            }}
+            $xPos={characterProperties?.position[0]}
+            $yPos={characterProperties?.position[1]}
           />
-        </Title>
-        <Body>
-          {Object.entries(CHARACTERS).map(
-            ([character, characterProperties]) => (
-              <Character
-                key={character}
-                onClick={() => {
-                  onClick(character);
-                  closeModal();
-                }}
-                $xPos={characterProperties?.position[0]}
-                $yPos={characterProperties?.position[1]}
-              />
-            )
-          )}
-        </Body>
-      </Modal>
-    </>,
-    document.getElementById('modal')
+        ))}
+      </Body>
+    </Modal>
   );
 };
 
 export default CharacterModal;
-
-const Backdrop = styled.div`
-  background: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 100;
-`;
 
 const Modal = styled.div`
   position: fixed;

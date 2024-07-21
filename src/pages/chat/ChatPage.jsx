@@ -33,29 +33,35 @@ const ChatPage = () => {
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const {
-    isOpen: isReportModalOpen,
-    openModal: openReportModal,
-    closeModal: closeReportModal,
-  } = useModal(false);
+  const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
+    () => (
+      <ReportModal closeModal={closeReportModal} onClick={handleReportUser} />
+    )
+  );
 
   const {
-    isOpen: isOpponentProfileModalOpen,
     openModal: openOpponentProfileModal,
     closeModal: closeOpponentProfileModal,
-  } = useModal(false);
+  } = useModal(() => (
+    <OpponentProfileModal
+      closeModal={closeOpponentProfileModal}
+      opponentProfile={opponentProfile}
+    />
+  ));
 
-  const {
-    isOpen: isCallModalOpen,
-    openModal: openCallModal,
-    closeModal: closeCallModal,
-  } = useModal(false);
+  const { openModal: openCallModal, closeModal: closeCallModal } = useModal(
+    () => (
+      <CallModal closeModal={closeCallModal} onClick={fetchOpponentTelNum} />
+    )
+  );
 
-  const {
-    isOpen: isCallRequestModalOpen,
-    openModal: openCallRequestModal,
-    closeModal: closeCallRequestModal,
-  } = useModal(false);
+  const { openModal: openCallRequestModal, closeModal: closeCallRequestModal } =
+    useModal(() => (
+      <CallRequestModal
+        closeModal={closeCallRequestModal}
+        onClick={requestCall}
+      />
+    ));
 
   const param = useParams();
 
@@ -200,6 +206,20 @@ const ChatPage = () => {
     }
   };
 
+  // 상대방 전화번호 가져온 뒤 전화 연결
+  const fetchOpponentTelNum = async () => {
+    try {
+      const res = await instance.get(
+        `/member/tel-num?memberId=${opponentMemberId}&chatRoomId=${roomId}`
+      );
+      window.location.href = `tel:${res.data.telNum}`;
+    } catch (error) {
+      toast.error('상대방의 전화번호를 가져오는데 실패했어요!', {
+        position: 'bottom-center',
+      });
+    }
+  };
+
   // STOMP 메시지 수신 시 작동하는 콜백 함수
   const subscritionCallback = (message) => {
     const parsedMessage = JSON.parse(message.body);
@@ -300,6 +320,20 @@ const ChatPage = () => {
       setOpponentProfile(opponentProfile);
     } catch (error) {
       console.log('error', error);
+    }
+  };
+
+  // 상대방 신고하기
+  const handleReportUser = async (reportMessage) => {
+    try {
+      await instance.post('/report', {
+        declareContent: reportMessage,
+        opponentId: opponentMemberId,
+      });
+      alert('신고가 완료되었어요!');
+    } catch (error) {
+      console.log(error);
+      alert('이미 신고한 사용자예요! 신고는 한 번만 가능해요.');
     }
   };
 
@@ -512,38 +546,6 @@ const ChatPage = () => {
           </>
         )}
       </Container>
-
-      {isReportModalOpen && (
-        <ReportModal
-          closeModal={closeReportModal}
-          opponentMemberId={opponentMemberId}
-        />
-      )}
-
-      {isOpponentProfileModalOpen && (
-        <OpponentProfileModal
-          closeModal={closeOpponentProfileModal}
-          opponentProfile={opponentProfile}
-        />
-      )}
-
-      {isCallModalOpen && (
-        <CallModal
-          closeModal={closeCallModal}
-          opponentMemberId={opponentMemberId}
-          roomId={roomId}
-        />
-      )}
-
-      {isCallRequestModalOpen && (
-        <CallRequestModal
-          closeModal={closeCallRequestModal}
-          onClick={() => {
-            requestCall();
-            closeCallRequestModal();
-          }}
-        />
-      )}
     </Wrapper>
   );
 };

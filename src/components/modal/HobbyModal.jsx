@@ -1,65 +1,49 @@
 import React from 'react';
-import { createPortal } from 'react-dom';
 import { HOBBY } from '../../constants/profile';
 import styled from 'styled-components';
 import toast from 'react-hot-toast';
 
 const HobbyModal = ({ closeModal, selectedList, hashtagCount, onClick }) => {
-  return createPortal(
-    <>
-      <Backdrop onClick={closeModal} />
-      <Modal>
-        <Title>
-          <div>취미 선택하기</div>
-          <img
-            src="/assets/cancel-button.png"
-            alt="닫기 버튼"
-            onClick={closeModal}
-          />
-        </Title>
-        <Body>
-          {HOBBY.map((value) => (
-            <ListItem
-              key={value}
-              onClick={() => {
-                if (hashtagCount >= 5) {
-                  toast.error('해시태그는 5개까지만 선택 가능해요!', {
-                    id: 'hashtag-limit',
-                  });
-                  return;
-                } else if (selectedList.includes(value)) {
-                  toast.error('이미 선택한 해시태그에요!', {
-                    id: 'hashtag-duplicate',
-                  });
-                  return;
-                }
-                onClick([...selectedList, value]);
-                closeModal();
-              }}
-              color={selectedList.includes(value) ? '#FF625D' : 'black'}
-            >
-              {value}
-            </ListItem>
-          ))}
-        </Body>
-      </Modal>
-    </>,
-    document.getElementById('modal')
+  return (
+    <Modal>
+      <Title>
+        <div>취미 선택하기</div>
+        <img
+          src="/assets/cancel-button.png"
+          alt="닫기 버튼"
+          onClick={closeModal}
+        />
+      </Title>
+      <Body>
+        {HOBBY.map((value) => (
+          <ListItem
+            key={value}
+            onClick={() => {
+              if (hashtagCount >= 5) {
+                toast.error('해시태그는 5개까지만 선택 가능해요!', {
+                  id: 'hashtag-limit',
+                });
+                return;
+              } else if (selectedList.includes(value)) {
+                toast.error('이미 선택한 해시태그에요!', {
+                  id: 'hashtag-duplicate',
+                });
+                return;
+              }
+              onClick([...selectedList, value]);
+              closeModal();
+            }}
+            color={selectedList.includes(value) ? '#FF625D' : 'black'}
+          >
+            {value}
+          </ListItem>
+        ))}
+      </Body>
+    </Modal>
   );
 };
 
 export default HobbyModal;
-
-const Backdrop = styled.div`
-  background: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-  z-index: 100;
-`;
 
 const Modal = styled.div`
   position: fixed;

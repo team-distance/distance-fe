@@ -28,23 +28,36 @@ const ProfileRegisterPage = () => {
   const [hashtagCount, setHashtagCount] = useState(0);
   const [toggleState, setToggleState] = useState('');
 
-  const {
-    isOpen: isCharacterModalOpen,
-    openModal: openCharacterModal,
-    closeModal: closeCharacterModal,
-  } = useModal(false);
+  const { openModal: openCharacterModal, closeModal: closeCharacterModal } =
+    useModal(() => (
+      <CharacterModal
+        onClick={setSelectedAnimal}
+        closeModal={closeCharacterModal}
+      />
+    ));
 
   const {
-    isOpen: isAttractivenessModalOpen,
     openModal: openAttractivenessModal,
     closeModal: closeAttractivenessModal,
-  } = useModal(false);
+  } = useModal(() => (
+    <AttractivenessModal
+      closeModal={closeAttractivenessModal}
+      selectedList={attractiveness}
+      hashtagCount={hashtagCount}
+      onClick={setAttractiveness}
+    />
+  ));
 
-  const {
-    isOpen: isHobbyModalOpen,
-    openModal: openHobbyModal,
-    closeModal: closeHobbyModal,
-  } = useModal(false);
+  const { openModal: openHobbyModal, closeModal: closeHobbyModal } = useModal(
+    () => (
+      <HobbyModal
+        closeModal={closeHobbyModal}
+        selectedList={hobby}
+        hashtagCount={hashtagCount}
+        onClick={setHobby}
+      />
+    )
+  );
 
   const navigate = useNavigate();
 
@@ -138,7 +151,7 @@ const ProfileRegisterPage = () => {
   }, [attractiveness, hobby]);
 
   return (
-    <div>
+    <>
       <Toaster
         position="bottom-center"
         toastOptions={{
@@ -230,32 +243,7 @@ const ProfileRegisterPage = () => {
           가입 완료하기
         </Button>
       </WrapContent>
-
-      {isCharacterModalOpen && (
-        <CharacterModal
-          closeModal={closeCharacterModal}
-          onClick={setSelectedAnimal}
-        />
-      )}
-
-      {isAttractivenessModalOpen && (
-        <AttractivenessModal
-          closeModal={closeAttractivenessModal}
-          selectedList={attractiveness}
-          hashtagCount={hashtagCount}
-          onClick={setAttractiveness}
-        />
-      )}
-
-      {isHobbyModalOpen && (
-        <HobbyModal
-          closeModal={closeHobbyModal}
-          selectedList={hobby}
-          hashtagCount={hashtagCount}
-          onClick={setHobby}
-        />
-      )}
-    </div>
+    </>
   );
 };
 

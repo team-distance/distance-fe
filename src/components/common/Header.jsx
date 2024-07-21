@@ -17,11 +17,15 @@ const Header = () => {
   const [myData, setMyData] = useRecoilState(myDataState);
   const navigate = useNavigate();
 
-  const {
-    isOpen: isMyProfileModalOpen,
-    openModal: openMyProfileModal,
-    closeModal: closeMyProfileModal,
-  } = useModal(false);
+  const { openModal: openMyProfileModal, closeModal: closeMyProfileModal } =
+    useModal(() => (
+      <MyProfileModal
+        closeModal={closeMyProfileModal}
+        onClick={navigateToEditProfilePage}
+        myData={myData}
+        handleLogout={handleLogout}
+      />
+    ));
 
   const handleLogout = async () => {
     const confirmLogout = window.confirm('로그아웃 하시겠습니까?');
@@ -38,6 +42,10 @@ const Header = () => {
       closeMyProfileModal();
       navigate('/');
     }
+  };
+
+  const navigateToEditProfilePage = () => {
+    navigate('/mypage/profile', { state: myData });
   };
 
   const getMyData = async () => {
@@ -75,17 +83,6 @@ const Header = () => {
           <StyledLink to="/login">로그인</StyledLink>
         )}
       </WrapHeader>
-
-      {isMyProfileModalOpen && (
-        <MyProfileModal
-          closeModal={closeMyProfileModal}
-          onClick={() => {
-            navigate('/mypage/profile', { state: myData });
-          }}
-          myData={myData}
-          handleLogout={handleLogout}
-        />
-      )}
     </>
   );
 };

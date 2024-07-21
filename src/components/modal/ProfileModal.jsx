@@ -1,74 +1,57 @@
 import React from 'react';
 import styled from 'styled-components';
-import { createPortal } from 'react-dom';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
 
 const ProfileModal = ({ closeModal, onClick, selectedProfile }) => {
-  return createPortal(
-    <>
-      <Backdrop onClick={closeModal} />
-      <Modal>
-        <CloseButton
-          src="/assets/cancel-button-gray.svg"
-          alt="닫기 버튼"
-          onClick={closeModal}
-        />
-        <WrapContent>
-          <CharacterBackground
-            backgroundColor={
+  return (
+    <Modal>
+      <CloseButton
+        src="/assets/cancel-button-gray.svg"
+        alt="닫기 버튼"
+        onClick={closeModal}
+      />
+      <WrapContent>
+        <CharacterBackground
+          backgroundColor={
+            CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]?.color
+          }
+        >
+          <Character
+            $xPos={
               CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
-                ?.color
+                ?.position[0]
             }
-          >
-            <Character
-              $xPos={
-                CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
-                  ?.position[0]
-              }
-              $yPos={
-                CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
-                  ?.position[1]
-              }
-            />
-          </CharacterBackground>
-          <TextDiv>
-            <MBTI>{selectedProfile.memberProfileDto.mbti}</MBTI>
-            <Major>{selectedProfile.memberProfileDto.department}</Major>
-          </TextDiv>
-          <TagContainer>
-            {selectedProfile.memberProfileDto.memberHobbyDto.map(
-              (hobby, index) => (
-                <Badge key={index}>#{hobby.hobby}</Badge>
-              )
-            )}
-            {selectedProfile.memberProfileDto.memberTagDto.map((tag, index) => (
-              <Badge key={index}>#{tag.tag}</Badge>
-            ))}
-          </TagContainer>
-        </WrapContent>
-        <Button size="medium" onClick={onClick}>
-          메시지 보내기
-        </Button>
-      </Modal>
-    </>,
-    document.getElementById('modal')
+            $yPos={
+              CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
+                ?.position[1]
+            }
+          />
+        </CharacterBackground>
+        <TextDiv>
+          <MBTI>{selectedProfile.memberProfileDto.mbti}</MBTI>
+          <Major>{selectedProfile.memberProfileDto.department}</Major>
+        </TextDiv>
+        <TagContainer>
+          {selectedProfile.memberProfileDto.memberHobbyDto.map(
+            (hobby, index) => (
+              <Badge key={index}>#{hobby.hobby}</Badge>
+            )
+          )}
+          {selectedProfile.memberProfileDto.memberTagDto.map((tag, index) => (
+            <Badge key={index}>#{tag.tag}</Badge>
+          ))}
+        </TagContainer>
+      </WrapContent>
+      <Button size="medium" onClick={onClick}>
+        메시지 보내기
+      </Button>
+    </Modal>
   );
 };
 
 export default ProfileModal;
-
-const Backdrop = styled.div`
-  background: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-  z-index: 100;
-`;
 
 const Modal = styled.div`
   position: fixed;

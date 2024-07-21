@@ -1,65 +1,35 @@
 import React, { useState } from 'react';
-import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import TextInput from '../register/TextInput';
-import { instance } from '../../api/instance';
 
-const ReportModal = ({ closeModal, opponentMemberId }) => {
+const ReportModal = ({ closeModal, onClick }) => {
   const [reportMessage, setReportMessage] = useState('');
 
-  const handleReportUser = async (reportMessage) => {
-    try {
-      await instance.post('/report', {
-        declareContent: reportMessage,
-        opponentId: opponentMemberId,
-      });
-      alert('신고가 완료되었어요!');
-    } catch (error) {
-      console.log(error);
-      alert('이미 신고한 사용자예요! 신고는 한 번만 가능해요.');
-    }
-  };
-
-  return createPortal(
-    <>
-      <Backdrop onClick={closeModal} />
-      <Modal>
-        <TextInput
-          label="사용자 신고하기"
-          placeholder="신고 내용을 입력해주세요."
-          value={reportMessage}
-          onChange={(e) => setReportMessage(e.target.value)}
-        />
-        <WrapButton>
-          <ReportButton
-            disabled={reportMessage === ''}
-            onClick={() => {
-              handleReportUser(reportMessage);
-              closeModal();
-            }}
-          >
-            신고하기
-          </ReportButton>
-          <CancelButton onClick={closeModal}>취소하기</CancelButton>
-        </WrapButton>
-      </Modal>
-    </>,
-    document.getElementById('modal')
+  return (
+    <Modal>
+      <TextInput
+        label="사용자 신고하기"
+        placeholder="신고 내용을 입력해주세요."
+        value={reportMessage}
+        onChange={(e) => setReportMessage(e.target.value)}
+      />
+      <WrapButton>
+        <ReportButton
+          disabled={reportMessage === ''}
+          onClick={() => {
+            onClick(reportMessage);
+            closeModal();
+          }}
+        >
+          신고하기
+        </ReportButton>
+        <CancelButton onClick={closeModal}>취소하기</CancelButton>
+      </WrapButton>
+    </Modal>
   );
 };
 
 export default ReportModal;
-
-const Backdrop = styled.div`
-  background: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-  z-index: 100;
-`;
 
 const Modal = styled.div`
   position: fixed;
