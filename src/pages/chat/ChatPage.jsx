@@ -6,19 +6,19 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
 import { instance } from '../../api/instance';
 import toast, { Toaster } from 'react-hot-toast';
-import BlankModal from '../../components/common/BlankModal';
-import TextInput from '../../components/register/TextInput';
 import { checkCurse } from '../../utils/checkCurse';
 import Lottie from 'react-lottie-player';
 import callAnimation from '../../lottie/call-animation.json';
 import useGroupedMessages from '../../hooks/useGroupedMessages';
-import Modal from '../../components/common/Modal';
 import Tooltip from '../../components/common/Tooltip';
 import { getByteLength } from '../../utils/getByteLength';
 import useDetectClose from '../../hooks/useDetectClose';
-import { CHARACTERS } from '../../constants/CHARACTERS';
-import Badge from '../../components/common/Badge';
 import { ClipLoader } from 'react-spinners';
+import ReportModal from '../../components/modal/ReportModal';
+import OpponentProfileModal from '../../components/modal/OpponentProfileModal';
+import CallModal from '../../components/modal/CallModal';
+import CallRequestModal from '../../components/modal/CallRequestModal';
+import useModal from '../../hooks/useModal';
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
@@ -28,11 +28,40 @@ const ChatPage = () => {
   const [isCallActive, setIsCallActive] = useState(false);
   const [isShowLottie, setIsShowLottie] = useState(false);
   const [isOpponentOut, setIsOpponentOut] = useState(false);
-  const [reportMessage, setReportMessage] = useState('');
   const [bothAgreed, setBothAgreed] = useState(false);
   const [opponentProfile, setOpponentProfile] = useState(null);
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
+    () => (
+      <ReportModal closeModal={closeReportModal} onClick={handleReportUser} />
+    )
+  );
+
+  const {
+    openModal: openOpponentProfileModal,
+    closeModal: closeOpponentProfileModal,
+  } = useModal(() => (
+    <OpponentProfileModal
+      closeModal={closeOpponentProfileModal}
+      opponentProfile={opponentProfile}
+    />
+  ));
+
+  const { openModal: openCallModal, closeModal: closeCallModal } = useModal(
+    () => (
+      <CallModal closeModal={closeCallModal} onClick={fetchOpponentTelNum} />
+    )
+  );
+
+  const { openModal: openCallRequestModal, closeModal: closeCallRequestModal } =
+    useModal(() => (
+      <CallRequestModal
+        closeModal={closeCallRequestModal}
+        onClick={requestCall}
+      />
+    ));
 
   const param = useParams();
 
@@ -42,9 +71,6 @@ const ChatPage = () => {
     false
   );
 
-  const profileModalRef = useRef();
-  const reportModalRef = useRef();
-  const callModalRef = useRef();
   const viewportRef = useRef();
 
   const navigate = useNavigate();
@@ -54,27 +80,6 @@ const ChatPage = () => {
   const roomId = parseInt(param?.chatRoomId);
 
   const groupedMessages = useGroupedMessages(messages);
-
-  const openReportModal = () => {
-    reportModalRef.current.open();
-  };
-
-  const closeReportModal = () => {
-    setReportMessage('');
-    reportModalRef.current.close();
-  };
-
-  const openCallModal = () => {
-    callModalRef.current.open();
-  };
-
-  const closeCallModal = () => {
-    callModalRef.current.close();
-  };
-
-  const openProfileModal = () => {
-    profileModalRef.current.open();
-  };
 
   const navigateToVerify = () => {
     navigate('/verify/univ');
@@ -201,6 +206,20 @@ const ChatPage = () => {
     }
   };
 
+  // 상대방 전화번호 가져온 뒤 전화 연결
+  const fetchOpponentTelNum = async () => {
+    try {
+      const res = await instance.get(
+        `/member/tel-num?memberId=${opponentMemberId}&chatRoomId=${roomId}`
+      );
+      window.location.href = `tel:${res.data.telNum}`;
+    } catch (error) {
+      toast.error('상대방의 전화번호를 가져오는데 실패했어요!', {
+        position: 'bottom-center',
+      });
+    }
+  };
+
   // STOMP 메시지 수신 시 작동하는 콜백 함수
   const subscritionCallback = (message) => {
     const parsedMessage = JSON.parse(message.body);
@@ -236,13 +255,13 @@ const ChatPage = () => {
     try {
       const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
       setBothAgreed(response.data);
+
+      bothAgreed ? openCallModal() : openCallRequestModal();
     } catch (error) {
       toast.error('방 상태를 가져오는데 실패했어요!', {
         position: 'bottom-center',
       });
     }
-
-    openCallModal();
   };
 
   // 서버에서 모든 메시지 불러오기
@@ -281,21 +300,6 @@ const ChatPage = () => {
     }
   };
 
-  // 신고하기
-  const handleReportUser = async () => {
-    try {
-      await instance.post('/report', {
-        declareContent: reportMessage,
-        opponentId: opponentMemberId,
-      });
-      alert('신고가 완료되었어요!');
-    } catch (error) {
-      console.log(error);
-      alert('이미 신고한 사용자예요! 신고는 한 번만 가능해요.');
-    }
-    closeReportModal();
-  };
-
   // 거리 불러오기
   const fetchDistance = async () => {
     try {
@@ -316,6 +320,20 @@ const ChatPage = () => {
       setOpponentProfile(opponentProfile);
     } catch (error) {
       console.log('error', error);
+    }
+  };
+
+  // 상대방 신고하기
+  const handleReportUser = async (reportMessage) => {
+    try {
+      await instance.post('/report', {
+        declareContent: reportMessage,
+        opponentId: opponentMemberId,
+      });
+      alert('신고가 완료되었어요!');
+    } catch (error) {
+      console.log(error);
+      alert('이미 신고한 사용자예요! 신고는 한 번만 가능해요.');
     }
   };
 
@@ -512,7 +530,7 @@ const ChatPage = () => {
               groupedMessages={groupedMessages}
               myId={myMemberId}
               responseCall={responseCall}
-              openProfileModal={openProfileModal}
+              openProfileModal={openOpponentProfileModal}
               opponentMemberCharacter={
                 opponentProfile && opponentProfile.memberCharacter
               }
@@ -528,97 +546,6 @@ const ChatPage = () => {
           </>
         )}
       </Container>
-
-      <BlankModal ref={reportModalRef}>
-        <ReportModalContent>
-          <TextInput
-            label="사용자 신고하기"
-            placeholder="신고 내용을 입력해주세요."
-            value={reportMessage}
-            onChange={(e) => setReportMessage(e.target.value)}
-          />
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <ReportButton
-              disabled={reportMessage === ''}
-              onClick={handleReportUser}
-            >
-              신고하기
-            </ReportButton>
-            <CancelButton onClick={closeReportModal}>취소하기</CancelButton>
-          </div>
-        </ReportModalContent>
-      </BlankModal>
-
-      <Modal
-        ref={callModalRef}
-        buttonLabel={bothAgreed ? '통화하기' : '요청하기'}
-        buttonClickHandler={
-          bothAgreed
-            ? async () => {
-                try {
-                  const res = await instance.get(
-                    `/member/tel-num?memberId=${opponentMemberId}&chatRoomId=${roomId}`
-                  );
-                  window.location.href = `tel:${res.data.telNum}`;
-                } catch (error) {
-                  toast.error('상대방의 전화번호를 가져오는데 실패했어요!', {
-                    position: 'bottom-center',
-                  });
-                  console.log(error);
-                }
-              }
-            : () => {
-                requestCall();
-                closeCallModal();
-              }
-        }
-      >
-        <CallModalContent>
-          {bothAgreed ? (
-            <>
-              <strong>🎉 이제 통화할 수 있어요!</strong>
-              <div>아래 버튼을 눌러 통화해보세요.</div>
-            </>
-          ) : (
-            <>
-              <strong>📞 통화를 요청할까요?</strong>
-              <div>
-                상대방이 요청을 수락하면
-                <br />
-                서로의 번호로 통화할 수 있어요.
-              </div>
-            </>
-          )}
-        </CallModalContent>
-      </Modal>
-      <Modal ref={profileModalRef}>
-        {opponentProfile && (
-          <WrapContent>
-            <CharacterBackground
-              backgroundColor={
-                CHARACTERS[opponentProfile.memberCharacter]?.color
-              }
-            >
-              <StyledImage
-                $xPos={CHARACTERS[opponentProfile.memberCharacter]?.position[0]}
-                $yPos={CHARACTERS[opponentProfile.memberCharacter]?.position[1]}
-              />
-            </CharacterBackground>
-            <TextDiv>
-              <MBTI>{opponentProfile.mbti}</MBTI>
-              <Major>{opponentProfile.department}</Major>
-            </TextDiv>
-            <TagContainer>
-              {opponentProfile.memberHobbyDto.map((hobby, index) => (
-                <Badge key={index}>#{hobby.hobby}</Badge>
-              ))}
-              {opponentProfile.memberTagDto.map((tag, index) => (
-                <Badge key={index}>#{tag.tag}</Badge>
-              ))}
-            </TagContainer>
-          </WrapContent>
-        )}
-      </Modal>
     </Wrapper>
   );
 };
@@ -682,40 +609,6 @@ const TopBar = styled.div`
   z-index: 1;
 `;
 
-const ReportModalContent = styled.div`
-  display: grid;
-  gap: 1rem;
-  width: 250px;
-  padding: 1.25rem;
-`;
-
-const ReportButton = styled.button`
-  background: none;
-  border: none;
-  color: #ff625d;
-
-  &:disabled {
-    color: #e0e0e0;
-  }
-`;
-
-const CancelButton = styled.button`
-  background: none;
-  border: none;
-`;
-
-const CallModalContent = styled.div`
-  display: grid;
-  gap: 1rem;
-  padding: 32px 0;
-  text-align: center;
-  line-height: normal;
-
-  strong {
-    font-weight: 600;
-  }
-`;
-
 const LottieContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -766,63 +659,6 @@ const TooltipTail = styled.div`
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
   border-bottom: 10px solid #333333;
-`;
-
-const WrapContent = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin: 32px 0;
-  gap: 12px;
-`;
-
-const CharacterBackground = styled.div`
-  position: relative;
-  width: 100px;
-  height: 100px;
-  border-radius: 100%;
-  background-color: ${(props) => props.backgroundColor};
-`;
-
-const StyledImage = styled.div`
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-
-  background-image: url('/assets/sp_character.png');
-  background-position: ${(props) =>
-    `-${props.$xPos * 60}px -${props.$yPos * 60}px`};
-  background-size: calc(100% * 4);
-`;
-
-const TextDiv = styled.div`
-  width: 100%;
-  text-align: center;
-  color: #333333;
-`;
-
-const Major = styled.div`
-  font-size: 24px;
-  font-weight: 700;
-  line-height: normal;
-`;
-
-const MBTI = styled.div`
-  color: #000000;
-  font-size: 14px;
-  line-height: normal;
-`;
-
-const TagContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
 `;
 
 const LoaderContainer = styled.div`

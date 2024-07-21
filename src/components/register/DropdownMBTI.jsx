@@ -18,35 +18,32 @@ const DropdownMBTI = ({ state = '', setState }) => {
   }, [setState, selected]);
 
   return (
-    <DropdownContainer ref={dropdownRef}>
+    <div ref={dropdownRef}>
       <DropdownButton $selected={selected} onClick={() => setIsOpen(!isOpen)}>
         {selected || 'MBTI를 선택해주세요.'}
+        {isOpen && (
+          <DropdownContent>
+            <Placeholder>MBTI를 선택해주세요.</Placeholder>
+            {mbtiTypes.map((type) => (
+              <DropdownItem
+                key={type}
+                onClick={() => {
+                  setSelected(type);
+                  setIsOpen(false);
+                }}
+              >
+                {type}
+              </DropdownItem>
+            ))}
+          </DropdownContent>
+        )}
       </DropdownButton>
-      {isOpen && (
-        <DropdownContent>
-          <Placeholder>MBTI를 선택해주세요.</Placeholder>
-          {mbtiTypes.map((type) => (
-            <DropdownItem
-              key={type}
-              onClick={() => {
-                setSelected(type);
-                setIsOpen(false);
-              }}
-            >
-              {type}
-            </DropdownItem>
-          ))}
-        </DropdownContent>
-      )}
-    </DropdownContainer>
+    </div>
   );
 };
 
-const DropdownContainer = styled.div`
-  position: relative;
-`;
-
 const DropdownButton = styled.div`
+  position: relative;
   padding: 0.75rem 1.25rem;
   background-color: #ffffff;
   border: 2px solid #d9d9d9;
@@ -68,11 +65,14 @@ const fadeIn = keyframes`
 const DropdownContent = styled.div`
   position: absolute;
   top: 0;
+  left: 0;
   width: 100%;
   height: 256px;
   overflow: auto;
+  box-sizing: border-box;
   border-radius: 20px;
   background-color: #ffffff;
+  color: black;
   border: 1px solid #ddd;
   z-index: 1;
   animation: ${fadeIn} 0.2s ease-out;

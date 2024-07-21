@@ -90,7 +90,6 @@ const StyledNav = styled.nav`
   justify-content: center;
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
-  z-index: 9999;
   width: 100%;
   background-color: #fff;
   border-top: #ededed solid 1px;

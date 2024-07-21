@@ -1,24 +1,36 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { instance } from '../../api/instance';
 import ClipLoader from 'react-spinners/ClipLoader';
-
-import { CHARACTERS } from '../../constants/CHARACTERS';
 import Profile from '../../components/home/Profile';
-import Modal from '../../components/common/Modal';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import Badge from '../../components/common/Badge';
 import Banner from '../../components/common/Banner';
 import ReloadButton from '../../components/home/ReloadButton';
+import ProfileModal from '../../components/modal/ProfileModal';
+import useModal from '../../hooks/useModal';
 
 const HomeIndexPage = () => {
-  const profileModal = useRef();
   const [selectedProfile, setSelectedProfile] = useState();
   const navigate = useNavigate();
   const [memberState, setMemberState] = useState();
   const [loading, setLoading] = useState(false);
+
+  const { openModal: openProfileModal, closeModal: closeProfileModal } =
+    useModal(() => (
+      <ProfileModal
+        closeModal={closeProfileModal}
+        onClick={() => {
+          handleCreateChatRoom(selectedProfile.memberId);
+        }}
+        selectedProfile={selectedProfile}
+      />
+    ));
+
+  useEffect(() => {
+    fetchMembers();
+  }, []);
 
   const fetchMembers = async () => {
     try {
@@ -32,13 +44,9 @@ const HomeIndexPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchMembers();
-  }, []);
-
   const handleSelectProfile = (profile) => {
     setSelectedProfile(profile);
-    profileModal.current.open();
+    openProfileModal();
   };
 
   const handleCreateChatRoom = async (opponentMemberId) => {
@@ -84,7 +92,7 @@ const HomeIndexPage = () => {
             break;
         }
       });
-    profileModal.current.close();
+    closeProfileModal();
   };
 
   const alertTextList = [
@@ -229,52 +237,6 @@ const HomeIndexPage = () => {
         </ProfileContainer>
       )}
       <ReloadButton onClick={fetchMembers} />
-
-      <Modal
-        ref={profileModal}
-        buttonLabel="메세지 보내기"
-        buttonClickHandler={() => {
-          handleCreateChatRoom(selectedProfile.memberId);
-        }}
-      >
-        {selectedProfile && (
-          <WrapContent>
-            <CharacterBackground
-              backgroundColor={
-                CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
-                  ?.color
-              }
-            >
-              <StyledImage
-                $xPos={
-                  CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
-                    ?.position[0]
-                }
-                $yPos={
-                  CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
-                    ?.position[1]
-                }
-              />
-            </CharacterBackground>
-            <TextDiv>
-              <MBTI>{selectedProfile.memberProfileDto.mbti}</MBTI>
-              <Major>{selectedProfile.memberProfileDto.department}</Major>
-            </TextDiv>
-            <TagContainer>
-              {selectedProfile.memberProfileDto.memberHobbyDto.map(
-                (hobby, index) => (
-                  <Badge key={index}>#{hobby.hobby}</Badge>
-                )
-              )}
-              {selectedProfile.memberProfileDto.memberTagDto.map(
-                (tag, index) => (
-                  <Badge key={index}>#{tag.tag}</Badge>
-                )
-              )}
-            </TagContainer>
-          </WrapContent>
-        )}
-      </Modal>
     </>
   );
 };
@@ -283,53 +245,6 @@ const ProfileContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-`;
-
-const WrapContent = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin: 32px 0;
-  gap: 12px;
-`;
-
-const CharacterBackground = styled.div`
-  position: relative;
-  width: 100px;
-  height: 100px;
-  border-radius: 100%;
-  background-color: ${(props) => props.backgroundColor};
-`;
-
-const StyledImage = styled.div`
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-
-  background-image: url('/assets/sp_character.png');
-  background-position: ${(props) =>
-    `-${props.$xPos * 60}px -${props.$yPos * 60}px`};
-  background-size: calc(100% * 4);
-`;
-
-const TextDiv = styled.div`
-  width: 100%;
-  text-align: center;
-  color: #333333;
-`;
-
-const Major = styled.div`
-  font-size: 24px;
-  font-weight: 700;
-`;
-
-const MBTI = styled.div`
-  color: #000000;
-  font-size: 14px;
 `;
 
 const LoaderContainer = styled.div`
@@ -342,14 +257,6 @@ const LoaderContainer = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 999;
-`;
-
-const TagContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
 `;
 
 const EmptyContainer = styled.div`
