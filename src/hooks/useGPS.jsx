@@ -2,6 +2,12 @@ import { useEffect, useState } from 'react';
 import { DISTANCE } from '../constants/location';
 import { calculateDistanceInMeter } from '../utils/calculateDistanceInMeter';
 
+/**
+ * Geolocation API로 실시간 위치를 받아오는 커스텀 훅입니다.
+ * 로그인 상태가 true일 때만 작동합니다.
+ * @param {*} isLoggedIn - 로그인 상태
+ * @returns {object} 현재 위도와 경도를 담은 객체
+ */
 const useGPS = (isLoggedIn) => {
   const [curLocation, setCurLocation] = useState({
     lat: 0,
