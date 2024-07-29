@@ -74,13 +74,9 @@ const UserRegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmitTelNum = async (data) => {
-    if (verifyButtonLabel === '재전송') {
-      // setVerifyNumFlag(true);
-      // setVerify(false);
-      // setVerifyNum('');
-    }
+
     const response = instance.post('/member/send/sms', {
-      telNum: registerData.telNum,
+      telNum: data.telNum,
       type: 'SIGNUP',
     });
     toast.promise(response, {
@@ -117,6 +113,11 @@ const UserRegisterPage = () => {
       });
       setShowPassword(true);
       setErrorVerifyNum('verifyNum');
+
+      setRegisterData((prevData) => ({
+        ...prevData,
+        verifyNum: data.verifyNum,
+      }));
     } catch (error) {
       toast.error('인증번호가 틀렸습니다.');
     }
@@ -125,6 +126,7 @@ const UserRegisterPage = () => {
   const handleSubmitPassword = (data) => {
     setRegisterData((prevData) => ({
       ...prevData,
+      password: data.password,
       agreePrivacy: data.agreePrivacy,
       agreeTerms: data.agreeTerms,
     }));

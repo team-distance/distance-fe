@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import styled from 'styled-components';
 
 const MessageInput = ({
@@ -7,8 +8,23 @@ const MessageInput = ({
   submitHandler,
   isOpponentOut,
 }) => {
+
+  const containerRef = useRef(null);
+
+  const handleFocus = () => {
+    if(containerRef.current) {
+      containerRef.current.classList.add('focused');
+    }
+  }
+
+  const handleBlur = () => {
+    if(containerRef.current) {
+      containerRef.current.classList.remove('focused');
+    }
+  }
+
   return (
-    <MeassageInputContainer>
+    <MeassageInputContainer ref={containerRef}>
       <WrapButton onClick={buttonClickHandler}>
         <img src={'/assets/report-button.svg'} alt="신고하기" />
       </WrapButton>
@@ -21,7 +37,7 @@ const MessageInput = ({
             disabled
           />
         ) : (
-          <Input value={value} onChange={changeHandler} />
+          <Input value={value} onChange={changeHandler} onFocus={handleFocus} onBlur={handleBlur} />
         )}
         <WrapButton type="submit" disabled={isOpponentOut}>
           <img src={'/assets/send-button.png'} alt="보내기" />
@@ -38,6 +54,12 @@ const MeassageInputContainer = styled.div`
   background: #ffffff;
   width: auto;
   padding: 0.5rem 1rem 3rem 1rem;
+
+  @media (max-width: 500px) {
+    &.focused {
+      padding: 0.5rem 1rem 1rem 1rem;
+    }
+  }
 `;
 
 const Input = styled.input`

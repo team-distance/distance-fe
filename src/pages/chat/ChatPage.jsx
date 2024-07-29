@@ -1,24 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Messages from '../../components/chat/Messages';
-import MessageInput from '../../components/chat/MessageInput';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
-import { instance } from '../../api/instance';
 import toast, { Toaster } from 'react-hot-toast';
+import { ClipLoader } from 'react-spinners';
+
+import { instance } from '../../api/instance';
 import { checkCurse } from '../../utils/checkCurse';
 import Lottie from 'react-lottie-player';
 import callAnimation from '../../lottie/call-animation.json';
 import useGroupedMessages from '../../hooks/useGroupedMessages';
-import Tooltip from '../../components/common/Tooltip';
 import { getByteLength } from '../../utils/getByteLength';
 import useDetectClose from '../../hooks/useDetectClose';
-import { ClipLoader } from 'react-spinners';
+import useModal from '../../hooks/useModal';
+
+import Messages from '../../components/chat/Messages';
+import MessageInput from '../../components/chat/MessageInput';
+import Tooltip from '../../components/common/Tooltip';
 import ReportModal from '../../components/modal/ReportModal';
 import OpponentProfileModal from '../../components/modal/OpponentProfileModal';
 import CallModal from '../../components/modal/CallModal';
 import CallRequestModal from '../../components/modal/CallRequestModal';
-import useModal from '../../hooks/useModal';
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
