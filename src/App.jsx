@@ -146,8 +146,7 @@ function App() {
 
       <Route path="/festival/foodtruck/:id" element={<FoodTruckPage />} />
 
-      {/* <Route path="/chat/:chatRoomId" element={<ChatPage />} /> */}
-      <Route path="/chat/Id" element={<ChatPage />} />
+      <Route path="/chat/:chatRoomId" element={<ChatPage />} />
 
       <Route path="/kakaotalk-fallback" element={<KakaotalkFallback />} />
 

@@ -33,7 +33,7 @@ const ChatPage = () => {
   const [bothAgreed, setBothAgreed] = useState(false);
   const [opponentProfile, setOpponentProfile] = useState(null);
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
@@ -465,7 +465,7 @@ const ChatPage = () => {
       )}
 
       <Container ref={viewportRef}>
-        {/* <TopBar>
+        <TopBar>
           <BackButton
             onClick={() => {
               navigate(-1);
@@ -520,7 +520,7 @@ const ChatPage = () => {
               />
             </LeaveButton>
           </div>
-        </TopBar> */}
+        </TopBar>
 
         {isLoading ? (
           <LoaderContainer>
