@@ -9,7 +9,7 @@ import Banner from '../../components/common/Banner';
 import ReloadButton from '../../components/home/ReloadButton';
 import ProfileModal from '../../components/modal/ProfileModal';
 import useModal from '../../hooks/useModal';
-import useErrorToast from '../../hooks/useErrorToast';
+import useToast from '../../hooks/useToast';
 
 const HomeIndexPage = () => {
   const [selectedProfile, setSelectedProfile] = useState();
@@ -29,22 +29,22 @@ const HomeIndexPage = () => {
     ));
 
   // 토스트 메세지
-  const {showToast: showFullMyChatroomToast} = useErrorToast(
+  const {showToast: showFullMyChatroomToast} = useToast(
     () => <span>
       이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.
     </span>, 'too-many-my-chatroom'
   )
-  const {showToast: showFullOppoChatroomToast} = useErrorToast(
+  const {showToast: showFullOppoChatroomToast} = useToast(
     () => <span>
       상대방이 이미 생성된 채팅방 5개입니다. 상대방이 수락하면 알려드릴게요!
     </span>, 'too-many-oppo-chatroom'
   )
-  const {showToast: showGpsErrorToast} = useErrorToast(
+  const {showToast: showGpsErrorToast} = useToast(
     () => <span>
       상대방의 위치정보가 없어 채팅을 할 수 없어요!
     </span>, 'too-many-oppo-chatroom'
   )  
-  const {showToast: showLoginErrorToast} = useErrorToast(
+  const {showToast: showLoginErrorToast} = useToast(
     () => <span>
       로그인 후 이용해주세요.
     </span>, 'too-many-oppo-chatroom'

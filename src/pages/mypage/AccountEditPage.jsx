@@ -5,8 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import HeaderPrev from '../../components/common/HeaderPrev';
 import TextInput from '../../components/register/TextInput';
-import toast, { Toaster } from 'react-hot-toast';
+// import toast, { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
+import useToast from '../../hooks/useToast';
 
 const AccountEditPage = () => {
   const navigate = useNavigate();
@@ -17,6 +18,14 @@ const AccountEditPage = () => {
   const [newPassword, setNewPassword] = useState('');
   const [isVerifyPassword, setIsVerifyPassword] = useState(false);
 
+  //토스트 메세지
+  const {showToast: showVerifyPasswordToast} = useToast(
+    () => <span>인증되었습니다.</span>, 'verify-password', 'bottom-center', 'success'
+  )
+  const {showToast: showVerifyPasswordErrorToast} = useToast(
+    () => <span>비밀번호가 일치하지 않습니다.</span>, 'verify-password-error'
+  )
+
   const verifyPassword = async (e) => {
     e.preventDefault();
 
@@ -26,10 +35,10 @@ const AccountEditPage = () => {
         password: oldPassword,
       });
       setIsVerifyPassword(true);
-      toast.success('인증되었습니다');
+      showVerifyPasswordToast();
     } catch (error) {
       console.log(error.response.data.code);
-      toast.error('비밀번호가 일치하지 않습니다.');
+      showVerifyPasswordErrorToast();
     }
   };
 
@@ -63,22 +72,16 @@ const AccountEditPage = () => {
       });
   };
 
-  useEffect(() => {
-    return () => {
-      toast.dismiss();
-    };
-  }, []);
-
   return (
     <>
-      <Toaster
+      {/* <Toaster
         position="bottom-center"
         toastOptions={{
           style: {
             fontSize: '14px',
           },
         }}
-      />
+      /> */}
       <WrapContent>
         <HeaderPrev title="계정 관리" navigateTo={-1} />
 

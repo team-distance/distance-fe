@@ -1,7 +1,7 @@
 import React from 'react';
 import { ATTRACTIVENESS } from '../../constants/profile';
 import styled from 'styled-components'
-import useErrorToast from '../../hooks/useErrorToast';
+import useToast from '../../hooks/useToast';
 
 const AttractivenessModal = ({
   closeModal,
@@ -11,13 +11,13 @@ const AttractivenessModal = ({
 }) => {
 
   // 토스트 에러메세지 - 해시태그 5개 이상 선택
-  const {showToast: showFullHashTagToast} = useErrorToast(
+  const {showToast: showFullHashTagToast} = useToast(
     () => <span>
       해시태그는 5개까지만 선택 가능해요!
     </span>, 'hashtag-limit'
   )
   // 토스트 에러메세지 - 이미 선택한 해시태그
-  const {showToast: showSelectedHashTagToast} = useErrorToast(
+  const {showToast: showSelectedHashTagToast} = useToast(
     () => <span>
       이미 선택한 해시태그에요!
     </span>, 'hashtag-selected'

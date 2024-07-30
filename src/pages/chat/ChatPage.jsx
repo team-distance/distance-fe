@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
-import toast, { Toaster } from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
+// import toast, { Toaster } from 'react-hot-toast';
 
 import { instance } from '../../api/instance';
 import { checkCurse } from '../../utils/checkCurse';
@@ -13,7 +13,7 @@ import useGroupedMessages from '../../hooks/useGroupedMessages';
 import { getByteLength } from '../../utils/getByteLength';
 import useDetectClose from '../../hooks/useDetectClose';
 import useModal from '../../hooks/useModal';
-import useErrorToast from '../../hooks/useErrorToast';
+import useToast from '../../hooks/useToast';
 
 import Messages from '../../components/chat/Messages';
 import MessageInput from '../../components/chat/MessageInput';
@@ -69,27 +69,27 @@ const ChatPage = () => {
 
   
   // 토스트 에러메세지
-  const {showToast: showBadWordToast} = useErrorToast(
+  const {showToast: showBadWordToast} = useToast(
     () => <span>
       앗! 부적절한 단어가 포함되어 있어요.
     </span>, 'bad-word'
   )
-  const {showToast: showWaitToast} = useErrorToast(
+  const {showToast: showWaitToast} = useToast(
     () => <span>
       잠시 후 다시 시도해주세요!
     </span>, 'wait'
   )
-  const {showToast: showTelNumErrorToast} = useErrorToast(
+  const {showToast: showTelNumErrorToast} = useToast(
     () => <span>
       상대방의 전화번호를 가져오는데 실패했어요!
     </span>, 'telnum-error'
   )
-  const {showToast: showRoomInfoErrorToast} = useErrorToast(
+  const {showToast: showRoomInfoErrorToast} = useToast(
     () => <span>
       방 정보를 가져오는데 실패했어요!
     </span>, 'telnum-error'
   )
-  const {showToast: showTooMuchMessageToast} = useErrorToast(
+  const {showToast: showTooMuchMessageToast} = useToast(
     () => <span>
       내용이 너무 많아요!
     </span>, 'message-length-error'

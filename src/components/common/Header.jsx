@@ -10,7 +10,7 @@ import { instance } from '../../api/instance';
 import AuthUnivState from './AuthUnivState';
 import MyProfileModal from '../modal/MyProfileModal';
 import useModal from '../../hooks/useModal';
-import useErrorToast from '../../hooks/useErrorToast';
+import useToast from '../../hooks/useToast';
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
@@ -27,7 +27,7 @@ const Header = () => {
       />
     ));
 
-    const {showToast: showMyDataErrorToast} = useErrorToast(
+    const {showToast: showMyDataErrorToast} = useToast(
       () => <span>
         프로필 정보를 가져오는데 실패했어요!
       </span>, 'my-data-error', 'bottom-center'
