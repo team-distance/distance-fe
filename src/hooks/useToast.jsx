@@ -55,8 +55,10 @@ export const usePromiseToast = () => {
     const showPromiseToast = (response, successFunc, errorFunc) => {
         toast.promise(response, {
             loading: '전송 중...',
-            success: successFunc(),
-            error: errorFunc()
+            success: successFunc,
+            error: errorFunc
+        }, {
+            position: 'bottom-center'
         })
     }
 

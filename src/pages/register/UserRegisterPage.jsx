@@ -14,6 +14,8 @@ import TermsModal from '../../components/modal/TermsModal';
 import PrivacyModal from '../../components/modal/PrivacyModal';
 import {useToast, usePromiseToast} from '../../hooks/useToast';
 
+import toast from 'react-hot-toast';
+
 const UserRegisterPage = () => {
   const navigate = useNavigate();
 
@@ -109,7 +111,6 @@ const UserRegisterPage = () => {
         } else {
           return '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
         }
-
       }
     );
 
@@ -128,6 +129,7 @@ const UserRegisterPage = () => {
     //     return '인증번호가 전송되었습니다.';
     //   },
     //   error: (error) => {
+    //     console.log(error.response.data);
     //     const ERROR_CODE = error?.response?.data?.code;
     //     if (ERROR_CODE === 'EXIST_TEL_NUM') {
     //       return '이미 등록된 전화번호입니다. 다른 번호를 입력해주세요.';
