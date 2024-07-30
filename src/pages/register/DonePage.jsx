@@ -5,7 +5,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { isLoggedInState, login } from '../../store/auth';
 import { useSetRecoilState } from 'recoil';
 import { onGetToken } from '../../firebaseConfig';
-// import toast, { Toaster } from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 import {useToast} from '../../hooks/useToast';
 
@@ -63,14 +62,6 @@ const DonePage = () => {
 
   return (
     <Background>
-      {/* <Toaster
-        position="bottom-center"
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-      /> */}
       <WrapContent>
         <WrapMessage>
           <div style={{ fontSize: '60px' }}>🎊</div>

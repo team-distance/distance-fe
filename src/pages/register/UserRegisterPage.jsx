@@ -7,7 +7,6 @@ import Button from '../../components/common/Button';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import ProgressBar from '../../components/register/ProgressBar';
-import toast, { Toaster } from 'react-hot-toast';
 import Checkbox from '../../components/common/Checkbox';
 import { useForm } from 'react-hook-form';
 import useModal from '../../hooks/useModal';

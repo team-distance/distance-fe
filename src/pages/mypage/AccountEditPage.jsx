@@ -5,8 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button';
 import HeaderPrev from '../../components/common/HeaderPrev';
 import TextInput from '../../components/register/TextInput';
-// import toast, { Toaster } from 'react-hot-toast';
-import { useEffect } from 'react';
 import {useToast} from '../../hooks/useToast';
 
 const AccountEditPage = () => {
@@ -74,14 +72,6 @@ const AccountEditPage = () => {
 
   return (
     <>
-      {/* <Toaster
-        position="bottom-center"
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-      /> */}
       <WrapContent>
         <HeaderPrev title="계정 관리" navigateTo={-1} />
 
