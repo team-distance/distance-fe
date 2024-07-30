@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { useLocation } from 'react-router-dom';
 
 /**
  * @param {function} toastContent - 토스트 JSX를 반환하는 함수
@@ -9,6 +11,12 @@ import toast from 'react-hot-toast';
  */
 
 const useToast = (toastContent, id, position = 'bottom-center', type = 'error') => {
+
+    const {pathname} = useLocation();
+
+    useEffect(() => {
+        toast.remove();
+    }, [pathname])
 
     const showToast = () => {
         toast[type](

@@ -7,11 +7,14 @@ import { onMessage } from 'firebase/messaging';
 import { messaging } from '../firebaseConfig';
 import PWAInstallPrompt from '../components/common/PWAInstallPrompt';
 import Header from '../components/common/Header';
+import useToast from '../hooks/useToast';
 
 const NavLayout = () => {
   const navigate = useNavigate();
   const userAgent = navigator.userAgent.toLowerCase();
   const isIphone = userAgent.includes('iphone');
+
+  //토스트 메시지
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
@@ -77,7 +80,7 @@ const NavLayout = () => {
         <Outlet />
       </Padding>
       <TabBar />
-      <Toaster
+      {/* <Toaster
         toastOptions={{
           style: {
             fontSize: '14px',
@@ -86,7 +89,7 @@ const NavLayout = () => {
         containerStyle={{
           bottom: isIphone ? '116px' : '96px',
         }}
-      />
+      /> */}
     </>
   );
 };

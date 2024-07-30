@@ -31,11 +31,11 @@ import NotFoundPage from './pages/root/NotFoundPage';
 import useGPS from './hooks/useGPS';
 import { useRecoilValue } from 'recoil';
 import { isLoggedInState } from './store/auth';
-import toast from 'react-hot-toast';
 import { instance } from './api/instance';
 import TeamIntroductionPage from './pages/mypage/TeamIntroductionPage';
 import GPSSolutionPage from './pages/root/GPSSolutionPage';
 import useRouteChangeTrack from './hooks/useRouteChangeTrack';
+import useToast from './hooks/useToast';
 
 function App() {
   useRouteChangeTrack();
@@ -43,34 +43,43 @@ function App() {
   const currentLocation = useGPS(isLoggedIn);
   const navigate = useNavigate();
 
+  //토스트 메세지
+  const { showToast: showGPSErrorToast } = useToast(
+    () => <>
+      <span style={{ marginRight: '8px' }}>
+        위치 접근 설정이 꺼져있어요!
+      </span>
+      <Link to="/gps" style={{ color: '#0096FF' }}>
+        해결하기
+      </Link>
+    </>, 'gps-disabled'
+  )
+  const { showToast: showGPSUpdateErrorToast } = useToast(
+    () => <span>위치 정보를 업데이트하는데 실패했어요!</span>, 'gps-update-error'
+  )
+  const { showToast: showAlarmErrorToast } = useToast(
+    () => <>
+      <span style={{ marginRight: '8px' }}>알림 설정이 꺼져있어요!</span>
+      <Link to="/notification" style={{ color: '#0096FF' }}>
+        해결하기
+      </Link>
+    </>, 'notification-disabled'
+
+  )
+
   useEffect(() => {
     registerServiceWorker();
   }, []);
 
-  useEffect(() => {
-    toast.remove();
-  }, [navigate]);
+  // useEffect(() => {
+  //   toast.remove();
+  // }, [navigate]);
 
   useEffect(() => {
     if (!isLoggedIn) return;
 
     if (currentLocation.error) {
-      toast.error(
-        (t) => (
-          <>
-            <span style={{ marginRight: '8px' }}>
-              위치 접근 설정이 꺼져있어요!
-            </span>
-            <Link to="/gps" style={{ color: '#0096FF' }}>
-              해결하기
-            </Link>
-          </>
-        ),
-        {
-          id: 'gps-disabled',
-          position: 'bottom-center',
-        }
-      );
+      showGPSErrorToast();
     } else if (currentLocation.lat === 0 || currentLocation.lng === 0) {
       return;
     } else {
@@ -80,29 +89,13 @@ function App() {
           longitude: currentLocation.lng,
         })
         .catch((err) => {
-          toast.error('위치 정보를 업데이트하는데 실패했어요!', {
-            id: 'gps-update-error',
-            position: 'bottom-center',
-          });
+          showGPSUpdateErrorToast();
           console.log(err);
         });
     }
 
     if ('Notification' in window && Notification.permission !== 'granted') {
-      toast.error(
-        (t) => (
-          <>
-            <span style={{ marginRight: '8px' }}>알림 설정이 꺼져있어요!</span>
-            <Link to="/notification" style={{ color: '#0096FF' }}>
-              해결하기
-            </Link>
-          </>
-        ),
-        {
-          id: 'notification-disabled',
-          position: 'bottom-center',
-        }
-      );
+      showAlarmErrorToast();
     }
   }, [currentLocation]);
 
