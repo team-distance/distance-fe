@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { registerDataState } from '../../store/registerDataState';
 import ProgressBar from '../../components/register/ProgressBar';
-// import { Toaster } from 'react-hot-toast';
 import CharacterModal from '../../components/modal/CharacterModal';
 import AttractivenessModal from '../../components/modal/AttractivenessModal';
 import HobbyModal from '../../components/modal/HobbyModal';
@@ -73,19 +72,19 @@ const ProfileRegisterPage = () => {
   }, [selectedAnimal, selectedMBTI, toggleState, attractiveness, hobby]);
 
   // 새로고침하여 데이터가 사라졌을 때, 다시 회원가입 페이지로 이동
-  // useEffect(() => {
-  //   if (
-  //     !registerData.agreeTerms ||
-  //     !registerData.agreePrivacy ||
-  //     registerData.telNum === '' ||
-  //     registerData.verifyNum === '' ||
-  //     registerData.password === '' ||
-  //     registerData.college === '' ||
-  //     registerData.department === ''
-  //   ) {
-  //     navigate('/register/user');
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (
+      !registerData.agreeTerms ||
+      !registerData.agreePrivacy ||
+      registerData.telNum === '' ||
+      registerData.verifyNum === '' ||
+      registerData.password === '' ||
+      registerData.college === '' ||
+      registerData.department === ''
+    ) {
+      navigate('/register/user');
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -152,15 +151,6 @@ const ProfileRegisterPage = () => {
 
   return (
     <>
-      {/* <Toaster
-        position="bottom-center"
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-      /> */}
-
       <WrapHeader>
         <ProgressBar progress={4} />
         <p>프로필을 등록해주세요</p>
