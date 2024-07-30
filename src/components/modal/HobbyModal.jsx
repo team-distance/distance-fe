@@ -1,9 +1,23 @@
 import React from 'react';
 import { HOBBY } from '../../constants/profile';
 import styled from 'styled-components';
-import toast from 'react-hot-toast';
+import useErrorToast from '../../hooks/useErrorToast';
 
 const HobbyModal = ({ closeModal, selectedList, hashtagCount, onClick }) => {
+
+  // 토스트 에러메세지 - 해시태그 5개 이상 선택
+  const {showToast: showFullHashTagToast} = useErrorToast(
+    () => <span>
+      해시태그는 5개까지만 선택 가능해요!
+    </span>, 'hashtag-limit'
+  )
+  // 토스트 에러메세지 - 이미 선택한 해시태그
+  const {showToast: showSelectedHashTagToast} = useErrorToast(
+    () => <span>
+      이미 선택한 해시태그에요!
+    </span>, 'hashtag-selected'
+  )
+
   return (
     <Modal>
       <Title>
@@ -20,14 +34,10 @@ const HobbyModal = ({ closeModal, selectedList, hashtagCount, onClick }) => {
             key={value}
             onClick={() => {
               if (hashtagCount >= 5) {
-                toast.error('해시태그는 5개까지만 선택 가능해요!', {
-                  id: 'hashtag-limit',
-                });
+                showFullHashTagToast();
                 return;
               } else if (selectedList.includes(value)) {
-                toast.error('이미 선택한 해시태그에요!', {
-                  id: 'hashtag-duplicate',
-                });
+                showSelectedHashTagToast();
                 return;
               }
               onClick([...selectedList, value]);
