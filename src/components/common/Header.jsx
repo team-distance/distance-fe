@@ -51,6 +51,7 @@ const Header = () => {
   };
 
   const navigateToEditProfilePage = () => {
+    closeMyProfileModal();
     navigate('/mypage/profile', { state: myData });
   };
 
