@@ -5,11 +5,11 @@ import { instance } from '../../api/instance';
 import ClipLoader from 'react-spinners/ClipLoader';
 import Profile from '../../components/home/Profile';
 import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
 import Banner from '../../components/common/Banner';
 import ReloadButton from '../../components/home/ReloadButton';
 import ProfileModal from '../../components/modal/ProfileModal';
 import useModal from '../../hooks/useModal';
+import useErrorToast from '../../hooks/useErrorToast';
 
 const HomeIndexPage = () => {
   const [selectedProfile, setSelectedProfile] = useState();
@@ -27,6 +27,29 @@ const HomeIndexPage = () => {
         selectedProfile={selectedProfile}
       />
     ));
+
+  // 토스트 메세지
+  const {showToast: showFullMyChatroomToast} = useErrorToast(
+    () => <span>
+      이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.
+    </span>, 'too-many-my-chatroom'
+  )
+  const {showToast: showFullOppoChatroomToast} = useErrorToast(
+    () => <span>
+      상대방이 이미 생성된 채팅방 5개입니다. 상대방이 수락하면 알려드릴게요!
+    </span>, 'too-many-oppo-chatroom'
+  )
+  const {showToast: showGpsErrorToast} = useErrorToast(
+    () => <span>
+      상대방의 위치정보가 없어 채팅을 할 수 없어요!
+    </span>, 'too-many-oppo-chatroom'
+  )  
+  const {showToast: showLoginErrorToast} = useErrorToast(
+    () => <span>
+      로그인 후 이용해주세요.
+    </span>, 'too-many-oppo-chatroom'
+  )
+
 
   useEffect(() => {
     fetchMembers();
@@ -61,34 +84,20 @@ const HomeIndexPage = () => {
       .catch((error) => {
         switch (error.response.data.code) {
           case 'TOO_MANY_MY_CHATROOM':
-            toast.error(
-              '이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.',
-              {
-                position: 'bottom-center',
-              }
-            );
+            showFullMyChatroomToast();
             break;
           case 'TOO_MANY_OPPONENT_CHATROOM':
-            toast.error(
-              '상대방이 이미 생성된 채팅방 5개입니다. 상대방이 수락하면 알려드릴게요!',
-              {
-                position: 'bottom-center',
-              }
-            );
+            showFullOppoChatroomToast();
             break;
           case 'NOT_AUTHENTICATION_STUDENT':
             window.confirm('학생 인증 후 이용해주세요.') &&
               navigate('/verify/univ');
             break;
           case 'NOT_EXIST_GPS':
-            toast.error('상대방의 위치정보가 없어 채팅을 할 수 없어요!', {
-              position: 'bottom-center',
-            });
+            showGpsErrorToast();
             break;
           default:
-            toast.error('로그인 후 이용해주세요.', {
-              position: 'bottom-center',
-            });
+            showLoginErrorToast();
             break;
         }
       });
