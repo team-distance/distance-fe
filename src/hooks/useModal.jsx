@@ -21,7 +21,7 @@ const useModal = (modal, options = {}) => {
 
   const openModal = () => {
     setActiveModal(
-      <>
+      <> 
         <Backdrop onClick={handleBackdropClick} />
         {modal()}
       </>
