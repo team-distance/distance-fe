@@ -13,7 +13,7 @@ import useGroupedMessages from '../../hooks/useGroupedMessages';
 import { getByteLength } from '../../utils/getByteLength';
 import useDetectClose from '../../hooks/useDetectClose';
 import useModal from '../../hooks/useModal';
-import useToast from '../../hooks/useToast';
+import {useToast} from '../../hooks/useToast';
 
 import Messages from '../../components/chat/Messages';
 import MessageInput from '../../components/chat/MessageInput';

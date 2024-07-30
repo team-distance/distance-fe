@@ -13,7 +13,7 @@ import { useForm } from 'react-hook-form';
 import useModal from '../../hooks/useModal';
 import TermsModal from '../../components/modal/TermsModal';
 import PrivacyModal from '../../components/modal/PrivacyModal';
-import useToast from '../../hooks/useToast';
+import {useToast, usePromiseToast} from '../../hooks/useToast';
 
 const UserRegisterPage = () => {
   const navigate = useNavigate();
@@ -45,6 +45,7 @@ const UserRegisterPage = () => {
   const {showToast: showVerifyNumErrorToast} = useToast(
     () => <span>인증번호가 틀렸습니다.</span>, 'verifynum-error'
   )
+  const {showPromiseToast: showSendMessageToast} = usePromiseToast();
 
   const {
     register: registerTelNum,
@@ -85,9 +86,10 @@ const UserRegisterPage = () => {
       telNum: data.telNum,
       type: 'SIGNUP',
     });
-    toast.promise(response, {
-      loading: '전송 중...',
-      success: () => {
+
+    //테스트 필요 ---------------------------------------------
+    showSendMessageToast(response,
+      () => {
         setVerifyButtonLabel('재전송');
         setErrorTelNum('telNum');
         setShowVerifyNum(true);
@@ -99,7 +101,7 @@ const UserRegisterPage = () => {
 
         return '인증번호가 전송되었습니다.';
       },
-      error: (error) => {
+      (error) => {
         const ERROR_CODE = error?.response?.data?.code;
         if (ERROR_CODE === 'EXIST_TEL_NUM') {
           return '이미 등록된 전화번호입니다. 다른 번호를 입력해주세요.';
@@ -108,8 +110,37 @@ const UserRegisterPage = () => {
         } else {
           return '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
         }
-      },
-    });
+
+      }
+    );
+
+    // toast.promise(response, {
+    //   loading: '전송 중...',
+    //   success: () => {
+    //     setVerifyButtonLabel('재전송');
+    //     setErrorTelNum('telNum');
+    //     setShowVerifyNum(true);
+
+    //     setRegisterData((prevData) => ({
+    //       ...prevData,
+    //       telNum: data.telNum,
+    //     }));
+
+    //     return '인증번호가 전송되었습니다.';
+    //   },
+    //   error: (error) => {
+    //     const ERROR_CODE = error?.response?.data?.code;
+    //     if (ERROR_CODE === 'EXIST_TEL_NUM') {
+    //       return '이미 등록된 전화번호입니다. 다른 번호를 입력해주세요.';
+    //     } else if (ERROR_CODE === 'TOO_MANY_REQUEST') {
+    //       return '일일 최대 요청 수를 넘어갔습니다!';
+    //     } else {
+    //       return '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
+    //     }
+    //   },
+    // });
+    //-------------------------------------------------------
+    
   };
 
   const handleSubmitVerifyNum = async (data) => {
@@ -142,17 +173,6 @@ const UserRegisterPage = () => {
 
   return (
     <div>
-      {/* <Toaster
-        position="bottom-center"
-        containerStyle={{
-          bottom: 104,
-        }}
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-      /> */}
       <WrapHeader>
         <ProgressBar progress={1} />
         <p>전화번호를 인증해주세요</p>

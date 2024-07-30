@@ -35,7 +35,7 @@ import { instance } from './api/instance';
 import TeamIntroductionPage from './pages/mypage/TeamIntroductionPage';
 import GPSSolutionPage from './pages/root/GPSSolutionPage';
 import useRouteChangeTrack from './hooks/useRouteChangeTrack';
-import useToast from './hooks/useToast';
+import {useToast} from './hooks/useToast';
 
 function App() {
   useRouteChangeTrack();
@@ -64,16 +64,11 @@ function App() {
         해결하기
       </Link>
     </>, 'notification-disabled'
-
   )
 
   useEffect(() => {
     registerServiceWorker();
   }, []);
-
-  // useEffect(() => {
-  //   toast.remove();
-  // }, [navigate]);
 
   useEffect(() => {
     if (!isLoggedIn) return;

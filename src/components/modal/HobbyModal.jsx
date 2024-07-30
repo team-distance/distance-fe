@@ -1,7 +1,7 @@
 import React from 'react';
 import { HOBBY } from '../../constants/profile';
 import styled from 'styled-components';
-import useToast from '../../hooks/useToast';
+import {useToast} from '../../hooks/useToast';
 
 const HobbyModal = ({ closeModal, selectedList, hashtagCount, onClick }) => {
 

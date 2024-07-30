@@ -7,7 +7,7 @@ import HeaderPrev from '../../components/common/HeaderPrev';
 import TextInput from '../../components/register/TextInput';
 // import toast, { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
-import useToast from '../../hooks/useToast';
+import {useToast} from '../../hooks/useToast';
 
 const AccountEditPage = () => {
   const navigate = useNavigate();

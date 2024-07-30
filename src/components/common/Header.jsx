@@ -10,7 +10,7 @@ import { instance } from '../../api/instance';
 import AuthUnivState from './AuthUnivState';
 import MyProfileModal from '../modal/MyProfileModal';
 import useModal from '../../hooks/useModal';
-import useToast from '../../hooks/useToast';
+import {useToast} from '../../hooks/useToast';
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);

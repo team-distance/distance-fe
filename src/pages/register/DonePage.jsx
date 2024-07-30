@@ -7,7 +7,7 @@ import { useSetRecoilState } from 'recoil';
 import { onGetToken } from '../../firebaseConfig';
 // import toast, { Toaster } from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
-import useToast from '../../hooks/useToast';
+import {useToast} from '../../hooks/useToast';
 
 const DonePage = () => {
   const [loading, setLoading] = useState(false);

@@ -6,7 +6,7 @@ import HeaderPrev from '../../components/common/HeaderPrev';
 import TextInput from '../../components/register/TextInput';
 // import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import useToast from '../../hooks/useToast';
+import {useToast} from '../../hooks/useToast';
 
 const DropoutPage = () => {
   const navigate = useNavigate();

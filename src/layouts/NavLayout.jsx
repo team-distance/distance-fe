@@ -7,7 +7,7 @@ import { onMessage } from 'firebase/messaging';
 import { messaging } from '../firebaseConfig';
 import PWAInstallPrompt from '../components/common/PWAInstallPrompt';
 import Header from '../components/common/Header';
-import useToast from '../hooks/useToast';
+import {useToast} from '../hooks/useToast';
 
 const NavLayout = () => {
   const navigate = useNavigate();

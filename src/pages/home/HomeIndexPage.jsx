@@ -9,7 +9,7 @@ import Banner from '../../components/common/Banner';
 import ReloadButton from '../../components/home/ReloadButton';
 import ProfileModal from '../../components/modal/ProfileModal';
 import useModal from '../../hooks/useModal';
-import useToast from '../../hooks/useToast';
+import {useToast} from '../../hooks/useToast';
 
 const HomeIndexPage = () => {
   const [selectedProfile, setSelectedProfile] = useState();

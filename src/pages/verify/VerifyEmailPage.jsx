@@ -4,10 +4,10 @@ import styled from 'styled-components';
 import { instance } from '../../api/instance';
 import Button from '../../components/common/Button';
 import TextInput from '../../components/register/TextInput';
-import toast, { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
 import { UNIV_STATE } from '../../constants/collegeState';
 import Checkbox from '../../components/common/Checkbox';
+import { useToast, usePromiseToast } from '../../hooks/useToast';
 
 const VerifyEmailPage = () => {
   const navigate = useNavigate();
@@ -21,6 +21,12 @@ const VerifyEmailPage = () => {
   const [emailDisabled, setEmailDisabled] = useState(true);
   const [verifyDisabled, setVerifyDisabled] = useState(true);
   const [isSendEmail, setIsSendEmail] = useState(false);
+
+  //토스트 메세지
+  const {showToast: showVerifyNumErrorToast} = useToast(
+    () => <span>인증번호가 틀렸습니다.</span>, 'verifynum-error'
+  )
+  const {showPromiseToast: showSendMessageToast} = usePromiseToast();
 
   const handleChangeEmail = (e) => {
     setSchoolEmail(e.target.value);
@@ -54,22 +60,43 @@ const VerifyEmailPage = () => {
     const response = instance.post('/univ/send/email', {
       schoolEmail: fullEmail,
     });
-    toast.promise(response, {
-      loading: '전송 중...',
-      success: () => {
+
+    //테스트 필요 ------------------------------------------------
+
+    showSendMessageToast(response,
+      () => {
         setIsSendEmail(true);
         return '인증메일이 전송되었습니다.';
       },
-      error: (err) => {
-        if (err.response.data.code === 'INVALID_EMAIL_FORMAT') {
+      (error) => {
+        if (error.response.data.code === 'INVALID_EMAIL_FORMAT') {
           return '이메일 형식이 올바르지 않습니다.';
-        } else if (err.response.data.code === 'EXIST_EMAIL') {
+        } else if (error.response.data.code === 'EXIST_EMAIL') {
           return '이미 존재하는 이메일 입니다.';
         } else {
           return '인증을 다시 시도해주세요.';
         }
-      },
-    });
+      }
+    )
+
+    // toast.promise(response, {
+    //   loading: '전송 중...',
+    //   success: () => {
+    //     setIsSendEmail(true);
+    //     return '인증메일이 전송되었습니다.';
+    //   },
+    //   error: (err) => {
+    //     if (err.response.data.code === 'INVALID_EMAIL_FORMAT') {
+    //       return '이메일 형식이 올바르지 않습니다.';
+    //     } else if (err.response.data.code === 'EXIST_EMAIL') {
+    //       return '이미 존재하는 이메일 입니다.';
+    //     } else {
+    //       return '인증을 다시 시도해주세요.';
+    //     }
+    //   },
+    // });
+    //---------------------------------------------------------
+
   };
 
   const verifyEmail = async () => {
@@ -83,7 +110,7 @@ const VerifyEmailPage = () => {
       alert('인증되었습니다.');
       navigate('/');
     } catch (error) {
-      toast.error('인증번호가 일치하지 않습니다.');
+      showVerifyNumErrorToast();
     }
   };
 
@@ -125,14 +152,6 @@ const VerifyEmailPage = () => {
 
   return (
     <WrapContent>
-      <Toaster
-        position="bottom-center"
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-      />
       <div>
         <Heading2>'학생 메일'로 인증하기</Heading2>
         <p>
