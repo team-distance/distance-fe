@@ -4,14 +4,23 @@ import { instance } from '../../api/instance';
 import Button from '../../components/common/Button';
 import HeaderPrev from '../../components/common/HeaderPrev';
 import TextInput from '../../components/register/TextInput';
-import toast, { Toaster } from 'react-hot-toast';
+// import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import useToast from '../../hooks/useToast';
 
 const DropoutPage = () => {
   const navigate = useNavigate();
   const [isDisabled, setIsDisabled] = useState(true);
   const [verifyPasswordFlag, setVerifyPasswordFlag] = useState(true);
   const [password, setPassword] = useState('');
+
+  //토스트 메세지
+  const {showToast: showVerifyPasswordToast} = useToast(
+    () => <span>인증되었습니다.</span>, 'verify-password', 'bottom-center', 'success'
+  )
+  const {showToast: showVerifyPasswordErrorToast} = useToast(
+    () => <span>비밀번호가 일치하지 않습니다.</span>, 'verify-password-error'
+  )
 
   const verifyPassword = async () => {
     //비밀번호 확인
@@ -21,11 +30,11 @@ const DropoutPage = () => {
       })
       .then(() => {
         setIsDisabled(false);
-        toast.success('인증되었습니다');
+        showVerifyPasswordToast();
       })
       .catch((error) => {
         console.log(error.response.data.code);
-        toast.error('비밀번호가 일치하지 않습니다.');
+        showVerifyPasswordErrorToast();
       });
   };
 
@@ -53,14 +62,14 @@ const DropoutPage = () => {
 
   return (
     <>
-      <Toaster
+      {/* <Toaster
         position="bottom-center"
         toastOptions={{
           style: {
             fontSize: '14px',
           },
         }}
-      />
+      /> */}
       <WrapContent>
         <HeaderPrev
           title="회원 탈퇴"

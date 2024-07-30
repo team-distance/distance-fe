@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { registerDataState } from '../../store/registerDataState';
 import ProgressBar from '../../components/register/ProgressBar';
-import { Toaster } from 'react-hot-toast';
+// import { Toaster } from 'react-hot-toast';
 import CharacterModal from '../../components/modal/CharacterModal';
 import AttractivenessModal from '../../components/modal/AttractivenessModal';
 import HobbyModal from '../../components/modal/HobbyModal';
@@ -152,14 +152,14 @@ const ProfileRegisterPage = () => {
 
   return (
     <>
-      <Toaster
+      {/* <Toaster
         position="bottom-center"
         toastOptions={{
           style: {
             fontSize: '14px',
           },
         }}
-      />
+      /> */}
 
       <WrapHeader>
         <ProgressBar progress={4} />

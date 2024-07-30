@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import useModal from '../../hooks/useModal';
 import TermsModal from '../../components/modal/TermsModal';
 import PrivacyModal from '../../components/modal/PrivacyModal';
+import useToast from '../../hooks/useToast';
 
 const UserRegisterPage = () => {
   const navigate = useNavigate();
@@ -39,6 +40,11 @@ const UserRegisterPage = () => {
         }}
       />
     ));
+
+  //토스트 메세지
+  const {showToast: showVerifyNumErrorToast} = useToast(
+    () => <span>인증번호가 틀렸습니다.</span>, 'verifynum-error'
+  )
 
   const {
     register: registerTelNum,
@@ -119,7 +125,7 @@ const UserRegisterPage = () => {
         verifyNum: data.verifyNum,
       }));
     } catch (error) {
-      toast.error('인증번호가 틀렸습니다.');
+      showVerifyNumErrorToast();
     }
   };
 
@@ -131,13 +137,12 @@ const UserRegisterPage = () => {
       agreeTerms: data.agreeTerms,
     }));
 
-    toast.dismiss();
     navigate('/register/univ');
   };
 
   return (
     <div>
-      <Toaster
+      {/* <Toaster
         position="bottom-center"
         containerStyle={{
           bottom: 104,
@@ -147,7 +152,7 @@ const UserRegisterPage = () => {
             fontSize: '14px',
           },
         }}
-      />
+      /> */}
       <WrapHeader>
         <ProgressBar progress={1} />
         <p>전화번호를 인증해주세요</p>
