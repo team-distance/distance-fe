@@ -1,4 +1,4 @@
-import { Link, Route, Routes, useNavigate } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 import HomeIndexPage from './pages/home/HomeIndexPage';
 import ChatIndexPage from './pages/chat/ChatIndexPage';
 import FestivalIndexPage from './pages/festival/FestivalIndexPage';
@@ -41,7 +41,6 @@ function App() {
   useRouteChangeTrack();
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const currentLocation = useGPS(isLoggedIn);
-  const navigate = useNavigate();
 
   //토스트 메세지
   const { showToast: showGPSErrorToast } = useToast(

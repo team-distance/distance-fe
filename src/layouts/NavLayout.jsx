@@ -2,19 +2,16 @@ import React, { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import TabBar from '../components/common/TabBar';
 import styled from 'styled-components';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { onMessage } from 'firebase/messaging';
 import { messaging } from '../firebaseConfig';
 import PWAInstallPrompt from '../components/common/PWAInstallPrompt';
 import Header from '../components/common/Header';
-import {useToast} from '../hooks/useToast';
 
 const NavLayout = () => {
   const navigate = useNavigate();
   const userAgent = navigator.userAgent.toLowerCase();
   const isIphone = userAgent.includes('iphone');
-
-  //토스트 메시지
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();

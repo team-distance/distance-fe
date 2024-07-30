@@ -10,10 +10,10 @@ import { useLocation } from 'react-router-dom';
  * @returns {object} showToast, dismissToast 함수를 포함하는 객체
  */
 export const useToast = (
-    toastContent, id, position = 'bottom-center', 
+    toastContent, id, position = 'bottom-center',
     type = 'error') => {
 
-    const {pathname} = useLocation();
+    const { pathname } = useLocation();
 
     useEffect(() => {
         toast.remove();
@@ -46,7 +46,7 @@ export const useToast = (
 
 export const usePromiseToast = () => {
 
-    const {pathname} = useLocation();
+    const { pathname } = useLocation();
 
     useEffect(() => {
         toast.remove();
@@ -62,6 +62,6 @@ export const usePromiseToast = () => {
         })
     }
 
-    return {showPromiseToast}
+    return { showPromiseToast }
 }
 

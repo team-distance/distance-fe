@@ -14,8 +14,6 @@ import TermsModal from '../../components/modal/TermsModal';
 import PrivacyModal from '../../components/modal/PrivacyModal';
 import {useToast, usePromiseToast} from '../../hooks/useToast';
 
-import toast from 'react-hot-toast';
-
 const UserRegisterPage = () => {
   const navigate = useNavigate();
 
