@@ -43,26 +43,16 @@ function App() {
   const currentLocation = useGPS(isLoggedIn);
 
   //토스트 메세지
-  const { showToast: showGPSErrorToast } = useToast(
+  const { showToast: showAlarmGPSErrorToast } = useToast(
     () => <>
-      <span style={{ marginRight: '8px' }}>
-        위치 접근 설정이 꺼져있어요!
-      </span>
-      <Link to="/gps" style={{ color: '#0096FF' }}>
+      <span style={{ marginRight: '8px' }}>알림과 위치 설정이 꺼져있어요!</span>
+      <Link to="/mypage" style={{ color: '#0096FF' }}>
         해결하기
       </Link>
-    </>, 'gps-disabled'
+    </>, 'alarm-gps-disabled'
   )
   const { showToast: showGPSUpdateErrorToast } = useToast(
     () => <span>위치 정보를 업데이트하는데 실패했어요!</span>, 'gps-update-error'
-  )
-  const { showToast: showAlarmErrorToast } = useToast(
-    () => <>
-      <span style={{ marginRight: '8px' }}>알림 설정이 꺼져있어요!</span>
-      <Link to="/notification" style={{ color: '#0096FF' }}>
-        해결하기
-      </Link>
-    </>, 'notification-disabled'
   )
 
   useEffect(() => {
@@ -72,8 +62,8 @@ function App() {
   useEffect(() => {
     if (!isLoggedIn) return;
 
-    if (currentLocation.error) {
-      showGPSErrorToast();
+    if (currentLocation.error || ('Notification' in window && Notification.permission !== 'granted')) {
+      showAlarmGPSErrorToast();
     } else if (currentLocation.lat === 0 || currentLocation.lng === 0) {
       return;
     } else {
@@ -86,10 +76,6 @@ function App() {
           showGPSUpdateErrorToast();
           console.log(err);
         });
-    }
-
-    if ('Notification' in window && Notification.permission !== 'granted') {
-      showAlarmErrorToast();
     }
   }, [currentLocation]);
 

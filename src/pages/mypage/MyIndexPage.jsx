@@ -5,6 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
 import { myDataState } from '../../store/myData';
 import { instance } from '../../api/instance';
+import { motion } from "framer-motion";
 
 const MyIndexPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
@@ -101,19 +102,39 @@ const MyIndexPage = () => {
                 onClick={() => navigate('/notification')}
               >
                 <div>앱푸시 알림 해결하기</div>
-                <img
-                  className="warning-icon"
-                  src="/assets/mypage/warning-icon.png"
-                  alt="PUSH 알림 문제 해결"
-                />
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ rotate: 360, scale: 1 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20
+                  }}
+                >
+                  <img
+                    className="warning-icon"
+                    src="/assets/mypage/warning-icon.png"
+                    alt="PUSH 알림 문제 해결"
+                  />
+                </motion.div>
               </div>
               <div className="menu" onClick={() => navigate('/gps')}>
                 <div>GPS 문제 해결</div>
-                <img
-                  className="warning-icon"
-                  src="/assets/mypage/warning-icon.png"
-                  alt="GPS 문제 해결"
-                />
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ rotate: 360, scale: 1 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20
+                  }}
+                >
+                  <img
+                    className="warning-icon"
+                    src="/assets/mypage/warning-icon.png"
+                    alt="GPS 문제 해결"
+                  />
+                </motion.div>
               </div>
               <a
                 className="menu border"
