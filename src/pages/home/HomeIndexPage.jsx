@@ -27,6 +27,7 @@ const HomeIndexPage = () => {
         selectedProfile={selectedProfile}
       />
     ));
+  
 
   // 토스트 메세지
   const {showToast: showFullMyChatroomToast} = useToast(

@@ -20,7 +20,7 @@ const NavLayout = () => {
       navigate('/kakaotalk-fallback');
     }
   }, []);
-
+  
   useEffect(() => {
     if (messaging) {
       onMessage(messaging, (payload) => {
