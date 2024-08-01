@@ -1,4 +1,4 @@
-import { Link, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import HomeIndexPage from './pages/home/HomeIndexPage';
 import ChatIndexPage from './pages/chat/ChatIndexPage';
 import FestivalIndexPage from './pages/festival/FestivalIndexPage';
