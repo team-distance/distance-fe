@@ -50,7 +50,7 @@ function App() {
     registerServiceWorker();
   }, []);
 
-  //수정중 -----------------------------------------------
+  // GPS update
   useEffect(() => {
     if (!isLoggedIn) return;
     if (currentLocation.lat === 0 || currentLocation.lng === 0) {
@@ -67,7 +67,6 @@ function App() {
         });
     }
   }, [currentLocation]);
-  //--------------------------------------------------------
 
   return (
     <Routes>
