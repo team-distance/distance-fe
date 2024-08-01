@@ -6,11 +6,16 @@ import { isLoggedInState } from '../../store/auth';
 import { myDataState } from '../../store/myData';
 import { instance } from '../../api/instance';
 import { motion } from "framer-motion";
+import { useCheckAlarmActive } from '../../hooks/useCheckAlarmActive';
+import { useCheckGpsActive } from '../../hooks/useCheckGpsActive';
 
 const MyIndexPage = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
   const myData = useRecoilValue(myDataState);
+
+  const alarmActive = useCheckAlarmActive();
+  const gpsActive = useCheckGpsActive();
 
   const handleLogout = async () => {
     const confirmLogout = window.confirm('로그아웃 하시겠습니까?');
@@ -29,18 +34,20 @@ const MyIndexPage = () => {
   };
 
   const shareButtonHandler = () => {
-    if (navigator.share) {
-      navigator
-        .share({
-          title: '💕 distance 디스턴스',
-          text: '축제를 200% 즐기는 방법, distance 💕',
-          url: 'https://dis-tance.com',
-        })
-        .then(() => alert('공유가 성공적으로 완료되었습니다.'))
-        .catch((error) => console.log('공유에 실패했습니다.', error));
-    } else {
-      alert('이 브라우저에서는 공유 기능을 사용할 수 없습니다.');
-    }
+    console.log(alarmActive);
+    console.log('gps', gpsActive);
+    // if (navigator.share) {
+    //   navigator
+    //     .share({
+    //       title: '💕 distance 디스턴스',
+    //       text: '축제를 200% 즐기는 방법, distance 💕',
+    //       url: 'https://dis-tance.com',
+    //     })
+    //     .then(() => alert('공유가 성공적으로 완료되었습니다.'))
+    //     .catch((error) => console.log('공유에 실패했습니다.', error));
+    // } else {
+    //   alert('이 브라우저에서는 공유 기능을 사용할 수 없습니다.');
+    // }
   };
 
   return (
@@ -102,7 +109,7 @@ const MyIndexPage = () => {
                 onClick={() => navigate('/notification')}
               >
                 <div>앱푸시 알림 해결하기</div>
-                <motion.div
+                {!alarmActive && <motion.div
                   initial={{ scale: 0 }}
                   animate={{ rotate: 360, scale: 1 }}
                   transition={{
@@ -116,11 +123,11 @@ const MyIndexPage = () => {
                     src="/assets/mypage/warning-icon.png"
                     alt="PUSH 알림 문제 해결"
                   />
-                </motion.div>
+                </motion.div>}
               </div>
               <div className="menu" onClick={() => navigate('/gps')}>
                 <div>GPS 문제 해결</div>
-                <motion.div
+                {!gpsActive && <motion.div
                   initial={{ scale: 0 }}
                   animate={{ rotate: 360, scale: 1 }}
                   transition={{
@@ -134,7 +141,7 @@ const MyIndexPage = () => {
                     src="/assets/mypage/warning-icon.png"
                     alt="GPS 문제 해결"
                   />
-                </motion.div>
+                </motion.div>}
               </div>
               <a
                 className="menu border"
