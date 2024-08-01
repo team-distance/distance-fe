@@ -74,9 +74,9 @@ const LoginPage = () => {
       return;
     }
 
-    // if ('Notification' in window && Notification.permission !== 'granted') {
-    //   alert('알림, 위치 권한을 허용해주세요!');
-    // }
+    if ('Notification' in window && Notification.permission !== 'granted') {
+      alert('알림, 위치 권한을 허용해주세요!');
+    }
 
     // clientToken 없어도 로그인 가능
     // 로딩 상태 설정

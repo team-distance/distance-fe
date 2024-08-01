@@ -35,20 +35,18 @@ const MyIndexPage = () => {
   };
 
   const shareButtonHandler = () => {
-    console.log(alarmActive);
-    console.log('gps', gpsActive);
-    // if (navigator.share) {
-    //   navigator
-    //     .share({
-    //       title: '💕 distance 디스턴스',
-    //       text: '축제를 200% 즐기는 방법, distance 💕',
-    //       url: 'https://dis-tance.com',
-    //     })
-    //     .then(() => alert('공유가 성공적으로 완료되었습니다.'))
-    //     .catch((error) => console.log('공유에 실패했습니다.', error));
-    // } else {
-    //   alert('이 브라우저에서는 공유 기능을 사용할 수 없습니다.');
-    // }
+    if (navigator.share) {
+      navigator
+        .share({
+          title: '💕 distance 디스턴스',
+          text: '축제를 200% 즐기는 방법, distance 💕',
+          url: 'https://dis-tance.com',
+        })
+        .then(() => alert('공유가 성공적으로 완료되었습니다.'))
+        .catch((error) => console.log('공유에 실패했습니다.', error));
+    } else {
+      alert('이 브라우저에서는 공유 기능을 사용할 수 없습니다.');
+    }
   };
 
   return (
