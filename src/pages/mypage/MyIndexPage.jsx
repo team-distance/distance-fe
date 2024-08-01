@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -8,8 +8,8 @@ import { instance } from '../../api/instance';
 import { motion } from "framer-motion";
 
 const MyIndexPage = () => {
-  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
   const myData = useRecoilValue(myDataState);
 
   const handleLogout = async () => {

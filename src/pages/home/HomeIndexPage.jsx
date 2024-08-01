@@ -4,16 +4,20 @@ import { useState } from 'react';
 import { instance } from '../../api/instance';
 import ClipLoader from 'react-spinners/ClipLoader';
 import Profile from '../../components/home/Profile';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Banner from '../../components/common/Banner';
 import ReloadButton from '../../components/home/ReloadButton';
 import ProfileModal from '../../components/modal/ProfileModal';
 import useModal from '../../hooks/useModal';
-import {useToast} from '../../hooks/useToast';
+import { useToast } from '../../hooks/useToast';
 
 const HomeIndexPage = () => {
-  const [selectedProfile, setSelectedProfile] = useState();
   const navigate = useNavigate();
+
+  // const alarmGps = useRecoilValue(alarmGpsState);
+  // const gpsUpdate = useRecoilValue(gpsUpdateState);
+
+  const [selectedProfile, setSelectedProfile] = useState();
   const [memberState, setMemberState] = useState();
   const [loading, setLoading] = useState(false);
 
@@ -27,34 +31,38 @@ const HomeIndexPage = () => {
         selectedProfile={selectedProfile}
       />
     ));
-  
+
 
   // 토스트 메세지
-  const {showToast: showFullMyChatroomToast} = useToast(
+  const { showToast: showFullMyChatroomToast } = useToast(
     () => <span>
       이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.
     </span>, 'too-many-my-chatroom'
   )
-  const {showToast: showFullOppoChatroomToast} = useToast(
+  const { showToast: showFullOppoChatroomToast } = useToast(
     () => <span>
       상대방이 이미 생성된 채팅방 5개입니다. 상대방이 수락하면 알려드릴게요!
     </span>, 'too-many-oppo-chatroom'
   )
-  const {showToast: showGpsErrorToast} = useToast(
+  const { showToast: showGpsErrorToast } = useToast(
     () => <span>
       상대방의 위치정보가 없어 채팅을 할 수 없어요!
     </span>, 'too-many-oppo-chatroom'
-  )  
-  const {showToast: showLoginErrorToast} = useToast(
+  )
+  const { showToast: showLoginErrorToast } = useToast(
     () => <span>
       로그인 후 이용해주세요.
     </span>, 'too-many-oppo-chatroom'
   )
 
-
-  useEffect(() => {
-    fetchMembers();
-  }, []);
+  const { showToast: showAlarmGPSErrorToast } = useToast(
+    () => <>
+      <span style={{ marginRight: '8px' }}>알림과 위치 설정이 꺼져있어요!</span>
+      <Link to="/mypage" style={{ color: '#0096FF' }}>
+        해결하기
+      </Link>
+    </>, 'alarm-gps-disabled'
+  )
 
   const fetchMembers = async () => {
     try {
@@ -216,6 +224,12 @@ const HomeIndexPage = () => {
 
   useEffect(() => {
     setMemberState(profile);
+    fetchMembers();
+  }, []);
+
+  useEffect(() => {
+    // if (alarmGps) showAlarmGPSErrorToast();
+    // else if (gpsUpdate) showGPSUpdateErrorToast();
   }, []);
 
   return (
