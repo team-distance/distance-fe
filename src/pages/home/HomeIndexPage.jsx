@@ -4,16 +4,23 @@ import { useState } from 'react';
 import { instance } from '../../api/instance';
 import ClipLoader from 'react-spinners/ClipLoader';
 import Profile from '../../components/home/Profile';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { useNavigate, Link } from 'react-router-dom';
 import Banner from '../../components/common/Banner';
 import ReloadButton from '../../components/home/ReloadButton';
 import ProfileModal from '../../components/modal/ProfileModal';
 import useModal from '../../hooks/useModal';
+import { useToast } from '../../hooks/useToast';
+import { useCheckAlarmActive } from '../../hooks/useCheckAlarmActive';
+import { useCheckGpsActive } from '../../hooks/useCheckGpsActive';
 
 const HomeIndexPage = () => {
-  const [selectedProfile, setSelectedProfile] = useState();
   const navigate = useNavigate();
+
+  //알림, GPS 설정 관리
+  const alarmActive = useCheckAlarmActive();
+  const gpsActive = useCheckGpsActive();
+
+  const [selectedProfile, setSelectedProfile] = useState();
   const [memberState, setMemberState] = useState();
   const [loading, setLoading] = useState(false);
 
@@ -28,9 +35,37 @@ const HomeIndexPage = () => {
       />
     ));
 
-  useEffect(() => {
-    fetchMembers();
-  }, []);
+
+  // 토스트 메세지
+  const { showToast: showFullMyChatroomToast } = useToast(
+    () => <span>
+      이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.
+    </span>, 'too-many-my-chatroom'
+  )
+  const { showToast: showFullOppoChatroomToast } = useToast(
+    () => <span>
+      상대방이 이미 생성된 채팅방 5개입니다. 상대방이 수락하면 알려드릴게요!
+    </span>, 'too-many-oppo-chatroom'
+  )
+  const { showToast: showGpsErrorToast } = useToast(
+    () => <span>
+      상대방의 위치정보가 없어 채팅을 할 수 없어요!
+    </span>, 'too-many-oppo-chatroom'
+  )
+  const { showToast: showLoginErrorToast } = useToast(
+    () => <span>
+      로그인 후 이용해주세요.
+    </span>, 'too-many-oppo-chatroom'
+  )
+
+  const { showToast: showAlarmGPSErrorToast } = useToast(
+    () => <>
+      <span style={{ marginRight: '8px' }}>알림과 위치 설정이 꺼져있어요!</span>
+      <Link to="/mypage" style={{ color: '#0096FF' }}>
+        해결하기
+      </Link>
+    </>, 'alarm-gps-disabled'
+  )
 
   const fetchMembers = async () => {
     try {
@@ -61,34 +96,20 @@ const HomeIndexPage = () => {
       .catch((error) => {
         switch (error.response.data.code) {
           case 'TOO_MANY_MY_CHATROOM':
-            toast.error(
-              '이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.',
-              {
-                position: 'bottom-center',
-              }
-            );
+            showFullMyChatroomToast();
             break;
           case 'TOO_MANY_OPPONENT_CHATROOM':
-            toast.error(
-              '상대방이 이미 생성된 채팅방 5개입니다. 상대방이 수락하면 알려드릴게요!',
-              {
-                position: 'bottom-center',
-              }
-            );
+            showFullOppoChatroomToast();
             break;
           case 'NOT_AUTHENTICATION_STUDENT':
             window.confirm('학생 인증 후 이용해주세요.') &&
               navigate('/verify/univ');
             break;
           case 'NOT_EXIST_GPS':
-            toast.error('상대방의 위치정보가 없어 채팅을 할 수 없어요!', {
-              position: 'bottom-center',
-            });
+            showGpsErrorToast();
             break;
           default:
-            toast.error('로그인 후 이용해주세요.', {
-              position: 'bottom-center',
-            });
+            showLoginErrorToast();
             break;
         }
       });
@@ -204,8 +225,17 @@ const HomeIndexPage = () => {
     },
   ];
 
+  const checkAndShowToast = async () => {
+    if (localStorage.getItem('isFirstLogin') === 'true' && (!alarmActive || !gpsActive)) {
+      await showAlarmGPSErrorToast(); // 비동기 작업 예시
+      localStorage.setItem('isFirstLogin', 'false');
+    }
+  }
+  
   useEffect(() => {
     setMemberState(profile);
+    fetchMembers();
+    checkAndShowToast();
   }, []);
 
   return (

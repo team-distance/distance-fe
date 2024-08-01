@@ -7,10 +7,10 @@ import { CHARACTERS } from '../../constants/CHARACTERS';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { instance } from '../../api/instance';
-import toast from 'react-hot-toast';
 import AuthUnivState from './AuthUnivState';
 import MyProfileModal from '../modal/MyProfileModal';
 import useModal from '../../hooks/useModal';
+import {useToast} from '../../hooks/useToast';
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
@@ -26,6 +26,12 @@ const Header = () => {
         handleLogout={handleLogout}
       />
     ));
+
+    const {showToast: showMyDataErrorToast} = useToast(
+      () => <span>
+        프로필 정보를 가져오는데 실패했어요!
+      </span>, 'my-data-error', 'bottom-center'
+    )
 
   const handleLogout = async () => {
     const confirmLogout = window.confirm('로그아웃 하시겠습니까?');
@@ -45,6 +51,7 @@ const Header = () => {
   };
 
   const navigateToEditProfilePage = () => {
+    closeMyProfileModal();
     navigate('/mypage/profile', { state: myData });
   };
 
@@ -54,10 +61,7 @@ const Header = () => {
       const res = await instance.get('/member/profile');
       setMyData(res.data);
     } catch (error) {
-      toast.error('프로필 정보를 가져오는데 실패했어요!', {
-        id: 'my-data-error',
-        position: 'bottom-center',
-      });
+      showMyDataErrorToast();
     }
   };
 

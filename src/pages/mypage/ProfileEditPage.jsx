@@ -6,7 +6,6 @@ import HeaderPrev from '../../components/common/HeaderPrev';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import { CHARACTERS } from '../../constants/CHARACTERS';
-import { Toaster } from 'react-hot-toast';
 import useModal from '../../hooks/useModal';
 import CharacterModal from '../../components/modal/CharacterModal';
 import AttractivenessModal from '../../components/modal/AttractivenessModal';
@@ -111,14 +110,6 @@ const ProfileEditPage = () => {
   }, []);
   return (
     <Wrapper>
-      <Toaster
-        position="bottom-center"
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-      />
       <WrapContent>
         <div>
           <HeaderPrev title="프로필 수정하기" navigateTo={-1} />

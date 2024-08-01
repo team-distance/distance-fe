@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import TabBar from '../components/common/TabBar';
 import styled from 'styled-components';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { onMessage } from 'firebase/messaging';
 import { messaging } from '../firebaseConfig';
 import PWAInstallPrompt from '../components/common/PWAInstallPrompt';
@@ -20,7 +20,7 @@ const NavLayout = () => {
       navigate('/kakaotalk-fallback');
     }
   }, []);
-
+  
   useEffect(() => {
     if (messaging) {
       onMessage(messaging, (payload) => {
@@ -77,7 +77,7 @@ const NavLayout = () => {
         <Outlet />
       </Padding>
       <TabBar />
-      <Toaster
+      {/* <Toaster
         toastOptions={{
           style: {
             fontSize: '14px',
@@ -86,7 +86,7 @@ const NavLayout = () => {
         containerStyle={{
           bottom: isIphone ? '116px' : '96px',
         }}
-      />
+      /> */}
     </>
   );
 };

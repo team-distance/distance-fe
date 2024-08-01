@@ -5,8 +5,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { isLoggedInState, login } from '../../store/auth';
 import { useSetRecoilState } from 'recoil';
 import { onGetToken } from '../../firebaseConfig';
-import toast, { Toaster } from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
+import {useToast} from '../../hooks/useToast';
 
 const DonePage = () => {
   const [loading, setLoading] = useState(false);
@@ -15,6 +15,12 @@ const DonePage = () => {
   const telNum = location.state.telNum;
   const password = location.state.password;
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
+
+  //토스트 메세지
+  const {showToast: showLoginErrorToast} = useToast(
+    () => <span>홈화면으로 이동해서 다시 로그인해주세요!</span>, 'login-error'
+  )
+  
 
   useEffect(() => {
     const instantLogin = async () => {
@@ -45,7 +51,7 @@ const DonePage = () => {
         setIsLoggedIn(true);
       } catch (err) {
         console.log(err);
-        toast.error('홈화면으로 이동해서 다시 로그인해주세요!');
+        showLoginErrorToast();
       } finally {
         setLoading(false);
       }
@@ -56,14 +62,6 @@ const DonePage = () => {
 
   return (
     <Background>
-      <Toaster
-        position="bottom-center"
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-      />
       <WrapContent>
         <WrapMessage>
           <div style={{ fontSize: '60px' }}>🎊</div>
