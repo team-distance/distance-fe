@@ -10,12 +10,15 @@ import ReloadButton from '../../components/home/ReloadButton';
 import ProfileModal from '../../components/modal/ProfileModal';
 import useModal from '../../hooks/useModal';
 import { useToast } from '../../hooks/useToast';
+import { useCheckAlarmActive } from '../../hooks/useCheckAlarmActive';
+import { useCheckGpsActive } from '../../hooks/useCheckGpsActive';
 
 const HomeIndexPage = () => {
   const navigate = useNavigate();
 
-  // const alarmGps = useRecoilValue(alarmGpsState);
-  // const gpsUpdate = useRecoilValue(gpsUpdateState);
+  //알림, GPS 설정 관리
+  const alarmActive = useCheckAlarmActive();
+  const gpsActive = useCheckGpsActive();
 
   const [selectedProfile, setSelectedProfile] = useState();
   const [memberState, setMemberState] = useState();
@@ -222,14 +225,17 @@ const HomeIndexPage = () => {
     },
   ];
 
+  const checkAndShowToast = async () => {
+    if (localStorage.getItem('isFirstLogin') === 'true' && (!alarmActive || !gpsActive)) {
+      await showAlarmGPSErrorToast(); // 비동기 작업 예시
+      localStorage.setItem('isFirstLogin', 'false');
+    }
+  }
+  
   useEffect(() => {
     setMemberState(profile);
     fetchMembers();
-  }, []);
-
-  useEffect(() => {
-    // if (alarmGps) showAlarmGPSErrorToast();
-    // else if (gpsUpdate) showGPSUpdateErrorToast();
+    checkAndShowToast();
   }, []);
 
   return (

@@ -14,6 +14,7 @@ const MyIndexPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
   const myData = useRecoilValue(myDataState);
 
+  //알림, GPS 설정 관리
   const alarmActive = useCheckAlarmActive();
   const gpsActive = useCheckGpsActive();
 

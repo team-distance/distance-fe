@@ -42,15 +42,6 @@ function App() {
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const currentLocation = useGPS(isLoggedIn);
 
-  // 토스트 메세지 -> 홈
-  // const { showToast: showAlarmGPSErrorToast } = useToast(
-  //   () => <>
-  //     <span style={{ marginRight: '8px' }}>알림과 위치 설정이 꺼져있어요!</span>
-  //     <Link to="/mypage" style={{ color: '#0096FF' }}>
-  //       해결하기
-  //     </Link>
-  //   </>, 'alarm-gps-disabled'
-  // )
   const { showToast: showGPSUpdateErrorToast } = useToast(
     () => <span>위치 정보를 업데이트하는데 실패했어요!</span>, 'gps-update-error'
   )

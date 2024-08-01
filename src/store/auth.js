@@ -17,6 +17,7 @@ export const login = async (value) => {
 
   const { accessToken, refreshToken } = response.data;
 
+  localStorage.setItem('isFirstLogin', 'true');
   localStorage.setItem('accessToken', accessToken);
   localStorage.setItem('refreshToken', refreshToken);
 };
