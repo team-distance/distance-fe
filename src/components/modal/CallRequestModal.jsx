@@ -34,12 +34,20 @@ const CallRequestModal = ({ closeModal, onClick }) => {
 export default CallRequestModal;
 
 const Modal = styled.div`
+  position: fixed;
   width: 60%;
   display: grid;
   gap: 1rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   padding: 32px;
+  padding-top: 56px;
   text-align: center;
   line-height: normal;
+  background-color: white;
+  border-radius: 20px;
+  z-index: 100;
 
   strong {
     font-weight: 600;

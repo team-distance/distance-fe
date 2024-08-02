@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import useModal from '../../hooks/useModal';
 import TermsModal from '../../components/modal/TermsModal';
 import PrivacyModal from '../../components/modal/PrivacyModal';
-import {useToast, usePromiseToast} from '../../hooks/useToast';
+import { useToast, usePromiseToast } from '../../hooks/useToast';
 
 const UserRegisterPage = () => {
   const navigate = useNavigate();
@@ -25,6 +25,7 @@ const UserRegisterPage = () => {
         closeModal={closeTermsModal}
         onClick={() => {
           setRegisterData({ ...registerData, agreeTerms: true });
+          setPasswordValue('agreeTerms', true);
         }}
       />
     )
@@ -36,15 +37,17 @@ const UserRegisterPage = () => {
         closeModal={closePrivacyModal}
         onClick={() => {
           setRegisterData({ ...registerData, agreePrivacy: true });
+          setPasswordValue('agreePrivacy', true);
         }}
       />
     ));
 
   //토스트 메세지
-  const {showToast: showVerifyNumErrorToast} = useToast(
-    () => <span>인증번호가 틀렸습니다.</span>, 'verifynum-error'
-  )
-  const {showPromiseToast: showSendMessageToast} = usePromiseToast();
+  const { showToast: showVerifyNumErrorToast } = useToast(
+    () => <span>인증번호가 틀렸습니다.</span>,
+    'verifynum-error'
+  );
+  const { showPromiseToast: showSendMessageToast } = usePromiseToast();
 
   const {
     register: registerTelNum,
@@ -68,6 +71,7 @@ const UserRegisterPage = () => {
     register: registerPassword,
     handleSubmit: submitPassword,
     formState: { isValid: passwordValid, errors: verifyPassword },
+    setValue: setPasswordValue,
     watch,
   } = useForm({
     mode: 'onChange',
@@ -80,13 +84,13 @@ const UserRegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmitTelNum = async (data) => {
-
     const response = instance.post('/member/send/sms', {
       telNum: data.telNum,
       type: 'SIGNUP',
     });
 
-    showSendMessageToast(response,
+    showSendMessageToast(
+      response,
       () => {
         setVerifyButtonLabel('재전송');
         setErrorTelNum('telNum');
@@ -110,7 +114,6 @@ const UserRegisterPage = () => {
         }
       }
     );
-    
   };
 
   const handleSubmitVerifyNum = async (data) => {

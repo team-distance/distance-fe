@@ -13,7 +13,7 @@ import useGroupedMessages from '../../hooks/useGroupedMessages';
 import { getByteLength } from '../../utils/getByteLength';
 import useDetectClose from '../../hooks/useDetectClose';
 import useModal from '../../hooks/useModal';
-import {useToast} from '../../hooks/useToast';
+import { useToast } from '../../hooks/useToast';
 
 import Messages from '../../components/chat/Messages';
 import MessageInput from '../../components/chat/MessageInput';
@@ -22,7 +22,6 @@ import ReportModal from '../../components/modal/ReportModal';
 import OpponentProfileModal from '../../components/modal/OpponentProfileModal';
 import CallModal from '../../components/modal/CallModal';
 import CallRequestModal from '../../components/modal/CallRequestModal';
-
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
@@ -67,34 +66,27 @@ const ChatPage = () => {
       />
     ));
 
-  
   // 토스트 에러메세지
-  const {showToast: showBadWordToast} = useToast(
-    () => <span>
-      앗! 부적절한 단어가 포함되어 있어요.
-    </span>, 'bad-word'
-  )
-  const {showToast: showWaitToast} = useToast(
-    () => <span>
-      잠시 후 다시 시도해주세요!
-    </span>, 'wait'
-  )
-  const {showToast: showTelNumErrorToast} = useToast(
-    () => <span>
-      상대방의 전화번호를 가져오는데 실패했어요!
-    </span>, 'telnum-error'
-  )
-  const {showToast: showRoomInfoErrorToast} = useToast(
-    () => <span>
-      방 정보를 가져오는데 실패했어요!
-    </span>, 'telnum-error'
-  )
-  const {showToast: showTooMuchMessageToast} = useToast(
-    () => <span>
-      내용이 너무 많아요!
-    </span>, 'message-length-error'
-  )
-
+  const { showToast: showBadWordToast } = useToast(
+    () => <span>앗! 부적절한 단어가 포함되어 있어요.</span>,
+    'bad-word'
+  );
+  const { showToast: showWaitToast } = useToast(
+    () => <span>잠시 후 다시 시도해주세요!</span>,
+    'wait'
+  );
+  const { showToast: showTelNumErrorToast } = useToast(
+    () => <span>상대방의 전화번호를 가져오는데 실패했어요!</span>,
+    'telnum-error'
+  );
+  const { showToast: showRoomInfoErrorToast } = useToast(
+    () => <span>방 정보를 가져오는데 실패했어요!</span>,
+    'telnum-error'
+  );
+  const { showToast: showTooMuchMessageToast } = useToast(
+    () => <span>내용이 너무 많아요!</span>,
+    'message-length-error'
+  );
 
   const param = useParams();
 
@@ -279,16 +271,18 @@ const ChatPage = () => {
     }
   };
 
-  // 전화 버튼 클릭 시
-  const handleClickCallButton = async () => {
+  const checkBothAgreed = async () => {
     try {
       const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
       setBothAgreed(response.data);
-
-      bothAgreed ? openCallModal() : openCallRequestModal();
     } catch (error) {
       showRoomInfoErrorToast();
     }
+  };
+
+  // 전화 버튼 클릭 시
+  const handleClickCallButton = () => {
+    bothAgreed ? openCallModal() : openCallRequestModal();
   };
 
   // 서버에서 모든 메시지 불러오기
@@ -368,6 +362,7 @@ const ChatPage = () => {
   useEffect(() => {
     const initializeChat = async () => {
       await fetchMemberIds();
+      await checkBothAgreed();
     };
 
     initializeChat();

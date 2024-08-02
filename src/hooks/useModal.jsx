@@ -19,11 +19,11 @@ const useModal = (modal, options = {}) => {
     if (closeOnClickBackdrop) closeModal();
   };
 
-  const openModal = () => {
+  const openModal = (data) => {
     setActiveModal(
-      <> 
+      <>
         <Backdrop onClick={handleBackdropClick} />
-        {modal()}
+        {modal(data)}
       </>
     );
     document.body.style.overflow = 'hidden';
