@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
 import { useRecoilState } from 'recoil';
@@ -86,7 +86,6 @@ const UserRegisterPage = () => {
       type: 'SIGNUP',
     });
 
-    //테스트 필요 ---------------------------------------------
     showSendMessageToast(response,
       () => {
         setVerifyButtonLabel('재전송');
@@ -111,34 +110,6 @@ const UserRegisterPage = () => {
         }
       }
     );
-
-    // toast.promise(response, {
-    //   loading: '전송 중...',
-    //   success: () => {
-    //     setVerifyButtonLabel('재전송');
-    //     setErrorTelNum('telNum');
-    //     setShowVerifyNum(true);
-
-    //     setRegisterData((prevData) => ({
-    //       ...prevData,
-    //       telNum: data.telNum,
-    //     }));
-
-    //     return '인증번호가 전송되었습니다.';
-    //   },
-    //   error: (error) => {
-    //     console.log(error.response.data);
-    //     const ERROR_CODE = error?.response?.data?.code;
-    //     if (ERROR_CODE === 'EXIST_TEL_NUM') {
-    //       return '이미 등록된 전화번호입니다. 다른 번호를 입력해주세요.';
-    //     } else if (ERROR_CODE === 'TOO_MANY_REQUEST') {
-    //       return '일일 최대 요청 수를 넘어갔습니다!';
-    //     } else {
-    //       return '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
-    //     }
-    //   },
-    // });
-    //-------------------------------------------------------
     
   };
 
