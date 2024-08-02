@@ -3,11 +3,10 @@ import styled from 'styled-components';
 import Button from '../../components/common/Button';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isLoggedInState, login } from '../../store/auth';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { onGetToken } from '../../firebaseConfig';
 import { ClipLoader } from 'react-spinners';
 import {useToast} from '../../hooks/useToast';
-import { registerDataState } from '../../store/registerDataState';
 import { useCheckAlarmActive } from '../../hooks/useCheckAlarmActive';
 import { useCheckGpsActive } from '../../hooks/useCheckGpsActive';
 
@@ -18,7 +17,6 @@ const DonePage = () => {
   const password = location.state?.password;
 
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
-  const registerData = useRecoilValue(registerDataState);
 
   const [loading, setLoading] = useState(false);
 
