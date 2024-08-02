@@ -20,13 +20,25 @@ export const useToast = (
     }, [pathname])
 
     const showToast = () => {
-        toast[type](
-            toastContent(),
-            {
-                id: id,
-                position: position
-            }
-        )
+
+        if(type === 'none') {
+            toast(
+                toastContent(),
+                {
+                    icon: null,
+                    id: id,
+                    position: position
+                }
+            )
+        } else {
+            toast[type](
+                toastContent(),
+                {
+                    id: id,
+                    position: position
+                }
+            )
+        }
     };
 
     const dismissToast = () => {

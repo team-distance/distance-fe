@@ -60,17 +60,22 @@ const HomeIndexPage = () => {
 
   const { showToast: showAlarmGPSErrorToast } = useToast(
     () => <>
-      <span style={{ marginRight: '8px' }}>알림과 위치 설정이 꺼져있어요!</span>
-      <Link to="/mypage" style={{ color: '#0096FF' }}>
-        해결하기
-      </Link>
-    </>, 'alarm-gps-disabled'
+      <span style={{ textAlign: 'center' }}>알림과 위치 설정이 꺼져있어요! 
+        <br/>
+        <Link to="/mypage" style={{ color: '#0096FF' }}>
+          해결하기
+        </Link>
+      </span>
+    </>, 'alarm-gps-disabled', 'bottom-center', 'none'
   )
 
   const fetchMembers = async () => {
     try {
       setLoading(true);
-      const res = await instance.get('/gps/matching');
+      const res = await instance.post('/gps/matching', {
+        isPermitOtherSchool: true,
+        searchRange: 1000
+      });
       setMemberState(res.data.matchedUsers);
     } catch (error) {
       console.log(error);
@@ -228,7 +233,7 @@ const HomeIndexPage = () => {
   const checkAndShowToast = async () => {
     if (localStorage.getItem('isFirstLogin') === 'true' && (!alarmActive || !gpsActive)) {
       await showAlarmGPSErrorToast(); // 비동기 작업 예시
-      localStorage.setItem('isFirstLogin', 'false');
+      // localStorage.setItem('isFirstLogin', 'false');
     }
   }
   
