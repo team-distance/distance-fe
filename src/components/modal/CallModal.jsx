@@ -30,10 +30,18 @@ const CallModal = ({ closeModal, onClick }) => {
 export default CallModal;
 
 const Modal = styled.div`
-  width: 60%;
+  position: fixed;
   display: grid;
+  width: 60%;
   gap: 1rem;
   padding: 32px;
+  padding-top: 56px;
+  top: 50%;
+  left: 50%;
+  background-color: white;
+  border-radius: 20px;
+  z-index: 100;
+  transform: translate(-50%, -50%);
   text-align: center;
   line-height: normal;
 
