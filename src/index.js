@@ -9,6 +9,7 @@ import { AwsRumProvider } from 'aws-rum-react';
 import ReactGA from 'react-ga4';
 import GlobalModalContainer from './providers/GlobalModalContainer';
 import GlobalToastContainer from './providers/GlobalToastContainer';
+import { NavermapsProvider } from 'react-naver-maps';
 
 const gaTrackingId = process.env.REACT_APP_GA_TRACKING_ID;
 
@@ -30,11 +31,13 @@ const app = (
       version="1.0.0"
     >
       <RecoilRoot>
-        <BrowserRouter>
-          <App />
-          <GlobalModalContainer />
-          <GlobalToastContainer />
-        </BrowserRouter>
+        <NavermapsProvider ncpClientId={process.env.REACT_APP_NCP_CLIENT_ID}>
+          <BrowserRouter>
+            <App />
+            <GlobalModalContainer />
+            <GlobalToastContainer />
+          </BrowserRouter>
+        </NavermapsProvider>
       </RecoilRoot>
     </AwsRumProvider>
   </React.StrictMode>
