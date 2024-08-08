@@ -66,6 +66,7 @@ const MessagesWrapper = styled.div`
   overflow: auto;
   flex: 1;
   min-height: 0;
+  margin-bottom: 6rem;
 `;
 
 const Announcement = styled.div`

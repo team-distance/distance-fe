@@ -1,5 +1,7 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components';
+import { MenuToggle } from './MenuToggle';
+import { Menu, useMenuAnimation } from './Menu';
 
 const MessageInput = ({
   value,
@@ -9,45 +11,58 @@ const MessageInput = ({
   isOpponentOut,
 }) => {
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const scope = useMenuAnimation(isMenuOpen);
   const containerRef = useRef(null);
 
   const handleFocus = () => {
-    if(containerRef.current) {
+    if (containerRef.current) {
       containerRef.current.classList.add('focused');
     }
   }
 
   const handleBlur = () => {
-    if(containerRef.current) {
+    if (containerRef.current) {
       containerRef.current.classList.remove('focused');
     }
   }
 
+  const onClickPlusButton = () => {
+    setIsMenuOpen(prev => !prev);
+    // buttonClickHandler() //신고하기 버튼 이벤트
+  }
+
   return (
-    <MeassageInputContainer ref={containerRef}>
-      <WrapButton onClick={buttonClickHandler}>
-        <img src={'/assets/report-button.svg'} alt="신고하기" />
-      </WrapButton>
-      <WrapInputForm onSubmit={submitHandler}>
-        {isOpponentOut ? (
-          <Input
-            value={value}
-            onChange={changeHandler}
-            placeholder="상대방이 나갔습니다."
-            disabled
-          />
-        ) : (
-          <Input value={value} onChange={changeHandler} onFocus={handleFocus} onBlur={handleBlur} />
-        )}
-        <WrapButton type="submit" disabled={isOpponentOut}>
-          <img src={'/assets/send-button.png'} alt="보내기" />
-        </WrapButton>
-      </WrapInputForm>
+    <MeassageInputContainer ref={scope}>
+      <Menu isOpen={isMenuOpen}/>
+      <InputContainer ref={containerRef}>
+        <MenuToggle toggle={onClickPlusButton} isOpen={isMenuOpen} />
+        <WrapInputForm onSubmit={submitHandler}>
+          {isOpponentOut ? (
+            <Input
+              value={value}
+              onChange={changeHandler}
+              placeholder="상대방이 나갔습니다."
+              disabled
+            />
+          ) : (
+            <Input value={value} onChange={changeHandler} onFocus={handleFocus} onBlur={handleBlur} />
+          )}
+          <WrapButton type="submit" disabled={isOpponentOut}>
+            <img src={'/assets/send-button.png'} alt="보내기" />
+          </WrapButton>
+        </WrapInputForm>
+      </InputContainer>
     </MeassageInputContainer>
+
   );
 };
 
 const MeassageInputContainer = styled.div`
+
+`;
+
+const InputContainer = styled.div`
   display: flex;
   gap: 0.8rem;
   align-items: center;

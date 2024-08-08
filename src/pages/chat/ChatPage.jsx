@@ -535,13 +535,13 @@ const ChatPage = () => {
                 </div>
               )}
             </CallButton>
-            <LeaveButton onClick={handleLeaveRoom}>
+            {/* <LeaveButton onClick={handleLeaveRoom}>
               <img
                 src="/assets/leave-button.svg"
                 alt="나가기 버튼"
                 width={21}
               />
-            </LeaveButton>
+            </LeaveButton> */}
           </div>
         </TopBar>
 
@@ -551,23 +551,24 @@ const ChatPage = () => {
           </LoaderContainer>
         ) : (
           <>
-            <Messages
-              groupedMessages={groupedMessages}
-              myId={myMemberId}
-              responseCall={responseCall}
-              openProfileModal={openOpponentProfileModal}
-              opponentMemberCharacter={
-                opponentProfile && opponentProfile.memberCharacter
-              }
-            />
-
-            <MessageInput
-              value={draftMessage}
-              buttonClickHandler={openReportModal}
-              changeHandler={handleChangeMessage}
-              submitHandler={sendMessage}
-              isOpponentOut={isOpponentOut}
-            />
+              <Messages
+                groupedMessages={groupedMessages}
+                myId={myMemberId}
+                responseCall={responseCall}
+                openProfileModal={openOpponentProfileModal}
+                opponentMemberCharacter={
+                  opponentProfile && opponentProfile.memberCharacter
+                }
+              />
+            <MessageInputWrapper>
+              <MessageInput
+                value={draftMessage}
+                buttonClickHandler={openReportModal}
+                changeHandler={handleChangeMessage}
+                submitHandler={sendMessage}
+                isOpponentOut={isOpponentOut}
+              />
+            </MessageInputWrapper>
           </>
         )}
       </Container>
@@ -631,7 +632,7 @@ const TopBar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 1;
+  z-index: 11;
 `;
 
 const LottieContainer = styled.div`
@@ -697,5 +698,13 @@ const LoaderContainer = styled.div`
   align-items: center;
   z-index: 999;
 `;
+
+const MessageInputWrapper = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 10;
+`;
+
 
 export default ChatPage;
