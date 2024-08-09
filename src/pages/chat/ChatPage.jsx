@@ -665,8 +665,7 @@ const TooltipMessage = styled.div`
   font-weight: 700;
   font-size: 10px;
   top: calc(100% + 14px);
-  left: 50%;
-  transform: translateX(-50%);
+  right: -10px;
   text-align: center;
   padding: 10px;
   background-color: #333333;
@@ -678,7 +677,7 @@ const TooltipMessage = styled.div`
 const TooltipTail = styled.div`
   position: absolute;
   top: -8px;
-  left: 50%;
+  right: 0;
   transform: translateX(-50%);
   width: 0;
   height: 0;

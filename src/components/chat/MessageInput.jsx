@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { MenuToggle } from './MenuToggle';
-import { Menu, useMenuAnimation } from './Menu';
+import Menu from './Menu';
+import useMenuAnimation from '../../hooks/useMenuAnimation';
 
 const MessageInput = ({
   value,
