@@ -350,7 +350,7 @@ const ChatPage = () => {
     }
   };
 
-  // 상대방 신고하기
+  // // 상대방 신고하기
   const handleReportUser = async (reportMessage) => {
     try {
       await instance.post('/report', {

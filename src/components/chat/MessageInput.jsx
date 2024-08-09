@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { MenuToggle } from './MenuToggle';
 import Menu from './Menu';
 import useMenuAnimation from '../../hooks/useMenuAnimation';
+import { instance } from '../../api/instance';
 
 const MessageInput = ({
   value,
@@ -33,9 +34,14 @@ const MessageInput = ({
     // buttonClickHandler() //신고하기 버튼 이벤트
   }
 
+  const clickReportButton = () => {
+    buttonClickHandler();
+    console.log("report");
+  }
+
   return (
     <MeassageInputContainer ref={scope}>
-      <Menu isOpen={isMenuOpen}/>
+      <Menu isOpen={isMenuOpen} handleReport={clickReportButton}/>
       <InputContainer ref={containerRef}>
         <MenuToggle toggle={onClickPlusButton} isOpen={isMenuOpen} />
         <WrapInputForm onSubmit={submitHandler}>
@@ -60,7 +66,7 @@ const MessageInput = ({
 };
 
 const MeassageInputContainer = styled.div`
-
+  display:relative;
 `;
 
 const InputContainer = styled.div`

@@ -3,16 +3,16 @@ import styled from "styled-components";
 const Menu = ({ isOpen, handleSendImage, handleReport, handleLeave }) => {
     return (
         <>
+            <NavContainer className="menu" $isOpen={isOpen}>
+                <WrapMenu>
+                    <li onClick={() => {console.log("사진전송")}}><img src="/assets/chat/picture-icon.svg" alt="사진 전송" />사진 전송</li>
+                    <li onClick={() => {console.log("신고하기")}}><img src="/assets/chat/report-icon.svg" alt="신고하기" />신고하기</li>
+                    <li onClick={() => {console.log("나가기")}}><img src="/assets/chat/leave-icon.svg" alt="나가기" />나가기</li>
+                </WrapMenu>
+            </NavContainer>
             {isOpen &&
                 <BlurBackground className="background" />
             }
-            <NavContainer className="menu">
-                <WrapMenu>
-                    <li onClick={handleSendImage}><img src="/assets/chat/picture-icon.svg" alt="사진 전송" />사진 전송</li>
-                    <li onClick={handleReport}><img src="/assets/chat/report-icon.svg" alt="신고하기" />신고하기</li>
-                    <li onClick={handleLeave}><img src="/assets/chat/leave-icon.svg" alt="나가기" />나가기</li>
-                </WrapMenu>
-            </NavContainer>
         </>
     );
 }
@@ -36,7 +36,7 @@ const BlurBackground = styled.div`
 
 const NavContainer = styled.nav`
     position: relative;
-    z-index: -1;
+    z-index:  ${({$isOpen}) => $isOpen? "1" : '-1'}
 `;
 
 const WrapMenu = styled.ul`

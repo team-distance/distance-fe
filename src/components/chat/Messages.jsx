@@ -67,6 +67,7 @@ const MessagesWrapper = styled.div`
   flex: 1;
   min-height: 0;
   margin-bottom: 6rem;
+  z-index: 0;
 `;
 
 const Announcement = styled.div`
