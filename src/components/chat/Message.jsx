@@ -146,18 +146,25 @@ const Message = memo(
       case 'USER':
         return sentByMe ? (
           <MessageByMe>
-            <div className="message-container">
-              <div className="wrapper">
-                <div className="read">{read !== 0 ? read : ''}</div>
-                <div className="time">{parseTime(time)}</div>
-              </div>
-              <div className="tail"></div>
-              {content.includes('s3.ap-northeast') ? (
+            {content.includes('s3.ap-northeast') ? (
+              <>
+                <div className="wrapper">
+                  <div className="read">{read !== 0 ? read : ''}</div>
+                  <div className="time">{parseTime(time)}</div>
+                </div>
                 <img src={content} className="message" />
-              ) : (
+              </>
+            ) : (
+              <div className="message-container">
+                <div className="wrapper">
+                  <div className="read">{read !== 0 ? read : ''}</div>
+                  <div className="time">{parseTime(time)}</div>
+                </div>
+                <div className="tail"></div>
+
                 <div className="message">{content}</div>
-              )}
-            </div>
+              </div>
+            )}
           </MessageByMe>
         ) : (
           <MessageByOther>
@@ -311,6 +318,13 @@ const MessageByMe = styled.div`
   margin: 16px;
   display: flex;
   justify-content: flex-end;
+
+  > img {
+    width: 9rem;
+    height: 13rem;
+    object-fit: cover;
+    border-radius: 0.75rem;
+  }
 
   > .message-container {
     display: flex;
