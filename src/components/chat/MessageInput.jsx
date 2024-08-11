@@ -1,18 +1,21 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { MenuToggle } from './MenuToggle';
 import Menu from './Menu';
 import useMenuAnimation from '../../hooks/useMenuAnimation';
-import { instance } from '../../api/instance';
 
 const MessageInput = ({
   value,
+  uploadedImage,
+  setUploadedImage,
+  setFile,
   buttonClickHandler,
+  leaveButtonClickHandler,
+  reportButtonClickHandler,
   changeHandler,
   submitHandler,
   isOpponentOut,
 }) => {
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const scope = useMenuAnimation(isMenuOpen);
   const containerRef = useRef(null);
@@ -21,30 +24,51 @@ const MessageInput = ({
     if (containerRef.current) {
       containerRef.current.classList.add('focused');
     }
-  }
+  };
 
   const handleBlur = () => {
     if (containerRef.current) {
       containerRef.current.classList.remove('focused');
     }
-  }
+  };
 
   const onClickPlusButton = () => {
-    setIsMenuOpen(prev => !prev);
+    setIsMenuOpen((prev) => !prev);
     // buttonClickHandler() //신고하기 버튼 이벤트
-  }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    submitHandler();
+    // setUploadedImage(null);
+  };
+
+  const deleteImage = () => {
+    setUploadedImage(null);
+    setFile(null);
+  };
 
   const clickReportButton = () => {
     buttonClickHandler();
-    console.log("report");
-  }
+    console.log('report');
+  };
+
+  useEffect(() => {
+    if (uploadedImage) setIsMenuOpen(false);
+  }, [uploadedImage]);
 
   return (
     <MeassageInputContainer ref={scope}>
-      <Menu isOpen={isMenuOpen} handleReport={clickReportButton}/>
+      <Menu
+        isOpen={isMenuOpen}
+        handleLeave={leaveButtonClickHandler}
+        handleReport={reportButtonClickHandler}
+        setImageFile={setFile}
+        setUploadedImage={setUploadedImage}
+      />
       <InputContainer ref={containerRef}>
         <MenuToggle toggle={onClickPlusButton} isOpen={isMenuOpen} />
-        <WrapInputForm onSubmit={submitHandler}>
+        <WrapInputForm onSubmit={handleSubmit}>
           {isOpponentOut ? (
             <Input
               value={value}
@@ -52,8 +76,17 @@ const MessageInput = ({
               placeholder="상대방이 나갔습니다."
               disabled
             />
+          ) : uploadedImage ? (
+            <WrapImage>
+              <img src={uploadedImage} alt="image" onClick={deleteImage} />
+            </WrapImage>
           ) : (
-            <Input value={value} onChange={changeHandler} onFocus={handleFocus} onBlur={handleBlur} />
+            <Input
+              value={value}
+              onChange={changeHandler}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+            />
           )}
           <WrapButton type="submit" disabled={isOpponentOut}>
             <img src={'/assets/send-button.png'} alt="보내기" />
@@ -61,12 +94,11 @@ const MessageInput = ({
         </WrapInputForm>
       </InputContainer>
     </MeassageInputContainer>
-
   );
 };
 
 const MeassageInputContainer = styled.div`
-  display:relative;
+  display: relative;
 `;
 
 const InputContainer = styled.div`
@@ -81,6 +113,17 @@ const InputContainer = styled.div`
     &.focused {
       padding: 0.5rem 1rem 1rem 1rem;
     }
+  }
+`;
+
+const WrapImage = styled.div`
+  width: 100%;
+
+  img {
+    width: 10rem;
+    height: 5rem;
+    object-fit: cover;
+    object-position: top;
   }
 `;
 

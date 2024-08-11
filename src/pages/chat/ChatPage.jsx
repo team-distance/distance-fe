@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
 import { ClipLoader } from 'react-spinners';
-// import toast, { Toaster } from 'react-hot-toast';
 
 import { instance } from '../../api/instance';
 import { checkCurse } from '../../utils/checkCurse';
@@ -13,7 +12,7 @@ import useGroupedMessages from '../../hooks/useGroupedMessages';
 import { getByteLength } from '../../utils/getByteLength';
 import useDetectClose from '../../hooks/useDetectClose';
 import useModal from '../../hooks/useModal';
-import {useToast} from '../../hooks/useToast';
+import { useToast } from '../../hooks/useToast';
 
 import Messages from '../../components/chat/Messages';
 import MessageInput from '../../components/chat/MessageInput';
@@ -22,7 +21,6 @@ import ReportModal from '../../components/modal/ReportModal';
 import OpponentProfileModal from '../../components/modal/OpponentProfileModal';
 import CallModal from '../../components/modal/CallModal';
 import CallRequestModal from '../../components/modal/CallRequestModal';
-
 
 const ChatPage = () => {
   const [client, setClient] = useState(null);
@@ -36,6 +34,9 @@ const ChatPage = () => {
   const [opponentProfile, setOpponentProfile] = useState(null);
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [file, setFile] = useState(null);
 
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
@@ -67,34 +68,27 @@ const ChatPage = () => {
       />
     ));
 
-  
   // 토스트 에러메세지
-  const {showToast: showBadWordToast} = useToast(
-    () => <span>
-      앗! 부적절한 단어가 포함되어 있어요.
-    </span>, 'bad-word'
-  )
-  const {showToast: showWaitToast} = useToast(
-    () => <span>
-      잠시 후 다시 시도해주세요!
-    </span>, 'wait'
-  )
-  const {showToast: showTelNumErrorToast} = useToast(
-    () => <span>
-      상대방의 전화번호를 가져오는데 실패했어요!
-    </span>, 'telnum-error'
-  )
-  const {showToast: showRoomInfoErrorToast} = useToast(
-    () => <span>
-      방 정보를 가져오는데 실패했어요!
-    </span>, 'telnum-error'
-  )
-  const {showToast: showTooMuchMessageToast} = useToast(
-    () => <span>
-      내용이 너무 많아요!
-    </span>, 'message-length-error'
-  )
-
+  const { showToast: showBadWordToast } = useToast(
+    () => <span>앗! 부적절한 단어가 포함되어 있어요.</span>,
+    'bad-word'
+  );
+  const { showToast: showWaitToast } = useToast(
+    () => <span>잠시 후 다시 시도해주세요!</span>,
+    'wait'
+  );
+  const { showToast: showTelNumErrorToast } = useToast(
+    () => <span>상대방의 전화번호를 가져오는데 실패했어요!</span>,
+    'telnum-error'
+  );
+  const { showToast: showRoomInfoErrorToast } = useToast(
+    () => <span>방 정보를 가져오는데 실패했어요!</span>,
+    'telnum-error'
+  );
+  const { showToast: showTooMuchMessageToast } = useToast(
+    () => <span>내용이 너무 많아요!</span>,
+    'message-length-error'
+  );
 
   const param = useParams();
 
@@ -149,31 +143,59 @@ const ChatPage = () => {
   };
 
   // 메시지 전송
-  const sendMessage = (e) => {
-    e.preventDefault();
+  const sendMessage = async () => {
+    if (!draftMessage.trim() && !file) return;
 
-    if (!draftMessage.trim()) return;
+    //욕설 필터링
     const isIncludingBadWord = checkCurse(draftMessage);
-
     if (isIncludingBadWord) {
       showBadWordToast();
       setDraftMessage('');
       return;
     }
 
-    try {
-      client.publish({
-        destination: `/app/chat/${roomId}`,
-        body: JSON.stringify({
-          chatMessage: draftMessage,
-          senderId: opponentMemberId,
-          receiverId: myMemberId,
-          publishType: 'USER',
-        }),
-      });
-      setDraftMessage('');
-    } catch (error) {
-      showWaitToast();
+    //이미지 전송
+    if (file) {
+      //S3 url 받기
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await instance.post('/chatroom/image', formData);
+
+      //stomp 전송
+      try {
+        client.publish({
+          destination: `/app/chat/${roomId}`,
+          body: JSON.stringify({
+            chatMessage: response.data.imageUrl,
+            senderId: opponentMemberId,
+            receiverId: myMemberId,
+            publishType: 'USER',
+          }),
+        });
+
+        setDraftMessage('');
+        setFile(null);
+      } catch (error) {
+        showWaitToast();
+      }
+    } else {
+      //stomp 전송
+      try {
+        client.publish({
+          destination: `/app/chat/${roomId}`,
+          body: JSON.stringify({
+            chatMessage: draftMessage,
+            senderId: opponentMemberId,
+            receiverId: myMemberId,
+            publishType: 'USER',
+          }),
+        });
+
+        setDraftMessage('');
+        setFile(null);
+      } catch (error) {
+        showWaitToast();
+      }
     }
   };
 
@@ -459,17 +481,6 @@ const ChatPage = () => {
 
   return (
     <Wrapper>
-      {/* <Toaster
-        position="bottom-center"
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-        containerStyle={{
-          bottom: 104,
-        }}
-      /> */}
       {isShowLottie && (
         <LottieContainer>
           <div>
@@ -535,13 +546,6 @@ const ChatPage = () => {
                 </div>
               )}
             </CallButton>
-            {/* <LeaveButton onClick={handleLeaveRoom}>
-              <img
-                src="/assets/leave-button.svg"
-                alt="나가기 버튼"
-                width={21}
-              />
-            </LeaveButton> */}
           </div>
         </TopBar>
 
@@ -551,19 +555,23 @@ const ChatPage = () => {
           </LoaderContainer>
         ) : (
           <>
-              <Messages
-                groupedMessages={groupedMessages}
-                myId={myMemberId}
-                responseCall={responseCall}
-                openProfileModal={openOpponentProfileModal}
-                opponentMemberCharacter={
-                  opponentProfile && opponentProfile.memberCharacter
-                }
-              />
+            <Messages
+              groupedMessages={groupedMessages}
+              myId={myMemberId}
+              responseCall={responseCall}
+              openProfileModal={openOpponentProfileModal}
+              opponentMemberCharacter={
+                opponentProfile && opponentProfile.memberCharacter
+              }
+            />
             <MessageInputWrapper>
               <MessageInput
                 value={draftMessage}
-                buttonClickHandler={openReportModal}
+                uploadedImage={uploadedImage}
+                setUploadedImage={setUploadedImage}
+                setFile={setFile}
+                leaveButtonClickHandler={handleLeaveRoom}
+                reportButtonClickHandler={openReportModal}
                 changeHandler={handleChangeMessage}
                 submitHandler={sendMessage}
                 isOpponentOut={isOpponentOut}
@@ -704,6 +712,5 @@ const MessageInputWrapper = styled.div`
   width: 100%;
   z-index: 10;
 `;
-
 
 export default ChatPage;

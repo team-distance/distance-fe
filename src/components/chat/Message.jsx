@@ -152,7 +152,11 @@ const Message = memo(
                 <div className="time">{parseTime(time)}</div>
               </div>
               <div className="tail"></div>
-              <div className="message">{content}</div>
+              {content.includes('s3.ap-northeast') ? (
+                <img src={content} className="message" />
+              ) : (
+                <div className="message">{content}</div>
+              )}
             </div>
           </MessageByMe>
         ) : (
