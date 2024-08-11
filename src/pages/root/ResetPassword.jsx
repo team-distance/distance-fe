@@ -27,8 +27,8 @@ const ResetPassword = () => {
   const [verifyButtonLabel, setVerifyButtonLabel] = useState('인증번호 전송');
 
   //토스트 메세지
-  const {showPromiseToast: showSendMessageToast} = usePromiseToast();
-  const {showPromiseToast: showVerifyToast} = usePromiseToast();
+  const { showPromiseToast: showSendMessageToast } = usePromiseToast();
+  const { showPromiseToast: showVerifyToast } = usePromiseToast();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,29 +55,30 @@ const ResetPassword = () => {
     e.preventDefault();
     setFormFlags((prev) => ({ ...prev, telNumValid: false }));
 
-      const response = instance.post('/member/send/sms', {
-        telNum: formData.telNum,
-        type: 'FIND',
-      });
+    const response = instance.post('/member/send/sms', {
+      telNum: formData.telNum,
+      type: 'FIND',
+    });
 
-      //테스트 필요 ---------------------------------------------
-      showSendMessageToast(response,
-        () => {
-          setFormActive((prev) => ({ ...prev, isSendMessage: true }));
-          setVerifyButtonLabel('재전송');
+    //테스트 필요 ---------------------------------------------
+    showSendMessageToast(
+      response,
+      () => {
+        setFormActive((prev) => ({ ...prev, isSendMessage: true }));
+        setVerifyButtonLabel('재전송');
 
-          return '인증번호가 전송되었습니다.';
-        },
-        (error) => {
-          const ERROR_CODE = error?.response?.data?.code;
-          if (ERROR_CODE === 'NOT_EXIST_MEMBER') {
-            return '등록되지 않은 전화번호입니다.';
-          } else {
-            return '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
-          }
+        return '인증번호가 전송되었습니다.';
+      },
+      (error) => {
+        const ERROR_CODE = error?.response?.data?.code;
+        if (ERROR_CODE === 'NOT_EXIST_MEMBER') {
+          return '등록되지 않은 전화번호입니다.';
+        } else {
+          return '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
         }
-      )
-      // -------------------------------------------------------
+      }
+    );
+    // -------------------------------------------------------
   };
 
   const verifyTelNum = async (e) => {
@@ -88,7 +89,8 @@ const ResetPassword = () => {
       authenticateNum: formData.verifyNum,
     });
 
-    showVerifyToast(response, 
+    showVerifyToast(
+      response,
       () => {
         setFormActive((prev) => ({ ...prev, isSendVerifyNum: true }));
         setFormFlags((prev) => ({
@@ -96,14 +98,14 @@ const ResetPassword = () => {
           verifyNumValid: false,
           verifyTelNum: true,
         }));
-        return '인증되었습니다.'
+        return '인증되었습니다.';
       },
       () => {
         setFormActive((prev) => ({ ...prev, isSendVerifyNum: false }));
         setFormFlags((prev) => ({ ...prev, telNumValid: true }));
-        return '인증번호가 틀렸습니다.'
+        return '인증번호가 틀렸습니다.';
       }
-    )
+    );
     // -------------------------------------------------------
 
     // try {
