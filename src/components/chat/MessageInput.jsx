@@ -15,10 +15,13 @@ const MessageInput = ({
   changeHandler,
   submitHandler,
   isOpponentOut,
+  isMenuOpen,
+  setIsMenuOpen,
 }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const scope = useMenuAnimation(isMenuOpen);
   const containerRef = useRef(null);
+  const toggleRef = useRef(null);
+
+  const scope = useMenuAnimation(isMenuOpen, toggleRef);
 
   const handleFocus = () => {
     if (containerRef.current) {
@@ -40,7 +43,7 @@ const MessageInput = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     submitHandler();
-    // setUploadedImage(null);
+    setUploadedImage(null);
   };
 
   const deleteImage = () => {
@@ -61,13 +64,14 @@ const MessageInput = ({
     <MeassageInputContainer ref={scope}>
       <Menu
         isOpen={isMenuOpen}
+        setIsOpen={setIsMenuOpen}
         handleLeave={leaveButtonClickHandler}
         handleReport={reportButtonClickHandler}
         setImageFile={setFile}
         setUploadedImage={setUploadedImage}
       />
       <InputContainer ref={containerRef}>
-        <MenuToggle toggle={onClickPlusButton} isOpen={isMenuOpen} />
+        <MenuToggle toggle={onClickPlusButton} ref={toggleRef} isOpen={isMenuOpen} />
         <WrapInputForm onSubmit={handleSubmit}>
           {isOpponentOut ? (
             <Input

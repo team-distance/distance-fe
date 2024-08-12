@@ -146,25 +146,19 @@ const Message = memo(
       case 'USER':
         return sentByMe ? (
           <MessageByMe>
-            {content.includes('s3.ap-northeast') ? (
-              <>
-                <div className="wrapper">
-                  <div className="read">{read !== 0 ? read : ''}</div>
-                  <div className="time">{parseTime(time)}</div>
-                </div>
-                <img src={content} className="message" />
-              </>
-            ) : (
               <div className="message-container">
                 <div className="wrapper">
                   <div className="read">{read !== 0 ? read : ''}</div>
                   <div className="time">{parseTime(time)}</div>
                 </div>
-                <div className="tail"></div>
-
-                <div className="message">{content}</div>
-              </div>
-            )}
+                {content.includes('s3.ap-northeast') ?
+                  <img src={content} /> :
+                  <>
+                    <div className="tail"></div>
+                    <div className="message">{content}</div>
+                  </>
+                }
+            </div>
           </MessageByMe>
         ) : (
           <MessageByOther>
@@ -177,12 +171,17 @@ const Message = memo(
                 $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
               />
             </CharacterBackground>
-
             <div className="message-section">
               <div className="nickname">{nickname}</div>
               <div className="message-container">
                 <div className="tail"></div>
-                <div className="message">{content}</div>
+                {content.includes('s3.ap-northeast') ?
+                  <img src={content} /> :
+                  <>
+                    <div className="tail"></div>
+                    <div className="message">{content}</div>
+                  </>
+                }
                 <div className="wrapper">
                   <div className="read">{read !== 0 ? read : ''}</div>
                   <div className="time">{parseTime(time)}</div>
@@ -319,13 +318,6 @@ const MessageByMe = styled.div`
   display: flex;
   justify-content: flex-end;
 
-  > img {
-    width: 9rem;
-    height: 13rem;
-    object-fit: cover;
-    border-radius: 0.75rem;
-  }
-
   > .message-container {
     display: flex;
     position: relative;
@@ -379,6 +371,12 @@ const MessageByMe = styled.div`
         font-weight: 600;
       }
     }
+      > img {
+        width: 9rem;
+        height: 13rem;
+        object-fit: cover;
+        border-radius: 0.75rem;
+      }
   }
 `;
 

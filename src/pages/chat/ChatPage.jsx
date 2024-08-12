@@ -23,6 +23,8 @@ import CallModal from '../../components/modal/CallModal';
 import CallRequestModal from '../../components/modal/CallRequestModal';
 
 const ChatPage = () => {
+  const navigate = useNavigate();
+
   const [client, setClient] = useState(null);
   const [messages, setMessages] = useState([]);
   const [draftMessage, setDraftMessage] = useState('');
@@ -35,8 +37,11 @@ const ChatPage = () => {
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  //이미지 전송
   const [uploadedImage, setUploadedImage] = useState(null);
   const [file, setFile] = useState(null);
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
@@ -100,7 +105,6 @@ const ChatPage = () => {
 
   const viewportRef = useRef();
 
-  const navigate = useNavigate();
 
   const [myMemberId, setMyMemberId] = useState(0);
   const [opponentMemberId, setOpponentMemberId] = useState(0);
@@ -159,7 +163,7 @@ const ChatPage = () => {
       //S3 url 받기
       const formData = new FormData();
       formData.append('file', file);
-      const response = await instance.post('/chatroom/image', formData);
+      const response = await instance.post('/image', formData);
 
       //stomp 전송
       try {
@@ -563,6 +567,7 @@ const ChatPage = () => {
               opponentMemberCharacter={
                 opponentProfile && opponentProfile.memberCharacter
               }
+              isMenuOpen={isMenuOpen}
             />
             <MessageInputWrapper>
               <MessageInput
@@ -575,6 +580,8 @@ const ChatPage = () => {
                 changeHandler={handleChangeMessage}
                 submitHandler={sendMessage}
                 isOpponentOut={isOpponentOut}
+                isMenuOpen={isMenuOpen}
+                setIsMenuOpen={setIsMenuOpen}
               />
             </MessageInputWrapper>
           </>
