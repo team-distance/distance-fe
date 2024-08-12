@@ -9,7 +9,6 @@ const MessageInput = ({
   uploadedImage,
   setUploadedImage,
   setFile,
-  buttonClickHandler,
   leaveButtonClickHandler,
   reportButtonClickHandler,
   changeHandler,
@@ -19,9 +18,8 @@ const MessageInput = ({
   setIsMenuOpen,
 }) => {
   const containerRef = useRef(null);
-  const toggleRef = useRef(null);
 
-  const scope = useMenuAnimation(isMenuOpen, toggleRef);
+  const scope = useMenuAnimation(isMenuOpen);
 
   const handleFocus = () => {
     if (containerRef.current) {
@@ -51,11 +49,6 @@ const MessageInput = ({
     setFile(null);
   };
 
-  const clickReportButton = () => {
-    buttonClickHandler();
-    console.log('report');
-  };
-
   useEffect(() => {
     if (uploadedImage) setIsMenuOpen(false);
   }, [uploadedImage]);
@@ -71,7 +64,7 @@ const MessageInput = ({
         setUploadedImage={setUploadedImage}
       />
       <InputContainer ref={containerRef}>
-        <MenuToggle toggle={onClickPlusButton} ref={toggleRef} isOpen={isMenuOpen} />
+        <MenuToggle toggle={onClickPlusButton} isOpen={isMenuOpen} />
         <WrapInputForm onSubmit={handleSubmit}>
           {isOpponentOut ? (
             <Input

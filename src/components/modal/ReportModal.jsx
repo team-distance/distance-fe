@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '../register/TextInput';
 
-const ReportModal = ({ closeModal, onClick }) => {
+const ReportModal = ({ closeModal, onClick, setIsMenuOpen }) => {
   const [reportMessage, setReportMessage] = useState('');
 
   return (
@@ -19,11 +19,12 @@ const ReportModal = ({ closeModal, onClick }) => {
           onClick={() => {
             onClick(reportMessage);
             closeModal();
+            setIsMenuOpen(false);
           }}
         >
           신고하기
         </ReportButton>
-        <CancelButton onClick={closeModal}>취소하기</CancelButton>
+        <CancelButton onClick={()=> {closeModal(); setIsMenuOpen(false);}}>취소하기</CancelButton>
       </WrapButton>
     </Modal>
   );
@@ -33,6 +34,11 @@ export default ReportModal;
 
 const Modal = styled.div`
   position: fixed;
+  top: 43%;
+  left: 50%;
+  z-index: 999;
+  transform: translateX(-50%);
+  background-color: white;
   border-radius: 20px;
   box-shadow: 0px 4px 10px 10px #3333334d;
   display: grid;

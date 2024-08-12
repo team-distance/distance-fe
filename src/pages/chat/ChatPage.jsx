@@ -45,7 +45,7 @@ const ChatPage = () => {
 
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
-      <ReportModal closeModal={closeReportModal} onClick={handleReportUser} />
+      <ReportModal closeModal={closeReportModal} onClick={handleReportUser} setIsMenuOpen={setIsMenuOpen} />
     )
   );
 

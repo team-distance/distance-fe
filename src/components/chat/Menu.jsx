@@ -4,7 +4,6 @@ import styled from 'styled-components';
 const Menu = ({
     isOpen,
     setIsOpen,
-    handleSendImage,
     handleReport,
     handleLeave,
     setImageFile,
@@ -79,11 +78,7 @@ const Menu = ({
                         <img src="/assets/chat/picture-icon.svg" alt="사진 전송" />
                         사진 전송
                     </li>
-                    <li
-                        onClick={() => {
-                            console.log('신고하기');
-                        }}
-                    >
+                    <li onClick={handleReport}>
                         <img src="/assets/chat/report-icon.svg" alt="신고하기" />
                         신고하기
                     </li>
