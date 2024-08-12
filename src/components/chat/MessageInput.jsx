@@ -8,6 +8,7 @@ const MessageInput = ({
   value,
   uploadedImage,
   setUploadedImage,
+  file,
   setFile,
   leaveButtonClickHandler,
   reportButtonClickHandler,
@@ -60,7 +61,8 @@ const MessageInput = ({
         setIsOpen={setIsMenuOpen}
         handleLeave={leaveButtonClickHandler}
         handleReport={reportButtonClickHandler}
-        setImageFile={setFile}
+        file={file}
+        setFile={setFile}
         setUploadedImage={setUploadedImage}
       />
       <InputContainer ref={containerRef}>

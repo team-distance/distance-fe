@@ -24,7 +24,7 @@ const ReportModal = ({ closeModal, onClick, setIsMenuOpen }) => {
         >
           신고하기
         </ReportButton>
-        <CancelButton onClick={()=> {closeModal(); setIsMenuOpen(false);}}>취소하기</CancelButton>
+        <CancelButton onClick={closeModal}>취소하기</CancelButton>
       </WrapButton>
     </Modal>
   );

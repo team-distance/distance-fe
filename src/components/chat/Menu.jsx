@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 const Menu = ({
@@ -6,7 +6,8 @@ const Menu = ({
     setIsOpen,
     handleReport,
     handleLeave,
-    setImageFile,
+    file,
+    setFile,
     setUploadedImage,
 }) => {
     const fileInputRef = useRef();
@@ -17,15 +18,16 @@ const Menu = ({
     };
 
     const onChangeImage = (e) => {
-        const file = e.target.files[0];
+        console.log("onChange>>>>>>>" , e.target.value);
+        const inputFile = e.target.files[0];
 
-        if (file) {
-            if (!file.type.startsWith('image/')) {
+        if (inputFile) {
+            if (!inputFile.type.startsWith('image/')) {
                 alert('이미지 파일만 업로드 가능합니다.');
                 return;
             }
 
-            const imageUrl = URL.createObjectURL(file);
+            const imageUrl = URL.createObjectURL(inputFile);
             setUploadedImage(imageUrl);
 
             const reader = new FileReader();
@@ -47,7 +49,7 @@ const Menu = ({
                     canvas.toBlob(
                         function (blob) {
                             console.log('Resized image size:', blob.size);
-                            setImageFile(blob);
+                            setFile(blob);
                         },
                         'image/jpeg',
                         0.5
@@ -55,12 +57,13 @@ const Menu = ({
                 };
                 img.src = e.target.result; // 파일 리더 결과를 이미지 소스로 설정
             };
-            reader.readAsDataURL(file); // 파일을 Data URL로 읽기
-
-            console.log(e.target.files);
-            console.log(imageUrl);
+            reader.readAsDataURL(inputFile); // 파일을 Data URL로 읽기
         }
     };
+
+    useEffect(() => {
+        fileInputRef.current.value = "";
+    },[file])
 
     return (
         <>

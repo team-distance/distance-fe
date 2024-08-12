@@ -68,7 +68,7 @@ const MessagesWrapper = styled.div`
   flex: 1;
   min-height: 0;
   margin-bottom: 6rem;
-  z-index: ${({ $isOpen }) => ($isOpen ? '0' : '20')};
+  z-index: ${({ $isOpen }) => ($isOpen ? '0' : '10')};
 `;
 
 const Announcement = styled.div`
