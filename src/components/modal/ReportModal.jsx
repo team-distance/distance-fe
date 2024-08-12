@@ -34,17 +34,17 @@ export default ReportModal;
 
 const Modal = styled.div`
   position: fixed;
-  top: 43%;
+  display: grid;
+  gap: 1rem;
+  top: 50%;
   left: 50%;
-  z-index: 999;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
+  width: 250px;
   background-color: white;
   border-radius: 20px;
   box-shadow: 0px 4px 10px 10px #3333334d;
-  display: grid;
-  gap: 1rem;
-  width: 250px;
   padding: 1.25rem;
+  z-index: 100;
 `;
 
 const WrapButton = styled.div`

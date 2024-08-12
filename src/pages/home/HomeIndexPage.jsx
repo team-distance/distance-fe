@@ -20,68 +20,81 @@ const HomeIndexPage = () => {
   const alarmActive = useCheckAlarmActive();
   const gpsActive = useCheckGpsActive();
 
-  const [selectedProfile, setSelectedProfile] = useState();
+  const [searchRange, setSearchRange] = useState(1000);
+  const [isPermitOtherSchool, setIsPermitOtherSchool] = useState(false);
+
   const [memberState, setMemberState] = useState();
   const [loading, setLoading] = useState(false);
 
   const { openModal: openProfileModal, closeModal: closeProfileModal } =
-    useModal(() => (
+    useModal((profile) => (
       <ProfileModal
         closeModal={closeProfileModal}
         onClick={() => {
-          handleCreateChatRoom(selectedProfile.memberId);
+          handleCreateChatRoom(profile.memberId);
         }}
-        selectedProfile={selectedProfile}
+        selectedProfile={profile}
       />
     ));
 
-
   // 토스트 메세지
   const { showToast: showFullMyChatroomToast } = useToast(
-    () => <span>
-      이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.
-    </span>, 'too-many-my-chatroom'
-  )
+    () => (
+      <span>
+        이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.
+      </span>
+    ),
+    'too-many-my-chatroom'
+  );
   const { showToast: showFullOppoChatroomToast } = useToast(
-    () => <span>
-      상대방이 이미 생성된 채팅방 5개입니다. 상대방이 수락하면 알려드릴게요!
-    </span>, 'too-many-oppo-chatroom'
-  )
+    () => (
+      <span>
+        상대방이 이미 생성된 채팅방 5개입니다. 상대방이 수락하면 알려드릴게요!
+      </span>
+    ),
+    'too-many-oppo-chatroom'
+  );
   const { showToast: showGpsErrorToast } = useToast(
-    () => <span>
-      상대방의 위치정보가 없어 채팅을 할 수 없어요!
-    </span>, 'too-many-oppo-chatroom'
-  )
+    () => <span>상대방의 위치정보가 없어 채팅을 할 수 없어요!</span>,
+    'too-many-oppo-chatroom'
+  );
   const { showToast: showLoginErrorToast } = useToast(
-    () => <span>
-      로그인 후 이용해주세요.
-    </span>, 'too-many-oppo-chatroom'
-  )
+    () => <span>로그인 후 이용해주세요.</span>,
+    'too-many-oppo-chatroom'
+  );
 
   const { showToast: showAlarmGPSErrorToast } = useToast(
     () => <>
-      <span style={{ marginRight: '8px' }}>알림과 위치 설정이 꺼져있어요!</span>
-      <Link to="/mypage" style={{ color: '#0096FF' }}>
-        해결하기
-      </Link>
-    </>, 'alarm-gps-disabled'
-  )
+      <span style={{ textAlign: 'center' }}>알림과 위치 설정이 꺼져있어요! 
+        <br/>
+        <Link to="/mypage" style={{ color: '#0096FF' }}>
+          해결하기
+        </Link>
+      </span>
+    </>, 'alarm-gps-disabled', 'bottom-center', 'none'
+  );
+
+  const handleChangeSearchRange = (e) => {
+    setSearchRange(e.target.value);
+  };
+
+  const handleChangeIsPermitOtherSchool = (e) => {
+    setIsPermitOtherSchool(e.target.value);
+  };
 
   const fetchMembers = async () => {
     try {
       setLoading(true);
-      const res = await instance.get('/gps/matching');
+      const res = await instance.post('/gps/matching', {
+        isPermitOtherSchool,
+        searchRange,
+      });
       setMemberState(res.data.matchedUsers);
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSelectProfile = (profile) => {
-    setSelectedProfile(profile);
-    openProfileModal();
   };
 
   const handleCreateChatRoom = async (opponentMemberId) => {
@@ -130,117 +143,48 @@ const HomeIndexPage = () => {
     },
   ];
 
-  const profile = [
-    {
-      memberProfileDto: {
-        memberCharacter: 'KOALA',
-        mbti: 'ENFP',
-        department: '컴퓨터공학과',
-        memberHobbyDto: [
-          {
-            hobby: '운동',
-          },
-          {
-            hobby: '독서',
-          },
-        ],
-        memberTagDto: [
-          {
-            tag: '밝음',
-          },
-          {
-            tag: '친절함',
-          },
-        ],
-      },
-    },
-    {
-      memberProfileDto: {
-        memberCharacter: 'CAT',
-        mbti: 'INTJ',
-        department: '컴퓨터공학과',
-        memberHobbyDto: [
-          {
-            hobby: '운동',
-          },
-          {
-            hobby: '독서',
-          },
-        ],
-        memberTagDto: [
-          {
-            tag: '밝음',
-          },
-          {
-            tag: '친절함',
-          },
-        ],
-      },
-    },
-    {
-      memberProfileDto: {
-        memberCharacter: 'PENGUIN',
-        mbti: 'INTP',
-        department: '컴퓨터공학과',
-        memberHobbyDto: [
-          {
-            hobby: '운동',
-          },
-          {
-            hobby: '독서',
-          },
-        ],
-        memberTagDto: [
-          {
-            tag: '밝음',
-          },
-          {
-            tag: '친절함',
-          },
-        ],
-      },
-    },
-    {
-      memberProfileDto: {
-        memberCharacter: 'PANDA',
-        mbti: 'ISTJ',
-        department: '컴퓨터공학과',
-        memberHobbyDto: [
-          {
-            hobby: '운동',
-          },
-          {
-            hobby: '독서',
-          },
-        ],
-        memberTagDto: [
-          {
-            tag: '밝음',
-          },
-          {
-            tag: '친절함',
-          },
-        ],
-      },
-    },
-  ];
-
   const checkAndShowToast = async () => {
-    if (localStorage.getItem('isFirstLogin') === 'true' && (!alarmActive || !gpsActive)) {
+    if (
+      localStorage.getItem('isFirstLogin') === 'true' &&
+      (!alarmActive || !gpsActive)
+    ) {
       await showAlarmGPSErrorToast(); // 비동기 작업 예시
       localStorage.setItem('isFirstLogin', 'false');
     }
-  }
-  
+  };
+
   useEffect(() => {
-    setMemberState(profile);
     fetchMembers();
     checkAndShowToast();
   }, []);
 
+  useEffect(() => {
+    fetchMembers();
+  }, [searchRange, isPermitOtherSchool]);
+
   return (
     <>
       <Banner alertText={alertTextList} />
+      <div style={{ display: 'flex', gap: '1rem' }}>
+        <select
+          style={{ width: '100%' }}
+          value={searchRange}
+          onChange={handleChangeSearchRange}
+        >
+          <option value="1000">1km</option>
+          <option value="5000">5km</option>
+          <option value="10000">10km</option>
+        </select>
+        <select
+          style={{ width: '100%' }}
+          value={isPermitOtherSchool}
+          onChange={handleChangeIsPermitOtherSchool}
+        >
+          <option value="false">같은 학교만</option>
+          <option value="true">다른 학교 포함</option>
+        </select>
+      </div>
+      <br />
       {memberState && memberState.length === 0 ? (
         <EmptyContainer>
           <div className="wrap">
@@ -260,7 +204,7 @@ const HomeIndexPage = () => {
               <Profile
                 key={index}
                 profile={profile}
-                onClick={() => handleSelectProfile(profile)}
+                onClick={() => openProfileModal(profile)}
               />
             ))
           )}

@@ -305,16 +305,18 @@ const ChatPage = () => {
     }
   };
 
-  // 전화 버튼 클릭 시
-  const handleClickCallButton = async () => {
+  const checkBothAgreed = async () => {
     try {
       const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
       setBothAgreed(response.data);
-
-      bothAgreed ? openCallModal() : openCallRequestModal();
     } catch (error) {
       showRoomInfoErrorToast();
     }
+  };
+
+  // 전화 버튼 클릭 시
+  const handleClickCallButton = () => {
+    bothAgreed ? openCallModal() : openCallRequestModal();
   };
 
   // 서버에서 모든 메시지 불러오기
@@ -394,6 +396,7 @@ const ChatPage = () => {
   useEffect(() => {
     const initializeChat = async () => {
       await fetchMemberIds();
+      await checkBothAgreed();
     };
 
     initializeChat();
