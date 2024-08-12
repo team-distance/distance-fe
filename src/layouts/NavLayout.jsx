@@ -71,7 +71,7 @@ const NavLayout = () => {
 
   return (
     <>
-      <PWAInstallPrompt />
+      {/* <PWAInstallPrompt /> */}
       <Padding $isIphone={isIphone}>
         <Header />
         <Outlet />

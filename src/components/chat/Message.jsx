@@ -146,13 +146,18 @@ const Message = memo(
       case 'USER':
         return sentByMe ? (
           <MessageByMe>
-            <div className="message-container">
-              <div className="wrapper">
-                <div className="read">{read !== 0 ? read : ''}</div>
-                <div className="time">{parseTime(time)}</div>
-              </div>
-              <div className="tail"></div>
-              <div className="message">{content}</div>
+              <div className="message-container">
+                <div className="wrapper">
+                  <div className="read">{read !== 0 ? read : ''}</div>
+                  <div className="time">{parseTime(time)}</div>
+                </div>
+                {content.includes('s3.ap-northeast') ?
+                  <img src={content} alt="message"/> :
+                  <>
+                    <div className="tail"></div>
+                    <div className="message">{content}</div>
+                  </>
+                }
             </div>
           </MessageByMe>
         ) : (
@@ -166,12 +171,17 @@ const Message = memo(
                 $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
               />
             </CharacterBackground>
-
             <div className="message-section">
               <div className="nickname">{nickname}</div>
               <div className="message-container">
                 <div className="tail"></div>
-                <div className="message">{content}</div>
+                {content.includes('s3.ap-northeast') ?
+                  <img src={content} alt="message" /> :
+                  <>
+                    <div className="tail"></div>
+                    <div className="message">{content}</div>
+                  </>
+                }
                 <div className="wrapper">
                   <div className="read">{read !== 0 ? read : ''}</div>
                   <div className="time">{parseTime(time)}</div>
@@ -361,6 +371,12 @@ const MessageByMe = styled.div`
         font-weight: 600;
       }
     }
+      > img {
+        width: 9rem;
+        height: 13rem;
+        object-fit: cover;
+        border-radius: 0.75rem;
+      }
   }
 `;
 

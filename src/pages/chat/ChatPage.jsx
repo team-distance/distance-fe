@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
 import { ClipLoader } from 'react-spinners';
-// import toast, { Toaster } from 'react-hot-toast';
 
 import { instance } from '../../api/instance';
 import { checkCurse } from '../../utils/checkCurse';
@@ -24,6 +23,8 @@ import CallModal from '../../components/modal/CallModal';
 import CallRequestModal from '../../components/modal/CallRequestModal';
 
 const ChatPage = () => {
+  const navigate = useNavigate();
+
   const [client, setClient] = useState(null);
   const [messages, setMessages] = useState([]);
   const [draftMessage, setDraftMessage] = useState('');
@@ -36,9 +37,15 @@ const ChatPage = () => {
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  //이미지 전송
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [file, setFile] = useState(null);
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
-      <ReportModal closeModal={closeReportModal} onClick={handleReportUser} />
+      <ReportModal closeModal={closeReportModal} onClick={handleReportUser} setIsMenuOpen={setIsMenuOpen} />
     )
   );
 
@@ -98,7 +105,6 @@ const ChatPage = () => {
 
   const viewportRef = useRef();
 
-  const navigate = useNavigate();
 
   const [myMemberId, setMyMemberId] = useState(0);
   const [opponentMemberId, setOpponentMemberId] = useState(0);
@@ -141,31 +147,59 @@ const ChatPage = () => {
   };
 
   // 메시지 전송
-  const sendMessage = (e) => {
-    e.preventDefault();
+  const sendMessage = async () => {
+    if (!draftMessage.trim() && !file) return;
 
-    if (!draftMessage.trim()) return;
+    //욕설 필터링
     const isIncludingBadWord = checkCurse(draftMessage);
-
     if (isIncludingBadWord) {
       showBadWordToast();
       setDraftMessage('');
       return;
     }
 
-    try {
-      client.publish({
-        destination: `/app/chat/${roomId}`,
-        body: JSON.stringify({
-          chatMessage: draftMessage,
-          senderId: opponentMemberId,
-          receiverId: myMemberId,
-          publishType: 'USER',
-        }),
-      });
-      setDraftMessage('');
-    } catch (error) {
-      showWaitToast();
+    //이미지 전송
+    if (file) {
+      //S3 url 받기
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await instance.post('/image', formData);
+
+      //stomp 전송
+      try {
+        client.publish({
+          destination: `/app/chat/${roomId}`,
+          body: JSON.stringify({
+            chatMessage: response.data.imageUrl,
+            senderId: opponentMemberId,
+            receiverId: myMemberId,
+            publishType: 'USER',
+          }),
+        });
+
+        setDraftMessage('');
+        setFile(null);
+      } catch (error) {
+        showWaitToast();
+      }
+    } else {
+      //stomp 전송
+      try {
+        client.publish({
+          destination: `/app/chat/${roomId}`,
+          body: JSON.stringify({
+            chatMessage: draftMessage,
+            senderId: opponentMemberId,
+            receiverId: myMemberId,
+            publishType: 'USER',
+          }),
+        });
+
+        setDraftMessage('');
+        setFile(null);
+      } catch (error) {
+        showWaitToast();
+      }
     }
   };
 
@@ -344,7 +378,7 @@ const ChatPage = () => {
     }
   };
 
-  // 상대방 신고하기
+  // // 상대방 신고하기
   const handleReportUser = async (reportMessage) => {
     try {
       await instance.post('/report', {
@@ -454,17 +488,6 @@ const ChatPage = () => {
 
   return (
     <Wrapper>
-      {/* <Toaster
-        position="bottom-center"
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-        containerStyle={{
-          bottom: 104,
-        }}
-      /> */}
       {isShowLottie && (
         <LottieContainer>
           <div>
@@ -530,13 +553,6 @@ const ChatPage = () => {
                 </div>
               )}
             </CallButton>
-            <LeaveButton onClick={handleLeaveRoom}>
-              <img
-                src="/assets/leave-button.svg"
-                alt="나가기 버튼"
-                width={21}
-              />
-            </LeaveButton>
           </div>
         </TopBar>
 
@@ -554,15 +570,23 @@ const ChatPage = () => {
               opponentMemberCharacter={
                 opponentProfile && opponentProfile.memberCharacter
               }
+              isMenuOpen={isMenuOpen}
             />
-
-            <MessageInput
-              value={draftMessage}
-              buttonClickHandler={openReportModal}
-              changeHandler={handleChangeMessage}
-              submitHandler={sendMessage}
-              isOpponentOut={isOpponentOut}
-            />
+            <MessageInputWrapper>
+              <MessageInput
+                value={draftMessage}
+                uploadedImage={uploadedImage}
+                setUploadedImage={setUploadedImage}
+                setFile={setFile}
+                leaveButtonClickHandler={handleLeaveRoom}
+                reportButtonClickHandler={openReportModal}
+                changeHandler={handleChangeMessage}
+                submitHandler={sendMessage}
+                isOpponentOut={isOpponentOut}
+                isMenuOpen={isMenuOpen}
+                setIsMenuOpen={setIsMenuOpen}
+              />
+            </MessageInputWrapper>
           </>
         )}
       </Container>
@@ -595,11 +619,6 @@ const CallButton = styled.button`
   border: none;
 `;
 
-const LeaveButton = styled.button`
-  background: none;
-  border: none;
-`;
-
 const WrapTitle = styled.div`
   position: absolute;
   left: 50%;
@@ -626,7 +645,7 @@ const TopBar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 1;
+  z-index: 11;
 `;
 
 const LottieContainer = styled.div`
@@ -659,8 +678,7 @@ const TooltipMessage = styled.div`
   font-weight: 700;
   font-size: 10px;
   top: calc(100% + 14px);
-  left: 50%;
-  transform: translateX(-50%);
+  right: -10px;
   text-align: center;
   padding: 10px;
   background-color: #333333;
@@ -672,7 +690,7 @@ const TooltipMessage = styled.div`
 const TooltipTail = styled.div`
   position: absolute;
   top: -8px;
-  left: 50%;
+  right: 0;
   transform: translateX(-50%);
   width: 0;
   height: 0;
@@ -691,6 +709,13 @@ const LoaderContainer = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 999;
+`;
+
+const MessageInputWrapper = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 10;
 `;
 
 export default ChatPage;

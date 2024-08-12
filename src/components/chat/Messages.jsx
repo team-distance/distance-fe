@@ -9,6 +9,7 @@ const Messages = memo(
     responseCall,
     openProfileModal,
     opponentMemberCharacter,
+    isMenuOpen,
   }) => {
     const messageRef = useRef();
 
@@ -23,7 +24,7 @@ const Messages = memo(
     }, [groupedMessages]);
 
     return (
-      <MessagesWrapper ref={messageRef}>
+      <MessagesWrapper ref={messageRef} $isOpen={isMenuOpen}>
         <Announcement>
           <div className="content">
             📢 잠깐만요! 채팅 상대는 소중한 학우입니다. 사이버 예절을 지켜
@@ -66,6 +67,8 @@ const MessagesWrapper = styled.div`
   overflow: auto;
   flex: 1;
   min-height: 0;
+  margin-bottom: 6rem;
+  z-index: ${({ $isOpen }) => ($isOpen ? '0' : '20')};
 `;
 
 const Announcement = styled.div`

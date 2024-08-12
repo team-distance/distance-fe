@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '../register/TextInput';
 
-const ReportModal = ({ closeModal, onClick }) => {
+const ReportModal = ({ closeModal, onClick, setIsMenuOpen }) => {
   const [reportMessage, setReportMessage] = useState('');
 
   return (
@@ -19,11 +19,12 @@ const ReportModal = ({ closeModal, onClick }) => {
           onClick={() => {
             onClick(reportMessage);
             closeModal();
+            setIsMenuOpen(false);
           }}
         >
           신고하기
         </ReportButton>
-        <CancelButton onClick={closeModal}>취소하기</CancelButton>
+        <CancelButton onClick={()=> {closeModal(); setIsMenuOpen(false);}}>취소하기</CancelButton>
       </WrapButton>
     </Modal>
   );

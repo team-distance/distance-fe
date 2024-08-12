@@ -1,53 +1,104 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { MenuToggle } from './MenuToggle';
+import Menu from './Menu';
+import useMenuAnimation from '../../hooks/useMenuAnimation';
 
 const MessageInput = ({
   value,
-  buttonClickHandler,
+  uploadedImage,
+  setUploadedImage,
+  setFile,
+  leaveButtonClickHandler,
+  reportButtonClickHandler,
   changeHandler,
   submitHandler,
   isOpponentOut,
+  isMenuOpen,
+  setIsMenuOpen,
 }) => {
-
   const containerRef = useRef(null);
 
+  const scope = useMenuAnimation(isMenuOpen);
+
   const handleFocus = () => {
-    if(containerRef.current) {
+    if (containerRef.current) {
       containerRef.current.classList.add('focused');
     }
-  }
+  };
 
   const handleBlur = () => {
-    if(containerRef.current) {
+    if (containerRef.current) {
       containerRef.current.classList.remove('focused');
     }
-  }
+  };
+
+  const onClickPlusButton = () => {
+    setIsMenuOpen((prev) => !prev);
+    // buttonClickHandler() //신고하기 버튼 이벤트
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    submitHandler();
+    setUploadedImage(null);
+  };
+
+  const deleteImage = () => {
+    setUploadedImage(null);
+    setFile(null);
+  };
+
+  useEffect(() => {
+    if (uploadedImage) setIsMenuOpen(false);
+  }, [uploadedImage]);
 
   return (
-    <MeassageInputContainer ref={containerRef}>
-      <WrapButton onClick={buttonClickHandler}>
-        <img src={'/assets/report-button.svg'} alt="신고하기" />
-      </WrapButton>
-      <WrapInputForm onSubmit={submitHandler}>
-        {isOpponentOut ? (
-          <Input
-            value={value}
-            onChange={changeHandler}
-            placeholder="상대방이 나갔습니다."
-            disabled
-          />
-        ) : (
-          <Input value={value} onChange={changeHandler} onFocus={handleFocus} onBlur={handleBlur} />
-        )}
-        <WrapButton type="submit" disabled={isOpponentOut}>
-          <img src={'/assets/send-button.png'} alt="보내기" />
-        </WrapButton>
-      </WrapInputForm>
+    <MeassageInputContainer ref={scope}>
+      <Menu
+        isOpen={isMenuOpen}
+        setIsOpen={setIsMenuOpen}
+        handleLeave={leaveButtonClickHandler}
+        handleReport={reportButtonClickHandler}
+        setImageFile={setFile}
+        setUploadedImage={setUploadedImage}
+      />
+      <InputContainer ref={containerRef}>
+        <MenuToggle toggle={onClickPlusButton} isOpen={isMenuOpen} />
+        <WrapInputForm onSubmit={handleSubmit}>
+          {isOpponentOut ? (
+            <Input
+              value={value}
+              onChange={changeHandler}
+              placeholder="상대방이 나갔습니다."
+              disabled
+            />
+          ) : uploadedImage ? (
+            <WrapImage>
+              <img src={uploadedImage} alt="preview" onClick={deleteImage} />
+            </WrapImage>
+          ) : (
+            <Input
+              value={value}
+              onChange={changeHandler}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+            />
+          )}
+          <WrapButton type="submit" disabled={isOpponentOut}>
+            <img src={'/assets/send-button.png'} alt="보내기" />
+          </WrapButton>
+        </WrapInputForm>
+      </InputContainer>
     </MeassageInputContainer>
   );
 };
 
 const MeassageInputContainer = styled.div`
+  display: relative;
+`;
+
+const InputContainer = styled.div`
   display: flex;
   gap: 0.8rem;
   align-items: center;
@@ -59,6 +110,17 @@ const MeassageInputContainer = styled.div`
     &.focused {
       padding: 0.5rem 1rem 1rem 1rem;
     }
+  }
+`;
+
+const WrapImage = styled.div`
+  width: 100%;
+
+  img {
+    width: 10rem;
+    height: 5rem;
+    object-fit: cover;
+    object-position: top;
   }
 `;
 
