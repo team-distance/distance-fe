@@ -174,7 +174,6 @@ const Message = memo(
             <div className="message-section">
               <div className="nickname">{nickname}</div>
               <div className="message-container">
-                <div className="tail"></div>
                 {content.includes('s3.ap-northeast') ?
                   <img src={content} alt="message" /> :
                   <>
@@ -299,6 +298,13 @@ const MessageByOther = styled.div`
           font-weight: 600;
         }
       }
+  
+      > img {
+        width: 9rem;
+        height: 13rem;
+        object-fit: cover;
+        border-radius: 0.75rem;
+      }
 
       > .wrapper {
         font-size: 0.6rem;
@@ -309,6 +315,7 @@ const MessageByOther = styled.div`
           opacity: 50%;
         }
       }
+    
     }
   }
 `;
@@ -371,12 +378,12 @@ const MessageByMe = styled.div`
         font-weight: 600;
       }
     }
-      > img {
-        width: 9rem;
-        height: 13rem;
-        object-fit: cover;
-        border-radius: 0.75rem;
-      }
+    > img {
+      width: 9rem;
+      height: 13rem;
+      object-fit: cover;
+      border-radius: 0.75rem;
+    }
   }
 `;
 
