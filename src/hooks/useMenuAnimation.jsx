@@ -4,8 +4,6 @@ import { useAnimate, stagger } from 'framer-motion';
 const useMenuAnimation = (isOpen) => {
   const [scope, animate] = useAnimate();
 
-  console.log(isOpen);
-
   useEffect(() => {
     const menuAnimations = isOpen
       ? [
