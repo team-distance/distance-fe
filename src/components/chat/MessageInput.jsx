@@ -52,10 +52,7 @@ const MessageInput = ({
 
   useEffect(() => {
     if (uploadedImage) setIsMenuOpen(false);
-    console.log("현재상태uploadedImage ", uploadedImage);
-    console.log("현재상태file ", file);
-
-  }, [uploadedImage, file]);
+  }, [uploadedImage]);
 
   return (
     <MeassageInputContainer ref={scope}>
