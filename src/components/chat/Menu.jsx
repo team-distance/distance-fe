@@ -9,6 +9,7 @@ const Menu = ({
     file,
     setFile,
     setUploadedImage,
+    isFirstRender
 }) => {
     const fileInputRef = useRef();
     const canvasRef = useRef(null);
@@ -67,7 +68,7 @@ const Menu = ({
 
     return (
         <>
-            <NavContainer className="menu" $isOpen={isOpen}>
+            <NavContainer className="menu" $isOpen={isOpen} $isFirstRender={isFirstRender}>
                 <WrapMenu>
                     <li onClick={handleImageButtonClick}>
                         <input
@@ -116,6 +117,7 @@ const BlurBackground = styled.div`
 const NavContainer = styled.nav`
   position: relative;
   z-index: ${({ $isOpen }) => ($isOpen ? '1' : '-1')};
+  visibility: ${({$isFirstRender}) => ($isFirstRender ? "hidden" : "visible")}
 `;
 
 const WrapMenu = styled.ul`

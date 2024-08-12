@@ -18,7 +18,7 @@ if (gaTrackingId) {
 const rootElement = document.getElementById('root');
 
 const app = (
-  <React.StrictMode>
+  // <React.StrictMode>
     <AwsRumProvider
       allowCookies
       endpoint={process.env.REACT_APP_AWS_RUM_ENDPOINT}
@@ -37,7 +37,7 @@ const app = (
         </BrowserRouter>
       </RecoilRoot>
     </AwsRumProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 const root = createRoot(rootElement);
 root.render(app);

@@ -54,6 +54,11 @@ const MessageInput = ({
     if (uploadedImage) setIsMenuOpen(false);
   }, [uploadedImage]);
 
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    isFirstRender.current = false;
+  },[])
+
   return (
     <MeassageInputContainer ref={scope}>
       <Menu
@@ -64,6 +69,7 @@ const MessageInput = ({
         file={file}
         setFile={setFile}
         setUploadedImage={setUploadedImage}
+        isFirstRender={isFirstRender.current}
       />
       <InputContainer ref={containerRef}>
         <MenuToggle toggle={onClickPlusButton} isOpen={isMenuOpen} />

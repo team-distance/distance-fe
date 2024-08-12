@@ -368,7 +368,7 @@ const SurveyLinkContainer = styled.div`
   width: 100%;
   height: 80px;
   position: fixed;
-  z-index: 999;
+  z-index: 1;
   bottom: 15%;
   left: 0;
   right: 0;

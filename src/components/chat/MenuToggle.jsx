@@ -43,5 +43,4 @@ const WrapButton = styled.button`
   align-items: center;
   border: none;
   background-color: transparent;
-  width: 2rem;
 `;
