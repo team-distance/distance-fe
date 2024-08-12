@@ -574,6 +574,7 @@ const ChatPage = () => {
                 value={draftMessage}
                 uploadedImage={uploadedImage}
                 setUploadedImage={setUploadedImage}
+                file={file}
                 setFile={setFile}
                 leaveButtonClickHandler={handleLeaveRoom}
                 reportButtonClickHandler={openReportModal}

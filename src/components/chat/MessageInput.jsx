@@ -8,6 +8,7 @@ const MessageInput = ({
   value,
   uploadedImage,
   setUploadedImage,
+  file,
   setFile,
   leaveButtonClickHandler,
   reportButtonClickHandler,
@@ -51,7 +52,10 @@ const MessageInput = ({
 
   useEffect(() => {
     if (uploadedImage) setIsMenuOpen(false);
-  }, [uploadedImage]);
+    console.log("현재상태uploadedImage ", uploadedImage);
+    console.log("현재상태file ", file);
+
+  }, [uploadedImage, file]);
 
   return (
     <MeassageInputContainer ref={scope}>
@@ -60,7 +64,8 @@ const MessageInput = ({
         setIsOpen={setIsMenuOpen}
         handleLeave={leaveButtonClickHandler}
         handleReport={reportButtonClickHandler}
-        setImageFile={setFile}
+        file={file}
+        setFile={setFile}
         setUploadedImage={setUploadedImage}
       />
       <InputContainer ref={containerRef}>
@@ -105,9 +110,6 @@ const InputContainer = styled.div`
   background: #ffffff;
   width: auto;
   padding: 0.5rem 1rem 3rem 1rem;
-
-  position: relative;
-  z-index: 99;
 
   @media (max-width: 500px) {
     &.focused {
