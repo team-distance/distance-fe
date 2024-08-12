@@ -616,11 +616,6 @@ const CallButton = styled.button`
   border: none;
 `;
 
-const LeaveButton = styled.button`
-  background: none;
-  border: none;
-`;
-
 const WrapTitle = styled.div`
   position: absolute;
   left: 50%;

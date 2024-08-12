@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { MenuToggle } from './MenuToggle';
 import Menu from './Menu';
@@ -75,7 +75,7 @@ const MessageInput = ({
             />
           ) : uploadedImage ? (
             <WrapImage>
-              <img src={uploadedImage} alt="image" onClick={deleteImage} />
+              <img src={uploadedImage} alt="preview" onClick={deleteImage} />
             </WrapImage>
           ) : (
             <Input
