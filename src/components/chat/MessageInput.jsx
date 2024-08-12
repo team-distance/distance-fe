@@ -106,6 +106,9 @@ const InputContainer = styled.div`
   width: auto;
   padding: 0.5rem 1rem 3rem 1rem;
 
+  position: relative;
+  z-index: 99;
+
   @media (max-width: 500px) {
     &.focused {
       padding: 0.5rem 1rem 1rem 1rem;
