@@ -131,7 +131,8 @@ const ImageInput = styled.div`
 
 const WrapImage = styled.div`  
   position:relative;
-  
+  padding: 0.5rem 0;
+
   .x-button {
     position: absolute;
     top: 0.5rem;
@@ -140,10 +141,8 @@ const WrapImage = styled.div`
   }
   .image-preview {
     max-width: 5.3125rem;
-    // max-height: 6.625rem;
     object-fit: contain;
     // object-position: top;
-    padding: 0.5rem 0;
   }
 `;
 

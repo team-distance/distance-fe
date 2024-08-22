@@ -7,6 +7,7 @@ const Messages = memo(
     groupedMessages,
     myId,
     responseCall,
+    viewImage,
     openProfileModal,
     opponentMemberCharacter,
     isMenuOpen,
@@ -52,6 +53,7 @@ const Messages = memo(
                 senderType={message.senderType}
                 sentByMe={message.senderId !== Number(myId)}
                 responseCall={responseCall}
+                viewImage={viewImage}
                 openProfileModal={openProfileModal}
                 opponentMemberCharacter={opponentMemberCharacter}
               />
