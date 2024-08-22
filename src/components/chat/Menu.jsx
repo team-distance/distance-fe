@@ -116,7 +116,6 @@ const BlurBackground = styled.div`
 
 const NavContainer = styled.nav`
   position: relative;
-  z-index: ${({ $isOpen }) => ($isOpen ? '1' : '-1')};
   visibility: ${({$isFirstRender}) => ($isFirstRender ? "hidden" : "visible")}
 `;
 

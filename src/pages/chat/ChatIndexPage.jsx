@@ -175,7 +175,10 @@ const ChatIndexPage = () => {
                             <div className="department">{chat.department}</div>
                             <div>{chat.mbti && <Badge>{chat.mbti}</Badge>}</div>
                           </Profile>
-                          <Message>{chat.lastMessage}</Message>
+                          {chat.lastMessage.includes('s3.ap-northeast') ?
+                            <Message>(사진)</Message>
+                            : <Message>{chat.lastMessage}</Message>
+                          }
                         </div>
 
                         <div className="right-section">

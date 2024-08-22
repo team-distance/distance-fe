@@ -21,6 +21,7 @@ import ReportModal from '../../components/modal/ReportModal';
 import OpponentProfileModal from '../../components/modal/OpponentProfileModal';
 import CallModal from '../../components/modal/CallModal';
 import CallRequestModal from '../../components/modal/CallRequestModal';
+import ImageView from '../../components/chat/ImageView';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -37,9 +38,10 @@ const ChatPage = () => {
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  //이미지 전송
   const [uploadedImage, setUploadedImage] = useState(null);
   const [file, setFile] = useState(null);
+  const [isShowImage, setIsShowImage] = useState(false);
+  const [imgSrc, setImageSrc] = useState("");
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -202,6 +204,12 @@ const ChatPage = () => {
       }
     }
   };
+
+  // 이미지 크게 보기
+  const viewImage = (src) => {
+    setImageSrc(src);
+    setIsShowImage(true);
+  }
 
   // 방 나가기
   const handleLeaveRoom = () => {
@@ -488,6 +496,7 @@ const ChatPage = () => {
 
   return (
     <Wrapper>
+      {isShowImage && <ImageView imgSrc={imgSrc} handleCancel={() => setIsShowImage(false)} />}
       {isShowLottie && (
         <LottieContainer>
           <div>
@@ -566,6 +575,7 @@ const ChatPage = () => {
               groupedMessages={groupedMessages}
               myId={myMemberId}
               responseCall={responseCall}
+              viewImage={viewImage}
               openProfileModal={openOpponentProfileModal}
               opponentMemberCharacter={
                 opponentProfile && opponentProfile.memberCharacter
