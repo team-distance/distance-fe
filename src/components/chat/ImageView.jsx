@@ -1,36 +1,29 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components"
 import { parseDate } from "../../utils/parseDate";
+import axios from "axios";
 
 const ImageView = ({ imgSrc, handleCancel }) => {
     const [showButton, setShowButton] = useState(true);
 
-    const date = new Date();
+    const handleDownload = () => {
+        try {
+            const res = axios.get(imgSrc, { responseType: 'blob' });
+            const blob = res.data;
 
-    useEffect(() => {
-        console.log(parseDate(date));
-    }, [])
-
-    const handleDownload = (url) => {
-        fetch(imgSrc, {
-          method: "GET",
-        })
-          .then((res) => {
-            return res.blob();
-          })
-          .then((blob) => {
             const blobURL = URL.createObjectURL(blob);
             const aTag = document.createElement("a");
-    
+
+            const date = parseDate(new Date());
+
             aTag.href = blobURL;
-            aTag.download=`Distance/${date}.jpg`;
-    
+            aTag.download = `Distance/${date}.jpg`;
+
             aTag.click();
-          })
-          .catch((e) => {
-            console.error(e);
-          });
-      };
+        } catch (e) {
+            console.log(e);
+        }
+    };
 
     return (
         <>
