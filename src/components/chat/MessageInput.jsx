@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { MenuToggle } from './MenuToggle';
 import Menu from './Menu';
 import useMenuAnimation from '../../hooks/useMenuAnimation';
-import { motion, AnimatePresence } from "framer-motion"
 
 const MessageInput = ({
   value,
