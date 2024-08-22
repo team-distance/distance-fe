@@ -6,12 +6,16 @@ import axios from "axios";
 const ImageView = ({ imgSrc, handleCancel }) => {
     const [showButton, setShowButton] = useState(true);
 
-    const handleDownload = () => {
-        try {
-            const res = axios.get(imgSrc, { responseType: 'blob' });
-            const blob = res.data;
+    const handleDownload = async() => {
 
-            const blobURL = URL.createObjectURL(blob);
+        const cloudFrontURL = `https://d2ujunquh0apez.cloudfront.net/${imgSrc.replace('https://distance-buckets.s3.ap-northeast-2.amazonaws.com/', '')}`
+
+        try {
+            const res = await axios.get(cloudFrontURL, { responseType: 'blob' });
+
+            // console.log(res.data);
+
+            const blobURL = URL.createObjectURL(res.data);
             const aTag = document.createElement("a");
 
             const date = parseDate(new Date());
