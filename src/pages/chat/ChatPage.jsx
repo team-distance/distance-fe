@@ -40,6 +40,8 @@ const ChatPage = () => {
 
   const [uploadedImage, setUploadedImage] = useState(null);
   const [file, setFile] = useState(null);
+  const [isShowImage, setIsShowImage] = useState(false);
+  const [imgSrc, setImageSrc] = useState("");
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -204,9 +206,9 @@ const ChatPage = () => {
   };
 
   // 이미지 크게 보기
-  const viewImage = () => {
-    console.log("이미지 크게 보기");
-    // <ImageView/>
+  const viewImage = (src) => {
+    setImageSrc(src);
+    setIsShowImage(true);
   }
 
   // 방 나가기
@@ -494,6 +496,7 @@ const ChatPage = () => {
 
   return (
     <Wrapper>
+      {isShowImage && <ImageView imgSrc={imgSrc} handleDownload={() => console.log("다운로드")} handleCancel={() => setIsShowImage(false)} />}
       {isShowLottie && (
         <LottieContainer>
           <div>
