@@ -2,28 +2,37 @@ import { useState } from "react";
 import styled from "styled-components"
 import { parseDate } from "../../utils/parseDate";
 import axios from "axios";
+import { usePromiseToast } from "../../hooks/useToast";
 
 const ImageView = ({ imgSrc, handleCancel }) => {
     const [showButton, setShowButton] = useState(true);
 
-    const handleDownload = async() => {
+    const { showPromiseToast: showDownloadImageToast } = usePromiseToast();
+
+    const handleDownload = () => {
 
         const cloudFrontURL = `https://d2ujunquh0apez.cloudfront.net/${imgSrc.replace('https://distance-buckets.s3.ap-northeast-2.amazonaws.com/', '')}`
 
         try {
-            const res = await axios.get(cloudFrontURL, { responseType: 'blob' });
+            const res = axios.get(cloudFrontURL, { responseType: 'blob' });
 
-            // console.log(res.data);
+            showDownloadImageToast(res, (res) => {
+                const blobURL = URL.createObjectURL(res.data);
+                const aTag = document.createElement("a");
 
-            const blobURL = URL.createObjectURL(res.data);
-            const aTag = document.createElement("a");
+                const date = parseDate(new Date());
 
-            const date = parseDate(new Date());
+                aTag.href = blobURL;
+                aTag.download = `Distance/${date}.jpg`;
 
-            aTag.href = blobURL;
-            aTag.download = `Distance/${date}.jpg`;
+                aTag.click();
 
-            aTag.click();
+                return '이미지가 저장되었습니다.';
+            },
+                (error) => {
+                console.log(error);
+                return "이미지 다운로드를 다시 시도해주세요.";
+            })
         } catch (e) {
             console.log(e);
         }

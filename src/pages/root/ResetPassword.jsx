@@ -60,7 +60,6 @@ const ResetPassword = () => {
       type: 'FIND',
     });
 
-    //테스트 필요 ---------------------------------------------
     showSendMessageToast(
       response,
       () => {
@@ -78,13 +77,11 @@ const ResetPassword = () => {
         }
       }
     );
-    // -------------------------------------------------------
   };
 
   const verifyTelNum = async (e) => {
     e.preventDefault();
 
-    //테스트 필요 ---------------------------------------------
     const response = instance.post('/member/authenticate', {
       authenticateNum: formData.verifyNum,
     });
@@ -106,25 +103,6 @@ const ResetPassword = () => {
         return '인증번호가 틀렸습니다.';
       }
     );
-    // -------------------------------------------------------
-
-    // try {
-    //   await instance.post('/member/authenticate', {
-    //     authenticateNum: formData.verifyNum,
-    //   });
-    //   setFormActive((prev) => ({ ...prev, isSendVerifyNum: true }));
-    //   setFormFlags((prev) => ({
-    //     ...prev,
-    //     verifyNumValid: false,
-    //     verifyTelNum: true,
-    //   }));
-    //   toast.success('인증되었습니다.', { id: toastId });
-    // } catch (error) {
-    //   toast.error('인증번호가 틀렸습니다.', { id: toastId });
-    //   setFormActive((prev) => ({ ...prev, isSendVerifyNum: false }));
-    //   setFormFlags((prev) => ({ ...prev, telNumValid: true }));
-    //   console.log(error);
-    // }
   };
 
   const handleHideForms = () => {
