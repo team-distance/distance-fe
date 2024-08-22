@@ -496,7 +496,7 @@ const ChatPage = () => {
 
   return (
     <Wrapper>
-      {isShowImage && <ImageView imgSrc={imgSrc} handleDownload={() => console.log("다운로드")} handleCancel={() => setIsShowImage(false)} />}
+      {isShowImage && <ImageView imgSrc={imgSrc} handleCancel={() => setIsShowImage(false)} />}
       {isShowLottie && (
         <LottieContainer>
           <div>

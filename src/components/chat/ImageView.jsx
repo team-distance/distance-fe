@@ -1,8 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components"
+import { parseDate } from "../../utils/parseDate";
 
-const ImageView = ({ imgSrc, handleDownload, handleCancel }) => {
+const ImageView = ({ imgSrc, handleCancel }) => {
     const [showButton, setShowButton] = useState(true);
+
+    const date = new Date();
+
+    useEffect(() => {
+        console.log(parseDate(date));
+    }, [])
+
+    const handleDownload = (url) => {
+        fetch(imgSrc, {
+          method: "GET",
+        })
+          .then((res) => {
+            return res.blob();
+          })
+          .then((blob) => {
+            const blobURL = URL.createObjectURL(blob);
+            const aTag = document.createElement("a");
+    
+            aTag.href = blobURL;
+            aTag.download=`Distance/${date}.jpg`;
+    
+            aTag.click();
+          })
+          .catch((e) => {
+            console.error(e);
+          });
+      };
 
     return (
         <>
