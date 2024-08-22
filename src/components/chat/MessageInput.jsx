@@ -37,7 +37,6 @@ const MessageInput = ({
 
   const onClickPlusButton = () => {
     setIsMenuOpen((prev) => !prev);
-    // buttonClickHandler() //신고하기 버튼 이벤트
   };
 
   const handleSubmit = (e) => {
@@ -83,9 +82,13 @@ const MessageInput = ({
               disabled
             />
           ) : uploadedImage ? (
-            <WrapImage>
-              <img src={uploadedImage} alt="preview" onClick={deleteImage} />
-            </WrapImage>
+            <ImageInput>
+              <WrapImage>
+                <img className="x-button" src="/assets/chat/x-button.svg" alt="cancel" onClick={deleteImage} />
+                <img className="image-preview" src={uploadedImage} alt="preview" />
+              </WrapImage>
+            </ImageInput>
+            
           ) : (
             <Input
               value={value}
@@ -122,14 +125,25 @@ const InputContainer = styled.div`
   }
 `;
 
-const WrapImage = styled.div`
+const ImageInput = styled.div`
   width: 100%;
+`;
 
-  img {
-    width: 10rem;
-    height: 5rem;
-    object-fit: cover;
-    object-position: top;
+const WrapImage = styled.div`  
+  position:relative;
+  
+  .x-button {
+    position: absolute;
+    top: 0.5rem;
+    left: 4.7rem;
+    z-index: 1;
+  }
+  .image-preview {
+    max-width: 5.3125rem;
+    // max-height: 6.625rem;
+    object-fit: contain;
+    // object-position: top;
+    padding: 0.5rem 0;
   }
 `;
 
