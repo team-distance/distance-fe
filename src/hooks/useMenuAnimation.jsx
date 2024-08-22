@@ -8,9 +8,14 @@ const useMenuAnimation = (isOpen) => {
     const menuAnimations = isOpen
       ? [
           [
+            "nav",
+            { transform: "translateY(0%)", zIndex: -1, height: "auto"},
+            { ease: [0.2, 0.8, 0.2, 1], duration: 0.6 }
+          ],
+          [
             'li',
             { transform: 'translateY(0%)', opacity: 1, filter: 'blur(0px)' },
-            { delay: stagger(0.05), at: '-0.05' },
+            { delay: stagger(0.05), at: '-1' },
           ],
         ]
       : [
@@ -23,6 +28,7 @@ const useMenuAnimation = (isOpen) => {
             },
             { delay: stagger(0.05, { from: 'last' }), at: '<' },
           ],
+          ["nav", { transform: "translateY(100%)" }, { at: "-0.1" }]
         ];
 
     animate([
@@ -39,6 +45,19 @@ const useMenuAnimation = (isOpen) => {
       ],
       ...menuAnimations,
     ]);
+
+    //메뉴가 여닫힌 후 z-index를 변경
+    if (isOpen) {
+      // 열릴 때
+      setTimeout(() => {
+        animate("nav", { zIndex: 9999 });
+      }, 600);
+    }else {
+      // 닫힐 때
+      setTimeout(() => {
+        animate("nav", { zIndex: -1, height: 0 });
+      }, 600);
+    }
 
   }, [isOpen]);
 

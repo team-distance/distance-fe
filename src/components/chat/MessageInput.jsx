@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { MenuToggle } from './MenuToggle';
 import Menu from './Menu';
 import useMenuAnimation from '../../hooks/useMenuAnimation';
+import { motion, AnimatePresence } from "framer-motion"
 
 const MessageInput = ({
   value,
@@ -57,10 +58,10 @@ const MessageInput = ({
   const isFirstRender = useRef(true);
   useEffect(() => {
     isFirstRender.current = false;
-  },[])
+  }, [])
 
   return (
-    <MeassageInputContainer ref={scope}>
+    <MeassageInputContainer ref={scope} className="이거니?">
       <Menu
         isOpen={isMenuOpen}
         setIsOpen={setIsMenuOpen}
