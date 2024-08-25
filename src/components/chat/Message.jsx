@@ -5,41 +5,40 @@ import Button from '../common/Button';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 
 /**
- * @param {string} nickname - 메시지를 보낸 사람의 닉네임
- * @param {string} content - 메시지 내용
- * @param {string} time - 메시지를 보낸 시간
- * @param {boolean} read - 메시지를 읽었는지 여부
+ * Message 객체 속성
+ * @param {string} senderName - 메시지를 보낸 사람의 닉네임
+ * @param {string} chatMessage - 메시지 내용
+ * @param {string} sendDt - 메시지를 보낸 시간
+ * @param {boolean} unreadCount - 메시지를 읽었는지 여부
  * @param {string} senderType - 메시지를 보낸 사람의 타입 (SYSTEM, USER, CALL_REQUEST, CALL_RESPONSE)
- * @param {boolean} sentByMe - 메시지를 내가 보냈는지 여부
  */
+
 const Message = memo(
   ({
-    nickname,
-    content,
-    time,
-    read,
-    senderType,
-    sentByMe,
+    message,
+    isSentByMe,
     responseCall,
     viewImage,
     openProfileModal,
     opponentMemberCharacter,
   }) => {
-    switch (senderType) {
+    switch (message.senderType) {
       case 'SYSTEM':
         return (
           <Announcement>
-            <div className="content">{content}</div>
+            <div className="content">{message.chatMessage}</div>
           </Announcement>
         );
 
       case 'CALL_REQUEST':
-        return sentByMe ? (
+        return isSentByMe ? (
           <MessageByMe>
             <div className="message-container">
               <div className="wrapper">
-                <div className="read">{read !== 0 ? read : ''}</div>
-                <div className="time">{parseTime(time)}</div>
+                <div className="read">
+                  {message.unreadCount !== 0 ? message.unreadCount : ''}
+                </div>
+                <div className="time">{parseTime(message.sendDt)}</div>
               </div>
               <div className="tail"></div>
               <div className="message">
@@ -60,7 +59,7 @@ const Message = memo(
               />
             </CharacterBackground>
             <div className="message-section">
-              <div className="nickname">{nickname}</div>
+              <div className="nickname">{message.senderName}</div>
               <div className="message-container">
                 <div className="tail"></div>
                 <div className="message">
@@ -77,8 +76,10 @@ const Message = memo(
                   </Button>
                 </div>
                 <div className="wrapper">
-                  <div className="read">{read !== 0 ? read : ''}</div>
-                  <div className="time">{parseTime(time)}</div>
+                  <div className="read">
+                    {message.unreadCount !== 0 ? message.unreadCount : ''}
+                  </div>
+                  <div className="time">{parseTime(message.sendDt)}</div>
                 </div>
               </div>
             </div>
@@ -86,12 +87,14 @@ const Message = memo(
         );
 
       case 'CALL_RESPONSE':
-        return sentByMe ? (
+        return isSentByMe ? (
           <MessageByMe>
             <div className="message-container">
               <div className="wrapper">
-                <div className="read">{read !== 0 ? read : ''}</div>
-                <div className="time">{parseTime(time)}</div>
+                <div className="read">
+                  {message.unreadCount !== 0 ? message.unreadCount : ''}
+                </div>
+                <div className="time">{parseTime(message.sendDt)}</div>
               </div>
               <div className="tail"></div>
               <div className="message">
@@ -120,7 +123,7 @@ const Message = memo(
               />
             </CharacterBackground>
             <div className="message-section">
-              <div className="nickname">{nickname}</div>
+              <div className="nickname">{message.senderName}</div>
               <div className="message-container">
                 <div className="tail"></div>
                 <div className="message">
@@ -136,8 +139,10 @@ const Message = memo(
                   </div>
                 </div>
                 <div className="wrapper">
-                  <div className="read">{read !== 0 ? read : ''}</div>
-                  <div className="time">{parseTime(time)}</div>
+                  <div className="read">
+                    {message.unreadCount !== 0 ? message.unreadCount : ''}
+                  </div>
+                  <div className="time">{parseTime(message.sendDt)}</div>
                 </div>
               </div>
             </div>
@@ -145,20 +150,27 @@ const Message = memo(
         );
 
       case 'USER':
-        return sentByMe ? (
+        return isSentByMe ? (
           <MessageByMe>
-              <div className="message-container">
-                <div className="wrapper">
-                  <div className="read">{read !== 0 ? read : ''}</div>
-                  <div className="time">{parseTime(time)}</div>
+            <div className="message-container">
+              <div className="wrapper">
+                <div className="read">
+                  {message.unreadCount !== 0 ? message.unreadCount : ''}
                 </div>
-                {content.includes('s3.ap-northeast') ?
-                  <img src={content} alt="message" onClick={() => viewImage(content)}/> :
-                  <>
-                    <div className="tail"></div>
-                    <div className="message">{content}</div>
-                  </>
-                }
+                <div className="time">{parseTime(message.sendDt)}</div>
+              </div>
+              {message.chatMessage.includes('s3.ap-northeast') ? (
+                <img
+                  src={message.chatMessage}
+                  alt="message"
+                  onClick={() => viewImage(message.chatMessage)}
+                />
+              ) : (
+                <>
+                  <div className="tail"></div>
+                  <div className="message">{message.chatMessage}</div>
+                </>
+              )}
             </div>
           </MessageByMe>
         ) : (
@@ -173,18 +185,25 @@ const Message = memo(
               />
             </CharacterBackground>
             <div className="message-section">
-              <div className="nickname">{nickname}</div>
+              <div className="nickname">{message.senderName}</div>
               <div className="message-container">
-                {content.includes('s3.ap-northeast') ?
-                  <img src={content} alt="message" onClick={() => viewImage(content)} /> :
+                {message.chatMessage.includes('s3.ap-northeast') ? (
+                  <img
+                    src={message.chatMessage}
+                    alt="message"
+                    onClick={() => viewImage(message.chatMessage)}
+                  />
+                ) : (
                   <>
                     <div className="tail"></div>
-                    <div className="message">{content}</div>
+                    <div className="message">{message.chatMessage}</div>
                   </>
-                }
+                )}
                 <div className="wrapper">
-                  <div className="read">{read !== 0 ? read : ''}</div>
-                  <div className="time">{parseTime(time)}</div>
+                  <div className="read">
+                    {message.unreadCount !== 0 ? message.unreadCount : ''}
+                  </div>
+                  <div className="time">{parseTime(message.sendDt)}</div>
                 </div>
               </div>
             </div>
@@ -299,7 +318,7 @@ const MessageByOther = styled.div`
           font-weight: 600;
         }
       }
-  
+
       > img {
         width: 9rem;
         height: 13rem;
@@ -316,7 +335,6 @@ const MessageByOther = styled.div`
           opacity: 50%;
         }
       }
-    
     }
   }
 `;

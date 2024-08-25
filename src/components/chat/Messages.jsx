@@ -46,12 +46,8 @@ const Messages = memo(
             {messages.map((message) => (
               <Message
                 key={message.messageId}
-                nickname={message.senderName}
-                content={message.chatMessage}
-                time={message.sendDt}
-                read={message.unreadCount}
-                senderType={message.senderType}
-                sentByMe={message.senderId !== Number(myId)}
+                message={message}
+                isSentByMe={message.senderId !== Number(myId)}
                 responseCall={responseCall}
                 viewImage={viewImage}
                 openProfileModal={openProfileModal}
