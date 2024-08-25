@@ -1,7 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Tooltip from '../common/Tooltip';
 
-const TopBar = () => {
+const TopBar = ({
+  distance,
+  isCallActive,
+  tooltipRef,
+  isCallTooltipVisible,
+  setIsCallTooltipVisible,
+  handleClickCallButton,
+}) => {
+  const navigate = useNavigate();
+
   return (
     <TopBarWrapper>
       <BackButton
@@ -69,6 +80,55 @@ const BackButton = styled.button`
   img {
     width: 12px;
   }
+`;
+
+const CallButton = styled.button`
+  background: none;
+  border: none;
+`;
+
+const WrapTitle = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+
+  > .title {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  > .subtitle {
+    font-size: 0.8rem;
+    color: #979797;
+    line-height: 1.5;
+  }
+`;
+
+const TooltipMessage = styled.div`
+  position: absolute;
+  font-weight: 700;
+  font-size: 10px;
+  top: calc(100% + 14px);
+  right: -10px;
+  text-align: center;
+  padding: 10px;
+  background-color: #333333;
+  color: #ffffff;
+  white-space: nowrap;
+  border-radius: 12px;
+`;
+
+const TooltipTail = styled.div`
+  position: absolute;
+  top: -8px;
+  right: 0;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #333333;
 `;
 
 export default TopBar;

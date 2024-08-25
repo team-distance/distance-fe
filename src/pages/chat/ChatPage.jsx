@@ -28,6 +28,7 @@ import {
   useFetchMessagesFromServer,
   useFetchUnreadMessagesFromServer,
 } from '../../hooks/useFetchMessages';
+import TopBar from '../../components/chat/TopBar';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -35,19 +36,16 @@ const ChatPage = () => {
   const roomId = parseInt(param?.chatRoomId);
 
   const distance = useFetchDistance(roomId);
-  // const isCallActive = useCallActive(messages, roomId);
+  const [messages, setMessages] = useState([]);
   const fetchLocalMessages = useFetchMessagesFromLocal(roomId);
   const fetchServerMessages = useFetchMessagesFromServer(roomId);
   const fetchServerUnreadMessages = useFetchUnreadMessagesFromServer(roomId);
+  const { isCallActive, isShowLottie } = useCallActive(messages, roomId);
 
   //리팩토링 중
   // ------------------------------------------
-
   const [client, setClient] = useState(null);
-  const [messages, setMessages] = useState([]);
   const [draftMessage, setDraftMessage] = useState('');
-  const [isCallActive, setIsCallActive] = useState(false);
-  const [isShowLottie, setIsShowLottie] = useState(false);
   const [isOpponentOut, setIsOpponentOut] = useState(false);
   const [bothAgreed, setBothAgreed] = useState(false);
   const [opponentProfile, setOpponentProfile] = useState(null);
@@ -122,8 +120,6 @@ const ChatPage = () => {
     tooltipRef,
     false
   );
-
-  const viewportRef = useRef();
 
   const [myMemberId, setMyMemberId] = useState(0);
   const [opponentMemberId, setOpponentMemberId] = useState(0);
@@ -401,35 +397,12 @@ const ChatPage = () => {
   // 메시지가 업데이트 될 때마다 로컬 스토리지에 저장
   useEffect(() => {
     const lastMessage = messages.at(-1);
-    console.log('lastMessage', lastMessage);
-
-    // if (lastMessage?.checkTiKiTaKa) setIsCallActive(true);
-    // else setIsCallActive(false);
 
     if (lastMessage?.roomStatus === 'ACTIVE') setIsOpponentOut(false);
     else if (lastMessage?.roomStatus === 'INACTIVE') setIsOpponentOut(true);
 
     if (messages.length > 0) saveMessagesToLocal();
   }, [messages]);
-
-  // 전화 버튼 애니메이션
-  useEffect(() => {
-    const callEffectShown =
-      JSON.parse(localStorage.getItem('callEffectShown')) || [];
-
-    if (!callEffectShown.includes(roomId)) {
-      if (isCallActive) {
-        const newArray = [...callEffectShown];
-        newArray.push(roomId);
-        localStorage.setItem('callEffectShown', JSON.stringify(newArray));
-        setIsShowLottie(true);
-        setTimeout(() => {
-          setIsShowLottie(false);
-        }, 4000);
-        setIsCallTooltipVisible(false);
-      }
-    }
-  }, [isCallActive]);
 
   // 메시지 길이 제한
   useEffect(() => {
@@ -446,56 +419,15 @@ const ChatPage = () => {
       )}
       {isShowLottie && <CallActiveLottie />}
 
-      <Container ref={viewportRef}>
-        <TopBar>
-          <BackButton
-            onClick={() => {
-              navigate(-1);
-            }}
-          >
-            <img
-              src="/assets/arrow-pink-button.png"
-              alt="뒤로가기"
-              width={12}
-            />
-          </BackButton>
-          <WrapTitle>
-            <div className="title">상대방과의 거리</div>
-            <div className="subtitle">
-              {distance === -1 ? (
-                <>
-                  <Tooltip message="두 명 모두 위치 정보를 공유해야 확인할 수 있어요!" />{' '}
-                  <span>위치를 표시할 수 없습니다.</span>
-                </>
-              ) : (
-                `${distance}m`
-              )}
-            </div>
-          </WrapTitle>
-          <div>
-            <CallButton>
-              {isCallActive ? (
-                <div onClick={handleClickCallButton}>
-                  <img src="/assets/callicon-active.svg" alt="전화버튼" />
-                </div>
-              ) : (
-                <div
-                  ref={tooltipRef}
-                  onClick={() => setIsCallTooltipVisible(!isCallTooltipVisible)}
-                  style={{ position: 'relative' }}
-                >
-                  <img src="/assets/callicon.svg" alt="전화버튼" />
-                  {isCallTooltipVisible && (
-                    <TooltipMessage>
-                      <TooltipTail />
-                      상대방과 더 대화해보세요!
-                    </TooltipMessage>
-                  )}
-                </div>
-              )}
-            </CallButton>
-          </div>
-        </TopBar>
+      <Container>
+        <TopBar
+          distance={distance}
+          isCallActive={isCallActive}
+          tooltipRef={tooltipRef}
+          isCallTooltipVisible={isCallTooltipVisible}
+          setIsCallTooltipVisible={setIsCallTooltipVisible}
+          handleClickCallButton={handleClickCallButton}
+        />
 
         {isLoading ? (
           <LoaderContainer>
@@ -550,71 +482,6 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-between;
   transition: height 0.3s;
-`;
-
-const BackButton = styled.button`
-  background: none;
-  border: none;
-`;
-
-const CallButton = styled.button`
-  background: none;
-  border: none;
-`;
-
-const WrapTitle = styled.div`
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-
-  > .title {
-    font-size: 1rem;
-    line-height: 1.5;
-  }
-
-  > .subtitle {
-    font-size: 0.8rem;
-    color: #979797;
-    line-height: 1.5;
-  }
-`;
-
-const TopBar = styled.div`
-  position: relative;
-  background: #ffffff;
-  padding: 0.75rem 1rem;
-  height: 3rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 11;
-`;
-
-const TooltipMessage = styled.div`
-  position: absolute;
-  font-weight: 700;
-  font-size: 10px;
-  top: calc(100% + 14px);
-  right: -10px;
-  text-align: center;
-  padding: 10px;
-  background-color: #333333;
-  color: #ffffff;
-  white-space: nowrap;
-  border-radius: 12px;
-`;
-
-const TooltipTail = styled.div`
-  position: absolute;
-  top: -8px;
-  right: 0;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid #333333;
 `;
 
 const LoaderContainer = styled.div`

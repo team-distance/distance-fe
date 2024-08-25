@@ -10,7 +10,7 @@ export const useCallActive = (messages, roomId) => {
   useEffect(() => {
     if (lastMessage?.checkTiKiTaKa) setIsCallActive(true);
     else setIsCallActive(false);
-  }, [messages]);
+  }, [lastMessage]);
 
   // 전화 버튼 애니메이션
   useEffect(() => {
