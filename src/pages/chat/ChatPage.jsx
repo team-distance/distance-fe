@@ -22,6 +22,12 @@ import CallRequestModal from '../../components/modal/CallRequestModal';
 import ImageView from '../../components/chat/ImageView';
 import { useFetchDistance } from '../../hooks/useFetchDistance';
 import CallActiveLottie from '../../components/chat/CallActiveLottie';
+import { useCallActive } from '../../hooks/useCallActive';
+import {
+  useFetchMessagesFromLocal,
+  useFetchMessagesFromServer,
+  useFetchUnreadMessagesFromServer,
+} from '../../hooks/useFetchMessages';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -29,6 +35,10 @@ const ChatPage = () => {
   const roomId = parseInt(param?.chatRoomId);
 
   const distance = useFetchDistance(roomId);
+  // const isCallActive = useCallActive(messages, roomId);
+  const fetchLocalMessages = useFetchMessagesFromLocal(roomId);
+  const fetchServerMessages = useFetchMessagesFromServer(roomId);
+  const fetchServerUnreadMessages = useFetchUnreadMessagesFromServer(roomId);
 
   //리팩토링 중
   // ------------------------------------------
@@ -120,14 +130,6 @@ const ChatPage = () => {
 
   const groupedMessages = useGroupedMessages(messages);
 
-  const navigateToVerify = () => {
-    navigate('/verify/univ');
-  };
-
-  const navigateToBack = () => {
-    navigate('/chat');
-  };
-
   const handleChangeMessage = (e) => {
     setDraftMessage(e.target.value);
   };
@@ -138,20 +140,6 @@ const ChatPage = () => {
       JSON.parse(localStorage.getItem('staleMessages')) || {};
     staleMessages[roomId] = JSON.stringify(messages);
     localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
-  };
-
-  // 로컬 스토리지에서 메시지 불러오기
-  const fetchStaleMessagesFromLocal = () => {
-    const staleMessages = localStorage.getItem('staleMessages');
-    if (staleMessages) {
-      const parsedStaleMessages = JSON.parse(staleMessages);
-      if (parsedStaleMessages[roomId]) {
-        const localMessages = JSON.parse(parsedStaleMessages[roomId]);
-        setMessages(JSON.parse(parsedStaleMessages[roomId]));
-        return localMessages;
-      }
-    }
-    return [];
   };
 
   // 메시지 전송
@@ -333,42 +321,6 @@ const ChatPage = () => {
     bothAgreed ? openCallModal() : openCallRequestModal();
   };
 
-  // 서버에서 모든 메시지 불러오기
-  const fetchAllMessagesFromServer = async () => {
-    try {
-      const msg = await instance.get(`/chatroom/${roomId}/allmessage`);
-      if (msg.data.length === 0) return;
-      setMessages(msg.data);
-    } catch (error) {
-      window.confirm('학생 인증 후 이용해주세요.')
-        ? navigateToVerify()
-        : navigateToBack();
-    }
-  };
-
-  // 서버에서 읽지 않은 메시지 불러오기
-  const fetchUnreadMessagesFromServer = async () => {
-    try {
-      const unreadMessages = await instance
-        .get(`/chatroom/${roomId}`)
-        .then((res) => res.data);
-      if (unreadMessages.length === 0) return;
-
-      // unreadMessages를 순회하며 messageId가 이미 messages에 있는지 확인하고 없으면 추가
-      unreadMessages.forEach((unreadMessage) => {
-        if (
-          !messages.find(
-            (message) => message.messageId === unreadMessage.messageId
-          )
-        ) {
-          setMessages((messages) => [...messages, unreadMessage]);
-        }
-      });
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-
   // 상대방 프로필 정보 불러오기
   const fetchOpponentProfile = async () => {
     try {
@@ -432,9 +384,9 @@ const ChatPage = () => {
         heartbeatOutgoing: 4000,
       });
 
-      const staleMessages = fetchStaleMessagesFromLocal();
-      if (staleMessages.length === 0) fetchAllMessagesFromServer();
-      else fetchUnreadMessagesFromServer();
+      const staleMessages = fetchLocalMessages(setMessages);
+      if (staleMessages.length === 0) fetchServerMessages(setMessages);
+      else fetchServerUnreadMessages(messages, setMessages);
 
       newClient.activate();
       setClient(newClient);
@@ -451,8 +403,8 @@ const ChatPage = () => {
     const lastMessage = messages.at(-1);
     console.log('lastMessage', lastMessage);
 
-    if (lastMessage?.checkTiKiTaKa) setIsCallActive(true);
-    else setIsCallActive(false);
+    // if (lastMessage?.checkTiKiTaKa) setIsCallActive(true);
+    // else setIsCallActive(false);
 
     if (lastMessage?.roomStatus === 'ACTIVE') setIsOpponentOut(false);
     else if (lastMessage?.roomStatus === 'INACTIVE') setIsOpponentOut(true);
