@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Client } from '@stomp/stompjs';
-import { ClipLoader } from 'react-spinners';
 
 import { instance } from '../../api/instance';
 import { checkCurse } from '../../utils/checkCurse';
@@ -14,7 +13,6 @@ import { useToast } from '../../hooks/useToast';
 
 import Messages from '../../components/chat/Messages';
 import MessageInput from '../../components/chat/MessageInput';
-import Tooltip from '../../components/common/Tooltip';
 import ReportModal from '../../components/modal/ReportModal';
 import OpponentProfileModal from '../../components/modal/OpponentProfileModal';
 import CallModal from '../../components/modal/CallModal';
@@ -29,6 +27,7 @@ import {
   useFetchUnreadMessagesFromServer,
 } from '../../hooks/useFetchMessages';
 import TopBar from '../../components/chat/TopBar';
+import Loader from '../../components/common/Loader';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -430,9 +429,7 @@ const ChatPage = () => {
         />
 
         {isLoading ? (
-          <LoaderContainer>
-            <ClipLoader color="#FF625D" size={50} />
-          </LoaderContainer>
+          <Loader />
         ) : (
           <>
             <Messages
@@ -482,18 +479,6 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-between;
   transition: height 0.3s;
-`;
-
-const LoaderContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
 `;
 
 const MessageInputWrapper = styled.div`

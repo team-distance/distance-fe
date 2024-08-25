@@ -8,6 +8,7 @@ import ClipLoader from 'react-spinners/ClipLoader';
 import { useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
 import Badge from '../../components/common/Badge';
+import Loader from '../../components/common/Loader';
 
 const ChatIndexPage = () => {
   const navigate = useNavigate();
@@ -112,9 +113,7 @@ const ChatIndexPage = () => {
     <>
       {isLoggedIn ? (
         loading ? (
-          <LoaderContainer>
-            <ClipLoader color={'#FF625D'} loading={loading} size={50} />
-          </LoaderContainer>
+          <Loader />
         ) : (
           <>
             <WrapInboxButton>
@@ -175,10 +174,11 @@ const ChatIndexPage = () => {
                             <div className="department">{chat.department}</div>
                             <div>{chat.mbti && <Badge>{chat.mbti}</Badge>}</div>
                           </Profile>
-                          {chat.lastMessage.includes('s3.ap-northeast') ?
+                          {chat.lastMessage.includes('s3.ap-northeast') ? (
                             <Message>(사진)</Message>
-                            : <Message>{chat.lastMessage}</Message>
-                          }
+                          ) : (
+                            <Message>{chat.lastMessage}</Message>
+                          )}
                         </div>
 
                         <div className="right-section">
@@ -321,18 +321,6 @@ const InboxButton = styled.div`
     display: flex;
     margin-left: 5px;
   }
-`;
-
-const LoaderContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
 `;
 
 const UnreadCount = styled.div`

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { UNIV_STATE } from '../../constants/collegeState';
+import Loader from '../common/Loader';
 
 const FoodTruck = () => {
   const navigate = useNavigate();
@@ -64,9 +65,7 @@ const FoodTruck = () => {
   return (
     <>
       {loading ? (
-        <LoaderContainer>
-          <ClipLoader color={'#FF625D'} loading={loading} size={50} />
-        </LoaderContainer>
+        <Loader />
       ) : (
         <WrapCards>
           {foodTruckList.map((foodTruck) => (
@@ -102,18 +101,6 @@ const WrapCards = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-`;
-
-const LoaderContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
 `;
 
 // const EmptyContainer = styled.div`

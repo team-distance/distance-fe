@@ -6,9 +6,9 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
 import Button from '../../components/common/Button';
-import ClipLoader from 'react-spinners/ClipLoader';
 import { onGetToken } from '../../firebaseConfig';
 import { registerDataState } from '../../store/registerDataState';
+import Loader from '../../components/common/Loader';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -115,9 +115,7 @@ const LoginPage = () => {
   return (
     <>
       {loading ? (
-        <LoaderContainer>
-          <ClipLoader color={'#FF625D'} loading={loading} size={50} />
-        </LoaderContainer>
+        <Loader />
       ) : (
         <WrapForm onSubmit={handleSubmit}>
           <WrapContent>
@@ -236,16 +234,4 @@ const LoginExpiredMessage = styled.div`
   text-align: center;
   color: #ff625d;
   margin-bottom: 1rem;
-`;
-
-const LoaderContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
 `;
