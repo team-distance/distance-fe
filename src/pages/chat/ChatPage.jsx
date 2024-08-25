@@ -6,8 +6,6 @@ import { ClipLoader } from 'react-spinners';
 
 import { instance } from '../../api/instance';
 import { checkCurse } from '../../utils/checkCurse';
-import Lottie from 'react-lottie-player';
-import callAnimation from '../../lottie/call-animation.json';
 import useGroupedMessages from '../../hooks/useGroupedMessages';
 import { getByteLength } from '../../utils/getByteLength';
 import useDetectClose from '../../hooks/useDetectClose';
@@ -23,6 +21,7 @@ import CallModal from '../../components/modal/CallModal';
 import CallRequestModal from '../../components/modal/CallRequestModal';
 import ImageView from '../../components/chat/ImageView';
 import { useFetchDistance } from '../../hooks/useFetchDistance';
+import CallActiveLottie from '../../components/chat/CallActiveLottie';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -30,6 +29,9 @@ const ChatPage = () => {
   const roomId = parseInt(param?.chatRoomId);
 
   const distance = useFetchDistance(roomId);
+
+  //리팩토링 중
+  // ------------------------------------------
 
   const [client, setClient] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -490,22 +492,7 @@ const ChatPage = () => {
       {isShowImage && (
         <ImageView imgSrc={imgSrc} handleCancel={() => setIsShowImage(false)} />
       )}
-      {isShowLottie && (
-        <LottieContainer>
-          <div>
-            <Lottie
-              animationData={callAnimation}
-              play
-              style={{ width: 200, height: 200 }}
-              loop={false}
-            />
-          </div>
-          <p>
-            <strong>전화 버튼이 활성화되었어요!</strong> <br />
-            채팅 상대와 전화를 연결해보세요
-          </p>
-        </LottieContainer>
-      )}
+      {isShowLottie && <CallActiveLottie />}
 
       <Container ref={viewportRef}>
         <TopBar>
@@ -650,31 +637,6 @@ const TopBar = styled.div`
   justify-content: space-between;
   align-items: center;
   z-index: 11;
-`;
-
-const LottieContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 99;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-
-  div {
-    transform: rotate(20deg) translateX(10px);
-  }
-
-  p {
-    color: white;
-    text-align: center;
-    font-size: 0.8rem;
-    strong {
-      font-size: 1rem;
-    }
-  }
 `;
 
 const TooltipMessage = styled.div`
