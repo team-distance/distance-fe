@@ -22,14 +22,18 @@ import OpponentProfileModal from '../../components/modal/OpponentProfileModal';
 import CallModal from '../../components/modal/CallModal';
 import CallRequestModal from '../../components/modal/CallRequestModal';
 import ImageView from '../../components/chat/ImageView';
+import { useFetchDistance } from '../../hooks/useFetchDistance';
 
 const ChatPage = () => {
   const navigate = useNavigate();
+  const param = useParams();
+  const roomId = parseInt(param?.chatRoomId);
+
+  const distance = useFetchDistance(roomId);
 
   const [client, setClient] = useState(null);
   const [messages, setMessages] = useState([]);
   const [draftMessage, setDraftMessage] = useState('');
-  const [distance, setDistance] = useState(-1);
   const [isCallActive, setIsCallActive] = useState(false);
   const [isShowLottie, setIsShowLottie] = useState(false);
   const [isOpponentOut, setIsOpponentOut] = useState(false);
@@ -41,13 +45,17 @@ const ChatPage = () => {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [file, setFile] = useState(null);
   const [isShowImage, setIsShowImage] = useState(false);
-  const [imgSrc, setImageSrc] = useState("");
+  const [imgSrc, setImageSrc] = useState('');
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
-      <ReportModal closeModal={closeReportModal} onClick={handleReportUser} setIsMenuOpen={setIsMenuOpen} />
+      <ReportModal
+        closeModal={closeReportModal}
+        onClick={handleReportUser}
+        setIsMenuOpen={setIsMenuOpen}
+      />
     )
   );
 
@@ -97,8 +105,6 @@ const ChatPage = () => {
     'message-length-error'
   );
 
-  const param = useParams();
-
   const tooltipRef = useRef();
   const [isCallTooltipVisible, setIsCallTooltipVisible] = useDetectClose(
     tooltipRef,
@@ -107,10 +113,8 @@ const ChatPage = () => {
 
   const viewportRef = useRef();
 
-
   const [myMemberId, setMyMemberId] = useState(0);
   const [opponentMemberId, setOpponentMemberId] = useState(0);
-  const roomId = parseInt(param?.chatRoomId);
 
   const groupedMessages = useGroupedMessages(messages);
 
@@ -209,7 +213,7 @@ const ChatPage = () => {
   const viewImage = (src) => {
     setImageSrc(src);
     setIsShowImage(true);
-  }
+  };
 
   // 방 나가기
   const handleLeaveRoom = () => {
@@ -363,17 +367,6 @@ const ChatPage = () => {
     }
   };
 
-  // 거리 불러오기
-  const fetchDistance = async () => {
-    try {
-      const distance = await instance.get(`/gps/distance/${roomId}`);
-      const parseDistance = parseInt(distance.data.distance);
-      setDistance(parseDistance);
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-
   // 상대방 프로필 정보 불러오기
   const fetchOpponentProfile = async () => {
     try {
@@ -441,8 +434,6 @@ const ChatPage = () => {
       if (staleMessages.length === 0) fetchAllMessagesFromServer();
       else fetchUnreadMessagesFromServer();
 
-      fetchDistance();
-
       newClient.activate();
       setClient(newClient);
 
@@ -496,7 +487,9 @@ const ChatPage = () => {
 
   return (
     <Wrapper>
-      {isShowImage && <ImageView imgSrc={imgSrc} handleCancel={() => setIsShowImage(false)} />}
+      {isShowImage && (
+        <ImageView imgSrc={imgSrc} handleCancel={() => setIsShowImage(false)} />
+      )}
       {isShowLottie && (
         <LottieContainer>
           <div>
