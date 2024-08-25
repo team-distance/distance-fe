@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useState } from 'react';
 import { instance } from '../../api/instance';
-import ClipLoader from 'react-spinners/ClipLoader';
 import Profile from '../../components/home/Profile';
 import { useNavigate, Link } from 'react-router-dom';
 import Banner from '../../components/common/Banner';

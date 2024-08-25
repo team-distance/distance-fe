@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import ProgramCard from './ProgramCard';
 import { useEffect, useState } from 'react';
 import { instance } from '../../api/instance';
-import ClipLoader from 'react-spinners/ClipLoader';
 import { UNIV_STATE } from '../../constants/collegeState';
 import Loader from '../common/Loader';
 

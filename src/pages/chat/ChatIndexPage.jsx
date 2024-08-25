@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import { parseTime } from '../../utils/parseTime';
 import { CHARACTERS } from '../../constants/CHARACTERS';
-import ClipLoader from 'react-spinners/ClipLoader';
 import { useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
 import Badge from '../../components/common/Badge';

@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Header from '../../components/common/Header';
 import { instance } from '../../api/instance';
-import ClipLoader from 'react-spinners/ClipLoader';
 import Loader from '../../components/common/Loader';
 
 const FoodTruckPage = () => {

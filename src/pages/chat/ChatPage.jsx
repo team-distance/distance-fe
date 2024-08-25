@@ -352,6 +352,7 @@ const ChatPage = () => {
     initializeChat();
   }, []);
 
+  // 여기
   // STOMP 클라이언트 생성
   useEffect(() => {
     if (isMemberIdsFetched) {
