@@ -50,7 +50,7 @@ const Message = memo(
         ) : (
           <MessageByOther>
             <CharacterBackground
-              backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
+              $backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
               onClick={openProfileModal}
             >
               <Character
@@ -110,7 +110,7 @@ const Message = memo(
         ) : (
           <MessageByOther>
             <CharacterBackground
-              backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
+              $backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
               onClick={openProfileModal}
             >
               <Character
@@ -158,7 +158,7 @@ const Message = memo(
         ) : (
           <MessageByOther>
             <CharacterBackground
-              backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
+              $backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
               onClick={openProfileModal}
             >
               <Character
@@ -206,7 +206,7 @@ const CharacterBackground = styled.div`
   width: 36px;
   height: 36px;
   border-radius: 9999px;
-  background-color: ${(props) => props.backgroundColor};
+  background-color: ${(props) => props.$backgroundColor};
 
   img {
     position: absolute;

@@ -34,6 +34,8 @@ import TeamIntroductionPage from './pages/mypage/TeamIntroductionPage';
 import GPSSolutionPage from './pages/root/GPSSolutionPage';
 import useRouteChangeTrack from './hooks/useRouteChangeTrack';
 import { useToast } from './hooks/useToast';
+import EventListPage from './pages/event/EventListPage';
+import EventDetailPage from './pages/event/EventDetailPage';
 
 function App() {
   useRouteChangeTrack();
@@ -91,7 +93,13 @@ function App() {
         <Route path="/chat" element={<ChatIndexPage />} />
         <Route path="/inbox" element={<ChatInboxPage />} />
 
-        <Route path="/event" element={<EventIndexPage />} />
+        <Route path="/event" element={<EventIndexPage />}>
+          <Route path="/event/" element={<EventListPage />} />
+          <Route
+            path="/event/:studentCouncilId"
+            element={<EventDetailPage />}
+          />
+        </Route>
         <Route path="/mypage" element={<MyIndexPage />} />
       </Route>
 

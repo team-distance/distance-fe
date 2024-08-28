@@ -7,9 +7,21 @@ import {
   Marker,
   useNavermaps,
 } from 'react-naver-maps';
+import { Outlet, useNavigate, useSearchParams } from 'react-router-dom';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { councilContentsState, schoolState } from '../../store/councilContents';
 
 const EventIndexPage = () => {
-  const [contents, setContents] = useState([]);
+  const [contents, setContents] = useRecoilState(councilContentsState);
+  const setSchool = useSetRecoilState(schoolState);
+  const [schoolLocation, setSchoolLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
+  const [schoolQuery, setSchoolQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const navigate = useNavigate();
   const navermaps = useNavermaps();
 
   const [isDragging, setIsDragging] = useState(false);
@@ -44,24 +56,51 @@ const EventIndexPage = () => {
     setIsDragging(false);
   };
 
-  const fetchContents = async () => {
+  const fetchContents = async (school) => {
     try {
-      const response = await instance.get('/council');
+      const response = await instance.get('/council', {
+        params: {
+          school: school,
+        },
+      });
+
+      setSchool(response.data.school);
+      setContents(response.data.contentResponse);
+      setSchoolLocation({
+        latitude: response.data.schoolLocation.latitude,
+        longitude: response.data.schoolLocation.longitude,
+      });
+
       console.log(response.data);
-      setContents(response.data);
     } catch (e) {
       alert('데이터를 가져오는데 실패했습니다');
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    navigate('/event');
+    setSearchParams({ school: schoolQuery });
+    fetchContents(schoolQuery || null);
+  };
+
+  const handleChangeSchoolQuery = (e) => {
+    setSchoolQuery(e.target.value);
+  };
+
   useEffect(() => {
-    fetchContents();
+    const school = searchParams.get('school');
+    fetchContents(school || null);
   }, []);
 
   return (
     <Wrapper onTouchEnd={handleTouchEnd} onTouchMove={handleTouchMove}>
-      <StyledForm>
-        <FloatingInput placeholder="학교명을 입력해주세요" />
+      <StyledForm onSubmit={handleSubmit}>
+        <FloatingInput
+          placeholder="학교명을 입력해주세요"
+          onChange={handleChangeSchoolQuery}
+        />
         <SearchButton type="submit">
           <img src="/assets/search-button.svg" alt="search" />
         </SearchButton>
@@ -69,25 +108,34 @@ const EventIndexPage = () => {
 
       <MapDiv style={{ width: '100%', height: '55%' }}>
         <NaverMap
+          center={
+            new navermaps.LatLng(
+              schoolLocation.latitude,
+              schoolLocation.longitude
+            )
+          }
           logoControlOptions={{ position: navermaps.Position.TOP_RIGHT }}
           mapDataControl={false}
           scaleControl={false}
-          defaultCenter={new navermaps.LatLng(37.3595704, 127.105399)}
           defaultZoom={15}
         >
-          {contents.map((content) =>
-            content.councilGpsResponses.map((gpsResponse) => (
-              <Marker
-                key={content.id}
-                position={
-                  new navermaps.LatLng(
-                    gpsResponse.councilLatitude,
-                    gpsResponse.councilLongitude
-                  )
-                }
-              />
-            ))
-          )}
+          {contents.map((content, index) => (
+            <div key={index}>
+              {content.councilGpsResponses.map((gpsResponse, index) => {
+                return (
+                  <Marker
+                    key={index}
+                    position={
+                      new navermaps.LatLng(
+                        gpsResponse.councilLatitude,
+                        gpsResponse.councilLongitude
+                      )
+                    }
+                  />
+                );
+              })}
+            </div>
+          ))}
         </NaverMap>
       </MapDiv>
 
@@ -101,25 +149,7 @@ const EventIndexPage = () => {
           <Handle />
         </HandleArea>
         <Body>
-          <UniversityName>전남대학교</UniversityName>
-          {contents.map((content) => (
-            <div key={content.id}>
-              <PostTitle>{content.content}</PostTitle>
-              <Locations>
-                위치:{' '}
-                {content.councilGpsResponses.map((gpsResponse) => (
-                  <span>{gpsResponse.location} </span>
-                ))}
-              </Locations>
-              <ImageContainer>
-                {content.councilImageResponses.map((imageResponse) => (
-                  <WrapImage>
-                    <Image src={imageResponse.imageUrl} alt="이미지" />
-                  </WrapImage>
-                ))}
-              </ImageContainer>
-            </div>
-          ))}
+          <Outlet />
         </Body>
       </Bottomsheet>
     </Wrapper>
@@ -155,6 +185,8 @@ const FloatingInput = styled.input`
   border-radius: 20px;
   border: none;
   box-sizing: border-box;
+  outline: none;
+  opacity: 0.8;
 
   &::placeholder {
     color: #d3d3d3;
@@ -203,50 +235,5 @@ const Handle = styled.div`
 `;
 
 const Body = styled.div`
-  padding: 16px;
-`;
-
-const UniversityName = styled.h1`
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 40px;
-`;
-
-const PostTitle = styled.h2`
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 22px;
-`;
-
-const Locations = styled.p`
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 200;
-  line-height: 22px;
-`;
-
-const ImageContainer = styled.div`
-  display: flex;
-  margin-top: 16px;
-  overflow: scroll;
-  gap: 8px;
-`;
-
-const WrapImage = styled.div`
-  position: relative;
-  width: 100px;
-  height: 100px;
-  flex-shrink: 0;
-`;
-
-const Image = styled.img`
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translate(50, 50);
-  width: 100%;
   height: 100%;
-  object-fit: cover;
-  margin: auto;
 `;
