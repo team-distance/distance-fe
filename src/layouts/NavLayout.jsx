@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import TabBar from '../components/common/TabBar';
 import styled from 'styled-components';
 import toast from 'react-hot-toast';
@@ -12,15 +12,17 @@ const NavLayout = () => {
   const navigate = useNavigate();
   const userAgent = navigator.userAgent.toLowerCase();
   const isIphone = userAgent.includes('iphone');
+  const { pathname } = useLocation();
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
+    console.log(pathname);
 
     if (userAgent.includes('kakao')) {
       navigate('/kakaotalk-fallback');
     }
   }, []);
-  
+
   useEffect(() => {
     if (messaging) {
       onMessage(messaging, (payload) => {
@@ -72,10 +74,16 @@ const NavLayout = () => {
   return (
     <>
       <PWAInstallPrompt />
-      <Padding $isIphone={isIphone}>
-        <Header />
+
+      {pathname === '/event' ? (
         <Outlet />
-      </Padding>
+      ) : (
+        <Padding $isIphone={isIphone}>
+          <Header />
+          <Outlet />
+        </Padding>
+      )}
+
       <TabBar />
       {/* <Toaster
         toastOptions={{
