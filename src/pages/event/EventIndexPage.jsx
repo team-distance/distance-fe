@@ -1,12 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { instance } from '../../api/instance';
-import {
-  Container as MapDiv,
-  NaverMap,
-  Marker,
-  useNavermaps,
-} from 'react-naver-maps';
 import { Outlet, useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { councilContentsState, schoolState } from '../../store/councilContents';
@@ -14,15 +8,20 @@ import { councilContentsState, schoolState } from '../../store/councilContents';
 const EventIndexPage = () => {
   const [contents, setContents] = useRecoilState(councilContentsState);
   const setSchool = useSetRecoilState(schoolState);
+
   const [schoolLocation, setSchoolLocation] = useState({
     latitude: 0,
     longitude: 0,
   });
   const [schoolQuery, setSchoolQuery] = useState('');
+
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const [map, setMap] = useState(null);
+  const mapElement = useRef(null);
+  const { naver } = window;
+
   const navigate = useNavigate();
-  const navermaps = useNavermaps();
 
   const [isDragging, setIsDragging] = useState(false);
   const [yPosition, setYPosition] = useState(window.innerHeight / 2);
@@ -82,6 +81,7 @@ const EventIndexPage = () => {
 
     navigate('/event');
     setSearchParams({ school: schoolQuery });
+
     fetchContents(schoolQuery || null);
   };
 
@@ -92,7 +92,49 @@ const EventIndexPage = () => {
   useEffect(() => {
     const school = searchParams.get('school');
     fetchContents(school || null);
+  }, [searchParams]);
+
+  useEffect(() => {
+    const map = new naver.maps.Map(mapElement.current, {
+      center: new naver.maps.LatLng(
+        schoolLocation.latitude,
+        schoolLocation.longitude
+      ),
+      zoom: 15,
+      disableKineticPan: false,
+      mapDataControl: false,
+      scaleControl: false,
+      logoControlOptions: {
+        position: naver.maps.Position.TOP_RIGHT,
+      },
+    });
+
+    setMap(map);
   }, []);
+
+  useEffect(() => {
+    if (map) {
+      map.morph(
+        new naver.maps.LatLng(schoolLocation.latitude, schoolLocation.longitude)
+      );
+    }
+  }, [schoolLocation]);
+
+  useEffect(() => {
+    if (map) {
+      contents.forEach((content) => {
+        content.councilGpsResponses.forEach((gpsResponse) => {
+          new naver.maps.Marker({
+            position: new naver.maps.LatLng(
+              gpsResponse.councilLatitude,
+              gpsResponse.councilLongitude
+            ),
+            map: map,
+          });
+        });
+      });
+    }
+  }, [contents]);
 
   return (
     <Wrapper onTouchEnd={handleTouchEnd} onTouchMove={handleTouchMove}>
@@ -106,38 +148,7 @@ const EventIndexPage = () => {
         </SearchButton>
       </StyledForm>
 
-      <MapDiv style={{ width: '100%', height: '55%' }}>
-        <NaverMap
-          center={
-            new navermaps.LatLng(
-              schoolLocation.latitude,
-              schoolLocation.longitude
-            )
-          }
-          logoControlOptions={{ position: navermaps.Position.TOP_RIGHT }}
-          mapDataControl={false}
-          scaleControl={false}
-          defaultZoom={15}
-        >
-          {contents.map((content, index) => (
-            <div key={index}>
-              {content.councilGpsResponses.map((gpsResponse, index) => {
-                return (
-                  <Marker
-                    key={index}
-                    position={
-                      new navermaps.LatLng(
-                        gpsResponse.councilLatitude,
-                        gpsResponse.councilLongitude
-                      )
-                    }
-                  />
-                );
-              })}
-            </div>
-          ))}
-        </NaverMap>
-      </MapDiv>
+      <div ref={mapElement} style={{ width: '100%', height: '55%' }}></div>
 
       <Bottomsheet
         style={{
