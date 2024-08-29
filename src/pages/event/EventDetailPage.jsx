@@ -2,8 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import styled from 'styled-components';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { schoolState } from '../../store/councilContents';
+import { selectedMarkerGps } from '../../store/selectedMarkerGps';
 
 const EventDetailPage = () => {
+  const school = useRecoilValue(schoolState);
+  const [selectedGpsCoord, setSelectedGpsCoord] =
+    useRecoilState(selectedMarkerGps);
   const [content, setContent] = useState({});
   const { studentCouncilId } = useParams();
   const navigate = useNavigate();
@@ -19,7 +25,18 @@ const EventDetailPage = () => {
 
   useEffect(() => {
     fetchCouncilDetail();
-  }, []);
+  }, [studentCouncilId]);
+
+  useEffect(() => {
+    if (!selectedGpsCoord.latitude && !selectedGpsCoord.longitude) {
+      if (content.councilGpsResponses?.length) {
+        setSelectedGpsCoord({
+          latitude: content.councilGpsResponses[0]?.councilLatitude,
+          longitude: content.councilGpsResponses[0]?.councilLongitude,
+        });
+      }
+    }
+  }, [selectedGpsCoord]);
 
   return (
     <Wrapper>
@@ -27,7 +44,7 @@ const EventDetailPage = () => {
         <BackButton
           src="/assets/arrow-pink-button.png"
           alt="뒤로가기"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate(`/event?school=${school}`)}
         />
         <Title>{content.title}</Title>
         <Stroke />
