@@ -40,10 +40,12 @@ const EventIndexPage = () => {
   const mapElement = useRef(null);
   const { naver } = window;
 
+  const handleRef = useRef(null);
+
   const navigate = useNavigate();
 
-  const handleTouchStart = (e) => {
-    const rect = e.target.getBoundingClientRect();
+  const handleTouchStart = () => {
+    const rect = handleRef.current.getBoundingClientRect();
     setYPosition(rect.top);
     setIsDragging(true);
   };
@@ -180,8 +182,9 @@ const EventIndexPage = () => {
           top: `${yPosition}px`,
         }}
         $isDragging={isDragging}
+        onTouchStart={yPosition === 100 ? null : handleTouchStart}
       >
-        <HandleArea onTouchStart={handleTouchStart}>
+        <HandleArea ref={handleRef} onTouchStart={handleTouchStart}>
           <Handle />
         </HandleArea>
         <Body>

@@ -13,7 +13,7 @@ const EventListPage = () => {
   const setSelectedGpsCoord = useSetRecoilState(selectedMarkerGps);
 
   return (
-    <>
+    <Wrapper>
       <UniversityName>{school}</UniversityName>
       <EventListItemWrapper>
         {contents.map((content) => (
@@ -34,9 +34,13 @@ const EventListPage = () => {
           />
         ))}
       </EventListItemWrapper>
-    </>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  height: 100%;
+`;
 
 const UniversityName = styled.h1`
   font-size: 24px;
@@ -49,6 +53,8 @@ const EventListItemWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  height: 75%;
+  overflow: auto;
 `;
 
 export default EventListPage;
