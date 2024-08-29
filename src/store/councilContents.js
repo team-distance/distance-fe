@@ -9,3 +9,8 @@ export const councilContentsState = atom({
   key: 'councilContentsState',
   default: [],
 });
+
+export const schoolQueryState = atom({
+  key: 'schoolQueryState',
+  default: '',
+});

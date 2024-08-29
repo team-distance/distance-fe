@@ -1,33 +1,46 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { instance } from '../../api/instance';
-import { Outlet, useNavigate, useSearchParams } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { councilContentsState, schoolState } from '../../store/councilContents';
+import {
+  Outlet,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
+import {
+  councilContentsState,
+  schoolQueryState,
+  schoolState,
+} from '../../store/councilContents';
+import { bottomsheetState } from '../../store/bottomsheetState';
+import { selectedMarkerGps } from '../../store/selectedMarkerGps';
 
 const EventIndexPage = () => {
   const [contents, setContents] = useRecoilState(councilContentsState);
   const setSchool = useSetRecoilState(schoolState);
+  const [yPosition, setYPosition] = useRecoilState(bottomsheetState);
+  const [isDragging, setIsDragging] = useState(false);
+  const [selectedGpsCoord, setSelectedGpsCoord] =
+    useRecoilState(selectedMarkerGps);
+  const resetSelectedGpsCoord = useResetRecoilState(selectedMarkerGps);
 
   const [schoolLocation, setSchoolLocation] = useState({
     latitude: 0,
     longitude: 0,
   });
-  const [schoolQuery, setSchoolQuery] = useState('');
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [schoolQuery, setSchoolQuery] = useRecoilState(schoolQueryState);
 
-  const [map, setMap] = useState(null);
+  const [searchParams] = useSearchParams();
+
+  const { studentCouncilId } = useParams();
+
+  const mapRef = useRef(null);
   const mapElement = useRef(null);
   const { naver } = window;
 
   const navigate = useNavigate();
-
-  const [isDragging, setIsDragging] = useState(false);
-  const [yPosition, setYPosition] = useState(window.innerHeight / 2);
-  const [animatedYPosition, setAnimatedYPosition] = useState(
-    window.innerHeight / 2
-  );
 
   const handleTouchStart = (e) => {
     const rect = e.target.getBoundingClientRect();
@@ -46,10 +59,8 @@ const EventIndexPage = () => {
     if (
       Math.abs(100 - yPosition) < Math.abs(window.innerHeight / 2 - yPosition)
     ) {
-      setAnimatedYPosition(100);
       setYPosition(100);
     } else {
-      setAnimatedYPosition(window.innerHeight / 2);
       setYPosition(window.innerHeight / 2);
     }
     setIsDragging(false);
@@ -69,8 +80,6 @@ const EventIndexPage = () => {
         latitude: response.data.schoolLocation.latitude,
         longitude: response.data.schoolLocation.longitude,
       });
-
-      console.log(response.data);
     } catch (e) {
       alert('데이터를 가져오는데 실패했습니다');
     }
@@ -79,9 +88,8 @@ const EventIndexPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    navigate('/event');
-    setSearchParams({ school: schoolQuery });
-
+    resetSelectedGpsCoord();
+    navigate(`/event?school=${schoolQuery}`);
     fetchContents(schoolQuery || null);
   };
 
@@ -91,45 +99,62 @@ const EventIndexPage = () => {
 
   useEffect(() => {
     const school = searchParams.get('school');
-    fetchContents(school || null);
+
+    if (!studentCouncilId) {
+      fetchContents(school || null);
+    }
   }, [searchParams]);
 
   useEffect(() => {
-    const map = new naver.maps.Map(mapElement.current, {
-      center: new naver.maps.LatLng(
-        schoolLocation.latitude,
-        schoolLocation.longitude
-      ),
-      zoom: 15,
-      disableKineticPan: false,
-      mapDataControl: false,
-      scaleControl: false,
-      logoControlOptions: {
-        position: naver.maps.Position.TOP_RIGHT,
-      },
-    });
+    if (!naver) return;
 
-    setMap(map);
-  }, []);
-
-  useEffect(() => {
-    if (map) {
-      map.morph(
+    if (!mapRef.current) {
+      mapRef.current = new naver.maps.Map(mapElement.current, {
+        zoom: 15,
+        disableKineticPan: false,
+        mapDataControl: false,
+        scaleControl: false,
+        logoControlOptions: {
+          position: naver.maps.Position.TOP_RIGHT,
+        },
+      });
+    } else {
+      mapRef.current.morph(
         new naver.maps.LatLng(schoolLocation.latitude, schoolLocation.longitude)
       );
     }
   }, [schoolLocation]);
 
   useEffect(() => {
-    if (map) {
+    if (studentCouncilId) {
+      mapRef.current.morph(
+        new naver.maps.LatLng(
+          selectedGpsCoord.latitude,
+          selectedGpsCoord.longitude
+        )
+      );
+    }
+  }, [studentCouncilId, selectedGpsCoord]);
+
+  useEffect(() => {
+    if (mapRef.current) {
       contents.forEach((content) => {
         content.councilGpsResponses.forEach((gpsResponse) => {
-          new naver.maps.Marker({
+          const marker = new naver.maps.Marker({
             position: new naver.maps.LatLng(
               gpsResponse.councilLatitude,
               gpsResponse.councilLongitude
             ),
-            map: map,
+            map: mapRef.current,
+          });
+
+          naver.maps.Event.addListener(marker, 'click', () => {
+            setSelectedGpsCoord({
+              latitude: gpsResponse.councilLatitude,
+              longitude: gpsResponse.councilLongitude,
+            });
+
+            navigate(`/event/${content.councilId}`);
           });
         });
       });
@@ -152,7 +177,7 @@ const EventIndexPage = () => {
 
       <Bottomsheet
         style={{
-          top: `${isDragging ? yPosition : animatedYPosition}px`,
+          top: `${yPosition}px`,
         }}
         $isDragging={isDragging}
       >
@@ -197,7 +222,6 @@ const FloatingInput = styled.input`
   border: none;
   box-sizing: border-box;
   outline: none;
-  opacity: 0.8;
 
   &::placeholder {
     color: #d3d3d3;
