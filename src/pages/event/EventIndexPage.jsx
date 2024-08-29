@@ -13,60 +13,29 @@ import {
   schoolQueryState,
   schoolState,
 } from '../../store/councilContents';
-import { bottomsheetState } from '../../store/bottomsheetState';
 import { selectedMarkerGps } from '../../store/selectedMarkerGps';
+import Bottomsheet from '../../components/event/Bottomsheet';
 
 const EventIndexPage = () => {
-  const [contents, setContents] = useRecoilState(councilContentsState);
-  const setSchool = useSetRecoilState(schoolState);
-  const [yPosition, setYPosition] = useRecoilState(bottomsheetState);
-  const [isDragging, setIsDragging] = useState(false);
-  const [selectedGpsCoord, setSelectedGpsCoord] =
-    useRecoilState(selectedMarkerGps);
-  const resetSelectedGpsCoord = useResetRecoilState(selectedMarkerGps);
-
   const [schoolLocation, setSchoolLocation] = useState({
     latitude: 0,
     longitude: 0,
   });
 
+  const [contents, setContents] = useRecoilState(councilContentsState);
+  const [selectedMarker, setSelectedMarker] = useRecoilState(selectedMarkerGps);
+  const resetSelectedGpsCoord = useResetRecoilState(selectedMarkerGps);
   const [schoolQuery, setSchoolQuery] = useRecoilState(schoolQueryState);
+  const setSchool = useSetRecoilState(schoolState);
 
   const [searchParams] = useSearchParams();
-
   const { studentCouncilId } = useParams();
 
   const mapRef = useRef(null);
   const mapElement = useRef(null);
   const { naver } = window;
 
-  const handleRef = useRef(null);
-
   const navigate = useNavigate();
-
-  const handleTouchStart = () => {
-    const rect = handleRef.current.getBoundingClientRect();
-    setYPosition(rect.top);
-    setIsDragging(true);
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isDragging) return;
-
-    const y = e.touches[0].clientY;
-    if (y >= 100 && y <= window.innerHeight / 2) setYPosition(y);
-  };
-
-  const handleTouchEnd = () => {
-    if (
-      Math.abs(100 - yPosition) < Math.abs(window.innerHeight / 2 - yPosition)
-    ) {
-      setYPosition(100);
-    } else {
-      setYPosition(window.innerHeight / 2);
-    }
-    setIsDragging(false);
-  };
 
   const fetchContents = async (school) => {
     try {
@@ -130,13 +99,10 @@ const EventIndexPage = () => {
   useEffect(() => {
     if (studentCouncilId) {
       mapRef.current.morph(
-        new naver.maps.LatLng(
-          selectedGpsCoord.latitude,
-          selectedGpsCoord.longitude
-        )
+        new naver.maps.LatLng(selectedMarker.latitude, selectedMarker.longitude)
       );
     }
-  }, [studentCouncilId, selectedGpsCoord]);
+  }, [studentCouncilId, selectedMarker]);
 
   useEffect(() => {
     if (mapRef.current) {
@@ -151,7 +117,7 @@ const EventIndexPage = () => {
           });
 
           naver.maps.Event.addListener(marker, 'click', () => {
-            setSelectedGpsCoord({
+            setSelectedMarker({
               latitude: gpsResponse.councilLatitude,
               longitude: gpsResponse.councilLongitude,
             });
@@ -164,7 +130,7 @@ const EventIndexPage = () => {
   }, [contents]);
 
   return (
-    <Wrapper onTouchEnd={handleTouchEnd} onTouchMove={handleTouchMove}>
+    <Wrapper>
       <StyledForm onSubmit={handleSubmit}>
         <FloatingInput
           placeholder="학교명을 입력해주세요"
@@ -175,21 +141,10 @@ const EventIndexPage = () => {
         </SearchButton>
       </StyledForm>
 
-      <div ref={mapElement} style={{ width: '100%', height: '55%' }}></div>
+      <div ref={mapElement} style={{ width: '100%', height: '55%' }} />
 
-      <Bottomsheet
-        style={{
-          top: `${yPosition}px`,
-        }}
-        $isDragging={isDragging}
-        onTouchStart={yPosition === 100 ? null : handleTouchStart}
-      >
-        <HandleArea ref={handleRef} onTouchStart={handleTouchStart}>
-          <Handle />
-        </HandleArea>
-        <Body>
-          <Outlet />
-        </Body>
+      <Bottomsheet>
+        <Outlet />
       </Bottomsheet>
     </Wrapper>
   );
@@ -198,12 +153,8 @@ const EventIndexPage = () => {
 export default EventIndexPage;
 
 const Wrapper = styled.div`
-  width: 100dvw;
+  position: relative;
   height: 100dvh;
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: hidden;
 `;
 
 const StyledForm = styled.form`
@@ -246,32 +197,4 @@ const SearchButton = styled.button`
     width: 20px;
     height: 20px;
   }
-`;
-
-const Bottomsheet = styled.div`
-  width: 100%;
-  height: 744px;
-  touch-action: none; // 터치되었을 때 뒷 배경 스크롤 막기
-  background-color: white;
-  border-radius: 25px 25px 0 0;
-  position: absolute;
-  transition: ${(props) => !props.$isDragging && 'top 0.25s ease-out'};
-`;
-
-const HandleArea = styled.div`
-  width: 100%;
-  padding-top: 8px;
-  padding-bottom: 44px;
-`;
-
-const Handle = styled.div`
-  width: 84px;
-  height: 4px;
-  background-color: #d3d3d3;
-  border-radius: 9999px;
-  margin: 0 auto;
-`;
-
-const Body = styled.div`
-  height: 100%;
 `;

@@ -75,7 +75,7 @@ const NavLayout = () => {
     <>
       <PWAInstallPrompt />
 
-      {pathname === '/event' ? (
+      {pathname.includes('/event') ? (
         <Outlet />
       ) : (
         <Padding $isIphone={isIphone}>
