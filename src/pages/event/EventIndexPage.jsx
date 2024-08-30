@@ -14,7 +14,7 @@ import {
   schoolState,
 } from '../../store/councilContents';
 import { selectedMarkerGps } from '../../store/selectedMarkerGps';
-import Bottomsheet from '../../components/event/Bottomsheet';
+import ExpandableBottomsheet from '../../components/event/ExpandableBottomsheet';
 import FloatingInput from '../../components/event/FloatingInput';
 
 const EventIndexPage = () => {
@@ -139,9 +139,9 @@ const EventIndexPage = () => {
 
       <NaverMap ref={mapElement} />
 
-      <Bottomsheet>
+      <ExpandableBottomsheet>
         <Outlet />
-      </Bottomsheet>
+      </ExpandableBottomsheet>
     </Wrapper>
   );
 };

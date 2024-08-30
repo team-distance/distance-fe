@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 import { bottomsheetState } from '../../store/bottomsheetState';
 import styled from 'styled-components';
 
-const Bottomsheet = ({ children }) => {
+const ExpandableBottomsheet = ({ children }) => {
   const [yPosition, setYPosition] = useRecoilState(bottomsheetState);
   const [isDragging, setIsDragging] = useState(false);
   const handleRef = useRef(null);
@@ -50,7 +50,7 @@ const Bottomsheet = ({ children }) => {
   );
 };
 
-export default Bottomsheet;
+export default ExpandableBottomsheet;
 
 const Wrapper = styled.div`
   position: fixed;
