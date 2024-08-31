@@ -12,6 +12,10 @@ import useModal from '../../hooks/useModal';
 import { useToast } from '../../hooks/useToast';
 import { useCheckAlarmActive } from '../../hooks/useCheckAlarmActive';
 import { useCheckGpsActive } from '../../hooks/useCheckGpsActive';
+import MatchingConfigButton from '../../components/home/MatchingConfigButton';
+import MatchingConfigBottomsheet from '../../components/modal/MatchingConfigBottomsheet';
+import { useRecoilValue } from 'recoil';
+import { matchingConfigState } from '../../store/matchingConfig';
 
 const HomeIndexPage = () => {
   const navigate = useNavigate();
@@ -20,11 +24,10 @@ const HomeIndexPage = () => {
   const alarmActive = useCheckAlarmActive();
   const gpsActive = useCheckGpsActive();
 
-  const [searchRange, setSearchRange] = useState(1000);
-  const [isPermitOtherSchool, setIsPermitOtherSchool] = useState(false);
-
   const [memberState, setMemberState] = useState();
   const [loading, setLoading] = useState(false);
+
+  const matchingConfig = useRecoilValue(matchingConfigState);
 
   const { openModal: openProfileModal, closeModal: closeProfileModal } =
     useModal((profile) => (
@@ -36,6 +39,14 @@ const HomeIndexPage = () => {
         selectedProfile={profile}
       />
     ));
+
+  const {
+    openModal: openMatchingConfigModal,
+    closeModal: closeMatchingConfigModal,
+  } = useModal(
+    () => <MatchingConfigBottomsheet closeModal={closeMatchingConfigModal} />,
+    { backdrop: false }
+  );
 
   // 토스트 메세지
   const { showToast: showFullMyChatroomToast } = useToast(
@@ -64,31 +75,26 @@ const HomeIndexPage = () => {
   );
 
   const { showToast: showAlarmGPSErrorToast } = useToast(
-    () => <>
-      <span style={{ textAlign: 'center' }}>알림과 위치 설정이 꺼져있어요! 
-        <br/>
-        <Link to="/mypage" style={{ color: '#0096FF' }}>
-          해결하기
-        </Link>
-      </span>
-    </>, 'alarm-gps-disabled', 'bottom-center', 'none'
+    () => (
+      <>
+        <span style={{ textAlign: 'center' }}>
+          알림과 위치 설정이 꺼져있어요!
+          <br />
+          <Link to="/mypage" style={{ color: '#0096FF' }}>
+            해결하기
+          </Link>
+        </span>
+      </>
+    ),
+    'alarm-gps-disabled',
+    'bottom-center',
+    'none'
   );
-
-  const handleChangeSearchRange = (e) => {
-    setSearchRange(e.target.value);
-  };
-
-  const handleChangeIsPermitOtherSchool = (e) => {
-    setIsPermitOtherSchool(e.target.value);
-  };
 
   const fetchMembers = async () => {
     try {
       setLoading(true);
-      const res = await instance.post('/gps/matching', {
-        isPermitOtherSchool,
-        searchRange,
-      });
+      const res = await instance.post('/gps/matching', matchingConfig);
       setMemberState(res.data.matchedUsers);
     } catch (error) {
       console.log(error);
@@ -160,31 +166,12 @@ const HomeIndexPage = () => {
 
   useEffect(() => {
     fetchMembers();
-  }, [searchRange, isPermitOtherSchool]);
+  }, [matchingConfig]);
 
   return (
     <>
       <Banner alertText={alertTextList} />
-      <div style={{ display: 'flex', gap: '1rem' }}>
-        <select
-          style={{ width: '100%' }}
-          value={searchRange}
-          onChange={handleChangeSearchRange}
-        >
-          <option value="1000">1km</option>
-          <option value="5000">5km</option>
-          <option value="10000">10km</option>
-        </select>
-        <select
-          style={{ width: '100%' }}
-          value={isPermitOtherSchool}
-          onChange={handleChangeIsPermitOtherSchool}
-        >
-          <option value="false">같은 학교만</option>
-          <option value="true">다른 학교 포함</option>
-        </select>
-      </div>
-      <br />
+
       {memberState && memberState.length === 0 ? (
         <EmptyContainer>
           <div className="wrap">
@@ -210,6 +197,7 @@ const HomeIndexPage = () => {
           )}
         </ProfileContainer>
       )}
+      <MatchingConfigButton onClick={openMatchingConfigModal} />
       <ReloadButton onClick={fetchMembers} />
     </>
   );
