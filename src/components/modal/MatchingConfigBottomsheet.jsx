@@ -100,7 +100,7 @@ const Bottomsheet = styled.div`
   padding: 32px;
   background: white;
   border-radius: 30px 30px 0 0;
-  box-shadow: 0px 0px 20px 0px #3333334d;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
   z-index: 100;
   overflow: hidden;
   transition: bottom 0.3s cubic-bezier(0, 0.45, 0.45, 1);
