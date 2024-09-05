@@ -28,6 +28,7 @@ import {
 } from '../../hooks/useFetchMessages';
 import TopBar from '../../components/chat/TopBar';
 import Loader from '../../components/common/Loader';
+import { useStompClient } from '../../hooks/useStomp';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -40,16 +41,17 @@ const ChatPage = () => {
   const fetchServerMessages = useFetchMessagesFromServer(roomId);
   const fetchServerUnreadMessages = useFetchUnreadMessagesFromServer(roomId);
   const { isCallActive, isShowLottie } = useCallActive(messages, roomId);
+  const [client, setClient] = useState(null);
+  const [myMemberId, setMyMemberId] = useState(0);
+  const [opponentMemberId, setOpponentMemberId] = useState(0);
 
   //리팩토링 중
   // ------------------------------------------
-  const [client, setClient] = useState(null);
   const [draftMessage, setDraftMessage] = useState('');
   const [isOpponentOut, setIsOpponentOut] = useState(false);
   const [bothAgreed, setBothAgreed] = useState(false);
   const [opponentProfile, setOpponentProfile] = useState(null);
-  const [myMemberId, setMyMemberId] = useState(0);
-  const [opponentMemberId, setOpponentMemberId] = useState(0);
+
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -273,21 +275,21 @@ const ChatPage = () => {
     }
   };
 
-  // STOMP 메시지 수신 시 작동하는 콜백 함수
-  const subscritionCallback = (message) => {
-    const parsedMessage = JSON.parse(message.body);
+  // // STOMP 메시지 수신 시 작동하는 콜백 함수
+  // const subscritionCallback = (message) => {
+  //   const parsedMessage = JSON.parse(message.body);
 
-    // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
-    setMessages((prevMessages) => {
-      const oldMessages = [...prevMessages];
-      if (parsedMessage.body.senderId !== oldMessages.at(-1)?.senderId) {
-        for (let i = 0; i < oldMessages.length; i++) {
-          oldMessages[i].unreadCount = 0;
-        }
-      }
-      return [...oldMessages, parsedMessage.body];
-    });
-  };
+  //   // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
+  //   setMessages((prevMessages) => {
+  //     const oldMessages = [...prevMessages];
+  //     if (parsedMessage.body.senderId !== oldMessages.at(-1)?.senderId) {
+  //       for (let i = 0; i < oldMessages.length; i++) {
+  //         oldMessages[i].unreadCount = 0;
+  //       }
+  //     }
+  //     return [...oldMessages, parsedMessage.body];
+  //   });
+  // };
 
   const fetchMemberIds = async () => {
     try {
@@ -353,42 +355,21 @@ const ChatPage = () => {
 
   // 여기
   // STOMP 클라이언트 생성
+  useStompClient(
+    setClient,
+    roomId,
+    myMemberId,
+    setMessages,
+    isMemberIdsFetched,
+    setIsLoading
+  );
   useEffect(() => {
     if (isMemberIdsFetched) {
       fetchOpponentProfile();
 
-      const newClient = new Client({
-        brokerURL: 'wss://dev.dis-tance.com/meet',
-        connectHeaders: {
-          chatRoomId: roomId,
-          memberId: myMemberId,
-        },
-        debug: function (str) {
-          console.log(str);
-        },
-        onConnect: (frame) => {
-          setIsLoading(false);
-          console.log('Connected: ' + frame);
-          newClient.subscribe(`/topic/chatroom/${roomId}`, subscritionCallback);
-        },
-        onStompError: (error) => {
-          console.log(error);
-        },
-        reconnectDelay: 50,
-        heartbeatIncoming: 4000,
-        heartbeatOutgoing: 4000,
-      });
-
       const staleMessages = fetchLocalMessages(setMessages);
       if (staleMessages.length === 0) fetchServerMessages(setMessages);
       else fetchServerUnreadMessages(messages, setMessages);
-
-      newClient.activate();
-      setClient(newClient);
-
-      return () => {
-        newClient.deactivate();
-      };
     }
   }, [isMemberIdsFetched]);
 
