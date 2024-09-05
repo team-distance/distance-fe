@@ -53,7 +53,7 @@ const EventListItemWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  height: 75%;
+  height: 70%;
   overflow: auto;
 `;
 
