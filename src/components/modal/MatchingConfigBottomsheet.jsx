@@ -4,6 +4,7 @@ import Radio from '../common/Radio';
 import { useRecoilState } from 'recoil';
 import { matchingConfigState } from '../../store/matchingConfig';
 import Slider from '../home/Slider';
+import { MotionConfig } from 'framer-motion';
 
 const MatchingConfigBottomsheet = ({ closeModal }) => {
   const [isOpen, setIsOpen] = useState(false);

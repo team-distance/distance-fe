@@ -29,6 +29,7 @@ import TopBar from '../../components/chat/TopBar';
 import Loader from '../../components/common/Loader';
 import { useInitializeStompClient } from '../../hooks/useStomp';
 import { useSendMessage } from '../../hooks/useSendMessage';
+import CallDistanceModal from '../../components/modal/CallDistanceModal';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -91,6 +92,16 @@ const ChatPage = () => {
         onClick={requestCall}
       />
     ));
+
+  const {
+    openModal: openCallDistanceModal,
+    closeModal: closeCallDistanceModal,
+  } = useModal(() => (
+    <CallDistanceModal
+      closeModal={closeCallDistanceModal}
+      onClick={fetchOpponentTelNum}
+    />
+  ));
 
   // 토스트 에러메세지
   const { showToast: showBadWordToast } = useToast(
@@ -359,7 +370,7 @@ const ChatPage = () => {
           isCallActive={isCallActive}
           tooltipRef={tooltipRef}
           isCallTooltipVisible={isCallTooltipVisible}
-          setIsCallTooltipVisible={setIsCallTooltipVisible}
+          setIsCallTooltipVisible={openCallDistanceModal}
           handleClickCallButton={handleClickCallButton}
         />
 

@@ -63,10 +63,7 @@ const TopBar = ({
 };
 
 const TopBarWrapper = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   background: #ffffff;
   padding: 0.75rem 1rem;
   height: 3rem;
