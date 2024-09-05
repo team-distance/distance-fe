@@ -174,7 +174,7 @@ const ChatIndexPage = () => {
                             <div>{chat.mbti && <Badge>{chat.mbti}</Badge>}</div>
                           </Profile>
                           {chat.lastMessage.includes('s3.ap-northeast') ? (
-                            <Message>(사진)</Message>
+                            <Message>사진을 전송하였습니다.</Message>
                           ) : (
                             <Message>{chat.lastMessage}</Message>
                           )}
