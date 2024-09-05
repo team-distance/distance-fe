@@ -58,8 +58,6 @@ const ChatPage = () => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const [visible, setVisible] = useState(false);
-
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
       <ReportModal

@@ -8,6 +8,7 @@ export const useCallActive = (messages, roomId) => {
 
   // 전화 버튼 활성화
   useEffect(() => {
+    console.log('전화버튼 활성화 오류 확인용!!!!!!', lastMessage);
     if (lastMessage?.checkTiKiTaKa) setIsCallActive(true);
     else setIsCallActive(false);
   }, [lastMessage]);
@@ -29,10 +30,9 @@ export const useCallActive = (messages, roomId) => {
         setTimeout(() => {
           setIsShowLottie(false);
         }, 4000);
-        // setIsCallTooltipVisible(false);
       }
     }
   }, [isCallActive]);
 
-  return { isShowLottie, isCallActive };
+  return { isCallActive, isShowLottie };
 };
