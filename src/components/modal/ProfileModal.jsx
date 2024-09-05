@@ -14,7 +14,7 @@ const ProfileModal = ({ closeModal, onClick, selectedProfile }) => {
       />
       <WrapContent>
         <CharacterBackground
-          backgroundColor={
+          $backgroundColor={
             CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]?.color
           }
         >
@@ -88,7 +88,7 @@ const CharacterBackground = styled.div`
   width: 100px;
   height: 100px;
   border-radius: 100%;
-  background-color: ${(props) => props.backgroundColor};
+  background-color: ${(props) => props.$backgroundColor};
 `;
 
 const Character = styled.div`

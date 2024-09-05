@@ -10,7 +10,7 @@ const Profile = ({ profile, onClick }) => {
     <WrapProfile onClick={onClick}>
       <Wrapper>
         <CharacterBackground
-          backgroundColor={CHARACTERS[memberCharacter]?.color}
+          $backgroundColor={CHARACTERS[memberCharacter]?.color}
         >
           <StyledImage
             $xPos={CHARACTERS[memberCharacter]?.position[0]}
@@ -61,7 +61,7 @@ const CharacterBackground = styled.div`
   width: 100px;
   height: 100px;
   border-radius: 100%;
-  background-color: ${(props) => props.backgroundColor};
+  background-color: ${(props) => props.$backgroundColor};
 `;
 
 const StyledImage = styled.div`

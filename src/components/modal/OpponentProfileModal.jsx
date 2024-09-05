@@ -13,7 +13,7 @@ const OpponentProfileModal = ({ closeModal, opponentProfile }) => {
       />
       <WrapContent>
         <CharacterBackground
-          backgroundColor={CHARACTERS[opponentProfile.memberCharacter]?.color}
+          $backgroundColor={CHARACTERS[opponentProfile.memberCharacter]?.color}
         >
           <Character
             $xPos={CHARACTERS[opponentProfile.memberCharacter]?.position[0]}
@@ -74,7 +74,7 @@ const CharacterBackground = styled.div`
   width: 100px;
   height: 100px;
   border-radius: 100%;
-  background-color: ${(props) => props.backgroundColor};
+  background-color: ${(props) => props.$backgroundColor};
 `;
 
 const Character = styled.div`

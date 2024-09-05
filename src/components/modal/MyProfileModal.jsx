@@ -19,7 +19,7 @@ const MyProfileModal = ({ closeModal, onClick, myData, handleLogout }) => {
       />
       <WrapContent>
         <CharacterBackground
-          backgroundColor={CHARACTERS[myData.memberCharacter]?.color}
+          $backgroundColor={CHARACTERS[myData.memberCharacter]?.color}
         >
           <Character
             $xPos={CHARACTERS[myData.memberCharacter]?.position[0]}
@@ -92,7 +92,7 @@ const CharacterBackground = styled.div`
   width: 100px;
   height: 100px;
   border-radius: 100%;
-  background-color: ${(props) => props.backgroundColor};
+  background-color: ${(props) => props.$backgroundColor};
 `;
 
 const Character = styled.div`

@@ -78,7 +78,7 @@ const ChatInboxPage = () => {
           // 추후 컴포넌트 분리할 때 이 부분도 같이 해결하겠슴다
           <InboxContainer key={inbox.waitingRoomId}>
             <CharacterBackground
-              backgroundColor={CHARACTERS[inbox.memberCharacter]?.color}
+              $backgroundColor={CHARACTERS[inbox.memberCharacter]?.color}
             >
               <StyledImage
                 $xPos={CHARACTERS[inbox.memberCharacter]?.position[0]}
@@ -171,7 +171,7 @@ const CharacterBackground = styled.div`
   height: 60px;
   border-radius: 50%;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
-  background-color: ${(props) => props.backgroundColor};
+  background-color: ${(props) => props.$backgroundColor};
   flex-shrink: 0;
 `;
 

@@ -154,7 +154,7 @@ const ChatIndexPage = () => {
                         onClick={() => onClickChatroom(chat)}
                       >
                         <CharacterBackground
-                          backgroundColor={
+                          $backgroundColor={
                             CHARACTERS[chat.memberCharacter]?.color
                           }
                         >
@@ -254,7 +254,7 @@ const CharacterBackground = styled.div`
   height: 60px;
   border-radius: 50%;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
-  background-color: ${(props) => props.backgroundColor};
+  background-color: ${(props) => props.$backgroundColor};
   flex-shrink: 0;
 `;
 
