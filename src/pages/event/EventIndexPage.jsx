@@ -46,13 +46,14 @@ const EventIndexPage = () => {
         },
       });
 
-      setSchool(response.data.school);
-      setContents(response.data.contentResponse);
+      setSchool(response.data?.school);
+      setContents(response.data?.contentResponse);
       setSchoolLocation({
-        latitude: response.data.schoolLocation.latitude,
-        longitude: response.data.schoolLocation.longitude,
+        latitude: response.data?.schoolLocation?.latitude,
+        longitude: response.data?.schoolLocation?.longitude,
       });
     } catch (e) {
+      console.error('ERROR!!', e);
       alert('데이터를 가져오는데 실패했습니다');
     }
   };
@@ -107,7 +108,7 @@ const EventIndexPage = () => {
 
   useEffect(() => {
     if (mapRef.current) {
-      contents.forEach((content) => {
+      contents?.forEach((content) => {
         content.councilGpsResponses.forEach((gpsResponse) => {
           const marker = new naver.maps.Marker({
             position: new naver.maps.LatLng(
@@ -115,6 +116,19 @@ const EventIndexPage = () => {
               gpsResponse.councilLongitude
             ),
             map: mapRef.current,
+            icon: {
+              content: [
+                '<div style="position: relative; display: flex; flex-direction: column; gap: 4px;">',
+                `<div style="border-radius: 4px; font-size: 8px; color: white; background-color: #333333; padding: 4px; display: flex; items-align: center; gap: 6px; white-space: nowrap;">${content.title}`,
+                '</div>',
+                '<div style="position: absolute; top: 16px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-style: solid; border-width: 4px 2px 0px 2px; border-color: #333333 transparent transparent transparent;"></div>',
+                '<div style="text-align: center;">',
+                '<img src="/assets/event/marker.svg" alt="marker" />',
+                '</div>',
+                '</div>',
+              ].join(''),
+              anchor: new naver.maps.Point(15, 35),
+            },
           });
 
           naver.maps.Event.addListener(marker, 'click', () => {

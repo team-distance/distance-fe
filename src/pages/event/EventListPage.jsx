@@ -16,7 +16,7 @@ const EventListPage = () => {
     <Wrapper>
       <UniversityName>{school}</UniversityName>
       <EventListItemWrapper>
-        {contents.map((content) => (
+        {contents?.map((content) => (
           <EventListItem
             key={content.councilId}
             onClick={() => {
