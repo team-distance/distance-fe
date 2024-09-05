@@ -1,8 +1,11 @@
-import { isLoggedInState } from "../store/auth"
+import { useRecoilValue } from 'recoil';
+import { isLoggedInState } from '../store/auth';
 
 export const useCheckAlarmActive = () => {
+  const isLoggedIn = useRecoilValue(isLoggedInState);
 
-    if(!isLoggedInState) return;
-    if('Notification' in window && Notification.permission !== 'granted') return false;
-    else return true;
-}
+  if (!isLoggedIn) return;
+  if ('Notification' in window && Notification.permission !== 'granted')
+    return false;
+  else return true;
+};

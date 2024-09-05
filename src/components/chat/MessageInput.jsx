@@ -56,10 +56,10 @@ const MessageInput = ({
   const isFirstRender = useRef(true);
   useEffect(() => {
     isFirstRender.current = false;
-  }, [])
+  }, []);
 
   return (
-    <MeassageInputContainer ref={scope} className="이거니?">
+    <MeassageInputContainer ref={scope}>
       <Menu
         isOpen={isMenuOpen}
         setIsOpen={setIsMenuOpen}
@@ -83,11 +83,19 @@ const MessageInput = ({
           ) : uploadedImage ? (
             <ImageInput>
               <WrapImage>
-                <img className="x-button" src="/assets/chat/x-button.svg" alt="cancel" onClick={deleteImage} />
-                <img className="image-preview" src={uploadedImage} alt="preview" />
+                <img
+                  className="x-button"
+                  src="/assets/chat/x-button.svg"
+                  alt="cancel"
+                  onClick={deleteImage}
+                />
+                <img
+                  className="image-preview"
+                  src={uploadedImage}
+                  alt="preview"
+                />
               </WrapImage>
             </ImageInput>
-            
           ) : (
             <Input
               value={value}
@@ -128,8 +136,8 @@ const ImageInput = styled.div`
   width: 100%;
 `;
 
-const WrapImage = styled.div`  
-  position:relative;
+const WrapImage = styled.div`
+  position: relative;
   padding: 0.5rem 0;
 
   .x-button {

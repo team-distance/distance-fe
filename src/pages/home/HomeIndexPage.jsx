@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useState } from 'react';
 import { instance } from '../../api/instance';
-import ClipLoader from 'react-spinners/ClipLoader';
 import Profile from '../../components/home/Profile';
 import { useNavigate, Link } from 'react-router-dom';
 import Banner from '../../components/common/Banner';
@@ -12,6 +11,7 @@ import useModal from '../../hooks/useModal';
 import { useToast } from '../../hooks/useToast';
 import { useCheckAlarmActive } from '../../hooks/useCheckAlarmActive';
 import { useCheckGpsActive } from '../../hooks/useCheckGpsActive';
+import Loader from '../../components/common/Loader';
 import MatchingConfigButton from '../../components/home/MatchingConfigButton';
 import MatchingConfigBottomsheet from '../../components/modal/MatchingConfigBottomsheet';
 import { useRecoilValue } from 'recoil';
@@ -151,10 +151,10 @@ const HomeIndexPage = () => {
 
   const checkAndShowToast = async () => {
     if (
-      localStorage.getItem('isFirstLogin') === 'true' &&
-      (!alarmActive || !gpsActive)
+      (localStorage.getItem('isFirstLogin') === 'true' && !alarmActive) ||
+      !gpsActive
     ) {
-      await showAlarmGPSErrorToast(); // 비동기 작업 예시
+      await showAlarmGPSErrorToast(); // 비동기
       localStorage.setItem('isFirstLogin', 'false');
     }
   };
@@ -182,9 +182,7 @@ const HomeIndexPage = () => {
       ) : (
         <ProfileContainer>
           {loading ? (
-            <LoaderContainer>
-              <ClipLoader color={'#FF625D'} loading={loading} size={50} />
-            </LoaderContainer>
+            <Loader />
           ) : (
             memberState &&
             memberState.map((profile, index) => (
@@ -207,18 +205,6 @@ const ProfileContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-`;
-
-const LoaderContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
 `;
 
 const EmptyContainer = styled.div`

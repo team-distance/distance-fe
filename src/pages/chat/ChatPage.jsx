@@ -1,13 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Client } from '@stomp/stompjs';
-import { ClipLoader } from 'react-spinners';
 
 import { instance } from '../../api/instance';
 import { checkCurse } from '../../utils/checkCurse';
-import Lottie from 'react-lottie-player';
-import callAnimation from '../../lottie/call-animation.json';
 import useGroupedMessages from '../../hooks/useGroupedMessages';
 import { getByteLength } from '../../utils/getByteLength';
 import useDetectClose from '../../hooks/useDetectClose';
@@ -16,38 +12,59 @@ import { useToast } from '../../hooks/useToast';
 
 import Messages from '../../components/chat/Messages';
 import MessageInput from '../../components/chat/MessageInput';
-import Tooltip from '../../components/common/Tooltip';
 import ReportModal from '../../components/modal/ReportModal';
 import OpponentProfileModal from '../../components/modal/OpponentProfileModal';
 import CallModal from '../../components/modal/CallModal';
 import CallRequestModal from '../../components/modal/CallRequestModal';
 import ImageView from '../../components/chat/ImageView';
+import { useFetchDistance } from '../../hooks/useFetchDistance';
+import CallActiveLottie from '../../components/chat/CallActiveLottie';
+import { useCallActive } from '../../hooks/useCallActive';
+import {
+  useFetchMessagesFromLocal,
+  useFetchMessagesFromServer,
+  useFetchUnreadMessagesFromServer,
+} from '../../hooks/useFetchMessages';
+import TopBar from '../../components/chat/TopBar';
+import Loader from '../../components/common/Loader';
+import { useInitializeStompClient } from '../../hooks/useStomp';
+import { useSendMessage } from '../../hooks/useSendMessage';
 
 const ChatPage = () => {
   const navigate = useNavigate();
+  const param = useParams();
+  const roomId = parseInt(param?.chatRoomId);
 
-  const [client, setClient] = useState(null);
+  const distance = useFetchDistance(roomId);
   const [messages, setMessages] = useState([]);
+  const fetchLocalMessages = useFetchMessagesFromLocal(roomId);
+  const fetchServerMessages = useFetchMessagesFromServer(roomId);
+  const fetchServerUnreadMessages = useFetchUnreadMessagesFromServer(roomId);
+  const groupedMessages = useGroupedMessages(messages);
+  const { isCallActive, isShowLottie } = useCallActive(messages, roomId);
+  const [client, setClient] = useState(null);
+  const [myMemberId, setMyMemberId] = useState(0);
+  const [opponentMemberId, setOpponentMemberId] = useState(0);
   const [draftMessage, setDraftMessage] = useState('');
-  const [distance, setDistance] = useState(-1);
-  const [isCallActive, setIsCallActive] = useState(false);
-  const [isShowLottie, setIsShowLottie] = useState(false);
   const [isOpponentOut, setIsOpponentOut] = useState(false);
   const [bothAgreed, setBothAgreed] = useState(false);
   const [opponentProfile, setOpponentProfile] = useState(null);
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
   const [uploadedImage, setUploadedImage] = useState(null);
   const [file, setFile] = useState(null);
   const [isShowImage, setIsShowImage] = useState(false);
-  const [imgSrc, setImageSrc] = useState("");
+  const [imgSrc, setImageSrc] = useState('');
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
-      <ReportModal closeModal={closeReportModal} onClick={handleReportUser} setIsMenuOpen={setIsMenuOpen} />
+      <ReportModal
+        closeModal={closeReportModal}
+        onClick={handleReportUser}
+        setIsMenuOpen={setIsMenuOpen}
+      />
     )
   );
 
@@ -97,30 +114,11 @@ const ChatPage = () => {
     'message-length-error'
   );
 
-  const param = useParams();
-
   const tooltipRef = useRef();
   const [isCallTooltipVisible, setIsCallTooltipVisible] = useDetectClose(
     tooltipRef,
     false
   );
-
-  const viewportRef = useRef();
-
-
-  const [myMemberId, setMyMemberId] = useState(0);
-  const [opponentMemberId, setOpponentMemberId] = useState(0);
-  const roomId = parseInt(param?.chatRoomId);
-
-  const groupedMessages = useGroupedMessages(messages);
-
-  const navigateToVerify = () => {
-    navigate('/verify/univ');
-  };
-
-  const navigateToBack = () => {
-    navigate('/chat');
-  };
 
   const handleChangeMessage = (e) => {
     setDraftMessage(e.target.value);
@@ -134,21 +132,18 @@ const ChatPage = () => {
     localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
   };
 
-  // 로컬 스토리지에서 메시지 불러오기
-  const fetchStaleMessagesFromLocal = () => {
-    const staleMessages = localStorage.getItem('staleMessages');
-    if (staleMessages) {
-      const parsedStaleMessages = JSON.parse(staleMessages);
-      if (parsedStaleMessages[roomId]) {
-        const localMessages = JSON.parse(parsedStaleMessages[roomId]);
-        setMessages(JSON.parse(parsedStaleMessages[roomId]));
-        return localMessages;
-      }
-    }
-    return [];
-  };
-
   // 메시지 전송
+  const { sendImageMessage, sendTextMessage } = useSendMessage(
+    draftMessage,
+    setDraftMessage,
+    setFile,
+    file,
+    client,
+    roomId,
+    opponentMemberId,
+    myMemberId,
+    showWaitToast
+  );
   const sendMessage = async () => {
     if (!draftMessage.trim() && !file) return;
 
@@ -162,46 +157,10 @@ const ChatPage = () => {
 
     //이미지 전송
     if (file) {
-      //S3 url 받기
-      const formData = new FormData();
-      formData.append('file', file);
-      const response = await instance.post('/image', formData);
-
-      //stomp 전송
-      try {
-        client.publish({
-          destination: `/app/chat/${roomId}`,
-          body: JSON.stringify({
-            chatMessage: response.data.imageUrl,
-            senderId: opponentMemberId,
-            receiverId: myMemberId,
-            publishType: 'USER',
-          }),
-        });
-
-        setDraftMessage('');
-        setFile(null);
-      } catch (error) {
-        showWaitToast();
-      }
+      sendImageMessage();
     } else {
       //stomp 전송
-      try {
-        client.publish({
-          destination: `/app/chat/${roomId}`,
-          body: JSON.stringify({
-            chatMessage: draftMessage,
-            senderId: opponentMemberId,
-            receiverId: myMemberId,
-            publishType: 'USER',
-          }),
-        });
-
-        setDraftMessage('');
-        setFile(null);
-      } catch (error) {
-        showWaitToast();
-      }
+      sendTextMessage();
     }
   };
 
@@ -209,7 +168,7 @@ const ChatPage = () => {
   const viewImage = (src) => {
     setImageSrc(src);
     setIsShowImage(true);
-  }
+  };
 
   // 방 나가기
   const handleLeaveRoom = () => {
@@ -285,22 +244,6 @@ const ChatPage = () => {
     }
   };
 
-  // STOMP 메시지 수신 시 작동하는 콜백 함수
-  const subscritionCallback = (message) => {
-    const parsedMessage = JSON.parse(message.body);
-
-    // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
-    setMessages((prevMessages) => {
-      const oldMessages = [...prevMessages];
-      if (parsedMessage.body.senderId !== oldMessages.at(-1)?.senderId) {
-        for (let i = 0; i < oldMessages.length; i++) {
-          oldMessages[i].unreadCount = 0;
-        }
-      }
-      return [...oldMessages, parsedMessage.body];
-    });
-  };
-
   const fetchMemberIds = async () => {
     try {
       const response = await instance.get(`/room-member/${roomId}`);
@@ -325,53 +268,6 @@ const ChatPage = () => {
   // 전화 버튼 클릭 시
   const handleClickCallButton = () => {
     bothAgreed ? openCallModal() : openCallRequestModal();
-  };
-
-  // 서버에서 모든 메시지 불러오기
-  const fetchAllMessagesFromServer = async () => {
-    try {
-      const msg = await instance.get(`/chatroom/${roomId}/allmessage`);
-      if (msg.data.length === 0) return;
-      setMessages(msg.data);
-    } catch (error) {
-      window.confirm('학생 인증 후 이용해주세요.')
-        ? navigateToVerify()
-        : navigateToBack();
-    }
-  };
-
-  // 서버에서 읽지 않은 메시지 불러오기
-  const fetchUnreadMessagesFromServer = async () => {
-    try {
-      const unreadMessages = await instance
-        .get(`/chatroom/${roomId}`)
-        .then((res) => res.data);
-      if (unreadMessages.length === 0) return;
-
-      // unreadMessages를 순회하며 messageId가 이미 messages에 있는지 확인하고 없으면 추가
-      unreadMessages.forEach((unreadMessage) => {
-        if (
-          !messages.find(
-            (message) => message.messageId === unreadMessage.messageId
-          )
-        ) {
-          setMessages((messages) => [...messages, unreadMessage]);
-        }
-      });
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-
-  // 거리 불러오기
-  const fetchDistance = async () => {
-    try {
-      const distance = await instance.get(`/gps/distance/${roomId}`);
-      const parseDistance = parseInt(distance.data.distance);
-      setDistance(parseDistance);
-    } catch (error) {
-      console.log('error', error);
-    }
   };
 
   // 상대방 프로필 정보 불러오기
@@ -411,44 +307,23 @@ const ChatPage = () => {
   }, []);
 
   // STOMP 클라이언트 생성
+  const initializeClient = useInitializeStompClient(
+    setClient,
+    roomId,
+    myMemberId,
+    setMessages,
+    setIsLoading
+  );
   useEffect(() => {
     if (isMemberIdsFetched) {
+      //상대방 프로필 불러오기
       fetchOpponentProfile();
-
-      const newClient = new Client({
-        brokerURL: 'wss://dev.dis-tance.com/meet',
-        connectHeaders: {
-          chatRoomId: roomId,
-          memberId: myMemberId,
-        },
-        debug: function (str) {
-          console.log(str);
-        },
-        onConnect: (frame) => {
-          setIsLoading(false);
-          console.log('Connected: ' + frame);
-          newClient.subscribe(`/topic/chatroom/${roomId}`, subscritionCallback);
-        },
-        onStompError: (error) => {
-          console.log(error);
-        },
-        reconnectDelay: 50,
-        heartbeatIncoming: 4000,
-        heartbeatOutgoing: 4000,
-      });
-
-      const staleMessages = fetchStaleMessagesFromLocal();
-      if (staleMessages.length === 0) fetchAllMessagesFromServer();
-      else fetchUnreadMessagesFromServer();
-
-      fetchDistance();
-
-      newClient.activate();
-      setClient(newClient);
-
-      return () => {
-        newClient.deactivate();
-      };
+      // STOMP 클라이언트 생성
+      initializeClient();
+      //이전 메세지 목록 불러오기
+      const staleMessages = fetchLocalMessages(setMessages);
+      if (staleMessages.length === 0) fetchServerMessages(setMessages);
+      else fetchServerUnreadMessages(messages, setMessages);
     }
   }, [isMemberIdsFetched]);
 
@@ -456,35 +331,12 @@ const ChatPage = () => {
   // 메시지가 업데이트 될 때마다 로컬 스토리지에 저장
   useEffect(() => {
     const lastMessage = messages.at(-1);
-    console.log('lastMessage', lastMessage);
-
-    if (lastMessage?.checkTiKiTaKa) setIsCallActive(true);
-    else setIsCallActive(false);
 
     if (lastMessage?.roomStatus === 'ACTIVE') setIsOpponentOut(false);
     else if (lastMessage?.roomStatus === 'INACTIVE') setIsOpponentOut(true);
 
     if (messages.length > 0) saveMessagesToLocal();
   }, [messages]);
-
-  // 전화 버튼 애니메이션
-  useEffect(() => {
-    const callEffectShown =
-      JSON.parse(localStorage.getItem('callEffectShown')) || [];
-
-    if (!callEffectShown.includes(roomId)) {
-      if (isCallActive) {
-        const newArray = [...callEffectShown];
-        newArray.push(roomId);
-        localStorage.setItem('callEffectShown', JSON.stringify(newArray));
-        setIsShowLottie(true);
-        setTimeout(() => {
-          setIsShowLottie(false);
-        }, 4000);
-        setIsCallTooltipVisible(false);
-      }
-    }
-  }, [isCallActive]);
 
   // 메시지 길이 제한
   useEffect(() => {
@@ -496,79 +348,23 @@ const ChatPage = () => {
 
   return (
     <Wrapper>
-      {isShowImage && <ImageView imgSrc={imgSrc} handleCancel={() => setIsShowImage(false)} />}
-      {isShowLottie && (
-        <LottieContainer>
-          <div>
-            <Lottie
-              animationData={callAnimation}
-              play
-              style={{ width: 200, height: 200 }}
-              loop={false}
-            />
-          </div>
-          <p>
-            <strong>전화 버튼이 활성화되었어요!</strong> <br />
-            채팅 상대와 전화를 연결해보세요
-          </p>
-        </LottieContainer>
+      {isShowImage && (
+        <ImageView imgSrc={imgSrc} handleCancel={() => setIsShowImage(false)} />
       )}
+      {isShowLottie && <CallActiveLottie />}
 
-      <Container ref={viewportRef}>
-        <TopBar>
-          <BackButton
-            onClick={() => {
-              navigate(-1);
-            }}
-          >
-            <img
-              src="/assets/arrow-pink-button.png"
-              alt="뒤로가기"
-              width={12}
-            />
-          </BackButton>
-          <WrapTitle>
-            <div className="title">상대방과의 거리</div>
-            <div className="subtitle">
-              {distance === -1 ? (
-                <>
-                  <Tooltip message="두 명 모두 위치 정보를 공유해야 확인할 수 있어요!" />{' '}
-                  <span>위치를 표시할 수 없습니다.</span>
-                </>
-              ) : (
-                `${distance}m`
-              )}
-            </div>
-          </WrapTitle>
-          <div>
-            <CallButton>
-              {isCallActive ? (
-                <div onClick={handleClickCallButton}>
-                  <img src="/assets/callicon-active.svg" alt="전화버튼" />
-                </div>
-              ) : (
-                <div
-                  ref={tooltipRef}
-                  onClick={() => setIsCallTooltipVisible(!isCallTooltipVisible)}
-                  style={{ position: 'relative' }}
-                >
-                  <img src="/assets/callicon.svg" alt="전화버튼" />
-                  {isCallTooltipVisible && (
-                    <TooltipMessage>
-                      <TooltipTail />
-                      상대방과 더 대화해보세요!
-                    </TooltipMessage>
-                  )}
-                </div>
-              )}
-            </CallButton>
-          </div>
-        </TopBar>
+      <Container>
+        <TopBar
+          distance={distance}
+          isCallActive={isCallActive}
+          tooltipRef={tooltipRef}
+          isCallTooltipVisible={isCallTooltipVisible}
+          setIsCallTooltipVisible={setIsCallTooltipVisible}
+          handleClickCallButton={handleClickCallButton}
+        />
 
         {isLoading ? (
-          <LoaderContainer>
-            <ClipLoader color="#FF625D" size={50} />
-          </LoaderContainer>
+          <Loader />
         ) : (
           <>
             <Messages
@@ -618,108 +414,6 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-between;
   transition: height 0.3s;
-`;
-
-const BackButton = styled.button`
-  background: none;
-  border: none;
-`;
-
-const CallButton = styled.button`
-  background: none;
-  border: none;
-`;
-
-const WrapTitle = styled.div`
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-
-  > .title {
-    font-size: 1rem;
-    line-height: 1.5;
-  }
-
-  > .subtitle {
-    font-size: 0.8rem;
-    color: #979797;
-    line-height: 1.5;
-  }
-`;
-
-const TopBar = styled.div`
-  position: relative;
-  background: #ffffff;
-  padding: 0.75rem 1rem;
-  height: 3rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 11;
-`;
-
-const LottieContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 99;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-
-  div {
-    transform: rotate(20deg) translateX(10px);
-  }
-
-  p {
-    color: white;
-    text-align: center;
-    font-size: 0.8rem;
-    strong {
-      font-size: 1rem;
-    }
-  }
-`;
-
-const TooltipMessage = styled.div`
-  position: absolute;
-  font-weight: 700;
-  font-size: 10px;
-  top: calc(100% + 14px);
-  right: -10px;
-  text-align: center;
-  padding: 10px;
-  background-color: #333333;
-  color: #ffffff;
-  white-space: nowrap;
-  border-radius: 12px;
-`;
-
-const TooltipTail = styled.div`
-  position: absolute;
-  top: -8px;
-  right: 0;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid #333333;
-`;
-
-const LoaderContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
 `;
 
 const MessageInputWrapper = styled.div`

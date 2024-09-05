@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import ProgramCard from './ProgramCard';
 import { useEffect, useState } from 'react';
 import { instance } from '../../api/instance';
-import ClipLoader from 'react-spinners/ClipLoader';
 import { UNIV_STATE } from '../../constants/collegeState';
+import Loader from '../common/Loader';
 
 const Program = () => {
   const [programList, setProgramList] = useState([]);
@@ -54,9 +54,7 @@ const Program = () => {
   return (
     <>
       {loading ? (
-        <LoaderContainer>
-          <ClipLoader color={'#FF625D'} loading={loading} size={50} />
-        </LoaderContainer>
+        <Loader />
       ) : (
         <>
           <Title>{school}</Title>
@@ -99,16 +97,4 @@ const WrapCards = styled.div`
   flex-direction: column;
   gap: 1rem;
   margin-bottom: 1rem;
-`;
-
-const LoaderContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
 `;

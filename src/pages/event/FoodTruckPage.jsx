@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Header from '../../components/common/Header';
 import { instance } from '../../api/instance';
-import ClipLoader from 'react-spinners/ClipLoader';
+import Loader from '../../components/common/Loader';
 
 const FoodTruckPage = () => {
   const navigate = useNavigate();
@@ -64,9 +64,7 @@ const FoodTruckPage = () => {
   return (
     <>
       {loading ? (
-        <LoaderContainer>
-          <ClipLoader color={'#FF625D'} loading={loading} size={50} />
-        </LoaderContainer>
+        <Loader />
       ) : (
         <DetailContainer>
           <Header />
@@ -200,16 +198,4 @@ const MenuCard = styled.div`
       line-height: 22px;
     }
   }
-`;
-
-const LoaderContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
 `;
