@@ -48,6 +48,8 @@ const ChatPage = () => {
   const [isOpponentOut, setIsOpponentOut] = useState(false);
   const [bothAgreed, setBothAgreed] = useState(false);
   const [opponentProfile, setOpponentProfile] = useState(null);
+  const [myMemberId, setMyMemberId] = useState(0);
+  const [opponentMemberId, setOpponentMemberId] = useState(0);
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -119,9 +121,6 @@ const ChatPage = () => {
     tooltipRef,
     false
   );
-
-  const [myMemberId, setMyMemberId] = useState(0);
-  const [opponentMemberId, setOpponentMemberId] = useState(0);
 
   const groupedMessages = useGroupedMessages(messages);
 
