@@ -151,10 +151,10 @@ const HomeIndexPage = () => {
 
   const checkAndShowToast = async () => {
     if (
-      localStorage.getItem('isFirstLogin') === 'true' &&
-      (!alarmActive || !gpsActive)
+      (localStorage.getItem('isFirstLogin') === 'true' && !alarmActive) ||
+      !gpsActive
     ) {
-      await showAlarmGPSErrorToast(); // 비동기 작업 예시
+      await showAlarmGPSErrorToast(); // 비동기
       localStorage.setItem('isFirstLogin', 'false');
     }
   };

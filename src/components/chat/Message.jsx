@@ -292,7 +292,7 @@ const MessageByOther = styled.div`
         position: absolute;
         top: 0;
         left: -10px;
-        width: 30px;
+        width: 25px;
         height: 30px;
         clip-path: polygon(100% 0, 0 0, 100% 100%);
         background-color: #f5f5f5;
@@ -367,7 +367,7 @@ const MessageByMe = styled.div`
       position: absolute;
       top: 0;
       right: -10px;
-      width: 30px;
+      width: 25px;
       height: 30px;
       clip-path: polygon(100% 0, 0 0, 0% 100%);
       background-color: #ff625d;

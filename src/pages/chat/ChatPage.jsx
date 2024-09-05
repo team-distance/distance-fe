@@ -45,23 +45,20 @@ const ChatPage = () => {
   const [client, setClient] = useState(null);
   const [myMemberId, setMyMemberId] = useState(0);
   const [opponentMemberId, setOpponentMemberId] = useState(0);
-
-  //리팩토링 중
-  // ------------------------------------------
   const [draftMessage, setDraftMessage] = useState('');
   const [isOpponentOut, setIsOpponentOut] = useState(false);
   const [bothAgreed, setBothAgreed] = useState(false);
   const [opponentProfile, setOpponentProfile] = useState(null);
-
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
   const [uploadedImage, setUploadedImage] = useState(null);
   const [file, setFile] = useState(null);
   const [isShowImage, setIsShowImage] = useState(false);
   const [imgSrc, setImageSrc] = useState('');
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const [visible, setVisible] = useState(false);
 
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
@@ -323,6 +320,7 @@ const ChatPage = () => {
     if (isMemberIdsFetched) {
       //상대방 프로필 불러오기
       fetchOpponentProfile();
+      // STOMP 클라이언트 생성
       initializeClient();
       //이전 메세지 목록 불러오기
       const staleMessages = fetchLocalMessages(setMessages);
