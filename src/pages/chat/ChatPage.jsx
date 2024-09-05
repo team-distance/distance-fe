@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Client } from '@stomp/stompjs';
 
 import { instance } from '../../api/instance';
 import { checkCurse } from '../../utils/checkCurse';
@@ -28,7 +27,8 @@ import {
 } from '../../hooks/useFetchMessages';
 import TopBar from '../../components/chat/TopBar';
 import Loader from '../../components/common/Loader';
-import { useStompClient } from '../../hooks/useStomp';
+import { useInitializeStompClient } from '../../hooks/useStomp';
+import { useSendMessage } from '../../hooks/useSendMessage';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -40,6 +40,7 @@ const ChatPage = () => {
   const fetchLocalMessages = useFetchMessagesFromLocal(roomId);
   const fetchServerMessages = useFetchMessagesFromServer(roomId);
   const fetchServerUnreadMessages = useFetchUnreadMessagesFromServer(roomId);
+  const groupedMessages = useGroupedMessages(messages);
   const { isCallActive, isShowLottie } = useCallActive(messages, roomId);
   const [client, setClient] = useState(null);
   const [myMemberId, setMyMemberId] = useState(0);
@@ -124,8 +125,6 @@ const ChatPage = () => {
     false
   );
 
-  const groupedMessages = useGroupedMessages(messages);
-
   const handleChangeMessage = (e) => {
     setDraftMessage(e.target.value);
   };
@@ -139,6 +138,17 @@ const ChatPage = () => {
   };
 
   // 메시지 전송
+  const { sendImageMessage, sendTextMessage } = useSendMessage(
+    draftMessage,
+    setDraftMessage,
+    setFile,
+    file,
+    client,
+    roomId,
+    opponentMemberId,
+    myMemberId,
+    showWaitToast
+  );
   const sendMessage = async () => {
     if (!draftMessage.trim() && !file) return;
 
@@ -152,46 +162,10 @@ const ChatPage = () => {
 
     //이미지 전송
     if (file) {
-      //S3 url 받기
-      const formData = new FormData();
-      formData.append('file', file);
-      const response = await instance.post('/image', formData);
-
-      //stomp 전송
-      try {
-        client.publish({
-          destination: `/app/chat/${roomId}`,
-          body: JSON.stringify({
-            chatMessage: response.data.imageUrl,
-            senderId: opponentMemberId,
-            receiverId: myMemberId,
-            publishType: 'USER',
-          }),
-        });
-
-        setDraftMessage('');
-        setFile(null);
-      } catch (error) {
-        showWaitToast();
-      }
+      sendImageMessage();
     } else {
       //stomp 전송
-      try {
-        client.publish({
-          destination: `/app/chat/${roomId}`,
-          body: JSON.stringify({
-            chatMessage: draftMessage,
-            senderId: opponentMemberId,
-            receiverId: myMemberId,
-            publishType: 'USER',
-          }),
-        });
-
-        setDraftMessage('');
-        setFile(null);
-      } catch (error) {
-        showWaitToast();
-      }
+      sendTextMessage();
     }
   };
 
@@ -275,22 +249,6 @@ const ChatPage = () => {
     }
   };
 
-  // // STOMP 메시지 수신 시 작동하는 콜백 함수
-  // const subscritionCallback = (message) => {
-  //   const parsedMessage = JSON.parse(message.body);
-
-  //   // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
-  //   setMessages((prevMessages) => {
-  //     const oldMessages = [...prevMessages];
-  //     if (parsedMessage.body.senderId !== oldMessages.at(-1)?.senderId) {
-  //       for (let i = 0; i < oldMessages.length; i++) {
-  //         oldMessages[i].unreadCount = 0;
-  //       }
-  //     }
-  //     return [...oldMessages, parsedMessage.body];
-  //   });
-  // };
-
   const fetchMemberIds = async () => {
     try {
       const response = await instance.get(`/room-member/${roomId}`);
@@ -353,20 +311,20 @@ const ChatPage = () => {
     initializeChat();
   }, []);
 
-  // 여기
   // STOMP 클라이언트 생성
-  useStompClient(
+  const initializeClient = useInitializeStompClient(
     setClient,
     roomId,
     myMemberId,
     setMessages,
-    isMemberIdsFetched,
     setIsLoading
   );
   useEffect(() => {
     if (isMemberIdsFetched) {
+      //상대방 프로필 불러오기
       fetchOpponentProfile();
-
+      initializeClient();
+      //이전 메세지 목록 불러오기
       const staleMessages = fetchLocalMessages(setMessages);
       if (staleMessages.length === 0) fetchServerMessages(setMessages);
       else fetchServerUnreadMessages(messages, setMessages);

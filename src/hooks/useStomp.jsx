@@ -1,12 +1,10 @@
 import { Client } from '@stomp/stompjs';
-import { useEffect } from 'react';
 
-export const useStompClient = (
+export const useInitializeStompClient = (
   setClient,
   roomId,
   myMemberId,
   setMessages,
-  isMemberIdsFetched,
   setIsLoading
 ) => {
   // STOMP 메시지 수신 시 작동하는 콜백 함수
@@ -25,7 +23,7 @@ export const useStompClient = (
     });
   };
 
-  useEffect(() => {
+  const initializeClient = () => {
     const newClient = new Client({
       brokerURL: 'wss://dev.dis-tance.com/meet',
       connectHeaders: {
@@ -54,5 +52,6 @@ export const useStompClient = (
     return () => {
       newClient.deactivate();
     };
-  }, [isMemberIdsFetched]);
+  };
+  return initializeClient;
 };
