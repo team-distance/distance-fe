@@ -54,8 +54,7 @@ export default ExpandableBottomsheet;
 
 const Wrapper = styled.div`
   position: fixed;
-  top: 0;
-  left: 0;
+  width: 100%;
   height: 100%;
   pointer-events: none;
 `;
@@ -63,7 +62,6 @@ const Wrapper = styled.div`
 const Sheet = styled.div`
   width: 100%;
   height: 744px;
-  touch-action: none; // 터치되었을 때 뒷 배경 스크롤 막기
   background-color: white;
   border-radius: 25px 25px 0 0;
   position: fixed;

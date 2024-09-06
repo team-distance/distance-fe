@@ -163,7 +163,8 @@ const EventIndexPage = () => {
 export default EventIndexPage;
 
 const Wrapper = styled.div`
-  position: relative;
+  position: fixed;
+  width: 100%;
   height: 100dvh;
 `;
 
