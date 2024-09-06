@@ -1,5 +1,4 @@
 import React from 'react';
-import Button from '../common/Button';
 import styled from 'styled-components';
 
 const CallDistanceModal = ({ closeModal, onClick }) => {

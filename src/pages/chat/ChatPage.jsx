@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -6,7 +6,6 @@ import { instance } from '../../api/instance';
 import { checkCurse } from '../../utils/checkCurse';
 import useGroupedMessages from '../../hooks/useGroupedMessages';
 import { getByteLength } from '../../utils/getByteLength';
-import useDetectClose from '../../hooks/useDetectClose';
 import useModal from '../../hooks/useModal';
 import { useToast } from '../../hooks/useToast';
 
@@ -123,12 +122,6 @@ const ChatPage = () => {
   const { showToast: showTooMuchMessageToast } = useToast(
     () => <span>내용이 너무 많아요!</span>,
     'message-length-error'
-  );
-
-  const tooltipRef = useRef();
-  const [isCallTooltipVisible, setIsCallTooltipVisible] = useDetectClose(
-    tooltipRef,
-    false
   );
 
   const handleChangeMessage = (e) => {
@@ -368,9 +361,7 @@ const ChatPage = () => {
         <TopBar
           distance={distance}
           isCallActive={isCallActive}
-          tooltipRef={tooltipRef}
-          isCallTooltipVisible={isCallTooltipVisible}
-          setIsCallTooltipVisible={openCallDistanceModal}
+          openCallDistanceModal={openCallDistanceModal}
           handleClickCallButton={handleClickCallButton}
         />
 
