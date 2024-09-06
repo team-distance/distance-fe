@@ -40,21 +40,24 @@ const EventListPage = () => {
 
 const Wrapper = styled.div`
   height: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const UniversityName = styled.h1`
   font-size: 24px;
   font-weight: 700;
-  margin-bottom: 40px;
   padding: 0 24px;
+  margin-bottom: 16px;
 `;
 
 const EventListItemWrapper = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  height: 70%;
   overflow: auto;
+  padding: 16px 0;
 `;
 
 export default EventListPage;

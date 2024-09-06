@@ -125,7 +125,7 @@ const Content = styled.p`
   font-weight: 200;
   line-height: 22px;
   padding: 0 24px;
-  height: 50%;
+  height: 60%;
   overflow: auto;
 `;
 

@@ -86,5 +86,7 @@ const Handle = styled.div`
 `;
 
 const Contents = styled.div`
-  height: 100%;
+  flex-grow: 1;
+  overflow-y: auto;
+  height: 590px;
 `;
