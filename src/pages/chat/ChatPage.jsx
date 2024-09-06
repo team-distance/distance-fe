@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -6,7 +6,6 @@ import { instance } from '../../api/instance';
 import { checkCurse } from '../../utils/checkCurse';
 import useGroupedMessages from '../../hooks/useGroupedMessages';
 import { getByteLength } from '../../utils/getByteLength';
-import useDetectClose from '../../hooks/useDetectClose';
 import useModal from '../../hooks/useModal';
 import { useToast } from '../../hooks/useToast';
 
@@ -29,6 +28,7 @@ import TopBar from '../../components/chat/TopBar';
 import Loader from '../../components/common/Loader';
 import { useInitializeStompClient } from '../../hooks/useStomp';
 import { useSendMessage } from '../../hooks/useSendMessage';
+import CallDistanceModal from '../../components/modal/CallDistanceModal';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -92,6 +92,16 @@ const ChatPage = () => {
       />
     ));
 
+  const {
+    openModal: openCallDistanceModal,
+    closeModal: closeCallDistanceModal,
+  } = useModal(() => (
+    <CallDistanceModal
+      closeModal={closeCallDistanceModal}
+      onClick={fetchOpponentTelNum}
+    />
+  ));
+
   // 토스트 에러메세지
   const { showToast: showBadWordToast } = useToast(
     () => <span>앗! 부적절한 단어가 포함되어 있어요.</span>,
@@ -112,12 +122,6 @@ const ChatPage = () => {
   const { showToast: showTooMuchMessageToast } = useToast(
     () => <span>내용이 너무 많아요!</span>,
     'message-length-error'
-  );
-
-  const tooltipRef = useRef();
-  const [isCallTooltipVisible, setIsCallTooltipVisible] = useDetectClose(
-    tooltipRef,
-    false
   );
 
   const handleChangeMessage = (e) => {
@@ -357,9 +361,7 @@ const ChatPage = () => {
         <TopBar
           distance={distance}
           isCallActive={isCallActive}
-          tooltipRef={tooltipRef}
-          isCallTooltipVisible={isCallTooltipVisible}
-          setIsCallTooltipVisible={setIsCallTooltipVisible}
+          openCallDistanceModal={openCallDistanceModal}
           handleClickCallButton={handleClickCallButton}
         />
 

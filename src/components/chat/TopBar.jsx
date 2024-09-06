@@ -6,9 +6,7 @@ import Tooltip from '../common/Tooltip';
 const TopBar = ({
   distance,
   isCallActive,
-  tooltipRef,
-  isCallTooltipVisible,
-  setIsCallTooltipVisible,
+  openCallDistanceModal,
   handleClickCallButton,
 }) => {
   const navigate = useNavigate();
@@ -43,17 +41,10 @@ const TopBar = ({
             </div>
           ) : (
             <div
-              ref={tooltipRef}
-              onClick={() => setIsCallTooltipVisible(!isCallTooltipVisible)}
+              onClick={openCallDistanceModal}
               style={{ position: 'relative' }}
             >
               <img src="/assets/callicon.svg" alt="전화버튼" />
-              {isCallTooltipVisible && (
-                <TooltipMessage>
-                  <TooltipTail />
-                  상대방과 더 대화해보세요!
-                </TooltipMessage>
-              )}
             </div>
           )}
         </CallButton>
@@ -63,10 +54,7 @@ const TopBar = ({
 };
 
 const TopBarWrapper = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   background: #ffffff;
   padding: 0.75rem 1rem;
   height: 3rem;
@@ -106,32 +94,6 @@ const WrapTitle = styled.div`
     color: #979797;
     line-height: 1.5;
   }
-`;
-
-const TooltipMessage = styled.div`
-  position: absolute;
-  font-weight: 700;
-  font-size: 10px;
-  top: calc(100% + 14px);
-  right: -10px;
-  text-align: center;
-  padding: 10px;
-  background-color: #333333;
-  color: #ffffff;
-  white-space: nowrap;
-  border-radius: 12px;
-`;
-
-const TooltipTail = styled.div`
-  position: absolute;
-  top: -8px;
-  right: 0;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid #333333;
 `;
 
 export default TopBar;
