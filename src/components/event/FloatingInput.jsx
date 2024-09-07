@@ -2,6 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { UNIVERSITY_LIST } from '../../constants/UNIVERSITY_LIST';
 
+/**
+ * 검색창 컴포넌트
+ * 1. 검색창에 학교명을 입력하면 연관 검색어 목록이 나타난다.
+ * 2. 검색창에 아무것도 입력하지 않고 검색하면 로그인된 학교로 이동한다.
+ * 3. 검색창에 학교명을 입력하고 검색하면 해당 학교로 이동한다.
+ * 4. 연관 검색어 목록을 클릭하면 해당 학교로 이동한다.
+ * 5. 이외의 상황에서는 검색 버튼이 비활성화된다. (오류 방지를 위해)
+ */
 const FloatingInput = ({ onSubmit, onChange, value, onClickRelatedSearch }) => {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef(null);
@@ -48,7 +56,15 @@ const FloatingInput = ({ onSubmit, onChange, value, onClickRelatedSearch }) => {
           ))}
         </RelatedSearchList>
       )}
-      <SearchButton type="submit" disabled={value.length}>
+      <SearchButton
+        type="submit"
+        disabled={
+          !UNIVERSITY_LIST.some((university) => {
+            if (value === '') return true;
+            return university === value;
+          })
+        }
+      >
         <img src="/assets/search-button.svg" alt="search" />
       </SearchButton>
     </StyledForm>
