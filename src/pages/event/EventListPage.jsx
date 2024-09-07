@@ -16,23 +16,27 @@ const EventListPage = () => {
     <Wrapper>
       <UniversityName>{school}</UniversityName>
       <EventListItemWrapper>
-        {contents?.map((content) => (
-          <EventListItem
-            key={content.councilId}
-            onClick={() => {
-              setSelectedGpsCoord({
-                latitude: content.councilGpsResponses[0]?.councilLatitude,
-                longitude: content.councilGpsResponses[0]?.councilLongitude,
-              });
+        {contents.length ? (
+          contents.map((content) => (
+            <EventListItem
+              key={content.councilId}
+              onClick={() => {
+                setSelectedGpsCoord({
+                  latitude: content.councilGpsResponses[0]?.councilLatitude,
+                  longitude: content.councilGpsResponses[0]?.councilLongitude,
+                });
 
-              navigate(`/event/${content.councilId}`);
-            }}
-            councilId={content.councilId}
-            title={content.title}
-            councilGpsResponses={content.councilGpsResponses}
-            councilImageResponses={content.councilImageResponses}
-          />
-        ))}
+                navigate(`/event/${content.councilId}`);
+              }}
+              councilId={content.councilId}
+              title={content.title}
+              councilGpsResponses={content.councilGpsResponses}
+              councilImageResponses={content.councilImageResponses}
+            />
+          ))
+        ) : (
+          <EmptyFallback>아직 등록된 글이 없어요!</EmptyFallback>
+        )}
       </EventListItemWrapper>
     </Wrapper>
   );
@@ -51,8 +55,16 @@ const UniversityName = styled.h1`
   margin-bottom: 16px;
 `;
 
+const EmptyFallback = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 14px;
+  color: #999;
+`;
+
 const EventListItemWrapper = styled.div`
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 16px;
