@@ -43,39 +43,42 @@ const EventDetailPage = () => {
 
   return (
     <Wrapper>
-      {isLoading && (
+      {isLoading ? (
         <Loader>
           <ClipLoader loading={isLoading} color="#FF6B6B" size={50} />
         </Loader>
+      ) : (
+        <>
+          <TitleSection>
+            <BackButton
+              src="/assets/arrow-pink-button.png"
+              alt="뒤로가기"
+              onClick={() => navigate(`/event?school=${school}`)}
+            />
+            <Title>{content.title}</Title>
+            <Stroke />
+          </TitleSection>
+
+          <Location>
+            위치:{' '}
+            {content.councilGpsResponses
+              ?.map((gpsResponse) => gpsResponse.location)
+              .join(', ')}
+          </Location>
+
+          <Date>
+            날짜: {content.startDt} ~ {content.endDt}
+          </Date>
+
+          <ImageContainer>
+            {content.councilImageResponses?.map((image, index) => (
+              <img src={image.imageUrl} alt={content.title} key={index} />
+            ))}
+          </ImageContainer>
+
+          <Content>{content.content}</Content>
+        </>
       )}
-      <TitleSection>
-        <BackButton
-          src="/assets/arrow-pink-button.png"
-          alt="뒤로가기"
-          onClick={() => navigate(`/event?school=${school}`)}
-        />
-        <Title>{content.title}</Title>
-        <Stroke />
-      </TitleSection>
-
-      <Location>
-        위치:{' '}
-        {content.councilGpsResponses
-          ?.map((gpsResponse) => gpsResponse.location)
-          .join(', ')}
-      </Location>
-
-      <Date>
-        날짜: {content.startDt} ~ {content.endDt}
-      </Date>
-
-      <ImageContainer>
-        {content.councilImageResponses?.map((image, index) => (
-          <img src={image.imageUrl} alt={content.title} key={index} />
-        ))}
-      </ImageContainer>
-
-      <Content>{content.content}</Content>
     </Wrapper>
   );
 };
