@@ -66,6 +66,13 @@ const EventIndexPage = () => {
     fetchContents(schoolQuery || null);
   };
 
+  const handleClickRelatedSearch = (university) => {
+    resetSelectedGpsCoord();
+    setSchoolQuery(university);
+    navigate(`/event?school=${university}`);
+    fetchContents(university);
+  };
+
   const handleChangeSchoolQuery = (e) => {
     setSchoolQuery(e.target.value);
   };
@@ -144,11 +151,18 @@ const EventIndexPage = () => {
     }
   }, [contents]);
 
+  useEffect(() => {
+    console.log(schoolQuery);
+  }, [schoolQuery]);
+
   return (
     <Wrapper>
       <FloatingInput
         onSubmit={handleSubmit}
         onChange={handleChangeSchoolQuery}
+        value={schoolQuery}
+        setValue={setSchoolQuery}
+        onClickRelatedSearch={handleClickRelatedSearch}
       />
 
       <NaverMap ref={mapElement} />
@@ -163,7 +177,8 @@ const EventIndexPage = () => {
 export default EventIndexPage;
 
 const Wrapper = styled.div`
-  position: relative;
+  position: fixed;
+  width: 100%;
   height: 100dvh;
 `;
 

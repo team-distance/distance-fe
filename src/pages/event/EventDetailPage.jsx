@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { schoolState } from '../../store/councilContents';
 import { selectedMarkerGps } from '../../store/selectedMarkerGps';
+import { ClipLoader } from 'react-spinners';
 
 const EventDetailPage = () => {
   const school = useRecoilValue(schoolState);
@@ -13,11 +14,13 @@ const EventDetailPage = () => {
   const [content, setContent] = useState({});
   const { studentCouncilId } = useParams();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchCouncilDetail = async () => {
     try {
       const response = await instance.get(`/council/${studentCouncilId}`);
       setContent(response.data);
+      setIsLoading(false);
     } catch (e) {
       console.error(e);
     }
@@ -40,6 +43,11 @@ const EventDetailPage = () => {
 
   return (
     <Wrapper>
+      {isLoading && (
+        <Loader>
+          <ClipLoader loading={isLoading} color="#FF6B6B" size={50} />
+        </Loader>
+      )}
       <TitleSection>
         <BackButton
           src="/assets/arrow-pink-button.png"
@@ -57,6 +65,10 @@ const EventDetailPage = () => {
           .join(', ')}
       </Location>
 
+      <Date>
+        날짜: {content.startDt} ~ {content.endDt}
+      </Date>
+
       <ImageContainer>
         {content.councilImageResponses?.map((image, index) => (
           <img src={image.imageUrl} alt={content.title} key={index} />
@@ -70,6 +82,14 @@ const EventDetailPage = () => {
 
 const Wrapper = styled.div`
   height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Loader = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const TitleSection = styled.div`
@@ -106,6 +126,13 @@ const Location = styled.div`
   margin-top: 16px;
 `;
 
+const Date = styled.div`
+  font-size: 0.75rem;
+  font-weight: 200;
+  line-height: 22px;
+  padding: 0 24px;
+`;
+
 const ImageContainer = styled.div`
   display: flex;
   overflow: auto;
@@ -124,8 +151,7 @@ const Content = styled.p`
   font-size: 12px;
   font-weight: 200;
   line-height: 22px;
-  padding: 0 24px;
-  height: 50%;
+  padding: 16px 24px;
   overflow: auto;
 `;
 
