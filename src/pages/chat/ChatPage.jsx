@@ -41,7 +41,10 @@ const ChatPage = () => {
   const fetchServerMessages = useFetchMessagesFromServer(roomId);
   const fetchServerUnreadMessages = useFetchUnreadMessagesFromServer(roomId);
   const groupedMessages = useGroupedMessages(messages);
-  const { isCallActive, isShowLottie } = useCallActive(messages, roomId);
+  const { isCallActive, isShowLottie, tiKiTaKaCount } = useCallActive(
+    messages,
+    roomId
+  );
   const [client, setClient] = useState(null);
   const [myMemberId, setMyMemberId] = useState(0);
   const [opponentMemberId, setOpponentMemberId] = useState(0);
@@ -99,6 +102,7 @@ const ChatPage = () => {
     <CallDistanceModal
       closeModal={closeCallDistanceModal}
       onClick={fetchOpponentTelNum}
+      tikitakaCount={tiKiTaKaCount}
     />
   ));
 

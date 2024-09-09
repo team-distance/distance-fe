@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
+import { TiKiTaKa } from '../constants/TiKiTaKaCount';
 
 export const useCallActive = (messages, roomId) => {
   const [isCallActive, setIsCallActive] = useState(false);
   const [isShowLottie, setIsShowLottie] = useState(false);
+  const [tiKiTaKaCount, setTiKiTaKaCount] = useState(0);
 
   const lastMessage = messages?.at(-1);
 
   // 전화 버튼 활성화
   useEffect(() => {
-    console.log('전화버튼 활성화 오류 확인용!!!!!!', lastMessage);
-    if (lastMessage?.checkTiKiTaKa) setIsCallActive(true);
+    setTiKiTaKaCount(lastMessage?.checkTiKiTaKa);
+    if (lastMessage?.checkTiKiTaKa >= TiKiTaKa) setIsCallActive(true);
     else setIsCallActive(false);
   }, [lastMessage]);
 
@@ -34,5 +36,5 @@ export const useCallActive = (messages, roomId) => {
     }
   }, [isCallActive]);
 
-  return { isCallActive, isShowLottie };
+  return { isCallActive, isShowLottie, tiKiTaKaCount };
 };

@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { TiKiTaKa } from '../../constants/TiKiTaKaCount';
+import { calcTiKiTaKaPercent } from '../../utils/calcTiKiTaKaPercent';
 
-const CallDistanceModal = ({ closeModal, onClick }) => {
+const CallDistanceModal = ({ closeModal, tikitakaCount }) => {
+  useEffect(() => {
+    console.log('>>>>>>>>>>>>>', calcTiKiTaKaPercent(TiKiTaKa, tikitakaCount));
+  }, []);
   return (
     <Modal>
       <CloseButton
@@ -9,12 +14,11 @@ const CallDistanceModal = ({ closeModal, onClick }) => {
         alt="닫기 버튼"
         onClick={closeModal}
       />
-
       <div>
         <Text>통화까지 남은 거리</Text>
-        <Distance>3M</Distance>
+        <Distance>{TiKiTaKa}M</Distance>
       </div>
-      <StatusBar>
+      <StatusBar $checkTikitaka={calcTiKiTaKaPercent(TiKiTaKa, tikitakaCount)}>
         <div className="filled" />
       </StatusBar>
       <Text>
@@ -74,7 +78,7 @@ const StatusBar = styled.div`
   .filled {
     position: absolute;
     left: 0;
-    width: 10%;
+    width: ${({ $checkTikitaka }) => `${$checkTikitaka}%`};
     height: 0.5625rem;
     background-color: #ff625d;
     border-radius: 0.63rem;

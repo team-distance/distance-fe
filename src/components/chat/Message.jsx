@@ -159,18 +159,10 @@ const Message = memo(
                 </div>
                 <div className="time">{parseTime(message.sendDt)}</div>
               </div>
-              {message.chatMessage.includes('s3.ap-northeast') ? (
-                <img
-                  src={message.chatMessage}
-                  alt="message"
-                  onClick={() => viewImage(message.chatMessage)}
-                />
-              ) : (
-                <>
-                  <div className="tail"></div>
-                  <div className="message">{message.chatMessage}</div>
-                </>
-              )}
+              <>
+                <div className="tail"></div>
+                <div className="message">{message.chatMessage}</div>
+              </>
             </div>
           </MessageByMe>
         ) : (
@@ -187,18 +179,56 @@ const Message = memo(
             <div className="message-section">
               <div className="nickname">{message.senderName}</div>
               <div className="message-container">
-                {message.chatMessage.includes('s3.ap-northeast') ? (
-                  <img
-                    src={message.chatMessage}
-                    alt="message"
-                    onClick={() => viewImage(message.chatMessage)}
-                  />
-                ) : (
-                  <>
-                    <div className="tail"></div>
-                    <div className="message">{message.chatMessage}</div>
-                  </>
-                )}
+                <>
+                  <div className="tail"></div>
+                  <div className="message">{message.chatMessage}</div>
+                </>
+                <div className="wrapper">
+                  <div className="read">
+                    {message.unreadCount !== 0 ? message.unreadCount : ''}
+                  </div>
+                  <div className="time">{parseTime(message.sendDt)}</div>
+                </div>
+              </div>
+            </div>
+          </MessageByOther>
+        );
+      case 'IMAGE':
+        return isSentByMe ? (
+          <MessageByMe>
+            <div className="message-container">
+              <div className="wrapper">
+                <div className="read">
+                  {message.unreadCount !== 0 ? message.unreadCount : ''}
+                </div>
+                <div className="time">{parseTime(message.sendDt)}</div>
+              </div>
+              <img
+                src={message.chatMessage}
+                alt="message"
+                onClick={() => viewImage(message.chatMessage)}
+              />
+            </div>
+          </MessageByMe>
+        ) : (
+          <MessageByOther>
+            <CharacterBackground
+              $backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
+              onClick={openProfileModal}
+            >
+              <Character
+                $xPos={CHARACTERS[opponentMemberCharacter]?.position[0]}
+                $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
+              />
+            </CharacterBackground>
+            <div className="message-section">
+              <div className="nickname">{message.senderName}</div>
+              <div className="message-container">
+                <img
+                  src={message.chatMessage}
+                  alt="message"
+                  onClick={() => viewImage(message.chatMessage)}
+                />
                 <div className="wrapper">
                   <div className="read">
                     {message.unreadCount !== 0 ? message.unreadCount : ''}

@@ -11,13 +11,12 @@ export const useSendMessage = (
   myMemberId,
   showWaitToast
 ) => {
+  // 이미지 전송
   const sendImageMessage = async () => {
     //S3 url 받기
     const formData = new FormData();
     formData.append('file', file);
     const response = await instance.post('/image', formData);
-
-    //stomp 전송
     try {
       client.publish({
         destination: `/app/chat/${roomId}`,
@@ -25,7 +24,7 @@ export const useSendMessage = (
           chatMessage: response.data.imageUrl,
           senderId: opponentMemberId,
           receiverId: myMemberId,
-          publishType: 'USER',
+          publishType: 'IMAGE',
         }),
       });
 
@@ -36,6 +35,7 @@ export const useSendMessage = (
     }
   };
 
+  // 텍스트 전송
   const sendTextMessage = () => {
     try {
       client.publish({
