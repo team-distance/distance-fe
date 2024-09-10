@@ -1,134 +1,66 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isLoggedInState, login } from '../../store/auth';
-import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
-import TextInput from '../../components/register/TextInput';
 import Button from '../../components/common/Button';
-import { onGetToken } from '../../firebaseConfig';
-import { instance } from '../../api/instance';
+// import { instance } from '../../api/instance';
 import Profile from '../../components/home/Profile';
-import useModal from '../../hooks/useModal';
-import ProfileModal from '../../components/modal/ProfileModal';
+import { useCreateChatRoom } from '../../hooks/useCreateChatRoom';
 
 const Matching = () => {
   const navigate = useNavigate();
-  const setIsLoggedIn = useSetRecoilState(isLoggedInState);
 
-  const [telNumTestFlag, setTelNumTestFlag] = useState(false);
-  const [pwTestFlag, setPwTestFlag] = useState(false);
-  const [loginResult, setLoginResult] = useState();
-  const [showWarning, setShowWarning] = useState(false);
+  const [matchingOpponent, setMatchingOpponent] = useState({});
+  const [isMemberFetched, setIsMemberFetched] = useState(false);
 
-  const [matchingOpponent, setMatchingOpponent] = useState({
-    memberId: 4,
-    nickName: '불교학부INFJ#4',
-    telNum: null,
-    reportCount: 0,
-    memberProfileDto: {
-      mbti: 'INFJ',
-      memberCharacter: 'CHICK',
-      department: '불교학부',
-      memberTagDto: [
-        {
-          tag: '수줍은',
-        },
-        {
-          tag: '애교',
-        },
-      ],
-      memberHobbyDto: [
-        {
-          hobby: '볼링',
-        },
-        {
-          hobby: '축구',
-        },
-        {
-          hobby: '클라이밍',
-        },
-      ],
-    },
-  });
-
-  const [loginValue, setLoginValue] = useState({
-    telNum: '',
-    password: '',
-  });
-
-  // const { openModal: openProfileModal, closeModal: closeProfileModal } =
-  //   useModal((profile) => (
-  //     <ProfileModal
-  //       closeModal={closeProfileModal}
-  //       onClick={() => {
-  //         handleCreateChatRoom(profile.memberId);
-  //       }}
-  //       selectedProfile={profile}
-  //     />
-  //   ));
-
-  const isDisabled = loginValue.telNum === '' || loginValue.password.length < 6;
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setShowWarning(false);
-
-    if (name === 'telNum') {
-      setTelNumTestFlag(!(value.length === 11));
-    }
-    if (name === 'password') {
-      setPwTestFlag(!(value.length >= 6));
-    }
-
-    setLoginValue((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  const createChatRoom = useCreateChatRoom();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (telNumTestFlag || pwTestFlag) {
-      setShowWarning(true);
-      return;
-    }
-
-    // clientToken 없어도 로그인 가능
-    let clientToken = null;
-
-    // clientToken 가져오기를 시도
-    // 브라우저에서 최초로 앱을 실행할 때, clientToken이 없을 수 있음
-    // 그래서 1회 시도 후 실패하면 다시 시도
-    try {
-      clientToken = await onGetToken();
-      localStorage.setItem('clientToken', clientToken);
-    } catch (err) {
-      clientToken = await onGetToken().catch((error) => console.log(error));
-      localStorage.setItem('clientToken', clientToken);
-    }
-
-    try {
-      // 로그인 시도 (clientToken이 null일 수도 있음)
-      await login({ ...loginValue, clientToken });
-
-      // 로그인 성공 시
-      setIsLoggedIn(true);
-      navigate('/matching');
-    } catch (err) {
-      // 로그인 실패 시
-      setShowWarning(true);
-      setLoginResult(err.response?.status || 'Login failed');
-    }
+    createChatRoom();
+    navigate('/matching/success');
   };
 
   useEffect(() => {
     // 매칭 상대 정보 불러오기
-    // const getMatchingUser = async () => {
-    //   const res = await instance.get('/event-matching/profile');
-    //   setMatchingOpponent(res.data);
-    // };
-    // getMatchingUser();
+    // ******api테스트+로그인 안 되어있을 때 처리 필요
+    const getMatchingUser = async () => {
+      // const res = await instance.get('/event-matching/profile');
+      // setMatchingOpponent(res.data);
+
+      //더미데이터
+      setMatchingOpponent({
+        memberId: 4,
+        nickName: '불교학부INFJ#4',
+        telNum: null,
+        reportCount: 0,
+        memberProfileDto: {
+          mbti: 'INFJ',
+          memberCharacter: 'CHICK',
+          department: '불교학부',
+          memberTagDto: [
+            {
+              tag: '수줍은',
+            },
+            {
+              tag: '애교',
+            },
+          ],
+          memberHobbyDto: [
+            {
+              hobby: '볼링',
+            },
+            {
+              hobby: '축구',
+            },
+            {
+              hobby: '클라이밍',
+            },
+          ],
+        },
+      });
+      setIsMemberFetched(true);
+    };
+    getMatchingUser();
   }, []);
 
   return (
@@ -140,15 +72,13 @@ const Matching = () => {
             <br /> 대화를 시작해볼까요?
           </p>
         </Heading>
-        {/* <Profile
-          key={index}
-          profile={matchingOpponent}
-          onClick={() => openProfileModal(profile)}
-        /> */}
+        <WrapProfile>
+          {isMemberFetched && <Profile profile={matchingOpponent} />}
+        </WrapProfile>
       </WrapContent>
 
-      <Button size="large" type="submit" disabled={isDisabled}>
-        로그인하기
+      <Button size="large" type="submit" disabled={!isMemberFetched}>
+        대화 시작하기
       </Button>
     </WrapForm>
   );
@@ -186,8 +116,7 @@ const Heading = styled.h2`
   }
 `;
 
-const Tip = styled.small`
-  font-size: 12px;
-  color: #ff625d;
-  font-weight: 700;
+const WrapProfile = styled.div`
+  width: 50%;
+  margin: 0 auto;
 `;

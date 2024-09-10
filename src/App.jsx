@@ -38,6 +38,7 @@ import EventListPage from './pages/event/EventListPage';
 import EventDetailPage from './pages/event/EventDetailPage';
 import EventLoginPage from './pages/root/EventLoginPage';
 import Matching from './pages/eventMatching/Matching';
+import MatchingSuccess from './pages/eventMatching/MatchingSuccess';
 
 function App() {
   useRouteChangeTrack();
@@ -123,6 +124,7 @@ function App() {
 
       <Route path="/event-matching" element={<EventLoginPage />} />
       <Route path="/matching" element={<Matching />} />
+      <Route path="/matching/success" element={<MatchingSuccess />} />
     </Routes>
   );
 }
