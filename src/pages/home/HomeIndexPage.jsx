@@ -166,6 +166,7 @@ const HomeIndexPage = () => {
 
   useEffect(() => {
     fetchMembers();
+    console.log('>>>>>>>>>>>', matchingConfig);
   }, [matchingConfig]);
 
   return (

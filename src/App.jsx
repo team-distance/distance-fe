@@ -36,6 +36,7 @@ import useRouteChangeTrack from './hooks/useRouteChangeTrack';
 import { useToast } from './hooks/useToast';
 import EventListPage from './pages/event/EventListPage';
 import EventDetailPage from './pages/event/EventDetailPage';
+import EventLoginPage from './pages/root/EventLoginPage';
 
 function App() {
   useRouteChangeTrack();
@@ -118,6 +119,8 @@ function App() {
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
 
       <Route path="*" element={<NotFoundPage />} />
+
+      <Route path="/event-matching" element={<EventLoginPage />} />
     </Routes>
   );
 }
