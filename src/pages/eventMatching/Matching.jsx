@@ -6,8 +6,12 @@ import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
 import Button from '../../components/common/Button';
 import { onGetToken } from '../../firebaseConfig';
+import { instance } from '../../api/instance';
+import Profile from '../../components/home/Profile';
+import useModal from '../../hooks/useModal';
+import ProfileModal from '../../components/modal/ProfileModal';
 
-const EventLoginPage = () => {
+const Matching = () => {
   const navigate = useNavigate();
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
 
@@ -16,14 +20,52 @@ const EventLoginPage = () => {
   const [loginResult, setLoginResult] = useState();
   const [showWarning, setShowWarning] = useState(false);
 
+  const [matchingOpponent, setMatchingOpponent] = useState({
+    memberId: 4,
+    nickName: '불교학부INFJ#4',
+    telNum: null,
+    reportCount: 0,
+    memberProfileDto: {
+      mbti: 'INFJ',
+      memberCharacter: 'CHICK',
+      department: '불교학부',
+      memberTagDto: [
+        {
+          tag: '수줍은',
+        },
+        {
+          tag: '애교',
+        },
+      ],
+      memberHobbyDto: [
+        {
+          hobby: '볼링',
+        },
+        {
+          hobby: '축구',
+        },
+        {
+          hobby: '클라이밍',
+        },
+      ],
+    },
+  });
+
   const [loginValue, setLoginValue] = useState({
     telNum: '',
     password: '',
   });
 
-  useEffect(() => {
-    setIsLoggedIn(false);
-  }, []);
+  // const { openModal: openProfileModal, closeModal: closeProfileModal } =
+  //   useModal((profile) => (
+  //     <ProfileModal
+  //       closeModal={closeProfileModal}
+  //       onClick={() => {
+  //         handleCreateChatRoom(profile.memberId);
+  //       }}
+  //       selectedProfile={profile}
+  //     />
+  //   ));
 
   const isDisabled = loginValue.telNum === '' || loginValue.password.length < 6;
 
@@ -80,39 +122,29 @@ const EventLoginPage = () => {
     }
   };
 
+  useEffect(() => {
+    // 매칭 상대 정보 불러오기
+    // const getMatchingUser = async () => {
+    //   const res = await instance.get('/event-matching/profile');
+    //   setMatchingOpponent(res.data);
+    // };
+    // getMatchingUser();
+  }, []);
+
   return (
     <WrapForm onSubmit={handleSubmit}>
       <WrapContent>
         <Heading>
-          <img src="/assets/logo-pink.png" alt="logo" />
           <p>
-            로그인하여 매칭된 상대와
-            <br /> 대화를 시작해보세요!
+            아래의 유저와 매칭되었어요!
+            <br /> 대화를 시작해볼까요?
           </p>
         </Heading>
-
-        <div>
-          <TextInput
-            label="전화번호"
-            name="telNum"
-            type="text"
-            onChange={handleChange}
-            placeholder={"'-'없이 입력"}
-          />
-        </div>
-
-        <div>
-          <TextInput
-            label="비밀번호"
-            name="password"
-            type="password"
-            onChange={handleChange}
-            placeholder={'6자리 이상'}
-          />
-          {showWarning && loginResult !== 200 && (
-            <Tip>로그인 정보가 일치하지 않습니다!</Tip>
-          )}
-        </div>
+        {/* <Profile
+          key={index}
+          profile={matchingOpponent}
+          onClick={() => openProfileModal(profile)}
+        /> */}
       </WrapContent>
 
       <Button size="large" type="submit" disabled={isDisabled}>
@@ -122,7 +154,7 @@ const EventLoginPage = () => {
   );
 };
 
-export default EventLoginPage;
+export default Matching;
 
 const WrapForm = styled.form`
   margin-top: 8.4rem;

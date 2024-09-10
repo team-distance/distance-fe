@@ -37,6 +37,7 @@ import { useToast } from './hooks/useToast';
 import EventListPage from './pages/event/EventListPage';
 import EventDetailPage from './pages/event/EventDetailPage';
 import EventLoginPage from './pages/root/EventLoginPage';
+import Matching from './pages/eventMatching/Matching';
 
 function App() {
   useRouteChangeTrack();
@@ -121,6 +122,7 @@ function App() {
       <Route path="*" element={<NotFoundPage />} />
 
       <Route path="/event-matching" element={<EventLoginPage />} />
+      <Route path="/matching" element={<Matching />} />
     </Routes>
   );
 }

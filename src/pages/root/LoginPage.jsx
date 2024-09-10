@@ -47,7 +47,7 @@ const LoginPage = () => {
     }));
   }, []);
 
-  const isDisabled = loginValue.telNum === '' || loginValue.password === '';
+  const isDisabled = loginValue.telNum === '' || loginValue.password.length < 6;
 
   const handleChange = (e) => {
     const { name, value } = e.target;

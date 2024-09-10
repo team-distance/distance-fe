@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { instance } from '../../api/instance';
 import Profile from '../../components/home/Profile';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Banner from '../../components/common/Banner';
 import ReloadButton from '../../components/home/ReloadButton';
 import ProfileModal from '../../components/modal/ProfileModal';
@@ -16,10 +16,9 @@ import MatchingConfigButton from '../../components/home/MatchingConfigButton';
 import MatchingConfigBottomsheet from '../../components/modal/MatchingConfigBottomsheet';
 import { useRecoilValue } from 'recoil';
 import { matchingConfigState } from '../../store/matchingConfig';
+import { useCreateChatRoom } from '../../hooks/useCreateChatRoom';
 
 const HomeIndexPage = () => {
-  const navigate = useNavigate();
-
   //알림, GPS 설정 관리
   const alarmActive = useCheckAlarmActive();
   const gpsActive = useCheckGpsActive();
@@ -28,13 +27,14 @@ const HomeIndexPage = () => {
   const [loading, setLoading] = useState(false);
 
   const matchingConfig = useRecoilValue(matchingConfigState);
+  const createChatRoom = useCreateChatRoom();
 
   const { openModal: openProfileModal, closeModal: closeProfileModal } =
     useModal((profile) => (
       <ProfileModal
         closeModal={closeProfileModal}
         onClick={() => {
-          handleCreateChatRoom(profile.memberId);
+          createChatRoom(profile.memberId, closeProfileModal);
         }}
         selectedProfile={profile}
       />
@@ -46,32 +46,6 @@ const HomeIndexPage = () => {
   } = useModal(
     () => <MatchingConfigBottomsheet closeModal={closeMatchingConfigModal} />,
     { backdrop: false }
-  );
-
-  // 토스트 메세지
-  const { showToast: showFullMyChatroomToast } = useToast(
-    () => (
-      <span>
-        이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.
-      </span>
-    ),
-    'too-many-my-chatroom'
-  );
-  const { showToast: showFullOppoChatroomToast } = useToast(
-    () => (
-      <span>
-        상대방이 이미 생성된 채팅방 5개입니다. 상대방이 수락하면 알려드릴게요!
-      </span>
-    ),
-    'too-many-oppo-chatroom'
-  );
-  const { showToast: showGpsErrorToast } = useToast(
-    () => <span>상대방의 위치정보가 없어 채팅을 할 수 없어요!</span>,
-    'too-many-oppo-chatroom'
-  );
-  const { showToast: showLoginErrorToast } = useToast(
-    () => <span>로그인 후 이용해주세요.</span>,
-    'too-many-oppo-chatroom'
   );
 
   const { showToast: showAlarmGPSErrorToast } = useToast(
@@ -101,38 +75,6 @@ const HomeIndexPage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleCreateChatRoom = async (opponentMemberId) => {
-    await instance
-      .post('/chatroom/create', {
-        memberId: opponentMemberId,
-      })
-      .then((res) => {
-        const createdChatRoom = res.data;
-        navigate(`/chat/${createdChatRoom}`);
-      })
-      .catch((error) => {
-        switch (error.response.data.code) {
-          case 'TOO_MANY_MY_CHATROOM':
-            showFullMyChatroomToast();
-            break;
-          case 'TOO_MANY_OPPONENT_CHATROOM':
-            showFullOppoChatroomToast();
-            break;
-          case 'NOT_AUTHENTICATION_STUDENT':
-            window.confirm('학생 인증 후 이용해주세요.') &&
-              navigate('/verify/univ');
-            break;
-          case 'NOT_EXIST_GPS':
-            showGpsErrorToast();
-            break;
-          default:
-            showLoginErrorToast();
-            break;
-        }
-      });
-    closeProfileModal();
   };
 
   const alertTextList = [
