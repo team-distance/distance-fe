@@ -150,6 +150,8 @@ const WrapButton = styled.div`
   width: 80%;
   position: absolute;
   bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
 `;
 
 const MoveToHome = styled.div`

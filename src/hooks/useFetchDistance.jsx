@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { instance } from '../api/instance';
 
 export const useFetchDistance = (roomId) => {
@@ -13,7 +13,10 @@ export const useFetchDistance = (roomId) => {
       console.log('error', error);
     }
   };
-  fetchDistance();
+
+  useEffect(() => {
+    fetchDistance();
+  }, []);
 
   return distance;
 };
