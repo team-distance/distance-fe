@@ -1,12 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { TiKiTaKa } from '../../constants/TiKiTaKaCount';
 import { calcTiKiTaKaPercent } from '../../utils/calcTiKiTaKaPercent';
 
 const CallDistanceModal = ({ closeModal, tikitakaCount }) => {
-  useEffect(() => {
-    console.log('>>>>>>>>>>>>>', calcTiKiTaKaPercent(TiKiTaKa, tikitakaCount));
-  }, []);
   return (
     <Modal>
       <CloseButton
@@ -16,7 +13,9 @@ const CallDistanceModal = ({ closeModal, tikitakaCount }) => {
       />
       <div>
         <Text>통화까지 남은 거리</Text>
-        <Distance>{TiKiTaKa}M</Distance>
+        <Distance>
+          {TiKiTaKa >= tikitakaCount ? TiKiTaKa - tikitakaCount : 0}M
+        </Distance>
       </div>
       <StatusBar $checkTikitaka={calcTiKiTaKaPercent(TiKiTaKa, tikitakaCount)}>
         <div className="filled" />
