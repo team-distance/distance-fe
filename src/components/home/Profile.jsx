@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../common/Badge';
+import MBTI from './MBTI';
 
 const Profile = ({ profile, onClick }) => {
   const { memberCharacter, mbti, department, memberHobbyDto, memberTagDto } =
@@ -16,9 +17,10 @@ const Profile = ({ profile, onClick }) => {
             $xPos={CHARACTERS[memberCharacter]?.position[0]}
             $yPos={CHARACTERS[memberCharacter]?.position[1]}
           />
+          <MBTI mbti={mbti} />
         </CharacterBackground>
         <WrapText>
-          <MBTI>{mbti}</MBTI>
+          <School>수정전학교</School>
           <Department>{department}</Department>
         </WrapText>
         <TagContainer>
@@ -82,26 +84,26 @@ const WrapText = styled.div`
   width: 90%;
 `;
 
+const School = styled.div`
+  color: #000;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+`;
+
 const Department = styled.div`
   font-weight: 700;
   color: #000000;
   text-align: center;
-  font-size: 14px;
+  font-size: 1.125rem;
   font-style: normal;
   line-height: normal;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-
-const MBTI = styled.div`
-  color: #000000;
-  text-align: center;
-  font-family: Pretendard;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
 `;
 
 const TagContainer = styled.div`
