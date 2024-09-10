@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../common/Badge';
 import MBTI from './MBTI';
+import Report from './Report';
 
 const Profile = ({ profile, onClick }) => {
   const { memberCharacter, mbti, department, memberHobbyDto, memberTagDto } =
@@ -10,6 +11,7 @@ const Profile = ({ profile, onClick }) => {
   return (
     <WrapProfile onClick={onClick}>
       <Wrapper>
+        <Report />
         <CharacterBackground
           $backgroundColor={CHARACTERS[memberCharacter]?.color}
         >
@@ -47,6 +49,7 @@ const WrapProfile = styled.div`
   border-radius: 12px;
   background: #ffffff;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.05);
+  position: relative;
 `;
 
 const Wrapper = styled.div`

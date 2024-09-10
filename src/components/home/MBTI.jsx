@@ -15,7 +15,7 @@ const MBTITag = styled.div`
   left: 90%;
   transform: translateX(-50%);
   text-align: center;
-  padding: 4px 10px;
+  padding: 2px 8px;
   background-color: #a8a0fb;
   color: #ffffff;
   white-space: nowrap;
