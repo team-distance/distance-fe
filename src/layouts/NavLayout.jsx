@@ -43,7 +43,13 @@ const NavLayout = () => {
                 <ToastIcon src={notificationImage} alt="디스턴스 아이콘" />
                 <div>
                   <ToastTitle>{notificationTitle}</ToastTitle>
-                  <ToastBody>{notificationBody}</ToastBody>
+                  <ToastBody>
+                    {notificationBody.includes(
+                      'buckets.s3.ap-northeast-2.amazonaws.com'
+                    )
+                      ? '사진을 전송하였습니다.'
+                      : notificationBody}
+                  </ToastBody>
                 </div>
               </ToastSectionLeft>
               <ToastSectionRight>
