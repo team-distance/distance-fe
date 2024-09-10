@@ -7,8 +7,10 @@ const Messages = memo(
     groupedMessages,
     myId,
     responseCall,
+    viewImage,
     openProfileModal,
     opponentMemberCharacter,
+    isMenuOpen,
   }) => {
     const messageRef = useRef();
 
@@ -23,7 +25,7 @@ const Messages = memo(
     }, [groupedMessages]);
 
     return (
-      <MessagesWrapper ref={messageRef}>
+      <MessagesWrapper ref={messageRef} $isOpen={isMenuOpen}>
         <Announcement>
           <div className="content">
             📢 잠깐만요! 채팅 상대는 소중한 학우입니다. 사이버 예절을 지켜
@@ -44,13 +46,10 @@ const Messages = memo(
             {messages.map((message) => (
               <Message
                 key={message.messageId}
-                nickname={message.senderName}
-                content={message.chatMessage}
-                time={message.sendDt}
-                read={message.unreadCount}
-                senderType={message.senderType}
-                sentByMe={message.senderId !== Number(myId)}
+                message={message}
+                isSentByMe={message.senderId !== Number(myId)}
                 responseCall={responseCall}
+                viewImage={viewImage}
                 openProfileModal={openProfileModal}
                 opponentMemberCharacter={opponentMemberCharacter}
               />
@@ -66,6 +65,8 @@ const MessagesWrapper = styled.div`
   overflow: auto;
   flex: 1;
   min-height: 0;
+  margin-bottom: 6rem;
+  z-index: ${({ $isOpen }) => ($isOpen ? '0' : '10')};
 `;
 
 const Announcement = styled.div`

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { instance } from '../../api/instance';
 import { useNavigate } from 'react-router-dom';
-import { CHARACTERS, COLORS } from '../../constants/character';
+import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../../components/common/Badge';
 
 const ChatInboxPage = () => {
@@ -72,56 +72,57 @@ const ChatInboxPage = () => {
     <>
       <Title>요청함</Title>
       {inboxList.length !== 0 ? (
-        inboxList.map((inbox) => {
-          return (
-            <InboxContainer key={inbox.waitingRoomId}>
-              <CharacterBackground $character={inbox.memberCharacter}>
-                <img
-                  src={CHARACTERS[inbox.memberCharacter]}
-                  alt={inbox.memberCharacter}
-                />
-              </CharacterBackground>
+        inboxList.map((inbox) => (
+          // 탈퇴한 사용자의 경우 캐릭터가 "?"로 표시되어야 하나
+          // 현재는 곰 캐릭터로 표시되도록 설정되어 있음
+          // 추후 컴포넌트 분리할 때 이 부분도 같이 해결하겠슴다
+          <InboxContainer key={inbox.waitingRoomId}>
+            <CharacterBackground
+              $backgroundColor={CHARACTERS[inbox.memberCharacter]?.color}
+            >
+              <StyledImage
+                $xPos={CHARACTERS[inbox.memberCharacter]?.position[0]}
+                $yPos={CHARACTERS[inbox.memberCharacter]?.position[1]}
+              />
+            </CharacterBackground>
 
-              <div className="right-section">
-                <div className="upper-area">
-                  <Profile>
-                    {inbox.department}
-                    <Badge>{inbox.mbti}</Badge>
-                  </Profile>
-                </div>
-                <div className="lower-area">
-                  <AcceptButton
-                    onClick={() => {
-                      const isAccepted =
-                        window.confirm('요청을 수락하시겠습니까?');
-                      if (isAccepted) {
-                        handleAcceptChat(
-                          inbox.loveReceiverId,
-                          inbox.loveSenderId,
-                          inbox.waitingRoomId
-                        );
-                      }
-                    }}
-                  >
-                    수락하기
-                  </AcceptButton>
-                  <DenyButton
-                    onClick={() => {
-                      const isAccepted =
-                        window.confirm('요청을 거절하시겠습니까?');
+            <div className="right-section">
+              <Profile>
+                <div className="department">{inbox.department}</div>
+                <Badge>{inbox.mbti}</Badge>
+              </Profile>
+              <div className="lower-area">
+                <AcceptButton
+                  onClick={() => {
+                    const isAccepted =
+                      window.confirm('요청을 수락하시겠습니까?');
+                    if (isAccepted) {
+                      handleAcceptChat(
+                        inbox.loveReceiverId,
+                        inbox.loveSenderId,
+                        inbox.waitingRoomId
+                      );
+                    }
+                  }}
+                >
+                  수락하기
+                </AcceptButton>
+                <DenyButton
+                  onClick={() => {
+                    const isAccepted =
+                      window.confirm('요청을 거절하시겠습니까?');
 
-                      if (isAccepted) {
-                        handleDenyChat(inbox.waitingRoomId);
-                      }
-                    }}
-                  >
-                    거절하기
-                  </DenyButton>
-                </div>
+                    if (isAccepted) {
+                      handleDenyChat(inbox.waitingRoomId);
+                    }
+                  }}
+                >
+                  거절하기
+                </DenyButton>
               </div>
-            </InboxContainer>
-          );
-        })
+            </div>
+          </InboxContainer>
+        ))
       ) : (
         <EmptyContainer>
           <div className="wrap">
@@ -147,11 +148,6 @@ const InboxContainer = styled.div`
     flex: 1;
     gap: 0.5rem;
 
-    > .upper-area {
-      display: flex;
-      justify-content: space-between;
-    }
-
     > .lower-area {
       display: flex;
       gap: 0.5rem;
@@ -164,7 +160,6 @@ const InboxContainer = styled.div`
 `;
 
 const Title = styled.div`
-  color: #000000;
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 16px;
@@ -176,23 +171,37 @@ const CharacterBackground = styled.div`
   height: 60px;
   border-radius: 50%;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
-  background-color: ${(props) => COLORS[props.$character]};
+  background-color: ${(props) => props.$backgroundColor};
+  flex-shrink: 0;
+`;
 
-  > img {
-    position: absolute;
-    width: 70%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+const StyledImage = styled.div`
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 40}px -${props.$yPos * 40}px`};
+  background-size: calc(100% * 4);
 `;
 
 const Profile = styled.div`
   display: flex;
+  align-items: center;
   gap: 4px;
-  color: #000000;
   font-size: 18px;
   font-weight: 700;
+  min-width: 0;
+
+  .department {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 `;
 
 const AcceptButton = styled.button`

@@ -34,9 +34,8 @@ const BottomNavBar = () => {
       iconActive: '/assets/icon/icon-chat-filled.svg',
     },
     {
-      name: '페스티벌',
-      path: '/festival/program',
-      alternative: '/festival/foodtruck',
+      name: '학교행사',
+      path: '/event',
       icon: '/assets/icon/icon-festival-stroked.svg',
       iconActive: '/assets/icon/icon-festival-filled.svg',
     },
@@ -90,7 +89,6 @@ const StyledNav = styled.nav`
   justify-content: center;
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
-  z-index: 9999;
   width: 100%;
   background-color: #fff;
   border-top: #ededed solid 1px;

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import TabBar from '../components/common/TabBar';
 import styled from 'styled-components';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { onMessage } from 'firebase/messaging';
 import { messaging } from '../firebaseConfig';
 import PWAInstallPrompt from '../components/common/PWAInstallPrompt';
@@ -12,9 +12,11 @@ const NavLayout = () => {
   const navigate = useNavigate();
   const userAgent = navigator.userAgent.toLowerCase();
   const isIphone = userAgent.includes('iphone');
+  const { pathname } = useLocation();
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
+    console.log(pathname);
 
     if (userAgent.includes('kakao')) {
       navigate('/kakaotalk-fallback');
@@ -72,12 +74,18 @@ const NavLayout = () => {
   return (
     <>
       <PWAInstallPrompt />
-      <Padding $isIphone={isIphone}>
-        <Header />
+
+      {pathname.includes('/event') ? (
         <Outlet />
-      </Padding>
+      ) : (
+        <Padding $isIphone={isIphone}>
+          <Header />
+          <Outlet />
+        </Padding>
+      )}
+
       <TabBar />
-      <Toaster
+      {/* <Toaster
         toastOptions={{
           style: {
             fontSize: '14px',
@@ -86,7 +94,7 @@ const NavLayout = () => {
         containerStyle={{
           bottom: isIphone ? '116px' : '96px',
         }}
-      />
+      /> */}
     </>
   );
 };

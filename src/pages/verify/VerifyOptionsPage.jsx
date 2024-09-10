@@ -47,15 +47,15 @@ const VerifyOptionsPage = () => {
 
   return (
     <WrapContent>
-      <h2>
+      <Heading>
         교내 학생임을 인증해주세요
         <LogoImage src={universityLogo} alt={university} />
-      </h2>
-      <p>
+      </Heading>
+      <Paragraph>
         세 가지 방법 중 하나를 택해 인증해주세요
         <br />
         인증이 완료되면 불이 들어옵니다.
-      </p>
+      </Paragraph>
 
       {authUnivState === 'FAILED_2' && (
         <FailedMessage>사진이 흔들렸습니다!</FailedMessage>
@@ -123,6 +123,17 @@ const WrapContent = styled.div`
 const FailedMessage = styled.div`
   color: red;
   margin-bottom: 1rem;
+`;
+
+const Heading = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+`;
+
+const Paragraph = styled.p`
+  font-size: 12px;
+  line-height: 16px;
 `;
 
 const LogoImage = styled.img`

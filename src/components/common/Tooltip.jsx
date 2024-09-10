@@ -20,9 +20,9 @@ const Tooltip = ({ message }) => {
 
 const TooltipIcon = styled.div`
   position: relative;
-  font-weight: 700;
+  font-weight: 600;
   color: #979797;
-  border: 1.5px solid #979797;
+  border: 1.2px solid #979797;
   border-radius: 100%;
   display: inline-block;
   text-align: center;

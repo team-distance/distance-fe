@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import { parseTime } from '../../utils/parseTime';
-import { CHARACTERS, COLORS } from '../../constants/character';
-import ClipLoader from 'react-spinners/ClipLoader';
+import { CHARACTERS } from '../../constants/CHARACTERS';
 import { useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
 import Badge from '../../components/common/Badge';
+import Loader from '../../components/common/Loader';
 
 const ChatIndexPage = () => {
   const navigate = useNavigate();
@@ -112,9 +112,7 @@ const ChatIndexPage = () => {
     <>
       {isLoggedIn ? (
         loading ? (
-          <LoaderContainer>
-            <ClipLoader color={'#FF625D'} loading={loading} size={50} />
-          </LoaderContainer>
+          <Loader />
         ) : (
           <>
             <WrapInboxButton>
@@ -148,28 +146,38 @@ const ChatIndexPage = () => {
                       : '(알수없음)';
 
                     return (
+                      // 탈퇴한 사용자의 경우 캐릭터가 "?"로 표시되어야 하나
+                      // 현재는 곰 캐릭터로 표시되도록 설정되어 있음
+                      // 추후 컴포넌트 분리할 때 이 부분도 같이 해결하겠슴다
                       <ChatRoomContainer
                         key={chat.chatRoomId}
                         onClick={() => onClickChatroom(chat)}
                       >
-                        <div className="left-section">
-                          <CharacterBackground
-                            $character={chat.memberCharacter}
-                          >
-                            <img
-                              className="null-img"
-                              src={CHARACTERS[chat.memberCharacter]}
-                              alt={chat.memberCharacter}
-                            />
-                          </CharacterBackground>
-                        </div>
+                        <CharacterBackground
+                          $backgroundColor={
+                            CHARACTERS[chat.memberCharacter]?.color
+                          }
+                        >
+                          <StyledImage
+                            $xPos={
+                              CHARACTERS[chat.memberCharacter]?.position[0]
+                            }
+                            $yPos={
+                              CHARACTERS[chat.memberCharacter]?.position[1]
+                            }
+                          />
+                        </CharacterBackground>
+
                         <div className="profile-section">
                           <Profile>
-                            <div className="cover">{chat.department}</div>
                             <div className="department">{chat.department}</div>
                             <div>{chat.mbti && <Badge>{chat.mbti}</Badge>}</div>
                           </Profile>
-                          <Message>{chat.lastMessage}</Message>
+                          {chat.lastMessage.includes('s3.ap-northeast') ? (
+                            <Message>사진을 전송하였습니다.</Message>
+                          ) : (
+                            <Message>{chat.lastMessage}</Message>
+                          )}
                         </div>
 
                         <div className="right-section">
@@ -219,39 +227,24 @@ const ChatListContainer = styled.div`
 const ChatRoomContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
   text-decoration-line: none;
   padding: 16px 0;
-  width: 100%;
-
-  > .left-section {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 0 0 auto;
-  }
 
   > .profile-section {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 0 15px;
-    flex: 1 1 auto;
+    padding: 0 16px;
     min-width: 0;
-
-    div {
-      display: inline-block;
-      overflow: hidden;
-      white-space: nowrap;
-    }
+    flex-grow: 1;
   }
 
   > .right-section {
     display: flex;
     gap: 12px;
     flex-direction: column;
+    flex-shrink: 0;
     align-items: flex-end;
-    flex: 0 0 auto;
   }
 `;
 
@@ -261,41 +254,34 @@ const CharacterBackground = styled.div`
   height: 60px;
   border-radius: 50%;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
-  background-color: ${(props) => COLORS[props.$character]};
+  background-color: ${(props) => props.$backgroundColor};
+  flex-shrink: 0;
+`;
 
-  > img {
-    position: absolute;
-    width: 70%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .null-img {
-    height: 50%;
-    object-fit: contain;
-  }
+const StyledImage = styled.div`
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 40}px -${props.$yPos * 40}px`};
+  background-size: calc(100% * 4);
 `;
 
 const Profile = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 4px;
   color: #000000;
   font-size: 18px;
   font-weight: 700;
   position: relative;
 
-  .cover {
-    width: 100%;
-    position: absolute;
-    background-image: linear-gradient(90deg, transparent 80%, #fbfbfb 100%);
-    z-index: 99;
-    color: transparent;
-  }
-
   .department {
-    max-width: 80%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -336,18 +322,6 @@ const InboxButton = styled.div`
   }
 `;
 
-const LoaderContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-`;
-
 const UnreadCount = styled.div`
   background-color: #ff625d;
   color: #ffffff;
@@ -384,14 +358,13 @@ const SurveyLinkContainer = styled.div`
   width: 100%;
   height: 80px;
   position: fixed;
-  z-index: 999;
+  z-index: 1;
   bottom: 15%;
   left: 0;
   right: 0;
   background-color: #f3f3f3;
   text-decoration: none;
   color: black;
-
   display: flex;
 `;
 

@@ -58,6 +58,10 @@ jobs:
       - name: NPM Build
         run: npm run build
 
+      - name: Replace environment variables in index.html
+        run: |
+          sed -i "s/%REACT_APP_NCP_CLIENT_ID%/${{ secrets.REACT_APP_NCP_CLIENT_ID }}/g" build/index.html
+
       - name: Transfer to S3 for serving static
         uses: jakejarvis/s3-sync-action@master
         with:

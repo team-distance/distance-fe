@@ -3,20 +3,35 @@ import styled from 'styled-components';
 import { isLoggedInState } from '../../store/auth';
 import { Link } from 'react-router-dom';
 import { myDataState } from '../../store/myData';
-import { CHARACTERS, COLORS } from '../../constants/character';
+import { CHARACTERS } from '../../constants/CHARACTERS';
 import { useNavigate } from 'react-router-dom';
-import Modal from './Modal';
-import { useEffect, useRef } from 'react';
-import Badge from './Badge';
+import { useEffect } from 'react';
 import { instance } from '../../api/instance';
-import toast from 'react-hot-toast';
 import AuthUnivState from './AuthUnivState';
+import MyProfileModal from '../modal/MyProfileModal';
+import useModal from '../../hooks/useModal';
+import {useToast} from '../../hooks/useToast';
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
   const [myData, setMyData] = useRecoilState(myDataState);
-  const modalRef = useRef();
   const navigate = useNavigate();
+
+  const { openModal: openMyProfileModal, closeModal: closeMyProfileModal } =
+    useModal(() => (
+      <MyProfileModal
+        closeModal={closeMyProfileModal}
+        onClick={navigateToEditProfilePage}
+        myData={myData}
+        handleLogout={handleLogout}
+      />
+    ));
+
+    const {showToast: showMyDataErrorToast} = useToast(
+      () => <span>
+        프로필 정보를 가져오는데 실패했어요!
+      </span>, 'my-data-error', 'bottom-center'
+    )
 
   const handleLogout = async () => {
     const confirmLogout = window.confirm('로그아웃 하시겠습니까?');
@@ -30,9 +45,14 @@ const Header = () => {
       console.log(error);
     } finally {
       localStorage.clear();
-      modalRef.current.close();
+      closeMyProfileModal();
       navigate('/');
     }
+  };
+
+  const navigateToEditProfilePage = () => {
+    closeMyProfileModal();
+    navigate('/mypage/profile', { state: myData });
   };
 
   const getMyData = async () => {
@@ -41,10 +61,7 @@ const Header = () => {
       const res = await instance.get('/member/profile');
       setMyData(res.data);
     } catch (error) {
-      toast.error('프로필 정보를 가져오는데 실패했어요!', {
-        id: 'my-data-error',
-        position: 'bottom-center',
-      });
+      showMyDataErrorToast();
     }
   };
 
@@ -59,57 +76,17 @@ const Header = () => {
         {isLoggedIn ? (
           <ProfileWrapper>
             <AuthUnivState />
-            <ProfileIcon
-              $character={myData.memberCharacter}
-              onClick={() => {
-                modalRef.current.open();
-              }}
-            >
-              <img
-                src={CHARACTERS[myData.memberCharacter]}
-                alt="프로필 이미지"
+            <ProfileRing onClick={openMyProfileModal}>
+              <Character
+                $xPos={CHARACTERS[myData.memberCharacter]?.position[0]}
+                $yPos={CHARACTERS[myData.memberCharacter]?.position[1]}
               />
-            </ProfileIcon>
+            </ProfileRing>
           </ProfileWrapper>
         ) : (
           <StyledLink to="/login">로그인</StyledLink>
         )}
       </WrapHeader>
-
-      <Modal
-        ref={modalRef}
-        buttonLabel="프로필 수정하기"
-        buttonColor="#FFAC0B"
-        buttonClickHandler={() => {
-          navigate('/mypage/profile', { state: myData });
-        }}
-      >
-        <WrapContent>
-          <CharacterBackground $character={myData.memberCharacter}>
-            <StyledImage
-              src={CHARACTERS[myData.memberCharacter]}
-              alt={myData.memberCharacter}
-            />
-          </CharacterBackground>
-          <TextDiv>
-            <MBTI>{myData.mbti}</MBTI>
-            <Major>{myData.department}</Major>
-          </TextDiv>
-          <TagContainer>
-            {myData?.memberHobbyDto?.map((hobby, index) => (
-              <Badge key={index}>#{hobby.hobby}</Badge>
-            ))}
-            {myData?.memberTagDto?.map((tag, index) => (
-              <Badge key={index}>#{tag.tag}</Badge>
-            ))}
-          </TagContainer>
-          <LogoutButton
-            src="/assets/leave-button.svg"
-            alt="나가기 버튼"
-            onClick={handleLogout}
-          />
-        </WrapContent>
-      </Modal>
     </>
   );
 };
@@ -136,17 +113,7 @@ const StyledLink = styled(Link)`
   color: #ff625d;
 `;
 
-const LogoutButton = styled.img`
-  width: 28px;
-  display: flex;
-  align-items: center;
-  position: absolute;
-  top: 20px;
-  left: 32px;
-  padding: 4px;
-`;
-
-const ProfileIcon = styled.div`
+const ProfileRing = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -155,11 +122,6 @@ const ProfileIcon = styled.div`
   align-items: center;
   background-color: white;
   position: relative;
-
-  img {
-    width: 32px;
-    height: 32px;
-  }
 
   &::before {
     content: '';
@@ -174,56 +136,13 @@ const ProfileIcon = styled.div`
   }
 `;
 
-const WrapContent = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 32px 0;
-  gap: 12px;
-`;
-
-const CharacterBackground = styled.div`
-  position: relative;
-  width: 60%;
-  height: 0;
-  padding-bottom: 60%;
-  border-radius: 50%;
-  background-color: ${(props) => COLORS[props.$character]};
-`;
-
-const StyledImage = styled.img`
-  position: absolute;
-  width: 60%;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-`;
-
-const TextDiv = styled.div`
-  text-align: center;
-  color: #333333;
-  width: 100%;
-  text-align: center;
-`;
-
-const Major = styled.div`
-  font-size: 24px;
-  font-weight: 700;
-`;
-
-const MBTI = styled.div`
-  color: #000000;
-  font-size: 14px;
-`;
-
-const TagContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
+const Character = styled.div`
+  width: 32px;
+  height: 32px;
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 32}px -${props.$yPos * 32}px`};
+  background-size: calc(100% * 4);
 `;
 
 export default Header;

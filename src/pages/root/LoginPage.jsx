@@ -6,9 +6,9 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
 import Button from '../../components/common/Button';
-import ClipLoader from 'react-spinners/ClipLoader';
 import { onGetToken } from '../../firebaseConfig';
 import { registerDataState } from '../../store/registerDataState';
+import Loader from '../../components/common/Loader';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -115,14 +115,12 @@ const LoginPage = () => {
   return (
     <>
       {loading ? (
-        <LoaderContainer>
-          <ClipLoader color={'#FF625D'} loading={loading} size={50} />
-        </LoaderContainer>
+        <Loader />
       ) : (
         <WrapForm onSubmit={handleSubmit}>
           <WrapContent>
             {location.state?.alert && alert('로그인이 필요합니다.')}
-            <h2>전화번호로 로그인하기</h2>
+            <Heading2>전화번호로 로그인하기</Heading2>
 
             <div>
               <TextInput
@@ -188,6 +186,12 @@ const WrapContent = styled.div`
   margin-bottom: 8rem;
 `;
 
+const Heading2 = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 3.5rem 0 1rem 0;
+`;
+
 const WrapText = styled.div`
   display: flex;
   justify-content: center;
@@ -230,16 +234,4 @@ const LoginExpiredMessage = styled.div`
   text-align: center;
   color: #ff625d;
   margin-bottom: 1rem;
-`;
-
-const LoaderContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
 `;

@@ -1,29 +1,31 @@
 import styled from 'styled-components';
-import { CHARACTERS } from '../../constants/character';
-import { COLORS } from '../../constants/character';
+import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../common/Badge';
 
 const Profile = ({ profile, onClick }) => {
+  const { memberCharacter, mbti, department, memberHobbyDto, memberTagDto } =
+    profile.memberProfileDto;
+
   return (
     <WrapProfile onClick={onClick}>
       <Wrapper>
         <CharacterBackground
-          $character={profile.memberProfileDto.memberCharacter}
+          $backgroundColor={CHARACTERS[memberCharacter]?.color}
         >
           <StyledImage
-            src={CHARACTERS[profile.memberProfileDto.memberCharacter]}
-            alt={profile.memberProfileDto.memberCharacter}
+            $xPos={CHARACTERS[memberCharacter]?.position[0]}
+            $yPos={CHARACTERS[memberCharacter]?.position[1]}
           />
         </CharacterBackground>
         <WrapText>
-          <MBTI>{profile.memberProfileDto.mbti}</MBTI>
-          <Department>{profile.memberProfileDto.department}</Department>
+          <MBTI>{mbti}</MBTI>
+          <Department>{department}</Department>
         </WrapText>
         <TagContainer>
-          {profile.memberProfileDto.memberHobbyDto.map((tag, index) => (
+          {memberHobbyDto.map((tag, index) => (
             <Badge key={index}>#{tag.hobby}</Badge>
           ))}
-          {profile.memberProfileDto.memberTagDto.map((tag, index) => (
+          {memberTagDto.map((tag, index) => (
             <Badge key={index}>#{tag.tag}</Badge>
           ))}
         </TagContainer>
@@ -33,7 +35,7 @@ const Profile = ({ profile, onClick }) => {
 };
 export default Profile;
 
-const WrapProfile = styled.article`
+const WrapProfile = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -51,26 +53,29 @@ const Wrapper = styled.div`
   align-items: center;
   flex-direction: column;
   padding: 0 6px;
-  width: 100%;
-  max-width: 150px;
   gap: 12px;
 `;
 
 const CharacterBackground = styled.div`
   position: relative;
-  width: 60%;
-  height: 0;
-  padding-bottom: 60%;
-  border-radius: 50%;
-  background-color: ${(props) => COLORS[props.$character]};
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
+  background-color: ${(props) => props.$backgroundColor};
 `;
 
-const StyledImage = styled.img`
+const StyledImage = styled.div`
   position: absolute;
-  width: 60%;
+  width: 60px;
+  height: 60px;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 60}px -${props.$yPos * 60}px`};
+  background-size: calc(100% * 4);
 `;
 
 const WrapText = styled.div`

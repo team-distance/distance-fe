@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
 import { useRecoilState } from 'recoil';
@@ -7,17 +7,47 @@ import Button from '../../components/common/Button';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import ProgressBar from '../../components/register/ProgressBar';
-import toast, { Toaster } from 'react-hot-toast';
 import Checkbox from '../../components/common/Checkbox';
-import Modal from '../../components/common/Modal';
-import TermsOfServiceArticle from '../../components/register/TermsOfServiceArticle';
-import PrivacyArticle from '../../components/register/PrivacyArticle';
 import { useForm } from 'react-hook-form';
+import useModal from '../../hooks/useModal';
+import TermsModal from '../../components/modal/TermsModal';
+import PrivacyModal from '../../components/modal/PrivacyModal';
+import { useToast, usePromiseToast } from '../../hooks/useToast';
 
 const UserRegisterPage = () => {
   const navigate = useNavigate();
 
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
+
+  const { openModal: openTermsModal, closeModal: closeTermsModal } = useModal(
+    () => (
+      <TermsModal
+        closeModal={closeTermsModal}
+        onClick={() => {
+          setRegisterData({ ...registerData, agreeTerms: true });
+          setPasswordValue('agreeTerms', true);
+        }}
+      />
+    )
+  );
+
+  const { openModal: openPrivacyModal, closeModal: closePrivacyModal } =
+    useModal(() => (
+      <PrivacyModal
+        closeModal={closePrivacyModal}
+        onClick={() => {
+          setRegisterData({ ...registerData, agreePrivacy: true });
+          setPasswordValue('agreePrivacy', true);
+        }}
+      />
+    ));
+
+  //토스트 메세지
+  const { showToast: showVerifyNumErrorToast } = useToast(
+    () => <span>인증번호가 틀렸습니다.</span>,
+    'verifynum-error'
+  );
+  const { showPromiseToast: showSendMessageToast } = usePromiseToast();
 
   const {
     register: registerTelNum,
@@ -41,6 +71,7 @@ const UserRegisterPage = () => {
     register: registerPassword,
     handleSubmit: submitPassword,
     formState: { isValid: passwordValid, errors: verifyPassword },
+    setValue: setPasswordValue,
     watch,
   } = useForm({
     mode: 'onChange',
@@ -52,27 +83,15 @@ const UserRegisterPage = () => {
   const [showVerifyNum, setShowVerifyNum] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const termsModalRef = useRef();
-  const privacyModalRef = useRef();
-
-  const handleOpenModal = (ref) => {
-    ref.current.open();
-    ref.current.scrollToTop();
-  };
-
   const handleSubmitTelNum = async (data) => {
-    if (verifyButtonLabel === '재전송') {
-      // setVerifyNumFlag(true);
-      // setVerify(false);
-      // setVerifyNum('');
-    }
     const response = instance.post('/member/send/sms', {
-      telNum: registerData.telNum,
+      telNum: data.telNum,
       type: 'SIGNUP',
     });
-    toast.promise(response, {
-      loading: '전송 중...',
-      success: () => {
+
+    showSendMessageToast(
+      response,
+      () => {
         setVerifyButtonLabel('재전송');
         setErrorTelNum('telNum');
         setShowVerifyNum(true);
@@ -84,7 +103,7 @@ const UserRegisterPage = () => {
 
         return '인증번호가 전송되었습니다.';
       },
-      error: (error) => {
+      (error) => {
         const ERROR_CODE = error?.response?.data?.code;
         if (ERROR_CODE === 'EXIST_TEL_NUM') {
           return '이미 등록된 전화번호입니다. 다른 번호를 입력해주세요.';
@@ -93,8 +112,8 @@ const UserRegisterPage = () => {
         } else {
           return '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
         }
-      },
-    });
+      }
+    );
   };
 
   const handleSubmitVerifyNum = async (data) => {
@@ -104,35 +123,29 @@ const UserRegisterPage = () => {
       });
       setShowPassword(true);
       setErrorVerifyNum('verifyNum');
+
+      setRegisterData((prevData) => ({
+        ...prevData,
+        verifyNum: data.verifyNum,
+      }));
     } catch (error) {
-      toast.error('인증번호가 틀렸습니다.');
+      showVerifyNumErrorToast();
     }
   };
 
   const handleSubmitPassword = (data) => {
     setRegisterData((prevData) => ({
       ...prevData,
+      password: data.password,
       agreePrivacy: data.agreePrivacy,
       agreeTerms: data.agreeTerms,
     }));
 
-    toast.dismiss();
     navigate('/register/univ');
   };
 
   return (
     <div>
-      <Toaster
-        position="bottom-center"
-        containerStyle={{
-          bottom: 104,
-        }}
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-      />
       <WrapHeader>
         <ProgressBar progress={1} />
         <p>전화번호를 인증해주세요</p>
@@ -202,13 +215,7 @@ const UserRegisterPage = () => {
               validate: (value) => value === true || '',
             })}
           />
-          <ShowDetail
-            onClick={() => {
-              handleOpenModal(termsModalRef);
-            }}
-          >
-            더보기
-          </ShowDetail>
+          <ShowDetail onClick={openTermsModal}>더보기</ShowDetail>
         </WrapCheckbox>
         <WrapCheckbox>
           <Checkbox
@@ -217,13 +224,7 @@ const UserRegisterPage = () => {
               validate: (value) => value === true || '',
             })}
           />
-          <ShowDetail
-            onClick={() => {
-              handleOpenModal(privacyModalRef);
-            }}
-          >
-            더보기
-          </ShowDetail>
+          <ShowDetail onClick={openPrivacyModal}>더보기</ShowDetail>
         </WrapCheckbox>
         <WrapButton>
           <Button type="submit" size="large" disabled={!passwordValid}>
@@ -231,27 +232,6 @@ const UserRegisterPage = () => {
           </Button>
         </WrapButton>
       </WrapForm>
-
-      <Modal
-        ref={termsModalRef}
-        buttonLabel="동의하기"
-        buttonClickHandler={() => {
-          setRegisterData({ ...registerData, agreeTerms: true });
-          termsModalRef.current.close();
-        }}
-      >
-        <TermsOfServiceArticle />
-      </Modal>
-      <Modal
-        ref={privacyModalRef}
-        buttonLabel="동의하기"
-        buttonClickHandler={() => {
-          setRegisterData({ ...registerData, agreePrivacy: true });
-          privacyModalRef.current.close();
-        }}
-      >
-        <PrivacyArticle />
-      </Modal>
     </div>
   );
 };

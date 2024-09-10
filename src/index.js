@@ -7,6 +7,8 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { AwsRumProvider } from 'aws-rum-react';
 import ReactGA from 'react-ga4';
+import GlobalModalContainer from './providers/GlobalModalContainer';
+import GlobalToastContainer from './providers/GlobalToastContainer';
 
 const gaTrackingId = process.env.REACT_APP_GA_TRACKING_ID;
 
@@ -30,6 +32,8 @@ const app = (
       <RecoilRoot>
         <BrowserRouter>
           <App />
+          <GlobalModalContainer />
+          <GlobalToastContainer />
         </BrowserRouter>
       </RecoilRoot>
     </AwsRumProvider>

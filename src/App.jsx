@@ -1,7 +1,7 @@
-import { Link, Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import HomeIndexPage from './pages/home/HomeIndexPage';
 import ChatIndexPage from './pages/chat/ChatIndexPage';
-import FestivalIndexPage from './pages/festival/FestivalIndexPage';
+import EventIndexPage from './pages/event/EventIndexPage';
 import MyIndexPage from './pages/mypage/MyIndexPage';
 import UserRegisterPage from './pages/register/UserRegisterPage';
 import UnivRegisterPage from './pages/register/UnivRegisterPage';
@@ -12,14 +12,12 @@ import NavLayout from './layouts/NavLayout';
 import LoginPage from './pages/root/LoginPage';
 import ProfileEditPage from './pages/mypage/ProfileEditPage';
 import ChatInboxPage from './pages/chat/ChatInboxPage';
-import Program from './components/festival/Program';
 import VerifyMobileIdPage from './pages/verify/VerifyMobileIdPage';
 import VerifyOptionsPage from './pages/verify/VerifyOptionsPage';
 import VerifyEmailPage from './pages/verify/VerifyEmailPage';
 import VerifyIdPage from './pages/verify/VerifyIdPage';
 import NotificationSolutionPage from './pages/root/NotificationSolutionPage';
-import FoodTruck from './components/festival/FoodTruck';
-import FoodTruckPage from './pages/festival/FoodTruckPage';
+import FoodTruckPage from './pages/event/FoodTruckPage';
 import KakaotalkFallback from './pages/root/KakaotalkFallback';
 import AccountEditPage from './pages/mypage/AccountEditPage';
 import DropoutPage from './pages/mypage/DropoutPage';
@@ -31,47 +29,32 @@ import NotFoundPage from './pages/root/NotFoundPage';
 import useGPS from './hooks/useGPS';
 import { useRecoilValue } from 'recoil';
 import { isLoggedInState } from './store/auth';
-import toast from 'react-hot-toast';
 import { instance } from './api/instance';
 import TeamIntroductionPage from './pages/mypage/TeamIntroductionPage';
 import GPSSolutionPage from './pages/root/GPSSolutionPage';
 import useRouteChangeTrack from './hooks/useRouteChangeTrack';
+import { useToast } from './hooks/useToast';
+import EventListPage from './pages/event/EventListPage';
+import EventDetailPage from './pages/event/EventDetailPage';
 
 function App() {
   useRouteChangeTrack();
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const currentLocation = useGPS(isLoggedIn);
-  const navigate = useNavigate();
+
+  const { showToast: showGPSUpdateErrorToast } = useToast(
+    () => <span>위치 정보를 업데이트하는데 실패했어요!</span>,
+    'gps-update-error'
+  );
 
   useEffect(() => {
     registerServiceWorker();
   }, []);
 
-  useEffect(() => {
-    toast.remove();
-  }, [navigate]);
-
+  // GPS update
   useEffect(() => {
     if (!isLoggedIn) return;
-
-    if (currentLocation.error) {
-      toast.error(
-        (t) => (
-          <>
-            <span style={{ marginRight: '8px' }}>
-              위치 접근 설정이 꺼져있어요!
-            </span>
-            <Link to="/gps" style={{ color: '#0096FF' }}>
-              해결하기
-            </Link>
-          </>
-        ),
-        {
-          id: 'gps-disabled',
-          position: 'bottom-center',
-        }
-      );
-    } else if (currentLocation.lat === 0 || currentLocation.lng === 0) {
+    if (currentLocation.lat === 0 || currentLocation.lng === 0) {
       return;
     } else {
       instance
@@ -80,29 +63,9 @@ function App() {
           longitude: currentLocation.lng,
         })
         .catch((err) => {
-          toast.error('위치 정보를 업데이트하는데 실패했어요!', {
-            id: 'gps-update-error',
-            position: 'bottom-center',
-          });
+          showGPSUpdateErrorToast();
           console.log(err);
         });
-    }
-
-    if ('Notification' in window && Notification.permission !== 'granted') {
-      toast.error(
-        (t) => (
-          <>
-            <span style={{ marginRight: '8px' }}>알림 설정이 꺼져있어요!</span>
-            <Link to="/notification" style={{ color: '#0096FF' }}>
-              해결하기
-            </Link>
-          </>
-        ),
-        {
-          id: 'notification-disabled',
-          position: 'bottom-center',
-        }
-      );
     }
   }, [currentLocation]);
 
@@ -130,11 +93,13 @@ function App() {
         <Route path="/chat" element={<ChatIndexPage />} />
         <Route path="/inbox" element={<ChatInboxPage />} />
 
-        <Route element={<FestivalIndexPage />}>
-          <Route path="/festival/program" element={<Program />} />
-          <Route path="/festival/foodtruck" element={<FoodTruck />} />
+        <Route path="/event" element={<EventIndexPage />}>
+          <Route path="/event/" element={<EventListPage />} />
+          <Route
+            path="/event/:studentCouncilId"
+            element={<EventDetailPage />}
+          />
         </Route>
-
         <Route path="/mypage" element={<MyIndexPage />} />
       </Route>
 

@@ -1,44 +1,106 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { instance } from '../../api/instance';
-import ClipLoader from 'react-spinners/ClipLoader';
-
-import { CHARACTERS, COLORS } from '../../constants/character';
 import Profile from '../../components/home/Profile';
-import Modal from '../../components/common/Modal';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import Badge from '../../components/common/Badge';
+import { useNavigate, Link } from 'react-router-dom';
 import Banner from '../../components/common/Banner';
 import ReloadButton from '../../components/home/ReloadButton';
+import ProfileModal from '../../components/modal/ProfileModal';
+import useModal from '../../hooks/useModal';
+import { useToast } from '../../hooks/useToast';
+import { useCheckAlarmActive } from '../../hooks/useCheckAlarmActive';
+import { useCheckGpsActive } from '../../hooks/useCheckGpsActive';
+import Loader from '../../components/common/Loader';
+import MatchingConfigButton from '../../components/home/MatchingConfigButton';
+import MatchingConfigBottomsheet from '../../components/modal/MatchingConfigBottomsheet';
+import { useRecoilValue } from 'recoil';
+import { matchingConfigState } from '../../store/matchingConfig';
 
 const HomeIndexPage = () => {
-  const profileModal = useRef();
-  const [selectedProfile, setSelectedProfile] = useState();
   const navigate = useNavigate();
+
+  //알림, GPS 설정 관리
+  const alarmActive = useCheckAlarmActive();
+  const gpsActive = useCheckGpsActive();
+
   const [memberState, setMemberState] = useState();
   const [loading, setLoading] = useState(false);
+
+  const matchingConfig = useRecoilValue(matchingConfigState);
+
+  const { openModal: openProfileModal, closeModal: closeProfileModal } =
+    useModal((profile) => (
+      <ProfileModal
+        closeModal={closeProfileModal}
+        onClick={() => {
+          handleCreateChatRoom(profile.memberId);
+        }}
+        selectedProfile={profile}
+      />
+    ));
+
+  const {
+    openModal: openMatchingConfigModal,
+    closeModal: closeMatchingConfigModal,
+  } = useModal(
+    () => <MatchingConfigBottomsheet closeModal={closeMatchingConfigModal} />,
+    { backdrop: false }
+  );
+
+  // 토스트 메세지
+  const { showToast: showFullMyChatroomToast } = useToast(
+    () => (
+      <span>
+        이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.
+      </span>
+    ),
+    'too-many-my-chatroom'
+  );
+  const { showToast: showFullOppoChatroomToast } = useToast(
+    () => (
+      <span>
+        상대방이 이미 생성된 채팅방 5개입니다. 상대방이 수락하면 알려드릴게요!
+      </span>
+    ),
+    'too-many-oppo-chatroom'
+  );
+  const { showToast: showGpsErrorToast } = useToast(
+    () => <span>상대방의 위치정보가 없어 채팅을 할 수 없어요!</span>,
+    'too-many-oppo-chatroom'
+  );
+  const { showToast: showLoginErrorToast } = useToast(
+    () => <span>로그인 후 이용해주세요.</span>,
+    'too-many-oppo-chatroom'
+  );
+
+  const { showToast: showAlarmGPSErrorToast } = useToast(
+    () => (
+      <>
+        <span style={{ textAlign: 'center' }}>
+          알림과 위치 설정이 꺼져있어요!
+          <br />
+          <Link to="/mypage" style={{ color: '#0096FF' }}>
+            해결하기
+          </Link>
+        </span>
+      </>
+    ),
+    'alarm-gps-disabled',
+    'bottom-center',
+    'none'
+  );
 
   const fetchMembers = async () => {
     try {
       setLoading(true);
-      const res = await instance.get('/gps/matching');
+      const res = await instance.post('/gps/matching', matchingConfig);
       setMemberState(res.data.matchedUsers);
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchMembers();
-  }, []);
-
-  const handleSelectProfile = (profile) => {
-    setSelectedProfile(profile);
-    profileModal.current.open();
   };
 
   const handleCreateChatRoom = async (opponentMemberId) => {
@@ -53,38 +115,24 @@ const HomeIndexPage = () => {
       .catch((error) => {
         switch (error.response.data.code) {
           case 'TOO_MANY_MY_CHATROOM':
-            toast.error(
-              '이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.',
-              {
-                position: 'bottom-center',
-              }
-            );
+            showFullMyChatroomToast();
             break;
           case 'TOO_MANY_OPPONENT_CHATROOM':
-            toast.error(
-              '상대방이 이미 생성된 채팅방 5개입니다. 상대방이 수락하면 알려드릴게요!',
-              {
-                position: 'bottom-center',
-              }
-            );
+            showFullOppoChatroomToast();
             break;
           case 'NOT_AUTHENTICATION_STUDENT':
             window.confirm('학생 인증 후 이용해주세요.') &&
               navigate('/verify/univ');
             break;
           case 'NOT_EXIST_GPS':
-            toast.error('상대방의 위치정보가 없어 채팅을 할 수 없어요!', {
-              position: 'bottom-center',
-            });
+            showGpsErrorToast();
             break;
           default:
-            toast.error('로그인 후 이용해주세요.', {
-              position: 'bottom-center',
-            });
+            showLoginErrorToast();
             break;
         }
       });
-    profileModal.current.close();
+    closeProfileModal();
   };
 
   const alertTextList = [
@@ -101,9 +149,29 @@ const HomeIndexPage = () => {
     },
   ];
 
+  const checkAndShowToast = async () => {
+    if (
+      (localStorage.getItem('isFirstLogin') === 'true' && !alarmActive) ||
+      !gpsActive
+    ) {
+      await showAlarmGPSErrorToast(); // 비동기
+      localStorage.setItem('isFirstLogin', 'false');
+    }
+  };
+
+  useEffect(() => {
+    fetchMembers();
+    checkAndShowToast();
+  }, []);
+
+  useEffect(() => {
+    fetchMembers();
+  }, [matchingConfig]);
+
   return (
     <>
       <Banner alertText={alertTextList} />
+
       {memberState && memberState.length === 0 ? (
         <EmptyContainer>
           <div className="wrap">
@@ -114,61 +182,21 @@ const HomeIndexPage = () => {
       ) : (
         <ProfileContainer>
           {loading ? (
-            <LoaderContainer>
-              <ClipLoader color={'#FF625D'} loading={loading} size={50} />
-            </LoaderContainer>
+            <Loader />
           ) : (
             memberState &&
             memberState.map((profile, index) => (
               <Profile
                 key={index}
                 profile={profile}
-                onClick={() => handleSelectProfile(profile)}
+                onClick={() => openProfileModal(profile)}
               />
             ))
           )}
         </ProfileContainer>
       )}
+      <MatchingConfigButton onClick={openMatchingConfigModal} />
       <ReloadButton onClick={fetchMembers} />
-
-      <Modal
-        ref={profileModal}
-        buttonLabel="메세지 보내기"
-        buttonClickHandler={() => {
-          handleCreateChatRoom(selectedProfile.memberId);
-        }}
-      >
-        {selectedProfile && (
-          <WrapContent>
-            <CharacterBackground
-              $character={selectedProfile.memberProfileDto.memberCharacter}
-            >
-              <StyledImage
-                src={
-                  CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
-                }
-                alt={selectedProfile.memberProfileDto.memberCharacter}
-              />
-            </CharacterBackground>
-            <TextDiv>
-              <MBTI>{selectedProfile.memberProfileDto.mbti}</MBTI>
-              <Major>{selectedProfile.memberProfileDto.department}</Major>
-            </TextDiv>
-            <TagContainer>
-              {selectedProfile.memberProfileDto.memberHobbyDto.map(
-                (hobby, index) => (
-                  <Badge key={index}>#{hobby.hobby}</Badge>
-                )
-              )}
-              {selectedProfile.memberProfileDto.memberTagDto.map(
-                (tag, index) => (
-                  <Badge key={index}>#{tag.tag}</Badge>
-                )
-              )}
-            </TagContainer>
-          </WrapContent>
-        )}
-      </Modal>
     </>
   );
 };
@@ -177,68 +205,6 @@ const ProfileContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-`;
-
-const WrapContent = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin: 32px 0;
-  gap: 12px;
-`;
-
-const CharacterBackground = styled.div`
-  position: relative;
-  width: 60%;
-  height: 0;
-  padding-bottom: 60%;
-  border-radius: 50%;
-  background-color: ${(props) => COLORS[props.$character]};
-`;
-
-const StyledImage = styled.img`
-  position: absolute;
-  width: 60%;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-`;
-
-const TextDiv = styled.div`
-  width: 100%;
-  text-align: center;
-  color: #333333;
-`;
-
-const Major = styled.div`
-  font-size: 24px;
-  font-weight: 700;
-`;
-
-const MBTI = styled.div`
-  color: #000000;
-  font-size: 14px;
-`;
-
-const LoaderContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-`;
-
-const TagContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
 `;
 
 const EmptyContainer = styled.div`

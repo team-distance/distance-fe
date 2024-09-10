@@ -5,20 +5,40 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { isLoggedInState, login } from '../../store/auth';
 import { useSetRecoilState } from 'recoil';
 import { onGetToken } from '../../firebaseConfig';
-import toast, { Toaster } from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
+import { useToast } from '../../hooks/useToast';
+import { useCheckAlarmActive } from '../../hooks/useCheckAlarmActive';
+import { useCheckGpsActive } from '../../hooks/useCheckGpsActive';
 
 const DonePage = () => {
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const telNum = location.state.telNum;
-  const password = location.state.password;
+  const telNum = location.state?.telNum;
+  const password = location.state?.password;
+
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
 
+  const [loading, setLoading] = useState(false);
+
+  //알림, GPS 설정 관리
+  const alarmActive = useCheckAlarmActive();
+  const gpsActive = useCheckGpsActive();
+
+  //토스트 메세지
+  const { showToast: showLoginErrorToast } = useToast(
+    () => <span>홈화면으로 이동해서 다시 로그인해주세요!</span>,
+    'login-error'
+  );
+
   useEffect(() => {
+    // 유저 정보 없을 시, 다시 회원가입 페이지로 이동
+    if (!location.state) {
+      navigate('/register/user');
+      return;
+    }
+
     const instantLogin = async () => {
-      if ('Notification' in window && Notification.permission !== 'granted') {
+      if (!alarmActive || !gpsActive) {
         alert('알림, 위치 권한을 허용해주세요!');
       }
 
@@ -45,7 +65,7 @@ const DonePage = () => {
         setIsLoggedIn(true);
       } catch (err) {
         console.log(err);
-        toast.error('홈화면으로 이동해서 다시 로그인해주세요!');
+        showLoginErrorToast();
       } finally {
         setLoading(false);
       }
@@ -56,18 +76,11 @@ const DonePage = () => {
 
   return (
     <Background>
-      <Toaster
-        position="bottom-center"
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-      />
       <WrapContent>
         <WrapMessage>
           <div style={{ fontSize: '60px' }}>🎊</div>
-          <h2>가입이 완료되었습니다!</h2>
+          <Heading2>가입이 완료되었습니다!</Heading2>
+          <p>학생 인증을 마치면 채팅 기능을 사용할 수 있어요</p>
         </WrapMessage>
         <WrapButton>
           <Button
@@ -121,6 +134,16 @@ const WrapContent = styled.div`
 
 const WrapMessage = styled.div`
   text-align: center;
+
+  p {
+    font-size: 0.75rem;
+  }
+`;
+
+const Heading2 = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 1rem 0 0.5rem 0;
 `;
 
 const WrapButton = styled.div`

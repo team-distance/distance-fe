@@ -4,7 +4,7 @@ import TextInput from '../../components/register/TextInput';
 import Button from '../../components/common/Button';
 import { instance } from '../../api/instance';
 import { useNavigate } from 'react-router-dom';
-import toast, { Toaster } from 'react-hot-toast';
+import { usePromiseToast } from '../../hooks/useToast';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -25,6 +25,10 @@ const ResetPassword = () => {
   });
 
   const [verifyButtonLabel, setVerifyButtonLabel] = useState('인증번호 전송');
+
+  //토스트 메세지
+  const { showPromiseToast: showSendMessageToast } = usePromiseToast();
+  const { showPromiseToast: showVerifyToast } = usePromiseToast();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,47 +54,55 @@ const ResetPassword = () => {
   const sendMessage = async (e) => {
     e.preventDefault();
     setFormFlags((prev) => ({ ...prev, telNumValid: false }));
-    const toastId = toast.loading('전송 중...');
-    try {
-      await instance.post('/member/send/sms', {
-        telNum: formData.telNum,
-        type: 'FIND',
-      });
-      setFormActive((prev) => ({ ...prev, isSendMessage: true }));
-      setVerifyButtonLabel('재전송');
-      toast.success('인증번호가 전송되었습니다.', {
-        id: toastId,
-      });
-    } catch (error) {
-      const ERROR_CODE = error?.response?.data?.code;
-      let errorMessage = '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
-      if (ERROR_CODE === 'NOT_EXIST_MEMBER') {
-        errorMessage = '등록되지 않은 전화번호입니다.';
+
+    const response = instance.post('/member/send/sms', {
+      telNum: formData.telNum,
+      type: 'FIND',
+    });
+
+    showSendMessageToast(
+      response,
+      () => {
+        setFormActive((prev) => ({ ...prev, isSendMessage: true }));
+        setVerifyButtonLabel('재전송');
+
+        return '인증번호가 전송되었습니다.';
+      },
+      (error) => {
+        const ERROR_CODE = error?.response?.data?.code;
+        if (ERROR_CODE === 'NOT_EXIST_MEMBER') {
+          return '등록되지 않은 전화번호입니다.';
+        } else {
+          return '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
+        }
       }
-      toast.error(errorMessage, { id: toastId });
-    }
+    );
   };
 
   const verifyTelNum = async (e) => {
     e.preventDefault();
-    const toastId = toast.loading('인증 중...');
-    try {
-      await instance.post('/member/authenticate', {
-        authenticateNum: formData.verifyNum,
-      });
-      setFormActive((prev) => ({ ...prev, isSendVerifyNum: true }));
-      setFormFlags((prev) => ({
-        ...prev,
-        verifyNumValid: false,
-        verifyTelNum: true,
-      }));
-      toast.success('인증되었습니다.', { id: toastId });
-    } catch (error) {
-      toast.error('인증번호가 틀렸습니다.', { id: toastId });
-      setFormActive((prev) => ({ ...prev, isSendVerifyNum: false }));
-      setFormFlags((prev) => ({ ...prev, telNumValid: true }));
-      console.log(error);
-    }
+
+    const response = instance.post('/member/authenticate', {
+      authenticateNum: formData.verifyNum,
+    });
+
+    showVerifyToast(
+      response,
+      () => {
+        setFormActive((prev) => ({ ...prev, isSendVerifyNum: true }));
+        setFormFlags((prev) => ({
+          ...prev,
+          verifyNumValid: false,
+          verifyTelNum: true,
+        }));
+        return '인증되었습니다.';
+      },
+      () => {
+        setFormActive((prev) => ({ ...prev, isSendVerifyNum: false }));
+        setFormFlags((prev) => ({ ...prev, telNumValid: true }));
+        return '인증번호가 틀렸습니다.';
+      }
+    );
   };
 
   const handleHideForms = () => {
@@ -118,17 +130,9 @@ const ResetPassword = () => {
 
   return (
     <>
-      <Toaster
-        position="bottom-center"
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-      />
       <WrapForm onSubmit={handleSubmit}>
         <WrapContent>
-          <h2>비밀번호 재설정하기</h2>
+          <Heading2>비밀번호 재설정하기</Heading2>
           <div>
             <TextInput
               label="전화번호"
@@ -189,4 +193,10 @@ const WrapContent = styled.div`
   display: grid;
   gap: 4rem;
   margin-bottom: 8rem;
+`;
+
+const Heading2 = styled.h2`
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 3.5rem 0 1rem 0;
 `;

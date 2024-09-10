@@ -2,43 +2,43 @@ import React, { memo } from 'react';
 import styled from 'styled-components';
 import { parseTime } from '../../utils/parseTime';
 import Button from '../common/Button';
-import { CHARACTERS, COLORS } from '../../constants/character';
+import { CHARACTERS } from '../../constants/CHARACTERS';
 
 /**
- * @param {string} nickname - 메시지를 보낸 사람의 닉네임
- * @param {string} content - 메시지 내용
- * @param {string} time - 메시지를 보낸 시간
- * @param {boolean} read - 메시지를 읽었는지 여부
+ * Message 객체 속성
+ * @param {string} senderName - 메시지를 보낸 사람의 닉네임
+ * @param {string} chatMessage - 메시지 내용
+ * @param {string} sendDt - 메시지를 보낸 시간
+ * @param {boolean} unreadCount - 메시지를 읽었는지 여부
  * @param {string} senderType - 메시지를 보낸 사람의 타입 (SYSTEM, USER, CALL_REQUEST, CALL_RESPONSE)
- * @param {boolean} sentByMe - 메시지를 내가 보냈는지 여부
  */
+
 const Message = memo(
   ({
-    nickname,
-    content,
-    time,
-    read,
-    senderType,
-    sentByMe,
+    message,
+    isSentByMe,
     responseCall,
+    viewImage,
     openProfileModal,
     opponentMemberCharacter,
   }) => {
-    switch (senderType) {
+    switch (message.senderType) {
       case 'SYSTEM':
         return (
           <Announcement>
-            <div className="content">{content}</div>
+            <div className="content">{message.chatMessage}</div>
           </Announcement>
         );
 
       case 'CALL_REQUEST':
-        return sentByMe ? (
+        return isSentByMe ? (
           <MessageByMe>
             <div className="message-container">
               <div className="wrapper">
-                <div className="read">{read !== 0 ? read : ''}</div>
-                <div className="time">{parseTime(time)}</div>
+                <div className="read">
+                  {message.unreadCount !== 0 ? message.unreadCount : ''}
+                </div>
+                <div className="time">{parseTime(message.sendDt)}</div>
               </div>
               <div className="tail"></div>
               <div className="message">
@@ -49,17 +49,17 @@ const Message = memo(
           </MessageByMe>
         ) : (
           <MessageByOther>
-            <Character
-              $character={opponentMemberCharacter}
+            <CharacterBackground
+              $backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
               onClick={openProfileModal}
             >
-              <img
-                src={CHARACTERS[opponentMemberCharacter]}
-                alt="opponentMemberCharacter"
+              <Character
+                $xPos={CHARACTERS[opponentMemberCharacter]?.position[0]}
+                $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
               />
-            </Character>
+            </CharacterBackground>
             <div className="message-section">
-              <div className="nickname">{nickname}</div>
+              <div className="nickname">{message.senderName}</div>
               <div className="message-container">
                 <div className="tail"></div>
                 <div className="message">
@@ -76,8 +76,10 @@ const Message = memo(
                   </Button>
                 </div>
                 <div className="wrapper">
-                  <div className="read">{read !== 0 ? read : ''}</div>
-                  <div className="time">{parseTime(time)}</div>
+                  <div className="read">
+                    {message.unreadCount !== 0 ? message.unreadCount : ''}
+                  </div>
+                  <div className="time">{parseTime(message.sendDt)}</div>
                 </div>
               </div>
             </div>
@@ -85,12 +87,14 @@ const Message = memo(
         );
 
       case 'CALL_RESPONSE':
-        return sentByMe ? (
+        return isSentByMe ? (
           <MessageByMe>
             <div className="message-container">
               <div className="wrapper">
-                <div className="read">{read !== 0 ? read : ''}</div>
-                <div className="time">{parseTime(time)}</div>
+                <div className="read">
+                  {message.unreadCount !== 0 ? message.unreadCount : ''}
+                </div>
+                <div className="time">{parseTime(message.sendDt)}</div>
               </div>
               <div className="tail"></div>
               <div className="message">
@@ -109,17 +113,17 @@ const Message = memo(
           </MessageByMe>
         ) : (
           <MessageByOther>
-            <Character
-              $character={opponentMemberCharacter}
+            <CharacterBackground
+              $backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
               onClick={openProfileModal}
             >
-              <img
-                src={CHARACTERS[opponentMemberCharacter]}
-                alt="opponentMemberCharacter"
+              <Character
+                $xPos={CHARACTERS[opponentMemberCharacter]?.position[0]}
+                $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
               />
-            </Character>
+            </CharacterBackground>
             <div className="message-section">
-              <div className="nickname">{nickname}</div>
+              <div className="nickname">{message.senderName}</div>
               <div className="message-container">
                 <div className="tail"></div>
                 <div className="message">
@@ -135,8 +139,10 @@ const Message = memo(
                   </div>
                 </div>
                 <div className="wrapper">
-                  <div className="read">{read !== 0 ? read : ''}</div>
-                  <div className="time">{parseTime(time)}</div>
+                  <div className="read">
+                    {message.unreadCount !== 0 ? message.unreadCount : ''}
+                  </div>
+                  <div className="time">{parseTime(message.sendDt)}</div>
                 </div>
               </div>
             </div>
@@ -144,37 +150,90 @@ const Message = memo(
         );
 
       case 'USER':
-        return sentByMe ? (
+        return isSentByMe ? (
           <MessageByMe>
             <div className="message-container">
               <div className="wrapper">
-                <div className="read">{read !== 0 ? read : ''}</div>
-                <div className="time">{parseTime(time)}</div>
+                <div className="read">
+                  {message.unreadCount !== 0 ? message.unreadCount : ''}
+                </div>
+                <div className="time">{parseTime(message.sendDt)}</div>
               </div>
-              <div className="tail"></div>
-              <div className="message">{content}</div>
+              <>
+                <div className="tail"></div>
+                <div className="message">{message.chatMessage}</div>
+              </>
             </div>
           </MessageByMe>
         ) : (
           <MessageByOther>
-            <Character
-              $character={opponentMemberCharacter}
+            <CharacterBackground
+              $backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
               onClick={openProfileModal}
             >
-              <img
-                src={CHARACTERS[opponentMemberCharacter]}
-                alt="opponentMemberCharacter"
+              <Character
+                $xPos={CHARACTERS[opponentMemberCharacter]?.position[0]}
+                $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
               />
-            </Character>
-
+            </CharacterBackground>
             <div className="message-section">
-              <div className="nickname">{nickname}</div>
+              <div className="nickname">{message.senderName}</div>
               <div className="message-container">
-                <div className="tail"></div>
-                <div className="message">{content}</div>
+                <>
+                  <div className="tail"></div>
+                  <div className="message">{message.chatMessage}</div>
+                </>
                 <div className="wrapper">
-                  <div className="read">{read !== 0 ? read : ''}</div>
-                  <div className="time">{parseTime(time)}</div>
+                  <div className="read">
+                    {message.unreadCount !== 0 ? message.unreadCount : ''}
+                  </div>
+                  <div className="time">{parseTime(message.sendDt)}</div>
+                </div>
+              </div>
+            </div>
+          </MessageByOther>
+        );
+      case 'IMAGE':
+        return isSentByMe ? (
+          <MessageByMe>
+            <div className="message-container">
+              <div className="wrapper">
+                <div className="read">
+                  {message.unreadCount !== 0 ? message.unreadCount : ''}
+                </div>
+                <div className="time">{parseTime(message.sendDt)}</div>
+              </div>
+              <img
+                src={message.chatMessage}
+                alt="message"
+                onClick={() => viewImage(message.chatMessage)}
+              />
+            </div>
+          </MessageByMe>
+        ) : (
+          <MessageByOther>
+            <CharacterBackground
+              $backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
+              onClick={openProfileModal}
+            >
+              <Character
+                $xPos={CHARACTERS[opponentMemberCharacter]?.position[0]}
+                $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
+              />
+            </CharacterBackground>
+            <div className="message-section">
+              <div className="nickname">{message.senderName}</div>
+              <div className="message-container">
+                <img
+                  src={message.chatMessage}
+                  alt="message"
+                  onClick={() => viewImage(message.chatMessage)}
+                />
+                <div className="wrapper">
+                  <div className="read">
+                    {message.unreadCount !== 0 ? message.unreadCount : ''}
+                  </div>
+                  <div className="time">{parseTime(message.sendDt)}</div>
                 </div>
               </div>
             </div>
@@ -200,13 +259,13 @@ const Announcement = styled.div`
   }
 `;
 
-const Character = styled.div`
+const CharacterBackground = styled.div`
   position: relative;
   flex-shrink: 0;
   width: 36px;
   height: 36px;
   border-radius: 9999px;
-  background-color: ${(props) => COLORS[props.$character]};
+  background-color: ${(props) => props.$backgroundColor};
 
   img {
     position: absolute;
@@ -218,10 +277,24 @@ const Character = styled.div`
   }
 `;
 
+const Character = styled.div`
+  width: 24px;
+  height: 24px;
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 24}px -${props.$yPos * 24}px`};
+  background-size: calc(100% * 4);
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+`;
+
 const MessageByOther = styled.div`
   display: flex;
   align-items: start;
-  gap: 0.5rem;
+  gap: 12px;
   margin: 16px;
 
   .profile-section {
@@ -249,7 +322,7 @@ const MessageByOther = styled.div`
         position: absolute;
         top: 0;
         left: -10px;
-        width: 30px;
+        width: 25px;
         height: 30px;
         clip-path: polygon(100% 0, 0 0, 100% 100%);
         background-color: #f5f5f5;
@@ -270,6 +343,17 @@ const MessageByOther = styled.div`
         a {
           color: black;
         }
+
+        strong {
+          font-weight: 600;
+        }
+      }
+
+      > img {
+        width: 9rem;
+        height: 13rem;
+        object-fit: cover;
+        border-radius: 0.75rem;
       }
 
       > .wrapper {
@@ -313,7 +397,7 @@ const MessageByMe = styled.div`
       position: absolute;
       top: 0;
       right: -10px;
-      width: 30px;
+      width: 25px;
       height: 30px;
       clip-path: polygon(100% 0, 0 0, 0% 100%);
       background-color: #ff625d;
@@ -338,6 +422,16 @@ const MessageByMe = styled.div`
       a {
         color: white;
       }
+
+      strong {
+        font-weight: 600;
+      }
+    }
+    > img {
+      width: 9rem;
+      height: 13rem;
+      object-fit: cover;
+      border-radius: 0.75rem;
     }
   }
 `;
