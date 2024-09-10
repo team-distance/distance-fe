@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { TiKiTaKa } from '../../constants/TiKiTaKaCount';
 import { calcTiKiTaKaPercent } from '../../utils/calcTiKiTaKaPercent';
