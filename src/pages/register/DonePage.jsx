@@ -106,13 +106,15 @@ const DonePage = () => {
               <div>학생 인증하기</div>
             )}
           </Button>
-          <MoveToHome
-            onClick={() => {
-              navigate('/');
-            }}
-          >
-            홈으로 이동
-          </MoveToHome>
+          {loading === false && (
+            <MoveToHome
+              onClick={() => {
+                navigate('/');
+              }}
+            >
+              홈으로 이동
+            </MoveToHome>
+          )}
         </WrapButton>
       </WrapContent>
     </Background>
