@@ -21,8 +21,8 @@ const DonePage = () => {
   const [loading, setLoading] = useState(false);
 
   //알림, GPS 설정 관리
-  const alarmActive = useCheckAlarmActive();
-  const gpsActive = useCheckGpsActive();
+  const isAlarmActive = useCheckAlarmActive();
+  const isGpsActive = useCheckGpsActive();
 
   //토스트 메세지
   const { showToast: showLoginErrorToast } = useToast(
@@ -38,7 +38,7 @@ const DonePage = () => {
     }
 
     const instantLogin = async () => {
-      if (!alarmActive || !gpsActive) {
+      if (!isAlarmActive || !isGpsActive) {
         alert('알림, 위치 권한을 허용해주세요!');
       }
 

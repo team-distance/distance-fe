@@ -1,27 +1,66 @@
 import React, { useEffect } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import TabBar from '../components/common/TabBar';
 import styled from 'styled-components';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { onMessage } from 'firebase/messaging';
 import { messaging } from '../firebaseConfig';
 import PWAInstallPrompt from '../components/common/PWAInstallPrompt';
 import Header from '../components/common/Header';
+import { useCheckGpsActive } from '../hooks/useCheckGpsActive';
+import { useCheckAlarmActive } from '../hooks/useCheckAlarmActive';
+import { useToast } from '../hooks/useToast';
+import { useRecoilValue } from 'recoil';
+import { isLoggedInState } from '../store/auth';
 
 const NavLayout = () => {
   const navigate = useNavigate();
   const userAgent = navigator.userAgent.toLowerCase();
   const isIphone = userAgent.includes('iphone');
   const { pathname } = useLocation();
+  const isLoggedIn = useRecoilValue(isLoggedInState);
+
+  const isGpsActive = useCheckGpsActive();
+  const isAlarmActive = useCheckAlarmActive();
+
+  const { showToast: showAlarmGPSErrorToast } = useToast(
+    () => (
+      <>
+        <span style={{ textAlign: 'center' }}>
+          알림과 위치 설정이 꺼져있어요!
+          <br />
+          <Link to="/mypage" style={{ color: '#0096FF' }}>
+            해결하기
+          </Link>
+        </span>
+      </>
+    ),
+    'alarm-gps-disabled',
+    'bottom-center',
+    'none'
+  );
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
-    console.log(pathname);
 
     if (userAgent.includes('kakao')) {
       navigate('/kakaotalk-fallback');
     }
   }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    const isFirstLogin = localStorage.getItem('isFirstLogin');
+
+    if (isFirstLogin === 'true') {
+      if (!isGpsActive || !isAlarmActive) {
+        console.log('알림, 위치 권한을 허용해주세요!');
+        showAlarmGPSErrorToast();
+        localStorage.setItem('isFirstLogin', 'false');
+      }
+    }
+  }, [isGpsActive, isAlarmActive]);
 
   useEffect(() => {
     if (messaging) {
