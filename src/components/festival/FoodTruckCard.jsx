@@ -1,6 +1,29 @@
 import React from 'react';
 import styled from 'styled-components';
 
+const FoodTruckCard = ({
+  foodTruckImage,
+  foodTruckName,
+  description,
+  onClick,
+}) => {
+  return (
+    <WrapCard onClick={onClick}>
+      <img className="truck" src={foodTruckImage} alt="food truck" />
+      <TextDiv>
+        <div className="title">{foodTruckName}</div>
+        <div className="menus">
+          <img src="/assets/festival/icon-truck.svg" alt="truck icon" />
+          <div>{description}</div>
+        </div>
+        <br />
+      </TextDiv>
+    </WrapCard>
+  );
+};
+
+export default FoodTruckCard;
+
 const WrapCard = styled.div`
   display: flex;
   gap: 1rem;
@@ -28,6 +51,7 @@ const TextDiv = styled.div`
     font-size: 18px;
     font-weight: 600;
     letter-spacing: -0.4px;
+    margin-bottom: 4px;
   }
 
   .menus {
@@ -49,26 +73,3 @@ const TextDiv = styled.div`
     }
   }
 `;
-
-const FoodTruckCard = ({
-  foodTruckImage,
-  foodTruckName,
-  description,
-  onClick,
-}) => {
-  return (
-    <WrapCard onClick={onClick}>
-      <img className="truck" src={foodTruckImage} alt="food truck" />
-      <TextDiv>
-        <div className="title">{foodTruckName}</div>
-        <div className="menus">
-          <img src="/assets/festival/icon-truck.svg" alt="truck icon" />
-          <div>{description}</div>
-        </div>
-        <br />
-      </TextDiv>
-    </WrapCard>
-  );
-};
-
-export default FoodTruckCard;
