@@ -45,6 +45,10 @@ const VerifyOptionsPage = () => {
     fetchSchool();
   }, []);
 
+  useEffect(() => {
+    console.log(universityLogo);
+  }, [universityLogo]);
+
   return (
     <WrapContent>
       <Heading>

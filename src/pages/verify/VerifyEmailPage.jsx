@@ -23,10 +23,11 @@ const VerifyEmailPage = () => {
   const [isSendEmail, setIsSendEmail] = useState(false);
 
   //토스트 메세지
-  const {showToast: showVerifyNumErrorToast} = useToast(
-    () => <span>인증번호가 틀렸습니다.</span>, 'verifynum-error'
-  )
-  const {showPromiseToast: showSendMessageToast} = usePromiseToast();
+  const { showToast: showVerifyNumErrorToast } = useToast(
+    () => <span>인증번호가 틀렸습니다.</span>,
+    'verifynum-error'
+  );
+  const { showPromiseToast: showSendMessageToast } = usePromiseToast();
 
   const handleChangeEmail = (e) => {
     setSchoolEmail(e.target.value);
@@ -63,7 +64,8 @@ const VerifyEmailPage = () => {
 
     //테스트 필요 ------------------------------------------------
 
-    showSendMessageToast(response,
+    showSendMessageToast(
+      response,
       () => {
         setIsSendEmail(true);
         return '인증메일이 전송되었습니다.';
@@ -77,7 +79,7 @@ const VerifyEmailPage = () => {
           return '인증을 다시 시도해주세요.';
         }
       }
-    )
+    );
 
     // toast.promise(response, {
     //   loading: '전송 중...',
@@ -96,7 +98,6 @@ const VerifyEmailPage = () => {
     //   },
     // });
     //---------------------------------------------------------
-
   };
 
   const verifyEmail = async () => {
@@ -160,7 +161,7 @@ const VerifyEmailPage = () => {
       </div>
       {domain.length > 1 && (
         <Checkbox
-          label="@dgu.ac.kr로 인증하기"
+          label="@jnu.ac.kr로 인증하기"
           onChange={handleCheckbox}
         ></Checkbox>
       )}
