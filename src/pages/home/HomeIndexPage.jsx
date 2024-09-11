@@ -17,6 +17,7 @@ import { useCreateChatRoom } from '../../hooks/useCreateChatRoom';
 const HomeIndexPage = () => {
   const [memberState, setMemberState] = useState();
   const [loading, setLoading] = useState(false);
+  const [isProfileButtonClicked, setIsProfileButtonClicked] = useState(false);
 
   const matchingConfig = useRecoilValue(matchingConfigState);
   const createChatRoom = useCreateChatRoom();
@@ -25,8 +26,13 @@ const HomeIndexPage = () => {
     useModal((profile) => (
       <ProfileModal
         closeModal={closeProfileModal}
+        isButtonClicked={isProfileButtonClicked}
         onClick={() => {
-          createChatRoom(profile.memberId, closeProfileModal);
+          createChatRoom(
+            profile.memberId,
+            closeProfileModal,
+            setIsProfileButtonClicked
+          );
         }}
         selectedProfile={profile}
       />
@@ -109,8 +115,13 @@ const HomeIndexPage = () => {
 
 const ProfileContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(
+    2,
+    minmax(150px, 1fr)
+  ); /* 최소 200px, 최대 1fr */
+  gap: 16px;
+  width: 100%;
+  margin: 0 auto;
 `;
 
 const EmptyContainer = styled.div`

@@ -267,6 +267,7 @@ const ChatPage = () => {
   const checkBothAgreed = async () => {
     try {
       const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
+      console.log('둘다동의>>>>>>>>>>>>', response.data);
       setBothAgreed(response.data);
     } catch (error) {
       showRoomInfoErrorToast();
@@ -274,7 +275,8 @@ const ChatPage = () => {
   };
 
   // 전화 버튼 클릭 시
-  const handleClickCallButton = () => {
+  const handleClickCallButton = async () => {
+    await checkBothAgreed();
     bothAgreed ? openCallModal() : openCallRequestModal();
   };
 

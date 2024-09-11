@@ -153,20 +153,29 @@ const ChatIndexPage = () => {
                         key={chat.chatRoomId}
                         onClick={() => onClickChatroom(chat)}
                       >
-                        <CharacterBackground
-                          $backgroundColor={
-                            CHARACTERS[chat.memberCharacter]?.color
-                          }
-                        >
-                          <StyledImage
-                            $xPos={
-                              CHARACTERS[chat.memberCharacter]?.position[0]
+                        {chat.memberCharacter === null ? (
+                          <CharacterBackground $backgroundColor={'#C3C3C3'}>
+                            <img
+                              src={'/assets/home/profile-null.png'}
+                              alt="탈퇴"
+                            />
+                          </CharacterBackground>
+                        ) : (
+                          <CharacterBackground
+                            $backgroundColor={
+                              CHARACTERS[chat.memberCharacter]?.color
                             }
-                            $yPos={
-                              CHARACTERS[chat.memberCharacter]?.position[1]
-                            }
-                          />
-                        </CharacterBackground>
+                          >
+                            <StyledImage
+                              $xPos={
+                                CHARACTERS[chat.memberCharacter]?.position[0]
+                              }
+                              $yPos={
+                                CHARACTERS[chat.memberCharacter]?.position[1]
+                              }
+                            />
+                          </CharacterBackground>
+                        )}
 
                         <div className="profile-section">
                           <Profile>
@@ -256,6 +265,14 @@ const CharacterBackground = styled.div`
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
   background-color: ${(props) => props.$backgroundColor};
   flex-shrink: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    width: 40%;
+  }
 `;
 
 const StyledImage = styled.div`
