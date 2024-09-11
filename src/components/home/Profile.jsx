@@ -4,16 +4,9 @@ import Badge from '../common/Badge';
 import MBTI from './MBTI';
 import Report from './Report';
 
-const Profile = ({ profile, onClick }) => {
-  const {
-    memberCharacter,
-    mbti,
-    school,
-    reportCount,
-    department,
-    memberHobbyDto,
-    memberTagDto,
-  } = profile.memberProfileDto;
+const Profile = ({ profile, school, reportCount, onClick }) => {
+  const { memberCharacter, mbti, department, memberHobbyDto, memberTagDto } =
+    profile.memberProfileDto;
 
   return (
     <WrapProfile onClick={onClick}>

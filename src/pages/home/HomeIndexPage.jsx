@@ -100,6 +100,8 @@ const HomeIndexPage = () => {
             memberState.map((profile, index) => (
               <Profile
                 key={index}
+                school={profile.school}
+                reportCount={profile.reportCount}
                 profile={profile}
                 onClick={() => openProfileModal(profile)}
               />
