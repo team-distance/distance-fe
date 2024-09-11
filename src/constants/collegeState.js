@@ -527,10 +527,10 @@ const DGU_COLLEGE_STATE = {
   ],
 };
 
-const CNU_COLLEGE_STATE = {
-  id: 'cnu',
+const JNU_COLLEGE_STATE = {
+  id: 'jnu',
   name: '전남대학교',
-  logo: '/assets/univ-logo/CNU.svg',
+  logo: '/assets/univ-logo/JNU.svg',
   webMail: 'https://portal.jnu.ac.kr/',
   state: [
     {
@@ -678,5 +678,5 @@ export const UNIV_STATE = [
   SCH_COLLEGE_STATE,
   KHU_COLLEGE_STATE,
   SWU_COLLEGE_STATE,
-  CNU_COLLEGE_STATE,
+  JNU_COLLEGE_STATE,
 ];
