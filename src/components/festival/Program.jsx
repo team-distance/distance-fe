@@ -16,7 +16,7 @@ const Program = () => {
     const getDomain = async () => {
       try {
         const res = await instance.get('/univ/check/univ-domain');
-        if (Array.isArray(res.data)) setSchool('동국대학교');
+        if (Array.isArray(res.data)) setSchool('전남대학교');
         else {
           UNIV_STATE.forEach((univ) => {
             if (res.data.includes(univ.id)) setSchool(univ.name);
