@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import React from 'react';
-import Button from '../common/Button';
 
 const TermsModal = ({ closeModal, onClick }) => {
   return (
@@ -109,7 +108,7 @@ const TermsModal = ({ closeModal, onClick }) => {
         </UnorderedList>
       </article>
 
-      <Button
+      {/* <Button
         size="medium"
         onClick={() => {
           onClick();
@@ -117,7 +116,7 @@ const TermsModal = ({ closeModal, onClick }) => {
         }}
       >
         동의하기
-      </Button>
+      </Button> */}
     </Modal>
   );
 };

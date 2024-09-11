@@ -47,6 +47,7 @@ const UserRegisterPage = () => {
     () => <span>인증번호가 틀렸습니다.</span>,
     'verifynum-error'
   );
+
   const { showPromiseToast: showSendMessageToast } = usePromiseToast();
 
   const {
@@ -58,6 +59,7 @@ const UserRegisterPage = () => {
     mode: 'onChange',
     shouldUseNativeValidation: true,
   });
+
   const {
     register: registerVerifyNum,
     handleSubmit: submitVerifyNum,
@@ -67,6 +69,7 @@ const UserRegisterPage = () => {
     mode: 'onChange',
     shouldUseNativeValidation: true,
   });
+
   const {
     register: registerPassword,
     handleSubmit: submitPassword,
@@ -77,6 +80,7 @@ const UserRegisterPage = () => {
     mode: 'onChange',
     shouldUseNativeValidation: true,
   });
+
   const passwordValue = watch('password');
 
   const [verifyButtonLabel, setVerifyButtonLabel] = useState('인증번호 전송');
@@ -119,6 +123,7 @@ const UserRegisterPage = () => {
   const handleSubmitVerifyNum = async (data) => {
     try {
       await instance.post('/member/authenticate', {
+        telNum: registerData.telNum,
         authenticateNum: data.verifyNum,
       });
       setShowPassword(true);
@@ -171,7 +176,7 @@ const UserRegisterPage = () => {
         <TextInput
           type="text"
           label="인증번호"
-          // timerState={180}
+          timerState={180}
           // onTimerEnd={() => setIsSendMessage(false)}
           placeholder="인증번호 입력"
           buttonLabel="인증하기"

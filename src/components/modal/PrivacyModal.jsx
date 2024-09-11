@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import Button from '../common/Button';
 
 const PrivacyModal = ({ closeModal, onClick }) => {
   return (
@@ -92,7 +91,7 @@ const PrivacyModal = ({ closeModal, onClick }) => {
         </Paragraph>
       </article>
 
-      <Button
+      {/* <Button
         size="medium"
         onClick={() => {
           onClick();
@@ -100,7 +99,7 @@ const PrivacyModal = ({ closeModal, onClick }) => {
         }}
       >
         동의하기
-      </Button>
+      </Button> */}
     </Modal>
   );
 };
