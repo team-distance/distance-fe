@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
 import { useRecoilState } from 'recoil';
@@ -18,6 +18,8 @@ const UserRegisterPage = () => {
   const navigate = useNavigate();
 
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
+
+  const [isTelNumChanged, setIsTelNumChanged] = useState(true);
 
   const { openModal: openTermsModal, closeModal: closeTermsModal } = useModal(
     () => (
@@ -55,6 +57,7 @@ const UserRegisterPage = () => {
     handleSubmit: submitTelNum,
     formState: { isValid: telNumValid },
     setError: setErrorTelNum,
+    watch: watchTelNum,
   } = useForm({
     mode: 'onChange',
     shouldUseNativeValidation: true,
@@ -75,13 +78,22 @@ const UserRegisterPage = () => {
     handleSubmit: submitPassword,
     formState: { isValid: passwordValid, errors: verifyPassword },
     setValue: setPasswordValue,
-    watch,
+    watch: watchPassword,
   } = useForm({
     mode: 'onChange',
     shouldUseNativeValidation: true,
   });
 
-  const passwordValue = watch('password');
+  const telNumValue = watchTelNum('telNum');
+  const passwordValue = watchPassword('password');
+
+  useEffect(() => {
+    if (telNumValue !== registerData.telNum) {
+      setIsTelNumChanged(true);
+      setShowVerifyNum(false);
+      setShowPassword(false);
+    }
+  }, [telNumValue]);
 
   const [verifyButtonLabel, setVerifyButtonLabel] = useState('인증번호 전송');
   const [showVerifyNum, setShowVerifyNum] = useState(false);
@@ -99,6 +111,7 @@ const UserRegisterPage = () => {
         setVerifyButtonLabel('재전송');
         setErrorTelNum('telNum');
         setShowVerifyNum(true);
+        setIsTelNumChanged(false);
 
         setRegisterData((prevData) => ({
           ...prevData,
@@ -170,7 +183,7 @@ const UserRegisterPage = () => {
       </WrapForm>
 
       <WrapForm
-        $visible={showVerifyNum}
+        $visible={showVerifyNum && !isTelNumChanged}
         onSubmit={submitVerifyNum(handleSubmitVerifyNum)}
       >
         <TextInput
@@ -190,7 +203,7 @@ const UserRegisterPage = () => {
 
       <WrapForm
         className="last-form"
-        $visible={showPassword}
+        $visible={showPassword && !isTelNumChanged}
         onSubmit={submitPassword(handleSubmitPassword)}
       >
         <TextInput
