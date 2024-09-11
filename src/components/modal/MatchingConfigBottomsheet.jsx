@@ -20,13 +20,11 @@ const MatchingConfigBottomsheet = ({ closeModal }) => {
     setSelectedOption(event.target.value === 'true' ? true : false);
   };
 
-  const handleRangeChange = () => {
-    // const range = Number(event.target.value);
+  const handleRangeChange = (event) => {
+    const range = Number(event.target.value);
 
     // range가 0이면 1000으로 설정
-    // setSearchRange(!range ? 1000 : range);
-
-    setSearchRange(500000);
+    setSearchRange(!range ? 1000 : range);
   };
 
   const handleSave = () => {
