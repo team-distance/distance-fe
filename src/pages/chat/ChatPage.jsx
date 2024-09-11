@@ -26,9 +26,9 @@ import {
 } from '../../hooks/useFetchMessages';
 import TopBar from '../../components/chat/TopBar';
 import Loader from '../../components/common/Loader';
-import { useInitializeStompClient } from '../../hooks/useStomp';
 import { useSendMessage } from '../../hooks/useSendMessage';
 import CallDistanceModal from '../../components/modal/CallDistanceModal';
+import { Client } from '@stomp/stompjs';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -314,24 +314,60 @@ const ChatPage = () => {
     initializeChat();
   }, []);
 
-  // STOMP 클라이언트 생성
-  const initializeClient = useInitializeStompClient(
-    setClient,
-    roomId,
-    myMemberId,
-    setMessages,
-    setIsLoading
-  );
+  const subscritionCallback = (message) => {
+    const parsedMessage = JSON.parse(message.body);
+
+    // messages 새로 set
+    setMessages((prevMessages) => {
+      const oldMessages = [...prevMessages];
+      // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
+      if (parsedMessage.body.senderId !== oldMessages.at(-1)?.senderId) {
+        for (let i = 0; i < oldMessages.length; i++) {
+          oldMessages[i].unreadCount = 0;
+        }
+      }
+      return [...oldMessages, parsedMessage.body];
+    });
+  };
+
   useEffect(() => {
     if (isMemberIdsFetched) {
       //상대방 프로필 불러오기
       fetchOpponentProfile();
       // STOMP 클라이언트 생성
-      initializeClient();
+      const newClient = new Client({
+        brokerURL: 'wss://dev.dis-tance.com/meet',
+        connectHeaders: {
+          chatRoomId: roomId,
+          memberId: myMemberId,
+        },
+        debug: function (str) {
+          console.log(str);
+        },
+        onConnect: (frame) => {
+          setIsLoading(false);
+          console.log('Connected: ' + frame);
+          newClient.subscribe(`/topic/chatroom/${roomId}`, subscritionCallback);
+        },
+        onStompError: (error) => {
+          console.log(error);
+        },
+        reconnectDelay: 50,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+      });
+
+      newClient.activate();
+      setClient(newClient);
+
       //이전 메세지 목록 불러오기
       const staleMessages = fetchLocalMessages(setMessages);
       if (staleMessages.length === 0) fetchServerMessages(setMessages);
       else fetchServerUnreadMessages(messages, setMessages);
+
+      return () => {
+        newClient.deactivate();
+      };
     }
   }, [isMemberIdsFetched]);
 
