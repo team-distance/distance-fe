@@ -39,6 +39,9 @@ import EventDetailPage from './pages/event/EventDetailPage';
 import EventLoginPage from './pages/root/EventLoginPage';
 import Matching from './pages/eventMatching/Matching';
 import MatchingSuccess from './pages/eventMatching/MatchingSuccess';
+import FestivalIndexPage from './pages/festival/FestivalIndexPage';
+import Program from './components/festival/Program';
+import FoodTruck from './components/festival/FoodTruck';
 
 function App() {
   useRouteChangeTrack();
@@ -95,6 +98,11 @@ function App() {
 
         <Route path="/chat" element={<ChatIndexPage />} />
         <Route path="/inbox" element={<ChatInboxPage />} />
+
+        <Route element={<FestivalIndexPage />}>
+          <Route path="/festival/program" element={<Program />} />
+          <Route path="/festival/foodtruck" element={<FoodTruck />} />
+        </Route>
 
         <Route path="/event" element={<EventIndexPage />}>
           <Route path="/event/" element={<EventListPage />} />
