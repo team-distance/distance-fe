@@ -1,8 +1,43 @@
 import React from 'react';
 import styled from 'styled-components';
-import { CHARACTERS } from '../../constants/CHARACTERS';
 
 const CharacterModal = ({ closeModal, onClick }) => {
+  const CHARACTERS = {
+    RABBIT: {
+      position: [1, 3],
+      color: '#D9EAD3',
+      txt_color: '#F4C4CA',
+    },
+    CAT: {
+      position: [1, 0],
+      color: '#FDF2D5',
+      txt_color: '#F5EC8D',
+    },
+
+    DOG: {
+      position: [2, 0],
+      color: '#EFE2D1',
+      txt_color: '#E0C6A4',
+    },
+
+    RAT: {
+      position: [2, 3],
+      color: '#D9EAD3',
+      txt_color: '#99D484',
+    },
+    BEAR: {
+      position: [0, 0],
+      color: '#D2C6BB',
+      txt_color: '#C1AA99',
+    },
+
+    FOX: {
+      position: [2, 1],
+      color: '#FCEDDC',
+      txt_color: '#FED4A5',
+    },
+  };
+
   return (
     <Modal>
       <Title>
