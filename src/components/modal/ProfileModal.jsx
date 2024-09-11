@@ -4,7 +4,12 @@ import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
 
-const ProfileModal = ({ closeModal, onClick, selectedProfile }) => {
+const ProfileModal = ({
+  closeModal,
+  onClick,
+  isButtonClicked,
+  selectedProfile,
+}) => {
   return (
     <Modal>
       <CloseButton
@@ -44,7 +49,7 @@ const ProfileModal = ({ closeModal, onClick, selectedProfile }) => {
           ))}
         </TagContainer>
       </WrapContent>
-      <Button size="medium" onClick={onClick}>
+      <Button size="medium" onClick={onClick} disabled={isButtonClicked}>
         메시지 보내기
       </Button>
     </Modal>

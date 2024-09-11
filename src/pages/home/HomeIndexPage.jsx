@@ -25,6 +25,7 @@ const HomeIndexPage = () => {
 
   const [memberState, setMemberState] = useState();
   const [loading, setLoading] = useState(false);
+  const [isProfileButtonClicked, setIsProfileButtonClicked] = useState(false);
 
   const matchingConfig = useRecoilValue(matchingConfigState);
   const createChatRoom = useCreateChatRoom();
@@ -33,8 +34,13 @@ const HomeIndexPage = () => {
     useModal((profile) => (
       <ProfileModal
         closeModal={closeProfileModal}
+        isButtonClicked={isProfileButtonClicked}
         onClick={() => {
-          createChatRoom(profile.memberId, closeProfileModal);
+          createChatRoom(
+            profile.memberId,
+            closeProfileModal,
+            setIsProfileButtonClicked
+          );
         }}
         selectedProfile={profile}
       />

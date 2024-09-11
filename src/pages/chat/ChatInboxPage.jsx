@@ -38,12 +38,12 @@ const ChatInboxPage = () => {
       switch (error.response.data.code) {
         case 'TOO_MANY_MY_CHATROOM':
           alert(
-            '이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요.'
+            '이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.'
           );
           break;
         case 'TOO_MANY_OPPONENT_CHATROOM':
           alert(
-            '상대방이 이미 생성된 채팅방 3개입니다. 상대방과 연결에 실패했습니다.'
+            '상대방이 이미 생성된 채팅방 5개입니다. 상대방과 연결에 실패했습니다.'
           );
           break;
         default:
