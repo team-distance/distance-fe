@@ -3,14 +3,10 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { instance } from '../../api/instance';
 import Profile from '../../components/home/Profile';
-import { Link } from 'react-router-dom';
 import Banner from '../../components/common/Banner';
 import ReloadButton from '../../components/home/ReloadButton';
 import ProfileModal from '../../components/modal/ProfileModal';
 import useModal from '../../hooks/useModal';
-import { useToast } from '../../hooks/useToast';
-import { useCheckAlarmActive } from '../../hooks/useCheckAlarmActive';
-import { useCheckGpsActive } from '../../hooks/useCheckGpsActive';
 import Loader from '../../components/common/Loader';
 import MatchingConfigButton from '../../components/home/MatchingConfigButton';
 import MatchingConfigBottomsheet from '../../components/modal/MatchingConfigBottomsheet';
@@ -19,10 +15,6 @@ import { matchingConfigState } from '../../store/matchingConfig';
 import { useCreateChatRoom } from '../../hooks/useCreateChatRoom';
 
 const HomeIndexPage = () => {
-  //알림, GPS 설정 관리
-  const alarmActive = useCheckAlarmActive();
-  const gpsActive = useCheckGpsActive();
-
   const [memberState, setMemberState] = useState();
   const [loading, setLoading] = useState(false);
 
@@ -46,23 +38,6 @@ const HomeIndexPage = () => {
   } = useModal(
     () => <MatchingConfigBottomsheet closeModal={closeMatchingConfigModal} />,
     { backdrop: false }
-  );
-
-  const { showToast: showAlarmGPSErrorToast } = useToast(
-    () => (
-      <>
-        <span style={{ textAlign: 'center' }}>
-          알림과 위치 설정이 꺼져있어요!
-          <br />
-          <Link to="/mypage" style={{ color: '#0096FF' }}>
-            해결하기
-          </Link>
-        </span>
-      </>
-    ),
-    'alarm-gps-disabled',
-    'bottom-center',
-    'none'
   );
 
   const fetchMembers = async () => {
@@ -91,19 +66,8 @@ const HomeIndexPage = () => {
     },
   ];
 
-  const checkAndShowToast = async () => {
-    if (
-      (localStorage.getItem('isFirstLogin') === 'true' && !alarmActive) ||
-      !gpsActive
-    ) {
-      await showAlarmGPSErrorToast(); // 비동기
-      localStorage.setItem('isFirstLogin', 'false');
-    }
-  };
-
   useEffect(() => {
     fetchMembers();
-    checkAndShowToast();
   }, []);
 
   useEffect(() => {

@@ -1,12 +1,14 @@
-import { useRecoilValue } from 'recoil';
-import { isLoggedInState } from '../store/auth';
-import useGPS from './useGPS';
+import { useEffect, useState } from 'react';
 
 export const useCheckGpsActive = () => {
-  const isLoggedIn = useRecoilValue(isLoggedInState);
-  const currentLocation = useGPS(isLoggedIn);
+  const [isGpsActive, setIsGpsActive] = useState(true);
 
-  if (!isLoggedIn) return;
-  if (currentLocation.error) return false;
-  else return true;
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      () => setIsGpsActive(true),
+      () => setIsGpsActive(false)
+    );
+  }, []);
+
+  return isGpsActive;
 };

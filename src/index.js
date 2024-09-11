@@ -31,9 +31,9 @@ const app = (
     >
       <RecoilRoot>
         <BrowserRouter>
+          <GlobalToastContainer />
           <App />
           <GlobalModalContainer />
-          <GlobalToastContainer />
         </BrowserRouter>
       </RecoilRoot>
     </AwsRumProvider>

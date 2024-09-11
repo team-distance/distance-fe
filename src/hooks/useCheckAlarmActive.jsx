@@ -1,11 +1,15 @@
-import { useRecoilValue } from 'recoil';
-import { isLoggedInState } from '../store/auth';
+import { useEffect, useState } from 'react';
 
 export const useCheckAlarmActive = () => {
-  const isLoggedIn = useRecoilValue(isLoggedInState);
+  const [isAlarmActive, setIsAlarmActive] = useState(true);
 
-  if (!isLoggedIn) return;
-  if ('Notification' in window && Notification.permission !== 'granted')
-    return false;
-  else return true;
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission !== 'granted') {
+      setIsAlarmActive(false);
+    } else {
+      setIsAlarmActive(true);
+    }
+  }, []);
+
+  return isAlarmActive;
 };

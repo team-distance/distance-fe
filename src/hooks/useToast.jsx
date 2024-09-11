@@ -10,44 +10,38 @@ import { useLocation } from 'react-router-dom';
  * @returns {object} showToast, dismissToast 함수를 포함하는 객체
  */
 export const useToast = (
-    toastContent, id, position = 'bottom-center',
-    type = 'error') => {
+  toastContent,
+  id,
+  position = 'bottom-center',
+  type = 'error'
+) => {
+  const { pathname } = useLocation();
 
-    const { pathname } = useLocation();
+  useEffect(() => {
+    toast.remove();
+  }, [pathname]);
 
-    useEffect(() => {
-        toast.remove();
-    }, [pathname])
-
-    const showToast = () => {
-
-        if(type === 'none') {
-            toast(
-                toastContent(),
-                {
-                    icon: null,
-                    id: id,
-                    position: position
-                }
-            )
-        } else {
-            toast[type](
-                toastContent(),
-                {
-                    id: id,
-                    position: position
-                }
-            )
-        }
-    };
-
-    const dismissToast = () => {
-        toast.dismiss(id);
+  const showToast = () => {
+    if (type === 'none') {
+      toast(toastContent(), {
+        icon: null,
+        id: id,
+        position: position,
+      });
+    } else {
+      toast[type](toastContent(), {
+        id: id,
+        position: position,
+      });
     }
+  };
 
-    return { showToast, dismissToast };
+  const dismissToast = () => {
+    toast.dismiss(id);
+  };
+
+  return { showToast, dismissToast };
 };
-
 
 /**
  * @param {Promise} response - 프로미스 객체
@@ -57,23 +51,25 @@ export const useToast = (
  */
 
 export const usePromiseToast = () => {
+  const { pathname } = useLocation();
 
-    const { pathname } = useLocation();
+  useEffect(() => {
+    toast.remove();
+  }, [pathname]);
 
-    useEffect(() => {
-        toast.remove();
-    }, [pathname])
+  const showPromiseToast = (response, successFunc, errorFunc) => {
+    toast.promise(
+      response,
+      {
+        loading: '전송 중...',
+        success: successFunc,
+        error: errorFunc,
+      },
+      {
+        position: 'bottom-center',
+      }
+    );
+  };
 
-    const showPromiseToast = (response, successFunc, errorFunc) => {
-        toast.promise(response, {
-            loading: '전송 중...',
-            success: successFunc,
-            error: errorFunc
-        }, {
-            position: 'bottom-center'
-        })
-    }
-
-    return { showPromiseToast }
-}
-
+  return { showPromiseToast };
+};

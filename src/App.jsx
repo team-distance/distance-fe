@@ -60,6 +60,7 @@ function App() {
   // GPS update
   useEffect(() => {
     if (!isLoggedIn) return;
+
     if (currentLocation.lat === 0 || currentLocation.lng === 0) {
       return;
     } else {
