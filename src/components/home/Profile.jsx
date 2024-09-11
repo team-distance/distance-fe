@@ -5,13 +5,20 @@ import MBTI from './MBTI';
 import Report from './Report';
 
 const Profile = ({ profile, onClick }) => {
-  const { memberCharacter, mbti, department, memberHobbyDto, memberTagDto } =
-    profile.memberProfileDto;
+  const {
+    memberCharacter,
+    mbti,
+    school,
+    reportCount,
+    department,
+    memberHobbyDto,
+    memberTagDto,
+  } = profile.memberProfileDto;
 
   return (
     <WrapProfile onClick={onClick}>
       <Wrapper>
-        <Report />
+        {reportCount > 0 && <Report reportCount={reportCount} />}
         <CharacterBackground
           $backgroundColor={CHARACTERS[memberCharacter]?.color}
         >
@@ -19,10 +26,10 @@ const Profile = ({ profile, onClick }) => {
             $xPos={CHARACTERS[memberCharacter]?.position[0]}
             $yPos={CHARACTERS[memberCharacter]?.position[1]}
           />
-          <MBTI mbti={mbti} />
+          <MBTI mbti={mbti} color={CHARACTERS[memberCharacter]?.txt_color} />
         </CharacterBackground>
         <WrapText>
-          <School>수정전학교</School>
+          <School>{school}</School>
           <Department>{department}</Department>
         </WrapText>
         <TagContainer>
