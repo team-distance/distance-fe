@@ -336,7 +336,7 @@ const ChatPage = () => {
       fetchOpponentProfile();
       // STOMP 클라이언트 생성
       const newClient = new Client({
-        brokerURL: 'wss://api.dis-tance.com/meet',
+        brokerURL: 'wss://dev.dis-tance.com/meet',
         connectHeaders: {
           chatRoomId: roomId,
           memberId: myMemberId,
