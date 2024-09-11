@@ -202,7 +202,7 @@ const ChatIndexPage = () => {
                   })}
               </ChatListContainer>
             )}
-            <SurveyLinkContainer
+            {/* <SurveyLinkContainer
               onClick={() => window.open('https://forms.gle/6ZgZvLD2iSM5LVuEA')}
             >
               <SurveyContentBox>
@@ -214,7 +214,7 @@ const ChatIndexPage = () => {
                   치킨받으러가기
                 </div>
               </SurveyContentBox>
-            </SurveyLinkContainer>
+            </SurveyLinkContainer> */}
           </>
         )
       ) : (
@@ -371,44 +371,44 @@ const EmptyContainer = styled.div`
   }
 `;
 
-const SurveyLinkContainer = styled.div`
-  width: 100%;
-  height: 80px;
-  position: fixed;
-  z-index: 1;
-  bottom: 15%;
-  left: 0;
-  right: 0;
-  background-color: #f3f3f3;
-  text-decoration: none;
-  color: black;
-  display: flex;
-`;
+// const SurveyLinkContainer = styled.div`
+//   width: 100%;
+//   height: 80px;
+//   position: fixed;
+//   z-index: 1;
+//   bottom: 15%;
+//   left: 0;
+//   right: 0;
+//   background-color: #f3f3f3;
+//   text-decoration: none;
+//   color: black;
+//   display: flex;
+// `;
 
-const SurveyContentBox = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+// const SurveyContentBox = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
 
-  width: 100%;
-  font-size: 1rem;
-  font-weight: 200;
+//   width: 100%;
+//   font-size: 1rem;
+//   font-weight: 200;
 
-  img {
-    height: 80px;
-  }
-  div {
-    padding-right: 3rem;
+//   img {
+//     height: 80px;
+//   }
+//   div {
+//     padding-right: 3rem;
 
-    .big-font {
-      font-size: 1.5rem;
-    }
+//     .big-font {
+//       font-size: 1.5rem;
+//     }
 
-    em {
-      font-style: normal;
-      font-weight: 600;
-    }
-  }
-`;
+//     em {
+//       font-style: normal;
+//       font-weight: 600;
+//     }
+//   }
+// `;
 
 export default ChatIndexPage;
