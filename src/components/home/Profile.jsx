@@ -1,14 +1,24 @@
 import styled from 'styled-components';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../common/Badge';
+import MBTI from './MBTI';
+import Report from './Report';
 
 const Profile = ({ profile, onClick }) => {
-  const { memberCharacter, mbti, department, memberHobbyDto, memberTagDto } =
-    profile.memberProfileDto;
+  const {
+    memberCharacter,
+    mbti,
+    school,
+    reportCount,
+    department,
+    memberHobbyDto,
+    memberTagDto,
+  } = profile.memberProfileDto;
 
   return (
     <WrapProfile onClick={onClick}>
       <Wrapper>
+        {reportCount > 0 && <Report reportCount={reportCount} />}
         <CharacterBackground
           $backgroundColor={CHARACTERS[memberCharacter]?.color}
         >
@@ -16,9 +26,10 @@ const Profile = ({ profile, onClick }) => {
             $xPos={CHARACTERS[memberCharacter]?.position[0]}
             $yPos={CHARACTERS[memberCharacter]?.position[1]}
           />
+          <MBTI mbti={mbti} color={CHARACTERS[memberCharacter]?.txt_color} />
         </CharacterBackground>
         <WrapText>
-          <MBTI>{mbti}</MBTI>
+          <School>{school}</School>
           <Department>{department}</Department>
         </WrapText>
         <TagContainer>
@@ -45,6 +56,7 @@ const WrapProfile = styled.div`
   border-radius: 12px;
   background: #ffffff;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.05);
+  position: relative;
 `;
 
 const Wrapper = styled.div`
@@ -82,26 +94,26 @@ const WrapText = styled.div`
   width: 90%;
 `;
 
+const School = styled.div`
+  color: #000;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+`;
+
 const Department = styled.div`
   font-weight: 700;
   color: #000000;
   text-align: center;
-  font-size: 14px;
+  font-size: 1.125rem;
   font-style: normal;
   line-height: normal;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-
-const MBTI = styled.div`
-  color: #000000;
-  text-align: center;
-  font-family: Pretendard;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
 `;
 
 const TagContainer = styled.div`

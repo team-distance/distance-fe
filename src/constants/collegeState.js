@@ -133,7 +133,7 @@ const SCH_COLLEGE_STATE = {
 
 const KHU_COLLEGE_STATE = {
   id: 'khu',
-  name: '경희대학교 (5.22~5.24 축제 종료)',
+  name: '경희대학교',
   logo: '/assets/univ-logo/KHU.svg',
   webMail: 'https://mail.khu.ac.kr/',
   state: [
@@ -321,7 +321,7 @@ const KHU_COLLEGE_STATE = {
 
 const SWU_COLLEGE_STATE = {
   id: 'swu',
-  name: '서울여자대학교 (5.22~5.24 축제 종료)',
+  name: '서울여자대학교',
   logo: '/assets/univ-logo/SWU.svg',
   webMail: 'https://mc183.mailplug.com/member/login?host_domain=swu.ac.kr',
   state: [
@@ -527,9 +527,156 @@ const DGU_COLLEGE_STATE = {
   ],
 };
 
+const JNU_COLLEGE_STATE = {
+  id: 'jnu',
+  name: '전남대학교',
+  logo: '/assets/univ-logo/JNU.svg',
+  webMail: 'https://portal.jnu.ac.kr/',
+  state: [
+    {
+      college: '간호대학',
+      department: ['간호학과'],
+    },
+    {
+      college: '경영대학',
+      department: ['경영학부', '경제학부'],
+    },
+    {
+      college: '공과대학',
+      department: [
+        '건축학부',
+        '고분자융합소재공학부',
+        '기계공학부',
+        '산업공학과',
+        '생물공학과',
+        '신소재공학부',
+        '에너지자원공학과',
+        '전기공학과',
+        '전자컴퓨터공학부',
+        '전자공학과',
+        '컴퓨터정보통신공학과',
+        '소프트웨어공학과',
+        '토목공학과',
+        '화학공학부',
+        '환경에너지공학과',
+      ],
+    },
+    {
+      college: '농업생명과학대학',
+      department: [
+        '식품공학과',
+        '분자생명공학과',
+        '농생명화학과',
+        '농업경제학과',
+        '동물자원학부',
+        '바이오에너지공학과',
+        '산림자원학과',
+        '임산공학과',
+        '식물생명공학부',
+        '조경학과',
+        '지역바이오시스템공학과',
+        '융합바이오시스템기계공학과',
+      ],
+    },
+    {
+      college: '사범대학',
+      department: [
+        '가정교육과',
+        '교육학과',
+        '국어교육과',
+        '물리교육과',
+        '생물교육과',
+        '수학교육과',
+        '역사교육과',
+        '영어교육과',
+        '유아교육과',
+        '윤리교육과',
+        '음악교육과',
+        '지구과학교육과',
+        '지리교육과',
+        '체육교육과',
+        '특수교육학부',
+        '화학교육과',
+      ],
+    },
+    {
+      college: '사회과학대학',
+      department: [
+        '문헌정보학과',
+        '문화인류고고학과',
+        '사회학과',
+        '미디어커뮤니케이션학과',
+        '심리학과',
+        '정치외교학과',
+        '지리학과',
+        '행정학과',
+      ],
+    },
+    {
+      college: '생활과학대학',
+      department: ['생활복지학과', '식품영양과학부', '의류학과'],
+    },
+    {
+      college: '수의과대학',
+      department: ['수의예과', '수의학과'],
+    },
+    {
+      college: '약학대학',
+      department: ['약학부'],
+    },
+    {
+      college: '예술대학',
+      department: ['국악학과', '디자인학과', '미술학과', '음악학과'],
+    },
+    {
+      college: '의과대학',
+      department: ['의학과', '의예과'],
+    },
+    {
+      college: '인문대학',
+      department: [
+        '국어국문학과',
+        '독일언어문학과',
+        '불어불문학과',
+        '사학과',
+        '영어영문학과',
+        '일어일문학과',
+        '중어중문학과',
+        '철학과',
+      ],
+    },
+    {
+      college: '자연과학대학',
+      department: [
+        '물리학과',
+        '생명과학기술학부',
+        '생물학과',
+        '수학과',
+        '지구환경과학부',
+        '통계학과',
+        '화학과',
+      ],
+    },
+    {
+      college: 'AI융합대학',
+      department: [
+        '융합전공',
+        '인공지능학부',
+        '빅데이터융합학과',
+        '지능형모빌리티융합학과',
+      ],
+    },
+    {
+      college: '자율전공학부',
+      department: ['자율전공학부'],
+    },
+  ],
+};
+
 export const UNIV_STATE = [
   DGU_COLLEGE_STATE,
   SCH_COLLEGE_STATE,
   KHU_COLLEGE_STATE,
   SWU_COLLEGE_STATE,
+  JNU_COLLEGE_STATE,
 ];

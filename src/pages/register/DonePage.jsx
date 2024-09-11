@@ -21,8 +21,8 @@ const DonePage = () => {
   const [loading, setLoading] = useState(false);
 
   //알림, GPS 설정 관리
-  const alarmActive = useCheckAlarmActive();
-  const gpsActive = useCheckGpsActive();
+  const isAlarmActive = useCheckAlarmActive();
+  const isGpsActive = useCheckGpsActive();
 
   //토스트 메세지
   const { showToast: showLoginErrorToast } = useToast(
@@ -38,7 +38,7 @@ const DonePage = () => {
     }
 
     const instantLogin = async () => {
-      if (!alarmActive || !gpsActive) {
+      if (!isAlarmActive || !isGpsActive) {
         alert('알림, 위치 권한을 허용해주세요!');
       }
 
@@ -106,13 +106,15 @@ const DonePage = () => {
               <div>학생 인증하기</div>
             )}
           </Button>
-          <MoveToHome
-            onClick={() => {
-              navigate('/');
-            }}
-          >
-            홈으로 이동
-          </MoveToHome>
+          {loading === false && (
+            <MoveToHome
+              onClick={() => {
+                navigate('/');
+              }}
+            >
+              홈으로 이동
+            </MoveToHome>
+          )}
         </WrapButton>
       </WrapContent>
     </Background>
@@ -150,6 +152,8 @@ const WrapButton = styled.div`
   width: 80%;
   position: absolute;
   bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
 `;
 
 const MoveToHome = styled.div`
