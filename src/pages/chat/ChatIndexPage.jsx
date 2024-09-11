@@ -155,7 +155,10 @@ const ChatIndexPage = () => {
                       >
                         {chat.memberCharacter === null ? (
                           <CharacterBackground $backgroundColor={'#C3C3C3'}>
-                            <img src={'/assets/home/profile-null.png'} />
+                            <img
+                              src={'/assets/home/profile-null.png'}
+                              alt="탈퇴"
+                            />
                           </CharacterBackground>
                         ) : (
                           <CharacterBackground
