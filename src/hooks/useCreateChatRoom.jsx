@@ -31,12 +31,17 @@ export const useCreateChatRoom = () => {
     'too-many-oppo-chatroom'
   );
 
-  const handleCreateChatRoom = async (opponentMemberId, closeProfileModal) => {
+  const handleCreateChatRoom = async (
+    opponentMemberId,
+    closeProfileModal,
+    setIsProfileButtonClicked
+  ) => {
     await instance
       .post('/chatroom/create', {
         memberId: opponentMemberId,
       })
       .then((res) => {
+        setIsProfileButtonClicked(true); //연타 방지
         const createdChatRoom = res.data;
         navigate(`/chat/${createdChatRoom}`);
       })

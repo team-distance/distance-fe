@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const Report = ({ reportCount }) => {
-  return <WrapReport>신고 누적 2회</WrapReport>;
+  return <WrapReport>신고 누적 {reportCount}회</WrapReport>;
 };
 
 const WrapReport = styled.div`

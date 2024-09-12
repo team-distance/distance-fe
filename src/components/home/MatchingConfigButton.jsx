@@ -5,7 +5,7 @@ const MatchingConfigButton = ({ onClick }) => {
   return (
     <StyledButton onClick={onClick}>
       <img
-        src="/assets/home/matching-config-button.svg"
+        src="/assets/home/matching-config.png"
         alt="matching config button"
       />
     </StyledButton>
@@ -25,7 +25,15 @@ const StyledButton = styled.button`
   background-color: #ffffff;
   box-shadow: 0px 4px 10px 0px #0000001a;
 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   &:disabled {
     filter: brightness(0.6);
+  }
+
+  img {
+    width: 25px;
   }
 `;

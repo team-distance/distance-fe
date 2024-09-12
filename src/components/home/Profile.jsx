@@ -4,16 +4,9 @@ import Badge from '../common/Badge';
 import MBTI from './MBTI';
 import Report from './Report';
 
-const Profile = ({ profile, onClick }) => {
-  const {
-    memberCharacter,
-    mbti,
-    school,
-    reportCount,
-    department,
-    memberHobbyDto,
-    memberTagDto,
-  } = profile.memberProfileDto;
+const Profile = ({ profile, school, reportCount, onClick }) => {
+  const { memberCharacter, mbti, department, memberHobbyDto, memberTagDto } =
+    profile.memberProfileDto;
 
   return (
     <WrapProfile onClick={onClick}>
@@ -114,6 +107,7 @@ const Department = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 12ch; /* 최대 7글자까지 제한 (ch는 글자 수 기준 너비 단위) */
 `;
 
 const TagContainer = styled.div`

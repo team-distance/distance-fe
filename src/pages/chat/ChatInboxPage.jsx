@@ -38,12 +38,12 @@ const ChatInboxPage = () => {
       switch (error.response.data.code) {
         case 'TOO_MANY_MY_CHATROOM':
           alert(
-            '이미 생성된 채팅방 3개입니다. 기존 채팅방을 지우고 다시 시도해주세요.'
+            '이미 생성된 채팅방 5개입니다. 기존 채팅방을 지우고 다시 시도해주세요.'
           );
           break;
         case 'TOO_MANY_OPPONENT_CHATROOM':
           alert(
-            '상대방이 이미 생성된 채팅방 3개입니다. 상대방과 연결에 실패했습니다.'
+            '상대방이 이미 생성된 채팅방 5개입니다. 상대방과 연결에 실패했습니다.'
           );
           break;
         default:
@@ -77,14 +77,20 @@ const ChatInboxPage = () => {
           // 현재는 곰 캐릭터로 표시되도록 설정되어 있음
           // 추후 컴포넌트 분리할 때 이 부분도 같이 해결하겠슴다
           <InboxContainer key={inbox.waitingRoomId}>
-            <CharacterBackground
-              $backgroundColor={CHARACTERS[inbox.memberCharacter]?.color}
-            >
-              <StyledImage
-                $xPos={CHARACTERS[inbox.memberCharacter]?.position[0]}
-                $yPos={CHARACTERS[inbox.memberCharacter]?.position[1]}
-              />
-            </CharacterBackground>
+            {inbox.memberCharacter === null ? (
+              <CharacterBackground $backgroundColor={'#C3C3C3'}>
+                <img src={'/assets/home/profile-null.png'} alt="탈퇴" />
+              </CharacterBackground>
+            ) : (
+              <CharacterBackground
+                $backgroundColor={CHARACTERS[inbox.memberCharacter]?.color}
+              >
+                <StyledImage
+                  $xPos={CHARACTERS[inbox.memberCharacter]?.position[0]}
+                  $yPos={CHARACTERS[inbox.memberCharacter]?.position[1]}
+                />
+              </CharacterBackground>
+            )}
 
             <div className="right-section">
               <Profile>
@@ -173,6 +179,14 @@ const CharacterBackground = styled.div`
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
   background-color: ${(props) => props.$backgroundColor};
   flex-shrink: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    width: 40%;
+  }
 `;
 
 const StyledImage = styled.div`

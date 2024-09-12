@@ -153,20 +153,29 @@ const ChatIndexPage = () => {
                         key={chat.chatRoomId}
                         onClick={() => onClickChatroom(chat)}
                       >
-                        <CharacterBackground
-                          $backgroundColor={
-                            CHARACTERS[chat.memberCharacter]?.color
-                          }
-                        >
-                          <StyledImage
-                            $xPos={
-                              CHARACTERS[chat.memberCharacter]?.position[0]
+                        {chat.memberCharacter === null ? (
+                          <CharacterBackground $backgroundColor={'#C3C3C3'}>
+                            <img
+                              src={'/assets/home/profile-null.png'}
+                              alt="탈퇴"
+                            />
+                          </CharacterBackground>
+                        ) : (
+                          <CharacterBackground
+                            $backgroundColor={
+                              CHARACTERS[chat.memberCharacter]?.color
                             }
-                            $yPos={
-                              CHARACTERS[chat.memberCharacter]?.position[1]
-                            }
-                          />
-                        </CharacterBackground>
+                          >
+                            <StyledImage
+                              $xPos={
+                                CHARACTERS[chat.memberCharacter]?.position[0]
+                              }
+                              $yPos={
+                                CHARACTERS[chat.memberCharacter]?.position[1]
+                              }
+                            />
+                          </CharacterBackground>
+                        )}
 
                         <div className="profile-section">
                           <Profile>
@@ -193,7 +202,7 @@ const ChatIndexPage = () => {
                   })}
               </ChatListContainer>
             )}
-            <SurveyLinkContainer
+            {/* <SurveyLinkContainer
               onClick={() => window.open('https://forms.gle/6ZgZvLD2iSM5LVuEA')}
             >
               <SurveyContentBox>
@@ -205,7 +214,7 @@ const ChatIndexPage = () => {
                   치킨받으러가기
                 </div>
               </SurveyContentBox>
-            </SurveyLinkContainer>
+            </SurveyLinkContainer> */}
           </>
         )
       ) : (
@@ -256,6 +265,14 @@ const CharacterBackground = styled.div`
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
   background-color: ${(props) => props.$backgroundColor};
   flex-shrink: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    width: 40%;
+  }
 `;
 
 const StyledImage = styled.div`
@@ -354,44 +371,44 @@ const EmptyContainer = styled.div`
   }
 `;
 
-const SurveyLinkContainer = styled.div`
-  width: 100%;
-  height: 80px;
-  position: fixed;
-  z-index: 1;
-  bottom: 15%;
-  left: 0;
-  right: 0;
-  background-color: #f3f3f3;
-  text-decoration: none;
-  color: black;
-  display: flex;
-`;
+// const SurveyLinkContainer = styled.div`
+//   width: 100%;
+//   height: 80px;
+//   position: fixed;
+//   z-index: 1;
+//   bottom: 15%;
+//   left: 0;
+//   right: 0;
+//   background-color: #f3f3f3;
+//   text-decoration: none;
+//   color: black;
+//   display: flex;
+// `;
 
-const SurveyContentBox = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+// const SurveyContentBox = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
 
-  width: 100%;
-  font-size: 1rem;
-  font-weight: 200;
+//   width: 100%;
+//   font-size: 1rem;
+//   font-weight: 200;
 
-  img {
-    height: 80px;
-  }
-  div {
-    padding-right: 3rem;
+//   img {
+//     height: 80px;
+//   }
+//   div {
+//     padding-right: 3rem;
 
-    .big-font {
-      font-size: 1.5rem;
-    }
+//     .big-font {
+//       font-size: 1.5rem;
+//     }
 
-    em {
-      font-style: normal;
-      font-weight: 600;
-    }
-  }
-`;
+//     em {
+//       font-style: normal;
+//       font-weight: 600;
+//     }
+//   }
+// `;
 
 export default ChatIndexPage;
