@@ -29,6 +29,7 @@ import Loader from '../../components/common/Loader';
 import { useSendMessage } from '../../hooks/useSendMessage';
 import CallDistanceModal from '../../components/modal/CallDistanceModal';
 import { Client } from '@stomp/stompjs';
+import { stompBrokerURL } from '../../constants/baseURL';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -338,7 +339,7 @@ const ChatPage = () => {
       fetchOpponentProfile();
       // STOMP 클라이언트 생성
       const newClient = new Client({
-        brokerURL: 'wss://dev.dis-tance.com/meet',
+        brokerURL: stompBrokerURL,
         connectHeaders: {
           chatRoomId: roomId,
           memberId: myMemberId,
