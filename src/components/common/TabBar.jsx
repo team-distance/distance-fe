@@ -36,7 +36,6 @@ const BottomNavBar = () => {
     {
       name: '학교행사',
       path: '/event',
-      alternative: '/event/*',
       icon: '/assets/icon/icon-festival-stroked.svg',
       iconActive: '/assets/icon/icon-festival-filled.svg',
     },
