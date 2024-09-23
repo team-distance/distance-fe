@@ -169,87 +169,90 @@ const UserRegisterPage = () => {
         <p>전화번호를 인증해주세요</p>
       </WrapHeader>
 
-      <WrapForm $visible={true} onSubmit={submitTelNum(handleSubmitTelNum)}>
-        <TextInput
-          type="text"
-          label="전화번호"
-          placeholder="'-' 없이 입력"
-          buttonDisabled={!telNumValid}
-          buttonLabel={verifyButtonLabel}
-          register={registerTelNum('telNum', {
-            validate: (value) => value.length === 11 || '',
-          })}
-        />
-      </WrapForm>
-
-      <WrapForm
-        $visible={showVerifyNum && !isTelNumChanged}
-        onSubmit={submitVerifyNum(handleSubmitVerifyNum)}
-      >
-        <TextInput
-          type="text"
-          label="인증번호"
-          timerState={180}
-          // onTimerEnd={() => setIsSendMessage(false)}
-          placeholder="인증번호 입력"
-          buttonLabel="인증하기"
-          buttonDisabled={!verifyNumValid}
-          register={registerVerifyNum('verifyNum', {
-            validate: (value) => value.length === 6 || '',
-          })}
-        />
-        {showPassword && <Tip>인증되었습니다!</Tip>}
-      </WrapForm>
-
-      <WrapForm
-        className="last-form"
-        $visible={showPassword && !isTelNumChanged}
-        onSubmit={submitPassword(handleSubmitPassword)}
-      >
-        <TextInput
-          label="비밀번호"
-          type="password"
-          placeholder="숫자로만 6자리 이상"
-          register={registerPassword('password', {
-            validate: (value) => value.length >= 6 || '',
-          })}
-        />
-        {passwordValue === undefined || passwordValue.length === 0 ? (
-          <Tip className="invalid">
-            숫자로만 구성된 6자리 이상이어야 합니다.
-          </Tip>
-        ) : verifyPassword.password ? (
-          <Tip className="invalid">
-            숫자로만 구성된 6자리 이상이어야 합니다.
-          </Tip>
-        ) : (
-          <Tip className="valid">사용가능합니다.</Tip>
-        )}
-
-        <WrapCheckbox className="first-checkbox">
-          <Checkbox
-            label="(필수) 서비스 이용약관 동의"
-            register={registerPassword('agreeTerms', {
-              validate: (value) => value === true || '',
+      <div style={{ paddingBottom: '10rem' }}>
+        <WrapForm $visible={true} onSubmit={submitTelNum(handleSubmitTelNum)}>
+          <TextInput
+            type="text"
+            label="전화번호"
+            placeholder="'-' 없이 입력"
+            buttonDisabled={!telNumValid}
+            buttonLabel={verifyButtonLabel}
+            register={registerTelNum('telNum', {
+              validate: (value) => value.length === 11 || '',
             })}
           />
-          <ShowDetail onClick={openTermsModal}>더보기</ShowDetail>
-        </WrapCheckbox>
-        <WrapCheckbox>
-          <Checkbox
-            label="(필수) 개인정보 수집 및 이용 동의"
-            register={registerPassword('agreePrivacy', {
-              validate: (value) => value === true || '',
+        </WrapForm>
+
+        <WrapForm
+          $visible={showVerifyNum && !isTelNumChanged}
+          onSubmit={submitVerifyNum(handleSubmitVerifyNum)}
+        >
+          <TextInput
+            type="text"
+            label="인증번호"
+            timerState={180}
+            // onTimerEnd={() => setIsSendMessage(false)}
+            placeholder="인증번호 입력"
+            buttonLabel="인증하기"
+            buttonDisabled={!verifyNumValid}
+            register={registerVerifyNum('verifyNum', {
+              validate: (value) => value.length === 6 || '',
             })}
           />
-          <ShowDetail onClick={openPrivacyModal}>더보기</ShowDetail>
-        </WrapCheckbox>
-        <WrapButton>
-          <Button type="submit" size="large" disabled={!passwordValid}>
-            학교 선택하기
-          </Button>
-        </WrapButton>
-      </WrapForm>
+          {showPassword && <Tip>인증되었습니다!</Tip>}
+        </WrapForm>
+
+        <WrapForm
+          className="last-form"
+          $visible={showPassword && !isTelNumChanged}
+          onSubmit={submitPassword(handleSubmitPassword)}
+        >
+          <TextInput
+            label="비밀번호"
+            type="password"
+            placeholder="숫자로만 6자리 이상"
+            register={registerPassword('password', {
+              validate: (value) => value.length >= 6 || '',
+            })}
+          />
+          {passwordValue === undefined || passwordValue.length === 0 ? (
+            <Tip className="invalid">
+              숫자로만 구성된 6자리 이상이어야 합니다.
+            </Tip>
+          ) : verifyPassword.password ? (
+            <Tip className="invalid">
+              숫자로만 구성된 6자리 이상이어야 합니다.
+            </Tip>
+          ) : (
+            <Tip className="valid">사용가능합니다.</Tip>
+          )}
+
+          <WrapCheckbox className="first-checkbox">
+            <Checkbox
+              label="(필수) 서비스 이용약관 동의"
+              register={registerPassword('agreeTerms', {
+                validate: (value) => value === true || '',
+              })}
+            />
+            <ShowDetail onClick={openTermsModal}>더보기</ShowDetail>
+          </WrapCheckbox>
+
+          <WrapCheckbox>
+            <Checkbox
+              label="(필수) 개인정보 수집 및 이용 동의"
+              register={registerPassword('agreePrivacy', {
+                validate: (value) => value === true || '',
+              })}
+            />
+            <ShowDetail onClick={openPrivacyModal}>더보기</ShowDetail>
+          </WrapCheckbox>
+          <WrapButton>
+            <Button type="submit" size="large" disabled={!passwordValid}>
+              학교 선택하기
+            </Button>
+          </WrapButton>
+        </WrapForm>
+      </div>
     </div>
   );
 };
