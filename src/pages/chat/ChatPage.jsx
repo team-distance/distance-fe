@@ -29,6 +29,7 @@ import Loader from '../../components/common/Loader';
 import { useSendMessage } from '../../hooks/useSendMessage';
 import CallDistanceModal from '../../components/modal/CallDistanceModal';
 import { Client } from '@stomp/stompjs';
+import { useCheckComeIn } from '../../hooks/useCheckComeIn';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -141,17 +142,22 @@ const ChatPage = () => {
   };
 
   // 메시지 전송
-  const { sendImageMessage, sendTextMessage } = useSendMessage(
-    draftMessage,
-    setDraftMessage,
-    setFile,
-    file,
-    client,
-    roomId,
-    opponentMemberId,
-    myMemberId,
-    showWaitToast
-  );
+  const { sendImageMessage, sendTextMessage, sendComeInMessage } =
+    useSendMessage(
+      draftMessage,
+      setDraftMessage,
+      setFile,
+      file,
+      client,
+      roomId,
+      opponentMemberId,
+      myMemberId,
+      showWaitToast
+    );
+
+  // 읽음 신호 확인
+  const { isOpponentComeIn } = useCheckComeIn(messages, myMemberId);
+
   const sendMessage = async () => {
     if (!draftMessage.trim() && !file) return;
 
@@ -267,7 +273,6 @@ const ChatPage = () => {
   const checkBothAgreed = async () => {
     try {
       const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
-      console.log('둘다동의>>>>>>>>>>>>', response.data);
       setBothAgreed(response.data);
     } catch (error) {
       showRoomInfoErrorToast();
@@ -366,6 +371,9 @@ const ChatPage = () => {
       const staleMessages = fetchLocalMessages(setMessages);
       if (staleMessages.length === 0) fetchServerMessages(setMessages);
       else fetchServerUnreadMessages(messages, setMessages);
+
+      //receiver !== lastMessageId 읽음 표시 신호 보내기
+      if (isOpponentComeIn) sendComeInMessage();
 
       return () => {
         newClient.deactivate();
