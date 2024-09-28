@@ -374,6 +374,7 @@ const ChatPage = () => {
       else fetchServerUnreadMessages(messages, setMessages);
 
       //receiver !== lastMessageId 읽음 표시 신호 보내기
+      console.log('isOpponentComeIn', isOpponentComeIn);
       if (isOpponentComeIn) sendComeInMessage();
 
       return () => {

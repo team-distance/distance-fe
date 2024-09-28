@@ -7,7 +7,7 @@ export const useCheckComeIn = (messages, myId) => {
   useEffect(() => {
     if (lastMessage) {
       console.log(
-        'lastMessage.senderId:',
+        'lastMessage.senderId',
         lastMessage.senderId,
         lastMessage.senderType
       );
@@ -15,7 +15,7 @@ export const useCheckComeIn = (messages, myId) => {
         setIsOpponentComeIn(true);
       }
     }
-  }, [lastMessage, myId]);
+  }, [messages, lastMessage, myId]);
 
   return { isOpponentComeIn };
 };
