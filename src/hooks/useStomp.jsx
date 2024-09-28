@@ -1,4 +1,5 @@
 import { Client } from '@stomp/stompjs';
+import { stompBrokerURL } from '../constants/baseURL';
 
 export const useInitializeStompClient = (
   setClient,
@@ -26,7 +27,7 @@ export const useInitializeStompClient = (
 
   const initializeClient = () => {
     const newClient = new Client({
-      brokerURL: 'wss://dev.dis-tance.com/meet',
+      brokerURL: stompBrokerURL,
       connectHeaders: {
         chatRoomId: roomId,
         memberId: myMemberId,

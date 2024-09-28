@@ -80,6 +80,13 @@ const HomeIndexPage = () => {
     fetchMembers();
   }, [matchingConfig]);
 
+  // return (
+  //   <div>
+  //     <div>유저수가 급증하여 서버가 일시 중단되었습니다.</div>
+  //     <div>8:00 ~ 8:30까지 최대한 복구하겠습니다.</div>
+  //   </div>
+  // );
+
   return (
     <>
       <Banner alertText={alertTextList} />
