@@ -10,6 +10,7 @@ import useModal from '../../hooks/useModal';
 import CharacterModal from '../../components/modal/CharacterModal';
 import AttractivenessModal from '../../components/modal/AttractivenessModal';
 import HobbyModal from '../../components/modal/HobbyModal';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const ProfileEditPage = () => {
   const navigate = useNavigate();
@@ -18,7 +19,31 @@ const ProfileEditPage = () => {
   const [selectedMBTI, setSelectedMBTI] = useState('');
   const [attractiveness, setAttractiveness] = useState([]);
   const [hobby, setHobby] = useState([]);
-  const [hashtagCount, setHashtagCount] = useState(0);
+
+  const hashtagCount = attractiveness.length + hobby.length;
+  const isDisabled =
+    !selectedAnimal || !selectedMBTI || hashtagCount < 3 || hashtagCount > 5;
+
+  const queryClient = useQueryClient();
+
+  const { data: myData } = useQuery({
+    queryKey: ['profile'],
+    queryFn: () => instance.get('/member/profile'),
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
+
+  const mutation = useMutation({
+    mutationFn: (data) => instance.patch('/member/profile/update', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      alert('회원정보 수정이 완료되었습니다.');
+      navigate('/mypage');
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
 
   const { openModal: openCharacterModal, closeModal: closeCharacterModal } =
     useModal(() => (
@@ -51,26 +76,18 @@ const ProfileEditPage = () => {
     )
   );
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    await instance
-      .patch('/member/profile/update', {
-        department: department,
-        mbti: selectedMBTI,
-        memberCharacter: selectedAnimal,
-        memberHobbyDto: hobby.map((value) => ({ hobby: value })),
-        memberTagDto: attractiveness.map((value) => ({ tag: value })),
-      })
-      .then(() => {
-        alert('회원정보 수정이 완료되었습니다.');
-      })
-      .then(() => {
-        navigate('/mypage');
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    const data = {
+      department: department,
+      mbti: selectedMBTI,
+      memberCharacter: selectedAnimal,
+      memberHobbyDto: hobby.map((value) => ({ hobby: value })),
+      memberTagDto: attractiveness.map((value) => ({ tag: value })),
+    };
+
+    mutation.mutate(data);
   };
 
   const filterSelectedAttractiveness = (target) => {
@@ -81,33 +98,16 @@ const ProfileEditPage = () => {
     setHobby((prev) => prev.filter((value) => value !== target));
   };
 
-  const isDisabled =
-    !selectedAnimal || !selectedMBTI || hashtagCount < 3 || hashtagCount > 5;
-
   useEffect(() => {
-    setHashtagCount(attractiveness.length + hobby.length);
-  }, [attractiveness, hobby]);
+    if (myData.data) {
+      setDepartment(myData.data.department);
+      setSelectedAnimal(myData.data.memberCharacter);
+      setSelectedMBTI(myData.data.mbti);
+      setAttractiveness(myData.data.memberTagDto.map((value) => value.tag));
+      setHobby(myData.data.memberHobbyDto.map((value) => value.hobby));
+    }
+  }, [myData]);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      await instance
-        .get('/member/profile')
-        .then((response) => {
-          setDepartment(response.data.department);
-          setSelectedAnimal(response.data.memberCharacter);
-          setSelectedMBTI(response.data.mbti);
-          setAttractiveness(
-            response.data.memberTagDto.map((value) => value.tag)
-          );
-          setHobby(response.data.memberHobbyDto.map((value) => value.hobby));
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    };
-
-    fetchProfile();
-  }, []);
   return (
     <Wrapper>
       <WrapContent>

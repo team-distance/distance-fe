@@ -1,73 +1,12 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { isLoggedInState } from '../../store/auth';
 import { Link } from 'react-router-dom';
-import { myDataState } from '../../store/myData';
-import { CHARACTERS } from '../../constants/CHARACTERS';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { instance } from '../../api/instance';
 import AuthUnivState from './AuthUnivState';
-import MyProfileModal from '../modal/MyProfileModal';
-import useModal from '../../hooks/useModal';
-import {useToast} from '../../hooks/useToast';
+import ProfileRing from './ProfileRing';
 
 const Header = () => {
-  const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
-  const [myData, setMyData] = useRecoilState(myDataState);
-  const navigate = useNavigate();
-
-  const { openModal: openMyProfileModal, closeModal: closeMyProfileModal } =
-    useModal(() => (
-      <MyProfileModal
-        closeModal={closeMyProfileModal}
-        onClick={navigateToEditProfilePage}
-        myData={myData}
-        handleLogout={handleLogout}
-      />
-    ));
-
-    const {showToast: showMyDataErrorToast} = useToast(
-      () => <span>
-        프로필 정보를 가져오는데 실패했어요!
-      </span>, 'my-data-error', 'bottom-center'
-    )
-
-  const handleLogout = async () => {
-    const confirmLogout = window.confirm('로그아웃 하시겠습니까?');
-    if (!confirmLogout) return;
-
-    try {
-      await instance.get('/member/logout');
-      setIsLoggedIn(false);
-      navigate('/');
-    } catch (error) {
-      console.log(error);
-    } finally {
-      localStorage.clear();
-      closeMyProfileModal();
-      navigate('/');
-    }
-  };
-
-  const navigateToEditProfilePage = () => {
-    closeMyProfileModal();
-    navigate('/mypage/profile', { state: myData });
-  };
-
-  const getMyData = async () => {
-    if (!isLoggedIn) return;
-    try {
-      const res = await instance.get('/member/profile');
-      setMyData(res.data);
-    } catch (error) {
-      showMyDataErrorToast();
-    }
-  };
-
-  useEffect(() => {
-    getMyData();
-  }, []);
+  const isLoggedIn = useRecoilValue(isLoggedInState);
 
   return (
     <>
@@ -76,12 +15,7 @@ const Header = () => {
         {isLoggedIn ? (
           <ProfileWrapper>
             <AuthUnivState />
-            <ProfileRing onClick={openMyProfileModal}>
-              <Character
-                $xPos={CHARACTERS[myData.memberCharacter]?.position[0]}
-                $yPos={CHARACTERS[myData.memberCharacter]?.position[1]}
-              />
-            </ProfileRing>
+            <ProfileRing />
           </ProfileWrapper>
         ) : (
           <StyledLink to="/login">로그인</StyledLink>
@@ -111,38 +45,6 @@ const ProfileWrapper = styled.div`
 const StyledLink = styled(Link)`
   font-weight: 600;
   color: #ff625d;
-`;
-
-const ProfileRing = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    border-radius: 50%;
-    background: linear-gradient(45deg, #ff625d, #ffac0b);
-    z-index: -1;
-  }
-`;
-
-const Character = styled.div`
-  width: 32px;
-  height: 32px;
-  background-image: url('/assets/sp_character.png');
-  background-position: ${(props) =>
-    `-${props.$xPos * 32}px -${props.$yPos * 32}px`};
-  background-size: calc(100% * 4);
 `;
 
 export default Header;

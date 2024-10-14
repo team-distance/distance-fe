@@ -8,6 +8,7 @@ import { useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
 import Badge from '../../components/common/Badge';
 import Loader from '../../components/common/Loader';
+import { useQuery } from '@tanstack/react-query';
 
 const ChatIndexPage = () => {
   const navigate = useNavigate();
@@ -15,7 +16,12 @@ const ChatIndexPage = () => {
   const [loading, setLoading] = useState(false);
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const [waitingCount, setWaitingCount] = useState(0);
-  const [authUniv, setAuthUniv] = useState(false);
+
+  const { data: authUniv } = useQuery({
+    queryKey: ['authUniv'],
+    queryFn: () => instance.get('/member/check/university'),
+    enabled: false,
+  });
 
   const fetchChatList = async () => {
     try {
@@ -39,6 +45,10 @@ const ChatIndexPage = () => {
     }
   };
 
+  useEffect(() => {
+    console.log(authUniv);
+  }, [authUniv]);
+
   const fetchChatWaiting = async () => {
     try {
       const res = await instance.get('/waiting').then((res) => res.data);
@@ -48,21 +58,9 @@ const ChatIndexPage = () => {
     }
   };
 
-  const checkVerified = async () => {
-    try {
-      const authUniv = await instance.get('/member/check/university');
-      if (authUniv.data === 'SUCCESS' || authUniv.data === 'PENDING') {
-        setAuthUniv(true);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     fetchChatList();
     fetchChatWaiting();
-    checkVerified();
   }, []);
 
   const formatTime = (time) => {
@@ -89,7 +87,7 @@ const ChatIndexPage = () => {
   };
 
   const onClickChatroom = async (chat) => {
-    if (!authUniv) {
+    if (authUniv.data !== 'SUCCESS' || authUniv.data === 'PENDING') {
       window.confirm('학생 인증 후 이용해주세요.') && navigate('/verify/univ');
     } else {
       if (chat.opponentMemberId === null) {
