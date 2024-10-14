@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useState } from 'react';
 import { instance } from '../../api/instance';
@@ -13,14 +13,24 @@ import MatchingConfigBottomsheet from '../../components/modal/MatchingConfigBott
 import { useRecoilValue } from 'recoil';
 import { matchingConfigState } from '../../store/matchingConfig';
 import { useCreateChatRoom } from '../../hooks/useCreateChatRoom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const HomeIndexPage = () => {
-  const [memberState, setMemberState] = useState();
-  const [loading, setLoading] = useState(false);
   const [isProfileButtonClicked, setIsProfileButtonClicked] = useState(false);
-
+  const queryClient = useQueryClient();
   const matchingConfig = useRecoilValue(matchingConfigState);
   const createChatRoom = useCreateChatRoom();
+
+  const { data: matchingList, isLoading } = useQuery({
+    queryKey: ['matching', matchingConfig],
+    queryFn: () =>
+      instance
+        .get('/gps/matching', {
+          params: matchingConfig,
+        })
+        .then((res) => res.data.matchedUsers),
+    staleTime: Infinity,
+  });
 
   const { openModal: openProfileModal, closeModal: closeProfileModal } =
     useModal((profile) => (
@@ -46,18 +56,6 @@ const HomeIndexPage = () => {
     { backdrop: false }
   );
 
-  const fetchMembers = async () => {
-    try {
-      setLoading(true);
-      const res = await instance.post('/gps/matching', matchingConfig);
-      setMemberState(res.data.matchedUsers);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const alertTextList = [
     // {
     //   text1: '📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입',
@@ -72,45 +70,42 @@ const HomeIndexPage = () => {
     },
   ];
 
-  useEffect(() => {
-    fetchMembers();
-  }, []);
-
-  useEffect(() => {
-    fetchMembers();
-  }, [matchingConfig]);
-
   return (
     <>
       <Banner alertText={alertTextList} />
 
-      {memberState && memberState.length === 0 ? (
+      {isLoading ? (
+        <Loader />
+      ) : matchingList.length ? (
+        <ProfileContainer>
+          {matchingList.map((profile, index) => (
+            <Profile
+              key={index}
+              school={profile.school}
+              reportCount={profile.reportCount}
+              profile={profile}
+              onClick={() => openProfileModal(profile)}
+            />
+          ))}
+        </ProfileContainer>
+      ) : (
         <EmptyContainer>
           <div className="wrap">
-            <img src={'/assets/empty-home.svg'} alt="empty icon" />
+            <img src="/assets/empty-home.svg" alt="empty icon" />
             <div>현재 근처에 있는 사람이 없어요!</div>
           </div>
         </EmptyContainer>
-      ) : (
-        <ProfileContainer>
-          {loading ? (
-            <Loader />
-          ) : (
-            memberState &&
-            memberState.map((profile, index) => (
-              <Profile
-                key={index}
-                school={profile.school}
-                reportCount={profile.reportCount}
-                profile={profile}
-                onClick={() => openProfileModal(profile)}
-              />
-            ))
-          )}
-        </ProfileContainer>
       )}
+
       <MatchingConfigButton onClick={openMatchingConfigModal} />
-      <ReloadButton onClick={fetchMembers} />
+
+      <ReloadButton
+        onClick={() =>
+          queryClient.invalidateQueries({
+            queryKey: ['matching', matchingConfig],
+          })
+        }
+      />
     </>
   );
 };
