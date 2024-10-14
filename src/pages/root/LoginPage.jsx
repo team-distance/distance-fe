@@ -72,9 +72,6 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    queryClient.invalidateQueries({ queryKey: ['matching'] });
-
-    console.log('loginValue', loginValue);
     if (telNumTestFlag || pwTestFlag) {
       setShowWarning(true);
       return;

@@ -26,7 +26,6 @@ const MyIndexPage = () => {
 
     try {
       await instance.get('/member/logout');
-      queryClient.invalidateQueries({ queryKey: ['matching'] });
       setIsLoggedIn(false);
       navigate('/');
     } catch (error) {

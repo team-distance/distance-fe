@@ -40,8 +40,6 @@ const DonePage = () => {
     }
 
     const instantLogin = async () => {
-      queryClient.invalidateQueries({ queryKey: ['matching'] });
-
       if (!isAlarmActive || !isGpsActive) {
         alert('알림, 위치 권한을 허용해주세요!');
       }

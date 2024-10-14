@@ -42,11 +42,13 @@ import MatchingSuccess from './pages/eventMatching/MatchingSuccess';
 import FestivalIndexPage from './pages/festival/FestivalIndexPage';
 import Program from './components/festival/Program';
 import FoodTruck from './components/festival/FoodTruck';
+import { useQueryClient } from '@tanstack/react-query';
 
 function App() {
   useRouteChangeTrack();
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const currentLocation = useGPS(isLoggedIn);
+  const queryClient = useQueryClient();
 
   const { showToast: showGPSUpdateErrorToast } = useToast(
     () => <span>위치 정보를 업데이트하는데 실패했어요!</span>,
@@ -75,6 +77,11 @@ function App() {
         });
     }
   }, [currentLocation]);
+
+  useEffect(() => {
+    
+    queryClient.invalidateQueries();
+  }, [isLoggedIn]);
 
   return (
     <Routes>
