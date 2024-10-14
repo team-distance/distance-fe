@@ -9,12 +9,14 @@ import { ClipLoader } from 'react-spinners';
 import { useToast } from '../../hooks/useToast';
 import { useCheckAlarmActive } from '../../hooks/useCheckAlarmActive';
 import { useCheckGpsActive } from '../../hooks/useCheckGpsActive';
+import { useQueryClient } from '@tanstack/react-query';
 
 const DonePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const telNum = location.state?.telNum;
   const password = location.state?.password;
+  const queryClient = useQueryClient();
 
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
 
@@ -38,6 +40,8 @@ const DonePage = () => {
     }
 
     const instantLogin = async () => {
+      queryClient.invalidateQueries({ queryKey: ['matching'] });
+
       if (!isAlarmActive || !isGpsActive) {
         alert('알림, 위치 권한을 허용해주세요!');
       }
