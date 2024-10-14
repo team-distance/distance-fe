@@ -15,8 +15,8 @@ const ProfileRing = () => {
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
 
   const { data: myData, isError } = useQuery({
-    queryKey: ['profile'],
-    queryFn: () => instance.get('/member/profile'),
+    queryKey: ['myProfile'],
+    queryFn: () => instance.get('/member/profile').then((res) => res.data),
     staleTime: Infinity,
   });
 
@@ -25,7 +25,7 @@ const ProfileRing = () => {
       <MyProfileModal
         closeModal={closeMyProfileModal}
         onClick={navigateToEditProfilePage}
-        myData={myData.data}
+        myData={myData}
         handleLogout={handleLogout}
       />
     ));
@@ -63,11 +63,11 @@ const ProfileRing = () => {
   }, [isError]);
 
   return (
-    myData?.data && (
+    myData && (
       <Ring onClick={openMyProfileModal}>
         <Character
-          $xPos={CHARACTERS[myData.data.memberCharacter]?.position[0]}
-          $yPos={CHARACTERS[myData.data.memberCharacter]?.position[1]}
+          $xPos={CHARACTERS[myData.memberCharacter]?.position[0]}
+          $yPos={CHARACTERS[myData.memberCharacter]?.position[1]}
         />
       </Ring>
     )

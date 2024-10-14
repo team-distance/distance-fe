@@ -8,21 +8,22 @@ const AuthUnivState = () => {
 
   const { data: authUniv } = useQuery({
     queryKey: ['authUniv'],
-    queryFn: () => instance.get('/member/check/university'),
+    queryFn: () =>
+      instance.get('/member/check/university').then((res) => res.data),
   });
 
   useEffect(() => {
     queryClient.setQueryDefaults(['authUniv'], {
-      staleTime: authUniv?.data === 'SUCCESS' && Infinity,
+      staleTime: authUniv === 'SUCCESS' && Infinity,
     });
-  }, [authUniv?.data]);
+  }, [authUniv]);
 
-  switch (authUniv?.data) {
+  switch (authUniv) {
     case 'SUCCESS':
       return;
     case 'PENDING':
       return (
-        <Wrapper $authUniv={authUniv?.data}>
+        <Wrapper $authUniv={authUniv}>
           <img
             className="icon"
             src="/assets/auth-warning.svg"
@@ -39,7 +40,7 @@ const AuthUnivState = () => {
     case 'FAILED_6':
     case 'FAILED_7':
       return (
-        <Wrapper $authUniv={authUniv?.data}>
+        <Wrapper $authUniv={authUniv}>
           <img className="icon" src="/assets/auth-fail.svg" alt="실패 아이콘" />
           <div>교내 학생 인증 실패</div>
         </Wrapper>

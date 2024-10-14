@@ -19,7 +19,8 @@ const ChatIndexPage = () => {
 
   const { data: authUniv } = useQuery({
     queryKey: ['authUniv'],
-    queryFn: () => instance.get('/member/check/university'),
+    queryFn: () =>
+      instance.get('/member/check/university').then((res) => res.data),
     enabled: false,
   });
 
@@ -44,10 +45,6 @@ const ChatIndexPage = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    console.log(authUniv);
-  }, [authUniv]);
 
   const fetchChatWaiting = async () => {
     try {
@@ -87,7 +84,7 @@ const ChatIndexPage = () => {
   };
 
   const onClickChatroom = async (chat) => {
-    if (authUniv.data !== 'SUCCESS' || authUniv.data === 'PENDING') {
+    if (authUniv !== 'SUCCESS' || authUniv === 'PENDING') {
       window.confirm('학생 인증 후 이용해주세요.') && navigate('/verify/univ');
     } else {
       if (chat.opponentMemberId === null) {

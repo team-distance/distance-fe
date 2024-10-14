@@ -27,16 +27,15 @@ const ProfileEditPage = () => {
   const queryClient = useQueryClient();
 
   const { data: myData } = useQuery({
-    queryKey: ['profile'],
-    queryFn: () => instance.get('/member/profile'),
+    queryKey: ['myProfile'],
+    queryFn: () => instance.get('/member/profile').then((res) => res.data),
     staleTime: Infinity,
-    gcTime: Infinity,
   });
 
   const mutation = useMutation({
     mutationFn: (data) => instance.patch('/member/profile/update', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      queryClient.invalidateQueries({ queryKey: ['myProfile'] });
       alert('회원정보 수정이 완료되었습니다.');
       navigate('/mypage');
     },
@@ -99,12 +98,12 @@ const ProfileEditPage = () => {
   };
 
   useEffect(() => {
-    if (myData.data) {
-      setDepartment(myData.data.department);
-      setSelectedAnimal(myData.data.memberCharacter);
-      setSelectedMBTI(myData.data.mbti);
-      setAttractiveness(myData.data.memberTagDto.map((value) => value.tag));
-      setHobby(myData.data.memberHobbyDto.map((value) => value.hobby));
+    if (myData) {
+      setDepartment(myData.department);
+      setSelectedAnimal(myData.memberCharacter);
+      setSelectedMBTI(myData.mbti);
+      setAttractiveness(myData.memberTagDto.map((value) => value.tag));
+      setHobby(myData.memberHobbyDto.map((value) => value.hobby));
     }
   }, [myData]);
 

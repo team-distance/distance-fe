@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { UNIV_STATE } from '../../constants/collegeState';
 import Checkbox from '../../components/common/Checkbox';
 import { useToast, usePromiseToast } from '../../hooks/useToast';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 const VerifyEmailPage = () => {
   const navigate = useNavigate();
