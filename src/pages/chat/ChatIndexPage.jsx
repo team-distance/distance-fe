@@ -84,7 +84,7 @@ const ChatIndexPage = () => {
   };
 
   const onClickChatroom = async (chat) => {
-    if (authUniv !== 'SUCCESS' || authUniv === 'PENDING') {
+    if (authUniv?.startsWith('FAILED')) {
       window.confirm('학생 인증 후 이용해주세요.') && navigate('/verify/univ');
     } else {
       if (chat.opponentMemberId === null) {
