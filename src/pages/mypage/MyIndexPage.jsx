@@ -5,14 +5,16 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
 import { myDataState } from '../../store/myData';
 import { instance } from '../../api/instance';
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 import { useCheckAlarmActive } from '../../hooks/useCheckAlarmActive';
 import { useCheckGpsActive } from '../../hooks/useCheckGpsActive';
+import { useQueryClient } from '@tanstack/react-query';
 
 const MyIndexPage = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
   const myData = useRecoilValue(myDataState);
+  const queryClient = useQueryClient();
 
   //알림, GPS 설정 관리
   const alarmActive = useCheckAlarmActive();
@@ -24,6 +26,7 @@ const MyIndexPage = () => {
 
     try {
       await instance.get('/member/logout');
+      queryClient.invalidateQueries({ queryKey: ['matching'] });
       setIsLoggedIn(false);
       navigate('/');
     } catch (error) {
@@ -103,44 +106,45 @@ const MyIndexPage = () => {
               <div className="menu" onClick={() => navigate('/privacy')}>
                 <div>개인정보 처리방침</div>
               </div>
-              <div
-                className="menu"
-                onClick={() => navigate('/notification')}
-              >
+              <div className="menu" onClick={() => navigate('/notification')}>
                 <div>앱푸시 알림 해결하기</div>
-                {!alarmActive && <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ rotate: 360, scale: 1 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 260,
-                    damping: 20
-                  }}
-                >
-                  <img
-                    className="warning-icon"
-                    src="/assets/mypage/warning-icon.png"
-                    alt="PUSH 알림 문제 해결"
-                  />
-                </motion.div>}
+                {!alarmActive && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ rotate: 360, scale: 1 }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 260,
+                      damping: 20,
+                    }}
+                  >
+                    <img
+                      className="warning-icon"
+                      src="/assets/mypage/warning-icon.png"
+                      alt="PUSH 알림 문제 해결"
+                    />
+                  </motion.div>
+                )}
               </div>
               <div className="menu" onClick={() => navigate('/gps')}>
                 <div>GPS 문제 해결</div>
-                {!gpsActive && <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ rotate: 360, scale: 1 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 260,
-                    damping: 20
-                  }}
-                >
-                  <img
-                    className="warning-icon"
-                    src="/assets/mypage/warning-icon.png"
-                    alt="GPS 문제 해결"
-                  />
-                </motion.div>}
+                {!gpsActive && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ rotate: 360, scale: 1 }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 260,
+                      damping: 20,
+                    }}
+                  >
+                    <img
+                      className="warning-icon"
+                      src="/assets/mypage/warning-icon.png"
+                      alt="GPS 문제 해결"
+                    />
+                  </motion.div>
+                )}
               </div>
               <a
                 className="menu border"
