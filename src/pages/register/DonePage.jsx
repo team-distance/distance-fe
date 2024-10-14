@@ -9,14 +9,12 @@ import { ClipLoader } from 'react-spinners';
 import { useToast } from '../../hooks/useToast';
 import { useCheckAlarmActive } from '../../hooks/useCheckAlarmActive';
 import { useCheckGpsActive } from '../../hooks/useCheckGpsActive';
-import { useQueryClient } from '@tanstack/react-query';
 
 const DonePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const telNum = location.state?.telNum;
   const password = location.state?.password;
-  const queryClient = useQueryClient();
 
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
 

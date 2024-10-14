@@ -9,7 +9,6 @@ import Button from '../../components/common/Button';
 import { onGetToken } from '../../firebaseConfig';
 import { registerDataState } from '../../store/registerDataState';
 import Loader from '../../components/common/Loader';
-import { useQueryClient } from '@tanstack/react-query';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -23,8 +22,6 @@ const LoginPage = () => {
   const [loginResult, setLoginResult] = useState();
   const [showWarning, setShowWarning] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const queryClient = useQueryClient();
 
   const [loginValue, setLoginValue] = useState({
     telNum: '',

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { CHARACTERS } from '../../constants/CHARACTERS';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { instance } from '../../api/instance';
 import useModal from '../../hooks/useModal';
 import MyProfileModal from '../modal/MyProfileModal';
@@ -13,7 +13,6 @@ import { isLoggedInState } from '../../store/auth';
 const ProfileRing = () => {
   const navigate = useNavigate();
   const setIsLoggedIn = useSetRecoilState(isLoggedInState);
-  const queryClient = useQueryClient();
 
   const { data: myData, isError } = useQuery({
     queryKey: ['myProfile'],

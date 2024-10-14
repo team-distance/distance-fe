@@ -8,13 +8,11 @@ import { instance } from '../../api/instance';
 import { motion } from 'framer-motion';
 import { useCheckAlarmActive } from '../../hooks/useCheckAlarmActive';
 import { useCheckGpsActive } from '../../hooks/useCheckGpsActive';
-import { useQueryClient } from '@tanstack/react-query';
 
 const MyIndexPage = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(isLoggedInState);
   const myData = useRecoilValue(myDataState);
-  const queryClient = useQueryClient();
 
   //알림, GPS 설정 관리
   const alarmActive = useCheckAlarmActive();
