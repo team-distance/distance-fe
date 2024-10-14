@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { UNIV_STATE } from '../../constants/collegeState';
 import Checkbox from '../../components/common/Checkbox';
 import { useToast, usePromiseToast } from '../../hooks/useToast';
+import { useQueryClient } from '@tanstack/react-query';
 
 const VerifyEmailPage = () => {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ const VerifyEmailPage = () => {
     'verifynum-error'
   );
   const { showPromiseToast: showSendMessageToast } = usePromiseToast();
+
+  const queryClient = useQueryClient();
 
   const handleChangeEmail = (e) => {
     setSchoolEmail(e.target.value);
@@ -80,24 +83,6 @@ const VerifyEmailPage = () => {
         }
       }
     );
-
-    // toast.promise(response, {
-    //   loading: '전송 중...',
-    //   success: () => {
-    //     setIsSendEmail(true);
-    //     return '인증메일이 전송되었습니다.';
-    //   },
-    //   error: (err) => {
-    //     if (err.response.data.code === 'INVALID_EMAIL_FORMAT') {
-    //       return '이메일 형식이 올바르지 않습니다.';
-    //     } else if (err.response.data.code === 'EXIST_EMAIL') {
-    //       return '이미 존재하는 이메일 입니다.';
-    //     } else {
-    //       return '인증을 다시 시도해주세요.';
-    //     }
-    //   },
-    // });
-    //---------------------------------------------------------
   };
 
   const verifyEmail = async () => {
@@ -108,6 +93,7 @@ const VerifyEmailPage = () => {
           ? schoolEmail
           : schoolEmail + domain[domainIndex],
       });
+      queryClient.invalidateQueries({ queryKey: ['authUniv'] });
       alert('인증되었습니다.');
       navigate('/');
     } catch (error) {

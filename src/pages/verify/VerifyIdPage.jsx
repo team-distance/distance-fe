@@ -4,64 +4,53 @@ import Button from '../../components/common/Button';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import { ClipLoader } from 'react-spinners';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { scaleImage } from '../../utils/scaleImage';
+import { useToast } from '../../hooks/useToast';
 
 const VerifyMobileIdPage = () => {
-  const navigate = useNavigate();
-
-  const fileInputRef = useRef();
-  const canvasRef = useRef(null);
-
-  const [uploadedImage, setUploadedImage] = useState(null);
   const [file, setFile] = useState(null);
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
   const [schoolId, setSchoolId] = useState('');
 
-  const onChangeImage = (e) => {
+  const fileInputRef = useRef();
+
+  const queryClient = useQueryClient();
+
+  const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationFn: (data) => instance.post('/studentcard/send', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['authUniv'] });
+      alert('인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.');
+      navigate('/');
+    },
+    onError: (error) => {
+      alert('학생증 전송에 실패했습니다. 다시 시도해주세요.');
+    },
+  });
+
+  const { showToast: showFileErrorToast } = useToast(
+    () => <span>이미지를 올리는데 실패했습니다. 다시 시도해주세요.</span>,
+    'my-data-error',
+    'bottom-center'
+  );
+
+  const onChangeImage = async (e) => {
     const file = e.target.files[0];
 
     if (file) {
-      setIsDisabled(false);
-
       if (!file.type.startsWith('image/')) {
         alert('이미지 파일만 업로드 가능합니다.');
         return;
       }
 
-      const imageUrl = URL.createObjectURL(file);
-      setUploadedImage(imageUrl);
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const img = new Image();
-        img.onload = function () {
-          const canvas = canvasRef.current;
-          const ctx = canvas.getContext('2d');
-
-          // 이미지 크기를 조절
-          const scaleFactor = 0.3;
-          canvas.width = img.width * scaleFactor;
-          canvas.height = img.height * scaleFactor;
-
-          // 축소된 크기로 이미지 그리기
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-          // canvas의 내용을 이미지 파일로 변환 (포맷, 품질)
-          canvas.toBlob(
-            function (blob) {
-              console.log('Resized image size:', blob.size);
-              setFile(blob);
-            },
-            'image/jpeg',
-            0.7
-          );
-        };
-        img.src = e.target.result; // 파일 리더 결과를 이미지 소스로 설정
-      };
-      reader.readAsDataURL(file); // 파일을 Data URL로 읽기
-
-      console.log(e.target.files);
-      console.log(imageUrl);
+      try {
+        const scaledImage = await scaleImage(file, 0.3, 'image/jpeg', 0.7);
+        setFile(scaledImage);
+      } catch (error) {
+        showFileErrorToast();
+      }
     }
   };
 
@@ -74,26 +63,11 @@ const VerifyMobileIdPage = () => {
       alert('이미지를 먼저 업로드해주세요.');
       return;
     }
+
     const formData = new FormData();
     formData.append('studentcard', file);
 
-    try {
-      setIsLoading(true);
-      setIsDisabled(true);
-      if (
-        window.confirm(
-          '인증되었습니다. 식별 불가능한 사진일 경우 사용이 제한됩니다.'
-        )
-      ) {
-        await instance.post('/studentcard/send', formData);
-        navigate('/');
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-      setIsDisabled(false);
-    }
+    mutation.mutate(formData);
   };
 
   useEffect(() => {
@@ -108,6 +82,7 @@ const VerifyMobileIdPage = () => {
         console.log(error);
       }
     };
+
     getDomain();
   }, []);
 
@@ -115,10 +90,10 @@ const VerifyMobileIdPage = () => {
     <WrapContent>
       <Heading2>'학생증'으로 인증하기</Heading2>
 
-      {uploadedImage ? (
+      {file ? (
         <>
           <UploadedImageDiv
-            src={uploadedImage}
+            src={URL.createObjectURL(file)}
             alt="profile"
             onClick={handleButtonClick}
           />
@@ -129,7 +104,6 @@ const VerifyMobileIdPage = () => {
             onChange={onChangeImage}
             hidden
           />
-          <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
         </>
       ) : (
         <UploadDiv onClick={handleButtonClick}>
@@ -142,11 +116,15 @@ const VerifyMobileIdPage = () => {
             onChange={onChangeImage}
             hidden
           />
-          <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
         </UploadDiv>
       )}
-      <Button size={'large'} onClick={sendStudentId} disabled={isDisabled}>
-        {isLoading ? (
+
+      <Button
+        size={'large'}
+        onClick={sendStudentId}
+        disabled={!file || mutation.isPending}
+      >
+        {mutation.isPending ? (
           <div
             style={{
               display: 'flex',
@@ -236,6 +214,7 @@ const UploadDiv = styled.div`
   height: 185px;
   border-radius: 20px;
   border: 2px dashed #ff625d;
+  box-sizing: border-box;
 
   img {
     width: 20%;
