@@ -3,13 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 
 export const useFetchDistance = (roomId) => {
   const { data: distance } = useQuery({
-    queryKey: ['distance', roomId],
+    queryKey: ['distance', { chatRoomId: roomId }],
     queryFn: () =>
       instance
         .get(`/gps/distance/${roomId}`)
         .then((res) => res.data)
         .then((data) => parseInt(data.distance)),
-    initialData: -1,
+    placeholderData: -1,
     staleTime: Infinity,
   });
 
