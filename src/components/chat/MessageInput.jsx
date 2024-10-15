@@ -6,8 +6,6 @@ import useMenuAnimation from '../../hooks/useMenuAnimation';
 
 const MessageInput = ({
   value,
-  uploadedImage,
-  setUploadedImage,
   file,
   setFile,
   leaveButtonClickHandler,
@@ -41,19 +39,19 @@ const MessageInput = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     submitHandler();
-    setUploadedImage(null);
+    setFile(null);
   };
 
   const deleteImage = () => {
-    setUploadedImage(null);
     setFile(null);
   };
 
   useEffect(() => {
-    if (uploadedImage) setIsMenuOpen(false);
-  }, [uploadedImage]);
+    if (file) setIsMenuOpen(false);
+  }, [file]);
 
   const isFirstRender = useRef(true);
+
   useEffect(() => {
     isFirstRender.current = false;
   }, []);
@@ -67,7 +65,6 @@ const MessageInput = ({
         handleReport={reportButtonClickHandler}
         file={file}
         setFile={setFile}
-        setUploadedImage={setUploadedImage}
         isFirstRender={isFirstRender.current}
       />
       <InputContainer ref={containerRef}>
@@ -80,7 +77,7 @@ const MessageInput = ({
               placeholder="상대방이 나갔습니다."
               disabled
             />
-          ) : uploadedImage ? (
+          ) : file ? (
             <ImageInput>
               <WrapImage>
                 <img
@@ -91,7 +88,7 @@ const MessageInput = ({
                 />
                 <img
                   className="image-preview"
-                  src={uploadedImage}
+                  src={URL.createObjectURL(file)}
                   alt="preview"
                 />
               </WrapImage>
