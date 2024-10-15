@@ -84,12 +84,11 @@ const StyledImage = styled.div`
 `;
 
 const WrapText = styled.div`
-  width: 90%;
+  width: 80%;
 `;
 
 const School = styled.div`
   color: #000;
-  text-align: center;
   font-family: Pretendard;
   font-size: 0.75rem;
   font-style: normal;
@@ -107,7 +106,6 @@ const Department = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 12ch; /* 최대 7글자까지 제한 (ch는 글자 수 기준 너비 단위) */
 `;
 
 const TagContainer = styled.div`
