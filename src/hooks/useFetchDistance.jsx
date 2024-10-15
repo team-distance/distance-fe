@@ -1,22 +1,17 @@
-import { useEffect, useState } from 'react';
 import { instance } from '../api/instance';
+import { useQuery } from '@tanstack/react-query';
 
 export const useFetchDistance = (roomId) => {
-  const [distance, setDistance] = useState(-1);
-
-  const fetchDistance = async () => {
-    try {
-      const distance = await instance.get(`/gps/distance/${roomId}`);
-      const parseDistance = parseInt(distance.data.distance);
-      setDistance(parseDistance);
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchDistance();
-  }, []);
+  const { data: distance } = useQuery({
+    queryKey: ['distance', roomId],
+    queryFn: () =>
+      instance
+        .get(`/gps/distance/${roomId}`)
+        .then((res) => res.data)
+        .then((data) => parseInt(data.distance)),
+    initialData: -1,
+    staleTime: Infinity,
+  });
 
   return distance;
 };
