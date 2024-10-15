@@ -56,7 +56,6 @@ const ChatPage = () => {
   const [bothAgreed, setBothAgreed] = useState(false);
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [uploadedImage, setUploadedImage] = useState(null);
   const [file, setFile] = useState(null);
   const [isShowImage, setIsShowImage] = useState(false);
   const [imgSrc, setImageSrc] = useState('');
@@ -431,8 +430,6 @@ const ChatPage = () => {
             <MessageInputWrapper>
               <MessageInput
                 value={draftMessage}
-                uploadedImage={uploadedImage}
-                setUploadedImage={setUploadedImage}
                 file={file}
                 setFile={setFile}
                 leaveButtonClickHandler={handleLeaveRoom}

@@ -1,100 +1,81 @@
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { scaleImage } from '../../utils/scaleImage';
 
 const Menu = ({
-    isOpen,
-    setIsOpen,
-    handleReport,
-    handleLeave,
-    file,
-    setFile,
-    setUploadedImage,
-    isFirstRender
+  isOpen,
+  setIsOpen,
+  handleReport,
+  handleLeave,
+  file,
+  setFile,
+  isFirstRender,
 }) => {
-    const fileInputRef = useRef();
-    const canvasRef = useRef(null);
+  const fileInputRef = useRef();
 
-    const handleImageButtonClick = () => {
-        fileInputRef.current.click();
-    };
+  const handleImageButtonClick = () => {
+    fileInputRef.current.click();
+  };
 
-    const onChangeImage = (e) => {
-        console.log("onChange>>>>>>>" , e.target.value);
-        const inputFile = e.target.files[0];
+  // HEIC 이미지는 JPEG로 변환
+  const onChangeImage = async (e) => {
+    const inputFile = e.target.files[0];
 
-        if (inputFile) {
-            if (!inputFile.type.startsWith('image/')) {
-                alert('이미지 파일만 업로드 가능합니다.');
-                return;
-            }
-
-            const imageUrl = URL.createObjectURL(inputFile);
-            setUploadedImage(imageUrl);
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const img = new Image();
-                img.onload = function () {
-                    const canvas = canvasRef.current;
-                    const ctx = canvas.getContext('2d');
-
-                    // 이미지 크기를 조절
-                    const scaleFactor = 0.3;
-                    canvas.width = img.width * scaleFactor;
-                    canvas.height = img.height * scaleFactor;
-
-                    // 축소된 크기로 이미지 그리기
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                    // canvas의 내용을 이미지 파일로 변환 (포맷, 품질)
-                    canvas.toBlob(
-                        function (blob) {
-                            console.log('Resized image size:', blob.size);
-                            setFile(blob);
-                        },
-                        'image/jpeg',
-                        0.5
-                    );
-                };
-                img.src = e.target.result; // 파일 리더 결과를 이미지 소스로 설정
-            };
-            reader.readAsDataURL(inputFile); // 파일을 Data URL로 읽기
+    if (inputFile) {
+      if (inputFile.type.startsWith('image/heic')) {
+        try {
+          const scaledImage = await scaleImage(inputFile, 1, 'image/jpeg', 1);
+          setFile(scaledImage);
+        } catch (error) {
+          console.log(error);
         }
-    };
+      } else {
+        setFile(inputFile);
+      }
+    }
+  };
 
-    useEffect(() => {
-        fileInputRef.current.value = "";
-    },[file])
+  useEffect(() => {
+    fileInputRef.current.value = '';
+  }, [file]);
 
-    return (
-        <>
-            <NavContainer className="menu" $isOpen={isOpen} $isFirstRender={isFirstRender}>
-                <WrapMenu>
-                    <li onClick={handleImageButtonClick}>
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="image/*"
-                            onChange={onChangeImage}
-                            hidden
-                        />
-                        <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
-                        <img src="/assets/chat/picture-icon.svg" alt="사진 전송" />
-                        사진 전송
-                    </li>
-                    <li onClick={handleReport}>
-                        <img src="/assets/chat/report-icon.svg" alt="신고하기" />
-                        신고하기
-                    </li>
-                    <li onClick={handleLeave}>
-                        <img src="/assets/chat/leave-icon.svg" alt="나가기" />
-                        나가기
-                    </li>
-                </WrapMenu>
-            </NavContainer>
-            {isOpen && <BlurBackground className="background" onClick={() => setIsOpen(false)} />}
-        </>
-    );
+  return (
+    <>
+      <NavContainer
+        className="menu"
+        $isOpen={isOpen}
+        $isFirstRender={isFirstRender}
+      >
+        <WrapMenu>
+          <li onClick={handleImageButtonClick}>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={onChangeImage}
+              hidden
+            />
+            <img src="/assets/chat/picture-icon.svg" alt="사진 전송" />
+            사진 전송
+          </li>
+          <li onClick={handleReport}>
+            <img src="/assets/chat/report-icon.svg" alt="신고하기" />
+            신고하기
+          </li>
+          <li onClick={handleLeave}>
+            <img src="/assets/chat/leave-icon.svg" alt="나가기" />
+            나가기
+          </li>
+        </WrapMenu>
+      </NavContainer>
+      {isOpen && (
+        <BlurBackground
+          className="background"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+    </>
+  );
 };
 export default Menu;
 
@@ -106,9 +87,9 @@ const BlurBackground = styled.div`
   bottom: 0;
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0) 20%, /* 투명한 부분이 20% 지점까지 */
-    rgba(255, 255, 255, 0.7) 50%, /* 그라데이션 시작 */
-    rgba(255, 255, 255, 1) 70% /* 아래쪽은 진한 흰색 */
+    rgba(255, 255, 255, 0) 20%,
+    /* 투명한 부분이 20% 지점까지 */ rgba(255, 255, 255, 0.7) 50%,
+    /* 그라데이션 시작 */ rgba(255, 255, 255, 1) 70% /* 아래쪽은 진한 흰색 */
   );
   backdrop-filter: blur(1px);
   z-index: -2;
@@ -116,7 +97,8 @@ const BlurBackground = styled.div`
 
 const NavContainer = styled.nav`
   position: relative;
-  visibility: ${({$isFirstRender}) => ($isFirstRender ? "hidden" : "visible")}
+  visibility: ${({ $isFirstRender }) =>
+    $isFirstRender ? 'hidden' : 'visible'};
 `;
 
 const WrapMenu = styled.ul`

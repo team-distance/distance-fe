@@ -194,6 +194,11 @@ const Message = memo(
           </MessageByOther>
         );
       case 'IMAGE':
+        const imageViaCdn = message.chatMessage.replace(
+          'https://distance-buckets.s3.ap-northeast-2.amazonaws.com',
+          'https://cdn.dis-tance.com'
+        );
+
         return isSentByMe ? (
           <MessageByMe>
             <div className="message-container">
@@ -204,9 +209,9 @@ const Message = memo(
                 <div className="time">{parseTime(message.sendDt)}</div>
               </div>
               <img
-                src={message.chatMessage}
+                src={imageViaCdn + '?w=600&f=webp&q=75'}
                 alt="message"
-                onClick={() => viewImage(message.chatMessage)}
+                onClick={() => viewImage(imageViaCdn)}
               />
             </div>
           </MessageByMe>
@@ -225,9 +230,9 @@ const Message = memo(
               <div className="nickname">{message.senderName}</div>
               <div className="message-container">
                 <img
-                  src={message.chatMessage}
+                  src={imageViaCdn + '?w=600&f=webp&q=75'}
                   alt="message"
-                  onClick={() => viewImage(message.chatMessage)}
+                  onClick={() => viewImage(imageViaCdn)}
                 />
                 <div className="wrapper">
                   <div className="read">
@@ -350,10 +355,10 @@ const MessageByOther = styled.div`
       }
 
       > img {
-        width: 9rem;
-        height: 13rem;
-        object-fit: cover;
-        border-radius: 0.75rem;
+        max-width: 70%;
+        width: auto;
+        height: auto;
+        border-radius: 1rem;
       }
 
       > .wrapper {
@@ -428,10 +433,10 @@ const MessageByMe = styled.div`
       }
     }
     > img {
-      width: 9rem;
-      height: 13rem;
-      object-fit: cover;
-      border-radius: 0.75rem;
+      max-width: 70%;
+      width: auto;
+      height: auto;
+      border-radius: 1rem;
     }
   }
 `;
