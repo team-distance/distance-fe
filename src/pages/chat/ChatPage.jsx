@@ -31,6 +31,7 @@ import CallDistanceModal from '../../components/modal/CallDistanceModal';
 import { Client } from '@stomp/stompjs';
 import { useCheckComeIn } from '../../hooks/useCheckComeIn';
 import { stompBrokerURL } from '../../constants/baseURL';
+import { useQuery } from '@tanstack/react-query';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -53,7 +54,6 @@ const ChatPage = () => {
   const [draftMessage, setDraftMessage] = useState('');
   const [isOpponentOut, setIsOpponentOut] = useState(false);
   const [bothAgreed, setBothAgreed] = useState(false);
-  const [opponentProfile, setOpponentProfile] = useState(null);
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [uploadedImage, setUploadedImage] = useState(null);
@@ -62,6 +62,16 @@ const ChatPage = () => {
   const [imgSrc, setImageSrc] = useState('');
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const { data: opponentProfile } = useQuery({
+    queryKey: ['opponentProfile', { chatRoomId: roomId }],
+    queryFn: () =>
+      instance
+        .get(`/member/profile/${opponentMemberId}`)
+        .then((res) => res.data),
+    enabled: isMemberIdsFetched,
+    staleTime: 1000 * 60 * 10,
+  });
 
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
@@ -286,18 +296,6 @@ const ChatPage = () => {
     bothAgreed ? openCallModal() : openCallRequestModal();
   };
 
-  // 상대방 프로필 정보 불러오기
-  const fetchOpponentProfile = async () => {
-    try {
-      const opponentProfile = await instance
-        .get(`/member/profile/${opponentMemberId}`)
-        .then((res) => res.data);
-      setOpponentProfile(opponentProfile);
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-
   // // 상대방 신고하기
   const handleReportUser = async (reportMessage) => {
     try {
@@ -340,8 +338,6 @@ const ChatPage = () => {
 
   useEffect(() => {
     if (isMemberIdsFetched) {
-      //상대방 프로필 불러오기
-      fetchOpponentProfile();
       // STOMP 클라이언트 생성
       const newClient = new Client({
         brokerURL: stompBrokerURL,
