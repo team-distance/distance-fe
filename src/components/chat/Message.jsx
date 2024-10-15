@@ -350,10 +350,10 @@ const MessageByOther = styled.div`
       }
 
       > img {
-        width: 9rem;
-        height: 13rem;
-        object-fit: cover;
-        border-radius: 0.75rem;
+        max-width: 70%;
+        width: auto;
+        height: auto;
+        border-radius: 1rem;
       }
 
       > .wrapper {
@@ -428,10 +428,10 @@ const MessageByMe = styled.div`
       }
     }
     > img {
-      width: 9rem;
-      height: 13rem;
-      object-fit: cover;
-      border-radius: 0.75rem;
+      max-width: 70%;
+      width: auto;
+      height: auto;
+      border-radius: 1rem;
     }
   }
 `;
