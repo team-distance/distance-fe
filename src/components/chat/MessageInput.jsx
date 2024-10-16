@@ -38,8 +38,8 @@ const MessageInput = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    submitHandler();
     setFile(null);
+    submitHandler();
   };
 
   const deleteImage = () => {
