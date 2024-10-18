@@ -355,9 +355,9 @@ const MessageByOther = styled.div`
       }
 
       > img {
-        max-width: 70%;
-        width: auto;
-        height: auto;
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
         border-radius: 1rem;
       }
 
@@ -433,9 +433,9 @@ const MessageByMe = styled.div`
       }
     }
     > img {
-      max-width: 70%;
-      width: auto;
-      height: auto;
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
       border-radius: 1rem;
     }
   }
