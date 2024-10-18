@@ -54,7 +54,6 @@ const MessageInput = ({
         <AnimatePresence>
           {isMenuOpen && (
             <Menu
-              isOpen={isMenuOpen}
               setIsOpen={setIsMenuOpen}
               handleLeave={leaveButtonClickHandler}
               handleReport={reportButtonClickHandler}
