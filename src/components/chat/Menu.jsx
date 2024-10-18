@@ -37,7 +37,8 @@ const menuVariants = {
 const Menu = ({ setIsOpen, handleReport, handleLeave, file, setFile }) => {
   const fileInputRef = useRef();
 
-  const handleImageButtonClick = () => {
+  const handleImageButtonClick = (e) => {
+    e.stopPropagation();
     fileInputRef.current.click();
   };
 
