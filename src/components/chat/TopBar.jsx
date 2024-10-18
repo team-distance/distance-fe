@@ -55,9 +55,8 @@ const TopBar = ({
 
 const TopBarWrapper = styled.div`
   position: relative;
-  background: #ffffff;
-  padding: 0.75rem 1rem;
-  height: 3rem;
+  padding: 12px 16px;
+  height: 48px;
   display: flex;
   justify-content: space-between;
   align-items: center;
