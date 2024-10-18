@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { MenuToggle } from './MenuToggle';
 import Menu from './Menu';
-import useMenuAnimation from '../../hooks/useMenuAnimation';
+import { AnimatePresence } from 'framer-motion';
 
 const MessageInput = ({
   value,
@@ -17,8 +17,6 @@ const MessageInput = ({
   setIsMenuOpen,
 }) => {
   const containerRef = useRef(null);
-
-  const scope = useMenuAnimation(isMenuOpen);
 
   const handleFocus = () => {
     if (containerRef.current) {
@@ -50,24 +48,20 @@ const MessageInput = ({
     if (file) setIsMenuOpen(false);
   }, [file]);
 
-  const isFirstRender = useRef(true);
-
-  useEffect(() => {
-    isFirstRender.current = false;
-  }, []);
-
   return (
-    <MeassageInputContainer ref={scope}>
-      <Menu
-        isOpen={isMenuOpen}
-        setIsOpen={setIsMenuOpen}
-        handleLeave={leaveButtonClickHandler}
-        handleReport={reportButtonClickHandler}
-        file={file}
-        setFile={setFile}
-        isFirstRender={isFirstRender.current}
-      />
+    <MeassageInputContainer>
       <InputContainer ref={containerRef}>
+        <AnimatePresence>
+          {isMenuOpen && (
+            <Menu
+              setIsOpen={setIsMenuOpen}
+              handleLeave={leaveButtonClickHandler}
+              handleReport={reportButtonClickHandler}
+              file={file}
+              setFile={setFile}
+            />
+          )}
+        </AnimatePresence>
         <MenuToggle toggle={onClickPlusButton} isOpen={isMenuOpen} />
         <WrapInputForm onSubmit={handleSubmit}>
           {isOpponentOut ? (
@@ -115,6 +109,7 @@ const MeassageInputContainer = styled.div`
 `;
 
 const InputContainer = styled.div`
+  display: relative;
   display: flex;
   gap: 0.8rem;
   align-items: center;
