@@ -211,6 +211,7 @@ const Message = memo(
               <img
                 src={imageViaCdn + '?w=600&f=webp&q=75'}
                 alt="message"
+                loading="lazy"
                 onClick={() => viewImage(imageViaCdn)}
               />
             </div>
@@ -231,6 +232,7 @@ const Message = memo(
               <div className="message-container">
                 <img
                   src={imageViaCdn + '?w=600&f=webp&q=75'}
+                  loading="lazy"
                   alt="message"
                   onClick={() => viewImage(imageViaCdn)}
                 />
@@ -355,9 +357,9 @@ const MessageByOther = styled.div`
       }
 
       > img {
-        max-width: 70%;
-        width: auto;
-        height: auto;
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
         border-radius: 1rem;
       }
 
@@ -433,9 +435,9 @@ const MessageByMe = styled.div`
       }
     }
     > img {
-      max-width: 70%;
-      width: auto;
-      height: auto;
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
       border-radius: 1rem;
     }
   }
