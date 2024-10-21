@@ -101,6 +101,7 @@ const ProfileRegisterPage = () => {
         memberCharacter: selectedAnimal,
         memberHobbyDto: registerData.memberHobbyDto,
         memberTagDto: registerData.memberTagDto,
+        referredTel: registerData.referredTel,
       })
       .then(() => {
         window.scrollTo(0, 0);

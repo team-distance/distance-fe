@@ -10,15 +10,44 @@ import Header from '../components/common/Header';
 import { useCheckGpsActive } from '../hooks/useCheckGpsActive';
 import { useCheckAlarmActive } from '../hooks/useCheckAlarmActive';
 import { useToast } from '../hooks/useToast';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isLoggedInState } from '../store/auth';
+import useModal from '../hooks/useModal';
+import ReferredTelDetectedModal from '../components/modal/ReferredTelDetectedModal';
+import { registerDataState } from '../store/registerDataState';
 
 const NavLayout = () => {
   const navigate = useNavigate();
   const userAgent = navigator.userAgent.toLowerCase();
   const isIphone = userAgent.includes('iphone');
   const { pathname } = useLocation();
+  const searchParams = new URLSearchParams(useLocation().search);
   const isLoggedIn = useRecoilValue(isLoggedInState);
+  const setRegisterData = useSetRecoilState(registerDataState);
+
+  const { openModal, closeModal } = useModal((referredTel) => (
+    <ReferredTelDetectedModal
+      closeModal={closeModal}
+      referredTel={referredTel}
+    />
+  ));
+
+  useEffect(() => {
+    const referredTel = searchParams.get('referredTel');
+
+    // 추천인으로부터 전달받은 링크에서 접속했으며 로그인 상태가 아닌 경우 추천인 전화번호를 전역 상태에 저장
+    if (referredTel && !isLoggedIn) {
+      setRegisterData((prev) => ({
+        ...prev,
+        referredTel,
+      }));
+
+      // 최초 로그인 시에만 모달을 띄움
+      if (localStorage.getItem('isFirstLogin') !== 'true') {
+        openModal(referredTel);
+      }
+    }
+  }, []);
 
   const isGpsActive = useCheckGpsActive();
   const isAlarmActive = useCheckAlarmActive();

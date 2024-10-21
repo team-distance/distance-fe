@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { registerDataState } from '../../store/registerDataState';
 import Button from '../../components/common/Button';
 import { useNavigate } from 'react-router-dom';
@@ -18,8 +18,10 @@ const UserRegisterPage = () => {
   const navigate = useNavigate();
 
   const [registerData, setRegisterData] = useRecoilState(registerDataState);
-
   const [isTelNumChanged, setIsTelNumChanged] = useState(true);
+  const [verifyButtonLabel, setVerifyButtonLabel] = useState('인증번호 전송');
+  const [showVerifyNum, setShowVerifyNum] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { openModal: openTermsModal, closeModal: closeTermsModal } = useModal(
     () => (
@@ -82,6 +84,9 @@ const UserRegisterPage = () => {
   } = useForm({
     mode: 'onChange',
     shouldUseNativeValidation: true,
+    defaultValues: {
+      referredTel: registerData.referredTel,
+    },
   });
 
   const telNumValue = watchTelNum('telNum');
@@ -94,10 +99,6 @@ const UserRegisterPage = () => {
       setShowPassword(false);
     }
   }, [telNumValue]);
-
-  const [verifyButtonLabel, setVerifyButtonLabel] = useState('인증번호 전송');
-  const [showVerifyNum, setShowVerifyNum] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmitTelNum = async (data) => {
     const response = instance.post('/member/send/sms', {
@@ -155,6 +156,7 @@ const UserRegisterPage = () => {
     setRegisterData((prevData) => ({
       ...prevData,
       password: data.password,
+      referredTel: data.referredTel,
       agreePrivacy: data.agreePrivacy,
       agreeTerms: data.agreeTerms,
     }));
@@ -169,24 +171,24 @@ const UserRegisterPage = () => {
         <p>전화번호를 인증해주세요</p>
       </WrapHeader>
 
-      <div style={{ paddingBottom: '10rem' }}>
-        <WrapForm $visible={true} onSubmit={submitTelNum(handleSubmitTelNum)}>
-          <TextInput
-            type="text"
-            label="전화번호"
-            placeholder="'-' 없이 입력"
-            buttonDisabled={!telNumValid}
-            buttonLabel={verifyButtonLabel}
-            register={registerTelNum('telNum', {
-              validate: (value) => value.length === 11 || '',
-            })}
-          />
-        </WrapForm>
+      <WrapForm $visible={true} onSubmit={submitTelNum(handleSubmitTelNum)}>
+        <TextInput
+          type="text"
+          label="전화번호"
+          placeholder="'-' 없이 입력"
+          buttonDisabled={!telNumValid}
+          buttonLabel={verifyButtonLabel}
+          register={registerTelNum('telNum', {
+            validate: (value) => value.length === 11 || '',
+          })}
+        />
+      </WrapForm>
 
-        <WrapForm
-          $visible={showVerifyNum && !isTelNumChanged}
-          onSubmit={submitVerifyNum(handleSubmitVerifyNum)}
-        >
+      <WrapForm
+        $visible={showVerifyNum && !isTelNumChanged}
+        onSubmit={submitVerifyNum(handleSubmitVerifyNum)}
+      >
+        <div>
           <TextInput
             type="text"
             label="인증번호"
@@ -200,13 +202,15 @@ const UserRegisterPage = () => {
             })}
           />
           {showPassword && <Tip>인증되었습니다!</Tip>}
-        </WrapForm>
+        </div>
+      </WrapForm>
 
-        <WrapForm
-          className="last-form"
-          $visible={showPassword && !isTelNumChanged}
-          onSubmit={submitPassword(handleSubmitPassword)}
-        >
+      <WrapForm
+        className="last-form"
+        $visible={showPassword && !isTelNumChanged}
+        onSubmit={submitPassword(handleSubmitPassword)}
+      >
+        <div>
           <TextInput
             label="비밀번호"
             type="password"
@@ -215,6 +219,7 @@ const UserRegisterPage = () => {
               validate: (value) => value.length >= 6 || '',
             })}
           />
+
           {passwordValue === undefined || passwordValue.length === 0 ? (
             <Tip className="invalid">
               숫자로만 구성된 6자리 이상이어야 합니다.
@@ -226,7 +231,16 @@ const UserRegisterPage = () => {
           ) : (
             <Tip className="valid">사용가능합니다.</Tip>
           )}
+        </div>
 
+        <TextInput
+          label="추천인 전화번호(생략 가능)"
+          type="text"
+          placeholder="'-' 없이 입력"
+          register={registerPassword('referredTel')}
+        />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <WrapCheckbox className="first-checkbox">
             <Checkbox
               label="(필수) 서비스 이용약관 동의"
@@ -246,13 +260,12 @@ const UserRegisterPage = () => {
             />
             <ShowDetail onClick={openPrivacyModal}>더보기</ShowDetail>
           </WrapCheckbox>
-          <WrapButton>
-            <Button type="submit" size="large" disabled={!passwordValid}>
-              학교 선택하기
-            </Button>
-          </WrapButton>
-        </WrapForm>
-      </div>
+
+          <Button type="submit" size="large" disabled={!passwordValid}>
+            학교 선택하기
+          </Button>
+        </div>
+      </WrapForm>
     </div>
   );
 };
@@ -273,7 +286,7 @@ const WrapForm = styled.form`
   display: flex;
   flex-direction: column;
   flex: 0 0 auto;
-  gap: 0.5rem;
+  gap: 48px;
   padding: 1.5rem 2rem;
   visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
 `;
