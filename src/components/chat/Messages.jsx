@@ -2,6 +2,11 @@ import React, { memo, useEffect, useRef } from 'react';
 import Message from './Message';
 import styled from 'styled-components';
 
+function bytesToMegabytes(bytes) {
+  const megabytes = bytes / (1024 * 1024);
+  return megabytes;
+}
+
 const Messages = memo(
   ({
     groupedMessages,
@@ -11,6 +16,9 @@ const Messages = memo(
     openProfileModal,
     opponentMemberCharacter,
     isMenuOpen,
+    isUploadingImage,
+    uploadingProgress,
+    uploadingImagePreviewUrl,
   }) => {
     const messageRef = useRef();
 
@@ -22,7 +30,7 @@ const Messages = memo(
 
     useEffect(() => {
       scrollToBottom();
-    }, [groupedMessages]);
+    }, [groupedMessages, isUploadingImage]);
 
     return (
       <MessagesWrapper ref={messageRef} $isOpen={isMenuOpen}>
@@ -56,6 +64,28 @@ const Messages = memo(
             ))}
           </React.Fragment>
         ))}
+        {isUploadingImage && (
+          <UploadingImagePreview>
+            <div className="message-container">
+              <img src={uploadingImagePreviewUrl} alt="message" />
+              <div className="backdrop" />
+              <div className="progress">
+                <Progress
+                  value={
+                    Math.round(
+                      (uploadingProgress.loaded / uploadingProgress.total) * 100
+                    ) || 0
+                  }
+                  max="100"
+                />
+                <div>
+                  {bytesToMegabytes(uploadingProgress.loaded).toFixed(2)} MB /{' '}
+                  {bytesToMegabytes(uploadingProgress.total).toFixed(2)} MB
+                </div>
+              </div>
+            </div>
+          </UploadingImagePreview>
+        )}
       </MessagesWrapper>
     );
   }
@@ -79,6 +109,71 @@ const Announcement = styled.div`
     background-color: #eee;
     padding: 0.5rem;
     text-align: center;
+    border-radius: 9999px;
+  }
+`;
+
+const UploadingImagePreview = styled.div`
+  margin: 16px;
+  display: flex;
+  justify-content: flex-end;
+
+  .message-container {
+    display: flex;
+    position: relative;
+    align-items: end;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    max-width: 80%;
+    border-radius: 1rem;
+    overflow: hidden;
+
+    img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 1rem;
+    }
+
+    .backdrop {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      top: 0;
+      left: 0;
+      opacity: 0.5;
+      background-color: black;
+    }
+
+    .progress {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      top: 0;
+      left: 0;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8rem;
+      gap: 8px;
+    }
+  }
+`;
+
+const Progress = styled.progress`
+  width: 80%;
+  height: 8px;
+  appearance: none;
+
+  &::-webkit-progress-bar {
+    background-color: #f5f5f5;
+    border-radius: 9999px;
+  }
+
+  &::-webkit-progress-value {
+    background-color: #ff625d;
     border-radius: 9999px;
   }
 `;

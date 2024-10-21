@@ -67,6 +67,7 @@ const ChatPage = () => {
     loaded: 0,
     total: 0,
   });
+  const [uploadingImagePreviewUrl, setUploadingImagePreviewUrl] = useState('');
 
   const { data: opponentProfile } = useQuery({
     queryKey: ['opponentProfile', { chatRoomId: roomId }],
@@ -170,7 +171,9 @@ const ChatPage = () => {
       myMemberId,
       showWaitToast,
       setIsUploadingImage,
-      setUploadingProgress
+      setUploadingProgress,
+      uploadingImagePreviewUrl,
+      setUploadingImagePreviewUrl
     );
 
   // 읽음 신호 확인
@@ -434,27 +437,11 @@ const ChatPage = () => {
                 opponentProfile && opponentProfile.memberCharacter
               }
               isMenuOpen={isMenuOpen}
+              isUploadingImage={isUploadingImage}
+              uploadingProgress={uploadingProgress}
+              uploadingImagePreviewUrl={uploadingImagePreviewUrl}
             />
             <MessageInputWrapper>
-              {isUploadingImage && (
-                <UploadingImage>
-                  <Progress
-                    value={
-                      Math.round(
-                        (uploadingProgress.loaded / uploadingProgress.total) *
-                          100
-                      ) || 0
-                    }
-                    max="100"
-                  />{' '}
-                  <div style={{ width: '4ch', textAlign: 'center' }}>
-                    {Math.round(
-                      (uploadingProgress.loaded / uploadingProgress.total) * 100
-                    ) || 0}
-                    %
-                  </div>
-                </UploadingImage>
-              )}
               <MessageInput
                 value={draftMessage}
                 file={file}
@@ -479,22 +466,6 @@ const Wrapper = styled.div`
   position: relative;
   touch-action: none;
   overflow: hidden;
-`;
-
-const Progress = styled.progress`
-  width: 100%;
-  height: 8px;
-  appearance: none;
-
-  &::-webkit-progress-bar {
-    background-color: #f5f5f5;
-    border-radius: 9999px;
-  }
-
-  &::-webkit-progress-value {
-    background-color: #ff625d;
-    border-radius: 9999px;
-  }
 `;
 
 const UploadingImage = styled.div`

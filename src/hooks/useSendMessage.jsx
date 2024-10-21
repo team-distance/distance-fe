@@ -12,7 +12,9 @@ export const useSendMessage = (
   myMemberId,
   showWaitToast,
   setIsUploadingImage,
-  setUploadingProgress
+  setUploadingProgress,
+  uploadingImagePreviewUrl,
+  setUploadingImagePreviewUrl
 ) => {
   // 이미지 전송
   const sendImageMessage = async () => {
@@ -26,6 +28,9 @@ export const useSendMessage = (
     // 가져온 파일 이름으로 새로운 File 객체 생성
     const newFile = new File([file], fileName, { type: file.type });
 
+    // 이미지 미리보기 URL 업데이트
+    setUploadingImagePreviewUrl(URL.createObjectURL(newFile));
+
     // 새로운 File 객체로 이미지 업로드
     await axios.put(s3Url, newFile, {
       timeout: 20000,
@@ -37,12 +42,6 @@ export const useSendMessage = (
           loaded: progressEvent.loaded,
           total: progressEvent.total,
         });
-
-        console.log(
-          'Upload Progress: ' +
-            Math.round((progressEvent.loaded / progressEvent.total) * 100) +
-            '%'
-        );
       },
     });
 
@@ -66,6 +65,10 @@ export const useSendMessage = (
 
       setDraftMessage('');
       setFile(null);
+
+      // 이미지 미리보기 URL 해제
+      URL.revokeObjectURL(uploadingImagePreviewUrl);
+      setUploadingImagePreviewUrl('');
     } catch (error) {
       showWaitToast();
     }
