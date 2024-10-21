@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import TextInput from '../../components/register/TextInput';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { registerDataState } from '../../store/registerDataState';
 import Button from '../../components/common/Button';
 import { useNavigate } from 'react-router-dom';
@@ -302,17 +302,6 @@ const Tip = styled.small`
   &.valid {
     color: #1ebd18;
   }
-`;
-
-const WrapButton = styled.div`
-  position: fixed;
-  bottom: 1.5rem;
-  right: 0;
-  left: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 2rem;
 `;
 
 const WrapCheckbox = styled.div`
