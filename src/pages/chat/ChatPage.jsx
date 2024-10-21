@@ -468,15 +468,6 @@ const Wrapper = styled.div`
   overflow: hidden;
 `;
 
-const UploadingImage = styled.div`
-  background-color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding: 0 24px;
-`;
-
 const Container = styled.div`
   height: 100dvh;
   bottom: 0;
