@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { instance } from '../api/instance';
 
 export const useSendMessage = (
@@ -15,14 +16,22 @@ export const useSendMessage = (
 ) => {
   // 이미지 전송
   const sendImageMessage = async () => {
-    //S3 url 받기
     setIsUploadingImage(true);
 
-    const formData = new FormData();
-    formData.append('file', file);
+    // S3 Pre-signed URL과 파일 이름 가져오기
+    const { fileName, s3Url } = await instance
+      .post('/image')
+      .then((res) => res.data);
 
-    const response = await instance.post('/image', formData, {
+    // 가져온 파일 이름으로 새로운 File 객체 생성
+    const newFile = new File([file], fileName, { type: file.type });
+
+    // 새로운 File 객체로 이미지 업로드
+    await axios.put(s3Url, newFile, {
       timeout: 20000,
+      headers: {
+        'Content-Type': newFile.type,
+      },
       onUploadProgress: (progressEvent) => {
         setUploadingProgress({
           loaded: progressEvent.loaded,
@@ -43,11 +52,12 @@ export const useSendMessage = (
       total: 0,
     });
 
+    // S3에 업로드한 이미지 URL로 메시지 전송
     try {
       client.publish({
         destination: `/app/chat/${roomId}`,
         body: JSON.stringify({
-          chatMessage: response.data.imageUrl,
+          chatMessage: `https://distance-buckets.s3.ap-northeast-2.amazonaws.com/${fileName}`,
           senderId: opponentMemberId,
           receiverId: myMemberId,
           publishType: 'IMAGE',
