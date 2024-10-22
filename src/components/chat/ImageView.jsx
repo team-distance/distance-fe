@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { parseDate } from '../../utils/parseDate';
 import axios from 'axios';
