@@ -7,10 +7,13 @@ import { ClipLoader } from 'react-spinners';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { scaleImage } from '../../utils/scaleImage';
 import { useToast } from '../../hooks/useToast';
+import { ALLOWED_IMAGE_TYPES } from '../../constants/ALLOWED_IMAGE_TYPES';
+import heic2any from 'heic2any';
 
 const VerifyMobileIdPage = () => {
   const [file, setFile] = useState(null);
   const [schoolId, setSchoolId] = useState('');
+  const [isConvertingHeic, setIsConvertingHeic] = useState(false);
 
   const fileInputRef = useRef();
 
@@ -37,20 +40,36 @@ const VerifyMobileIdPage = () => {
   );
 
   const onChangeImage = async (e) => {
-    const file = e.target.files[0];
+    let inputFile = e.target.files[0];
 
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        alert('이미지 파일만 업로드 가능합니다.');
-        return;
+    if (!inputFile) return;
+
+    if (!ALLOWED_IMAGE_TYPES.includes(inputFile.type)) {
+      alert('지원하지 않는 이미지 형식입니다.');
+      return;
+    }
+
+    try {
+      // 이미지가 HEIC 형식일 경우 JPEG로 변환
+      if (inputFile.type === 'image/heic') {
+        setIsConvertingHeic(true);
+        inputFile = await heic2any({
+          blob: inputFile,
+          toType: 'image/jpeg',
+        });
+        setIsConvertingHeic(false);
       }
 
-      try {
-        const scaledImage = await scaleImage(file, 0.3, 'image/jpeg', 0.7);
-        setFile(scaledImage);
-      } catch (error) {
-        showFileErrorToast();
-      }
+      // 이미지 크기를 50%로 줄임
+      inputFile = await scaleImage({
+        file: inputFile,
+        scale: 0.5,
+        quality: 0.7,
+      });
+
+      setFile(inputFile);
+    } catch (error) {
+      showFileErrorToast();
     }
   };
 
@@ -107,15 +126,21 @@ const VerifyMobileIdPage = () => {
         </>
       ) : (
         <UploadDiv onClick={handleButtonClick}>
-          <img src="/assets/camera.png" alt="no profile" />
-          <p>이미지 업로드</p>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={onChangeImage}
-            hidden
-          />
+          {isConvertingHeic ? (
+            <ClipLoader color={'#ff625d'} />
+          ) : (
+            <>
+              <img src="/assets/camera.png" alt="no profile" />
+              <p>이미지 업로드</p>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={onChangeImage}
+                hidden
+              />
+            </>
+          )}
         </UploadDiv>
       )}
 

@@ -2,14 +2,6 @@ import React, { memo, useEffect, useRef } from 'react';
 import Message from './Message';
 import styled from 'styled-components';
 
-function bytesToMegabytes(bytes) {
-  if (bytes === 0) {
-    return 0;
-  } else {
-    return bytes / (1024 * 1024);
-  }
-}
-
 const Messages = memo(
   ({
     groupedMessages,
@@ -82,8 +74,9 @@ const Messages = memo(
                   max="100"
                 />
                 <div>
-                  {bytesToMegabytes(uploadingProgress.loaded).toFixed(2)} MB /{' '}
-                  {bytesToMegabytes(uploadingProgress.total).toFixed(2)} MB
+                  {/* 바이트를 메가바이트로 변환 */}
+                  {(uploadingProgress.loaded / (1024 * 1024)).toFixed(2)} MB /{' '}
+                  {(uploadingProgress.total / (1024 * 1024)).toFixed(2)} MB
                 </div>
               </div>
             </div>

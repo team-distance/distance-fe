@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { parseDate } from '../../utils/parseDate';
 import axios from 'axios';
 import { usePromiseToast } from '../../hooks/useToast';
+import Loader from '../common/Loader';
 
 const ImageView = ({ imgSrc, handleCancel }) => {
   const [showButton, setShowButton] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { showPromiseToast: showDownloadImageToast } = usePromiseToast();
 
-  const handleDownload = () => {
+  const handleClickDownload = () => {
     try {
       const res = axios.get(imgSrc, { responseType: 'blob' });
 
@@ -46,7 +48,7 @@ const ImageView = ({ imgSrc, handleCancel }) => {
             <img
               src="/assets/chat/download-button.svg"
               alt="download"
-              onClick={handleDownload}
+              onClick={handleClickDownload}
             />
             <img
               src="/assets/chat/cancel-button.svg"
@@ -58,7 +60,12 @@ const ImageView = ({ imgSrc, handleCancel }) => {
       )}
       <Background onClick={() => setShowButton((prev) => !prev)}>
         <WrapImage>
-          <img src={imgSrc + '?f=webp'} alt="view" />
+          {isLoading && <Loader />}
+          <img
+            src={imgSrc + '?f=webp'}
+            alt="view"
+            onLoad={() => setIsLoading(false)}
+          />
         </WrapImage>
       </Background>
     </>

@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { convertHeic2Any } from '../../utils/convertHeic2Any';
+import { ALLOWED_IMAGE_TYPES } from '../../constants/ALLOWED_IMAGE_TYPES';
+import heic2any from 'heic2any';
 
 const backgroundVariants = {
   visible: {
@@ -51,21 +52,28 @@ const Menu = ({
 
   // HEIC 이미지는 JPEG로 변환
   const onChangeImage = async (e) => {
-    const inputFile = e.target.files[0];
+    let inputFile = e.target.files[0];
 
-    if (inputFile) {
-      if (inputFile.type.startsWith('image/heic')) {
-        try {
-          setIsConvertingHeic(true);
-          const convertedImage = await convertHeic2Any(inputFile, 'jpeg');
-          setFile(convertedImage);
-          setIsConvertingHeic(false);
-        } catch (error) {
-          console.log(error);
-        }
-      } else {
-        setFile(inputFile);
+    if (!inputFile) return;
+
+    if (!ALLOWED_IMAGE_TYPES.includes(inputFile.type)) {
+      alert('지원하지 않는 이미지 형식입니다.');
+      return;
+    }
+
+    try {
+      // 이미지가 HEIC 형식일 경우 JPEG로 변환
+      if (inputFile.type === 'image/heic') {
+        setIsConvertingHeic(true);
+        inputFile = await heic2any({
+          blob: inputFile,
+          toType: 'image/jpeg',
+        });
+        setIsConvertingHeic(false);
       }
+      setFile(inputFile);
+    } catch (error) {
+      console.log(error);
     }
   };
 

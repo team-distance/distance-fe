@@ -2,11 +2,11 @@
  * 이미지 크기를 조절하는 함수
  * @param {File} file - 원본 이미지 파일
  * @param {number} scale - 이미지 크기 조절 비율 (0 ~ 1)
- * @param {string} format - 출력 이미지 형식 (예를 들어, 'image/jpeg')
+ * @param {string} format - 출력 이미지 형식 (기본값: 'image/jpeg')
  * @param {number} quality - 출력 이미지 품질 (0 ~ 1)
  * @returns {Promise<Blob>} - 크기가 조절된 이미지 Blob 객체
  */
-export const scaleImage = (file, scale, format, quality) => {
+export const scaleImage = ({ file, scale, format = 'image/jpeg', quality }) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
