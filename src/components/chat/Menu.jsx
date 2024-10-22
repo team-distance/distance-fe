@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { convertHeic2Any } from '../../utils/convertHeic2Any';
+import { ALLOWED_IMAGE_TYPES } from '../../constants/ALLOWED_IMAGE_TYPES';
 
 const backgroundVariants = {
   visible: {
@@ -54,10 +55,15 @@ const Menu = ({
     const inputFile = e.target.files[0];
 
     if (inputFile) {
-      if (inputFile.type.startsWith('image/heic')) {
+      if (!ALLOWED_IMAGE_TYPES.includes(inputFile.type)) {
+        alert('지원하지 않는 이미지 형식입니다.');
+        return;
+      }
+
+      if (inputFile.type === 'image/heic') {
         try {
           setIsConvertingHeic(true);
-          const convertedImage = await convertHeic2Any(inputFile, 'jpeg');
+          const convertedImage = await convertHeic2Any({ heicFile: inputFile });
           setFile(convertedImage);
           setIsConvertingHeic(false);
         } catch (error) {
