@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { MenuToggle } from './MenuToggle';
 import Menu from './Menu';
 import { AnimatePresence } from 'framer-motion';
+import { ClipLoader } from 'react-spinners';
 
 const MessageInput = ({
   value,
@@ -17,6 +18,7 @@ const MessageInput = ({
   setIsMenuOpen,
 }) => {
   const containerRef = useRef(null);
+  const [isConvertingHeic, setIsConvertingHeic] = useState(false);
 
   const handleFocus = () => {
     if (containerRef.current) {
@@ -45,23 +47,24 @@ const MessageInput = ({
   };
 
   useEffect(() => {
-    if (file) setIsMenuOpen(false);
-  }, [file]);
+    if (file || isConvertingHeic) setIsMenuOpen(false);
+  }, [file, isConvertingHeic]);
 
   return (
     <MeassageInputContainer>
+      <AnimatePresence>
+        {isMenuOpen && (
+          <Menu
+            setIsOpen={setIsMenuOpen}
+            handleLeave={leaveButtonClickHandler}
+            handleReport={reportButtonClickHandler}
+            file={file}
+            setFile={setFile}
+            setIsConvertingHeic={setIsConvertingHeic}
+          />
+        )}
+      </AnimatePresence>
       <InputContainer ref={containerRef}>
-        <AnimatePresence>
-          {isMenuOpen && (
-            <Menu
-              setIsOpen={setIsMenuOpen}
-              handleLeave={leaveButtonClickHandler}
-              handleReport={reportButtonClickHandler}
-              file={file}
-              setFile={setFile}
-            />
-          )}
-        </AnimatePresence>
         <MenuToggle toggle={onClickPlusButton} isOpen={isMenuOpen} />
         <WrapInputForm onSubmit={handleSubmit}>
           {isOpponentOut ? (
@@ -71,20 +74,25 @@ const MessageInput = ({
               placeholder="상대방이 나갔습니다."
               disabled
             />
-          ) : file ? (
+          ) : file || isConvertingHeic ? (
             <ImageInput>
               <WrapImage>
-                <img
-                  className="x-button"
-                  src="/assets/chat/x-button.svg"
-                  alt="cancel"
-                  onClick={deleteImage}
-                />
-                <img
-                  className="image-preview"
-                  src={URL.createObjectURL(file)}
-                  alt="preview"
-                />
+                {file && (
+                  <>
+                    <img
+                      className="x-button"
+                      src="/assets/chat/x-button.svg"
+                      alt="cancel"
+                      onClick={deleteImage}
+                    />
+                    <img
+                      className="image-preview"
+                      src={URL.createObjectURL(file)}
+                      alt="preview"
+                    />
+                  </>
+                )}
+                {isConvertingHeic && <ClipLoader size={16} color="#ff625d" />}
               </WrapImage>
             </ImageInput>
           ) : (
@@ -109,7 +117,6 @@ const MeassageInputContainer = styled.div`
 `;
 
 const InputContainer = styled.div`
-  display: relative;
   display: flex;
   gap: 0.8rem;
   align-items: center;

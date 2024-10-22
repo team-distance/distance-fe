@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { scaleImage } from '../../utils/scaleImage';
 import { motion } from 'framer-motion';
+import { convertHeic2Any } from '../../utils/convertHeic2Any';
 
 const backgroundVariants = {
   visible: {
@@ -34,7 +34,14 @@ const menuVariants = {
   },
 };
 
-const Menu = ({ setIsOpen, handleReport, handleLeave, file, setFile }) => {
+const Menu = ({
+  setIsOpen,
+  handleReport,
+  handleLeave,
+  file,
+  setFile,
+  setIsConvertingHeic,
+}) => {
   const fileInputRef = useRef();
 
   const handleImageButtonClick = (e) => {
@@ -49,8 +56,10 @@ const Menu = ({ setIsOpen, handleReport, handleLeave, file, setFile }) => {
     if (inputFile) {
       if (inputFile.type.startsWith('image/heic')) {
         try {
-          const scaledImage = await scaleImage(inputFile, 1, 'image/jpeg', 1);
-          setFile(scaledImage);
+          setIsConvertingHeic(true);
+          const convertedImage = await convertHeic2Any(inputFile, 'jpeg');
+          setFile(convertedImage);
+          setIsConvertingHeic(false);
         } catch (error) {
           console.log(error);
         }
@@ -99,11 +108,11 @@ const Menu = ({ setIsOpen, handleReport, handleLeave, file, setFile }) => {
 export default Menu;
 
 const BlurBackground = styled(motion.div)`
-  position: absolute;
-  height: calc(100vh - 100%);
+  position: fixed;
   left: 0;
   right: 0;
-  bottom: 100%;
+  bottom: 0;
+  top: 0;
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0) 20%,
@@ -112,12 +121,12 @@ const BlurBackground = styled(motion.div)`
       /* 투명한 부분이 20% 지점까지, 그라데이션 시작, 아래쪽은 진한 회색 */
   );
   backdrop-filter: blur(1px);
-  z-index: -1;
+  z-index: -2;
 `;
 
 const WrapMenu = styled.ul`
   position: absolute;
-  bottom: 0;
+  bottom: 10%;
 
   li {
     display: flex;
