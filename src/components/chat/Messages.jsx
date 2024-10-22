@@ -3,8 +3,11 @@ import Message from './Message';
 import styled from 'styled-components';
 
 function bytesToMegabytes(bytes) {
-  const megabytes = bytes / (1024 * 1024);
-  return megabytes;
+  if (bytes === 0) {
+    return 0;
+  } else {
+    return bytes / (1024 * 1024);
+  }
 }
 
 const Messages = memo(
