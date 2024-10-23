@@ -68,6 +68,7 @@ const ChatPage = () => {
     total: 0,
   });
   const [uploadingImagePreviewUrl, setUploadingImagePreviewUrl] = useState('');
+  const [requestCancelController, setRequestCancelController] = useState(null);
 
   const { data: opponentProfile } = useQuery({
     queryKey: ['opponentProfile', { chatRoomId: roomId }],
@@ -173,7 +174,8 @@ const ChatPage = () => {
       setIsUploadingImage,
       setUploadProgress,
       uploadingImagePreviewUrl,
-      setUploadingImagePreviewUrl
+      setUploadingImagePreviewUrl,
+      setRequestCancelController
     );
 
   // 읽음 신호 확인
@@ -440,6 +442,7 @@ const ChatPage = () => {
               isUploadingImage={isUploadingImage}
               uploadProgress={uploadProgress}
               uploadingImagePreviewUrl={uploadingImagePreviewUrl}
+              requestCancelController={requestCancelController}
             />
             <MessageInputWrapper>
               <MessageInput
