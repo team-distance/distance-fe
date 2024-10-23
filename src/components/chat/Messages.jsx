@@ -14,12 +14,19 @@ const Messages = memo(
     isUploadingImage,
     uploadProgress,
     uploadingImagePreviewUrl,
+    requestCancelController,
   }) => {
     const messageRef = useRef();
 
     const scrollToBottom = () => {
       if (messageRef.current) {
         messageRef.current.scrollTop = messageRef.current.scrollHeight;
+      }
+    };
+
+    const cancelUpload = () => {
+      if (requestCancelController) {
+        requestCancelController.abort();
       }
     };
 
@@ -78,6 +85,7 @@ const Messages = memo(
                   {(uploadProgress.loaded / (1024 * 1024)).toFixed(2)} MB /{' '}
                   {(uploadProgress.total / (1024 * 1024)).toFixed(2)} MB
                 </div>
+                <RoundedButton onClick={cancelUpload}>취소</RoundedButton>
               </div>
             </div>
           </UploadingImagePreview>
@@ -172,6 +180,12 @@ const Progress = styled.progress`
     background-color: #ff625d;
     border-radius: 9999px;
   }
+`;
+
+const RoundedButton = styled.div`
+  padding: 0.5rem 1rem;
+  border: 1px solid white;
+  border-radius: 1rem;
 `;
 
 export default Messages;

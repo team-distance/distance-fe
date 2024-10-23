@@ -128,20 +128,20 @@ const ImageView = ({ imgSrc, handleCancel }) => {
                 </div>
               )}
 
-              <CancelButton onClick={cancelDownload}>취소</CancelButton>
+              <RoundedButton onClick={cancelDownload}>취소</RoundedButton>
             </Backdrop>
           )}
           {isError && (
             <Backdrop>
               <div>이미지를 불러오는 중 오류가 발생했습니다.</div>
-              <CancelButton
+              <RoundedButton
                 onClick={() => {
                   downloadOriginalSizedImage();
                   setIsError(false);
                 }}
               >
                 다시 시도
-              </CancelButton>
+              </RoundedButton>
             </Backdrop>
           )}
           <img src={image} alt="view" />
@@ -222,7 +222,7 @@ const Progress = styled.progress`
   }
 `;
 
-const CancelButton = styled.div`
+const RoundedButton = styled.div`
   padding: 0.5rem 1rem;
   border: 1px solid white;
   border-radius: 1rem;
