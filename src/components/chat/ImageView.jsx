@@ -21,6 +21,8 @@ const ImageView = ({ imgSrc, handleCancel }) => {
   const [scale, setScale] = useState(1);
   const [initialDistance, setInitialDistance] = useState(0);
 
+  const MAX_SCALE = 5;
+
   const containerRef = useRef(null);
   const imgRef = useRef(null);
 
@@ -107,7 +109,7 @@ const ImageView = ({ imgSrc, handleCancel }) => {
       );
       const scaleChange = distance / initialDistance;
       setScale((prevScale) =>
-        Math.min(3, Math.max(1, prevScale * scaleChange))
+        Math.min(MAX_SCALE, Math.max(1, prevScale * scaleChange))
       );
       setInitialDistance(distance);
     }
@@ -120,7 +122,7 @@ const ImageView = ({ imgSrc, handleCancel }) => {
   };
 
   const adjustScale = () => {
-    setScale((prevScale) => Math.min(3, Math.max(1, prevScale)));
+    setScale((prevScale) => Math.min(MAX_SCALE, Math.max(1, prevScale)));
   };
 
   const adjustImagePosition = () => {
