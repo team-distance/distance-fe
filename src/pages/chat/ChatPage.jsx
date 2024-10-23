@@ -63,7 +63,7 @@ const ChatPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [uploadingProgress, setUploadingProgress] = useState({
+  const [uploadProgress, setUploadProgress] = useState({
     loaded: 0,
     total: 0,
   });
@@ -171,7 +171,7 @@ const ChatPage = () => {
       myMemberId,
       showWaitToast,
       setIsUploadingImage,
-      setUploadingProgress,
+      setUploadProgress,
       uploadingImagePreviewUrl,
       setUploadingImagePreviewUrl
     );
@@ -438,7 +438,7 @@ const ChatPage = () => {
               }
               isMenuOpen={isMenuOpen}
               isUploadingImage={isUploadingImage}
-              uploadingProgress={uploadingProgress}
+              uploadProgress={uploadProgress}
               uploadingImagePreviewUrl={uploadingImagePreviewUrl}
             />
             <MessageInputWrapper>

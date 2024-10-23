@@ -12,7 +12,7 @@ const Messages = memo(
     opponentMemberCharacter,
     isMenuOpen,
     isUploadingImage,
-    uploadingProgress,
+    uploadProgress,
     uploadingImagePreviewUrl,
   }) => {
     const messageRef = useRef();
@@ -68,15 +68,15 @@ const Messages = memo(
                 <Progress
                   value={
                     Math.round(
-                      (uploadingProgress.loaded / uploadingProgress.total) * 100
+                      (uploadProgress.loaded / uploadProgress.total) * 100
                     ) || 0
                   }
                   max="100"
                 />
                 <div>
                   {/* 바이트를 메가바이트로 변환 */}
-                  {(uploadingProgress.loaded / (1024 * 1024)).toFixed(2)} MB /{' '}
-                  {(uploadingProgress.total / (1024 * 1024)).toFixed(2)} MB
+                  {(uploadProgress.loaded / (1024 * 1024)).toFixed(2)} MB /{' '}
+                  {(uploadProgress.total / (1024 * 1024)).toFixed(2)} MB
                 </div>
               </div>
             </div>
