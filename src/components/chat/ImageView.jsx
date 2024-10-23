@@ -15,6 +15,39 @@ const ImageView = ({ imgSrc, handleCancel }) => {
     total: 0,
   });
 
+  // translate 속성은 이 상태값을 이용하여 이미지를 이동시킵니다.
+  const [isTouching, setIsTouching] = useState(false);
+  const [prevTouchPosition, setPrevTouchPosition] = useState({ x: 0, y: 0 });
+  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
+
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    setPrevTouchPosition({ x: touch.clientX, y: touch.clientY });
+    setIsTouching(true);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isTouching) return;
+
+    const touch = e.touches[0];
+    const x = touch.clientX;
+    const y = touch.clientY;
+
+    const diffX = x - prevTouchPosition.x;
+    const diffY = y - prevTouchPosition.y;
+
+    setPrevTouchPosition({ x, y });
+
+    setImagePosition((prev) => ({
+      x: prev.x + diffX,
+      y: prev.y + diffY,
+    }));
+  };
+
+  const handleTouchEnd = () => {
+    setIsTouching(false);
+  };
+
   const { showPromiseToast: showDownloadImageToast } = usePromiseToast();
 
   const handleClickDownload = () => {
@@ -109,7 +142,11 @@ const ImageView = ({ imgSrc, handleCancel }) => {
         </WrapButtons>
       )}
       <Background onClick={() => setShowButton((prev) => !prev)}>
-        <WrapImage>
+        <WrapImage
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           {isLoading && (
             <Backdrop>
               <Progress
@@ -122,7 +159,6 @@ const ImageView = ({ imgSrc, handleCancel }) => {
                 <div>원본 크기로 변환 중</div>
               ) : (
                 <div>
-                  {/* 바이트를 메가바이트로 변환 */}
                   {(downloadProgress.loaded / (1024 * 1024)).toFixed(2)} MB /{' '}
                   {(downloadProgress.total / (1024 * 1024)).toFixed(2)} MB
                 </div>
@@ -144,7 +180,13 @@ const ImageView = ({ imgSrc, handleCancel }) => {
               </RoundedButton>
             </Backdrop>
           )}
-          <img src={image} alt="view" />
+          <img
+            src={image}
+            alt="view"
+            style={{
+              transform: `translate(${imagePosition.x}px, ${imagePosition.y}px)`,
+            }}
+          />
         </WrapImage>
       </Background>
     </>
@@ -184,6 +226,7 @@ const WrapImage = styled.div`
   height: 100%;
 
   img {
+    z-index: -1;
     max-width: 100%;
     max-height: 100%;
   }
