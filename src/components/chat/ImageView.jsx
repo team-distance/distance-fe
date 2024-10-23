@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { parseDate } from '../../utils/parseDate';
 import axios from 'axios';
@@ -14,6 +14,148 @@ const ImageView = ({ imgSrc, handleCancel }) => {
     loaded: 0,
     total: 0,
   });
+
+  const [isTouching, setIsTouching] = useState(false);
+  const [prevTouchPosition, setPrevTouchPosition] = useState({ x: 0, y: 0 });
+  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
+  const [scale, setScale] = useState(1);
+  const [initialDistance, setInitialDistance] = useState(0);
+
+  const containerRef = useRef(null);
+  const imgRef = useRef(null);
+
+  const handleTouchStart = (e) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      setPrevTouchPosition({ x: touch.clientX, y: touch.clientY });
+      setIsTouching(true);
+    } else if (e.touches.length === 2) {
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const distance = Math.sqrt(
+        Math.pow(touch2.clientX - touch1.clientX, 2) +
+          Math.pow(touch2.clientY - touch1.clientY, 2)
+      );
+      setInitialDistance(distance);
+      setIsTouching(true);
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isTouching) return;
+
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      const x = touch.clientX;
+      const y = touch.clientY;
+
+      const diffX = x - prevTouchPosition.x;
+      const diffY = y - prevTouchPosition.y;
+
+      setPrevTouchPosition({ x, y });
+
+      setImagePosition((prev) => {
+        const container = containerRef.current;
+        const img = imgRef.current;
+
+        if (!container || !img) return prev;
+
+        const containerRect = container.getBoundingClientRect();
+        const imgRect = img.getBoundingClientRect();
+
+        let newX = prev.x + diffX;
+        let newY = prev.y + diffY;
+
+        // 이미지가 화면 밖으로 벗어나지 않도록 조정
+        if (imgRect.left + diffX > containerRect.left) {
+          newX = 0;
+        } else if (imgRect.right + diffX < containerRect.right) {
+          newX = containerRect.width - imgRect.width;
+        }
+
+        if (imgRect.top + diffY > containerRect.top) {
+          newY = 0;
+        } else if (imgRect.bottom + diffY < containerRect.bottom) {
+          newY = containerRect.height - imgRect.height;
+        }
+
+        // 확대된 상태에서 이미지의 끝부분이 부모 요소의 끝부분에서 떨어지지 않도록 조정
+        if (imgRect.width > containerRect.width) {
+          if (imgRect.left + diffX > containerRect.left) {
+            newX = prev.x - (imgRect.left - containerRect.left);
+          } else if (imgRect.right + diffX < containerRect.right) {
+            newX = prev.x + (containerRect.right - imgRect.right);
+          }
+        }
+
+        if (imgRect.height > containerRect.height) {
+          if (imgRect.top + diffY > containerRect.top) {
+            newY = prev.y - (imgRect.top - containerRect.top);
+          } else if (imgRect.bottom + diffY < containerRect.bottom) {
+            newY = prev.y + (containerRect.bottom - imgRect.bottom);
+          }
+        }
+
+        return { x: newX, y: newY };
+      });
+    } else if (e.touches.length === 2) {
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const distance = Math.sqrt(
+        Math.pow(touch2.clientX - touch1.clientX, 2) +
+          Math.pow(touch2.clientY - touch1.clientY, 2)
+      );
+      const scaleChange = distance / initialDistance;
+      setScale((prevScale) =>
+        Math.min(3, Math.max(1, prevScale * scaleChange))
+      );
+      setInitialDistance(distance);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsTouching(false);
+    adjustScale();
+    adjustImagePosition();
+  };
+
+  const adjustScale = () => {
+    setScale((prevScale) => Math.min(3, Math.max(1, prevScale)));
+  };
+
+  const adjustImagePosition = () => {
+    const container = containerRef.current;
+    const img = imgRef.current;
+
+    if (!container || !img) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const imgRect = img.getBoundingClientRect();
+
+    let newX = imagePosition.x;
+    let newY = imagePosition.y;
+
+    // 이미지가 부모 요소의 테두리와 일치하도록 조정
+    if (imgRect.left > containerRect.left) {
+      newX = 0;
+    } else if (imgRect.right < containerRect.right) {
+      newX = containerRect.width - imgRect.width;
+    }
+
+    if (imgRect.top > containerRect.top) {
+      newY = 0;
+    } else if (imgRect.bottom < containerRect.bottom) {
+      newY = containerRect.height - imgRect.height;
+    }
+
+    setImagePosition({ x: newX, y: newY });
+  };
+
+  useEffect(() => {
+    if (!isTouching && scale === 1) {
+      setImagePosition({ x: 0, y: 0 });
+    }
+  }, [isTouching, scale]);
 
   const { showPromiseToast: showDownloadImageToast } = usePromiseToast();
 
@@ -109,7 +251,12 @@ const ImageView = ({ imgSrc, handleCancel }) => {
         </WrapButtons>
       )}
       <Background onClick={() => setShowButton((prev) => !prev)}>
-        <WrapImage>
+        <WrapImage
+          ref={containerRef}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           {isLoading && (
             <Backdrop>
               <Progress
@@ -122,7 +269,6 @@ const ImageView = ({ imgSrc, handleCancel }) => {
                 <div>원본 크기로 변환 중</div>
               ) : (
                 <div>
-                  {/* 바이트를 메가바이트로 변환 */}
                   {(downloadProgress.loaded / (1024 * 1024)).toFixed(2)} MB /{' '}
                   {(downloadProgress.total / (1024 * 1024)).toFixed(2)} MB
                 </div>
@@ -144,7 +290,15 @@ const ImageView = ({ imgSrc, handleCancel }) => {
               </RoundedButton>
             </Backdrop>
           )}
-          <img src={image} alt="view" />
+          <img
+            ref={imgRef}
+            src={image}
+            alt="view"
+            style={{
+              transform: `translate(${imagePosition.x}px, ${imagePosition.y}px) scale(${scale})`,
+              transition: isTouching ? 'none' : 'transform 0.3s ease-out',
+            }}
+          />
         </WrapImage>
       </Background>
     </>
@@ -184,6 +338,7 @@ const WrapImage = styled.div`
   height: 100%;
 
   img {
+    z-index: -1;
     max-width: 100%;
     max-height: 100%;
   }
