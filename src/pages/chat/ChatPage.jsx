@@ -410,6 +410,10 @@ const ChatPage = () => {
     }
   }, [draftMessage]);
 
+  useEffect(() => {
+    console.log(uploadProgress);
+  }, [uploadProgress]);
+
   return (
     <Wrapper>
       {isShowImage && (
