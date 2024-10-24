@@ -66,6 +66,7 @@ const ChatPage = () => {
   const [uploadProgress, setUploadProgress] = useState({
     loaded: 0,
     total: 0,
+    progress: 0,
   });
   const [uploadingImagePreviewUrl, setUploadingImagePreviewUrl] = useState('');
   const [requestCancelController, setRequestCancelController] = useState(null);
@@ -409,10 +410,6 @@ const ChatPage = () => {
       setDraftMessage(draftMessage.slice(0, -1));
     }
   }, [draftMessage]);
-
-  useEffect(() => {
-    console.log(uploadProgress);
-  }, [uploadProgress]);
 
   return (
     <Wrapper>

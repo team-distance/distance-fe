@@ -47,6 +47,7 @@ export const useSendMessage = (
           setUploadProgress({
             loaded: progressEvent.loaded,
             total: progressEvent.total,
+            progress: progressEvent.progress,
           });
         },
         signal: newController.signal,
