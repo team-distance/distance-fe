@@ -4,6 +4,22 @@ import { parseDate } from '../../utils/parseDate';
 import axios from 'axios';
 import { usePromiseToast } from '../../hooks/useToast';
 import usePinchZoom from '../../hooks/usePinchZoom';
+import { AnimatePresence, motion } from 'framer-motion';
+
+const variants = {
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { ease: [0.2, 0.8, 0.2, 1], duration: 1 },
+  },
+  hidden: {
+    opacity: 0,
+    y: 100,
+    filter: 'blur(10px)',
+    transition: { ease: [0.2, 0.8, 0.2, 1], duration: 2 },
+  },
+};
 
 const ImageView = ({ imgSrc, handleCancel }) => {
   const [showButton, setShowButton] = useState(true);
@@ -59,7 +75,9 @@ const ImageView = ({ imgSrc, handleCancel }) => {
   };
 
   const downloadOriginalSizedImage = async () => {
+    setIsError(false);
     setIsLoading(true);
+
     const newController = new AbortController();
     setRequestCancelController(newController);
 
@@ -75,12 +93,13 @@ const ImageView = ({ imgSrc, handleCancel }) => {
         signal: newController.signal,
       });
       setImage(URL.createObjectURL(response.data));
+      setIsLoading(false);
     } catch (error) {
-      if (!error?.code === 'ERR_CANCELED') {
+      console.log(error);
+      if (!(error.code === 'ERR_CANCELED')) {
+        console.log('triggered');
         setIsError(true);
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -88,6 +107,7 @@ const ImageView = ({ imgSrc, handleCancel }) => {
     if (requestCancelController) {
       requestCancelController.abort();
       setRequestCancelController(null);
+      setIsLoading(false);
     }
   };
 
@@ -120,6 +140,7 @@ const ImageView = ({ imgSrc, handleCancel }) => {
           </div>
         </WrapButtons>
       )}
+
       <Background onClick={() => setShowButton((prev) => !prev)}>
         <WrapImage
           ref={containerRef}
@@ -127,39 +148,6 @@ const ImageView = ({ imgSrc, handleCancel }) => {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {isLoading && (
-            <Backdrop>
-              <Progress
-                value={
-                  (downloadProgress.loaded / downloadProgress.total) * 100 || 0
-                }
-                max={100}
-              />
-              {downloadProgress.loaded === downloadProgress.total ? (
-                <div>원본 크기로 변환 중</div>
-              ) : (
-                <div>
-                  {(downloadProgress.loaded / (1024 * 1024)).toFixed(2)} MB /{' '}
-                  {(downloadProgress.total / (1024 * 1024)).toFixed(2)} MB
-                </div>
-              )}
-
-              <RoundedButton onClick={cancelDownload}>취소</RoundedButton>
-            </Backdrop>
-          )}
-          {isError && (
-            <Backdrop>
-              <div>이미지를 불러오는 중 오류가 발생했습니다.</div>
-              <RoundedButton
-                onClick={() => {
-                  downloadOriginalSizedImage();
-                  setIsError(false);
-                }}
-              >
-                다시 시도
-              </RoundedButton>
-            </Backdrop>
-          )}
           <img
             ref={imgRef}
             src={image}
@@ -171,6 +159,63 @@ const ImageView = ({ imgSrc, handleCancel }) => {
           />
         </WrapImage>
       </Background>
+
+      <AnimatePresence>
+        {isLoading && (
+          <DownloadIndicator
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={variants}
+          >
+            <div className="upper-section">
+              <Progress
+                value={(
+                  (downloadProgress.loaded / downloadProgress.total) *
+                  100
+                ).toString()}
+                max={100}
+              />
+              {isError ? (
+                <img
+                  width={16}
+                  height={16}
+                  src="/assets/retry-button.svg"
+                  alt="retry"
+                  onClick={() => {
+                    downloadOriginalSizedImage();
+                    setIsError(false);
+                  }}
+                />
+              ) : (
+                <img
+                  width={16}
+                  height={16}
+                  src="/assets/cancel-button-gray.svg"
+                  alt="cancel"
+                  onClick={cancelDownload}
+                />
+              )}
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              {isError ? (
+                <div>이미지를 불러오는 중 오류가 발생했습니다.</div>
+              ) : (
+                <div>
+                  {downloadProgress.loaded === downloadProgress.total ? (
+                    <div>원본 크기로 변환 중</div>
+                  ) : (
+                    <div>
+                      {(downloadProgress.loaded / (1024 * 1024)).toFixed(2)} MB
+                      / {(downloadProgress.total / (1024 * 1024)).toFixed(2)} MB
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </DownloadIndicator>
+        )}
+      </AnimatePresence>
     </>
   );
 };
@@ -214,25 +259,8 @@ const WrapImage = styled.div`
   }
 `;
 
-const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  padding: 0.5rem;
-  font-size: 0.8rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-`;
-
 const Progress = styled.progress`
-  width: 80%;
+  width: 100%;
   height: 8px;
   appearance: none;
 
@@ -247,10 +275,26 @@ const Progress = styled.progress`
   }
 `;
 
-const RoundedButton = styled.div`
+const DownloadIndicator = styled(motion.div)`
+  background: rgba(50, 50, 50, 0.5);
+  color: white;
   padding: 0.5rem 1rem;
-  border: 1px solid white;
   border-radius: 1rem;
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .upper-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
 `;
 
 export default ImageView;
