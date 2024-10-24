@@ -16,6 +16,10 @@ const Messages = memo(
     uploadingImagePreviewUrl,
     requestCancelController,
   }) => {
+    // 아이폰에서는 프로그레스 바에 파일 전체 크기를 표시하지 않기 위해 사용
+    // (axios의 onUploadProgress 이벤트 핸들러에서 total 값이 제대로 전달되지 않음)
+    const isIphone = navigator.userAgent.includes('iPhone');
+
     const messageRef = useRef();
 
     const scrollToBottom = () => {
@@ -73,17 +77,15 @@ const Messages = memo(
               <div className="backdrop" />
               <div className="progress">
                 <Progress
-                  value={
-                    Math.round(
-                      (uploadProgress.loaded / uploadProgress.total) * 100
-                    ) || 0
-                  }
-                  max="100"
+                  value={Math.round(uploadProgress.progress * 100) || 0}
+                  max={100}
                 />
                 <div>
-                  {/* 바이트를 메가바이트로 변환 */}
-                  {(uploadProgress.loaded / (1024 * 1024)).toFixed(2)} MB /{' '}
-                  {(uploadProgress.total / (1024 * 1024)).toFixed(2)} MB
+                  {(uploadProgress.loaded / (1024 * 1024)).toFixed(2)} MB
+                  {!isIphone &&
+                    ` / ${(uploadProgress.total / (1024 * 1024)).toFixed(
+                      2
+                    )} MB`}
                 </div>
                 <RoundedButton onClick={cancelUpload}>취소</RoundedButton>
               </div>

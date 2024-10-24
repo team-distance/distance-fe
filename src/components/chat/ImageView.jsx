@@ -30,6 +30,7 @@ const ImageView = ({ imgSrc, handleCancel }) => {
   const [downloadProgress, setDownloadProgress] = useState({
     loaded: 0,
     total: 0,
+    progress: 0,
   });
 
   const {
@@ -88,6 +89,7 @@ const ImageView = ({ imgSrc, handleCancel }) => {
           setDownloadProgress({
             loaded: progressEvent.loaded,
             total: progressEvent.total,
+            progress: progressEvent.progress,
           });
         },
         signal: newController.signal,
@@ -170,10 +172,7 @@ const ImageView = ({ imgSrc, handleCancel }) => {
           >
             <div className="upper-section">
               <Progress
-                value={(
-                  (downloadProgress.loaded / downloadProgress.total) *
-                  100
-                ).toString()}
+                value={Math.round(downloadProgress.progress * 100) || 0}
                 max={100}
               />
               {isError ? (
@@ -197,7 +196,7 @@ const ImageView = ({ imgSrc, handleCancel }) => {
                 />
               )}
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div className="lower-section">
               {isError ? (
                 <div>이미지를 불러오는 중 오류가 발생했습니다.</div>
               ) : (
@@ -294,6 +293,10 @@ const DownloadIndicator = styled(motion.div)`
     justify-content: space-between;
     align-items: center;
     gap: 16px;
+  }
+
+  .lower-section {
+    text-align: center;
   }
 `;
 
