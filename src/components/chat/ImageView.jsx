@@ -1,8 +1,25 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { parseDate } from '../../utils/parseDate';
 import axios from 'axios';
 import { usePromiseToast } from '../../hooks/useToast';
+import usePinchZoom from '../../hooks/usePinchZoom';
+import { AnimatePresence, motion } from 'framer-motion';
+
+const variants = {
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { ease: [0.2, 0.8, 0.2, 1], duration: 1 },
+  },
+  hidden: {
+    opacity: 0,
+    y: 100,
+    filter: 'blur(10px)',
+    transition: { ease: [0.2, 0.8, 0.2, 1], duration: 2 },
+  },
+};
 
 const ImageView = ({ imgSrc, handleCancel }) => {
   const [showButton, setShowButton] = useState(true);
@@ -15,149 +32,16 @@ const ImageView = ({ imgSrc, handleCancel }) => {
     total: 0,
   });
 
-  const [isTouching, setIsTouching] = useState(false);
-  const [prevTouchPosition, setPrevTouchPosition] = useState({ x: 0, y: 0 });
-  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
-  const [scale, setScale] = useState(1);
-  const [initialDistance, setInitialDistance] = useState(0);
-
-  const MAX_SCALE = 5;
-
-  const containerRef = useRef(null);
-  const imgRef = useRef(null);
-
-  const handleTouchStart = (e) => {
-    if (e.touches.length === 1) {
-      const touch = e.touches[0];
-      setPrevTouchPosition({ x: touch.clientX, y: touch.clientY });
-      setIsTouching(true);
-    } else if (e.touches.length === 2) {
-      const touch1 = e.touches[0];
-      const touch2 = e.touches[1];
-      const distance = Math.sqrt(
-        Math.pow(touch2.clientX - touch1.clientX, 2) +
-          Math.pow(touch2.clientY - touch1.clientY, 2)
-      );
-      setInitialDistance(distance);
-      setIsTouching(true);
-    }
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isTouching) return;
-
-    if (e.touches.length === 1) {
-      const touch = e.touches[0];
-      const x = touch.clientX;
-      const y = touch.clientY;
-
-      const diffX = x - prevTouchPosition.x;
-      const diffY = y - prevTouchPosition.y;
-
-      setPrevTouchPosition({ x, y });
-
-      setImagePosition((prev) => {
-        const container = containerRef.current;
-        const img = imgRef.current;
-
-        if (!container || !img) return prev;
-
-        const containerRect = container.getBoundingClientRect();
-        const imgRect = img.getBoundingClientRect();
-
-        let newX = prev.x + diffX;
-        let newY = prev.y + diffY;
-
-        // 이미지가 화면 밖으로 벗어나지 않도록 조정
-        if (imgRect.left + diffX > containerRect.left) {
-          newX = 0;
-        } else if (imgRect.right + diffX < containerRect.right) {
-          newX = containerRect.width - imgRect.width;
-        }
-
-        if (imgRect.top + diffY > containerRect.top) {
-          newY = 0;
-        } else if (imgRect.bottom + diffY < containerRect.bottom) {
-          newY = containerRect.height - imgRect.height;
-        }
-
-        // 확대된 상태에서 이미지의 끝부분이 부모 요소의 끝부분에서 떨어지지 않도록 조정
-        if (imgRect.width > containerRect.width) {
-          if (imgRect.left + diffX > containerRect.left) {
-            newX = prev.x - (imgRect.left - containerRect.left);
-          } else if (imgRect.right + diffX < containerRect.right) {
-            newX = prev.x + (containerRect.right - imgRect.right);
-          }
-        }
-
-        if (imgRect.height > containerRect.height) {
-          if (imgRect.top + diffY > containerRect.top) {
-            newY = prev.y - (imgRect.top - containerRect.top);
-          } else if (imgRect.bottom + diffY < containerRect.bottom) {
-            newY = prev.y + (containerRect.bottom - imgRect.bottom);
-          }
-        }
-
-        return { x: newX, y: newY };
-      });
-    } else if (e.touches.length === 2) {
-      const touch1 = e.touches[0];
-      const touch2 = e.touches[1];
-      const distance = Math.sqrt(
-        Math.pow(touch2.clientX - touch1.clientX, 2) +
-          Math.pow(touch2.clientY - touch1.clientY, 2)
-      );
-      const scaleChange = distance / initialDistance;
-      setScale((prevScale) =>
-        Math.min(MAX_SCALE, Math.max(1, prevScale * scaleChange))
-      );
-      setInitialDistance(distance);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setIsTouching(false);
-    adjustScale();
-    adjustImagePosition();
-  };
-
-  const adjustScale = () => {
-    setScale((prevScale) => Math.min(MAX_SCALE, Math.max(1, prevScale)));
-  };
-
-  const adjustImagePosition = () => {
-    const container = containerRef.current;
-    const img = imgRef.current;
-
-    if (!container || !img) return;
-
-    const containerRect = container.getBoundingClientRect();
-    const imgRect = img.getBoundingClientRect();
-
-    let newX = imagePosition.x;
-    let newY = imagePosition.y;
-
-    // 이미지가 부모 요소의 테두리와 일치하도록 조정
-    if (imgRect.left > containerRect.left) {
-      newX = 0;
-    } else if (imgRect.right < containerRect.right) {
-      newX = containerRect.width - imgRect.width;
-    }
-
-    if (imgRect.top > containerRect.top) {
-      newY = 0;
-    } else if (imgRect.bottom < containerRect.bottom) {
-      newY = containerRect.height - imgRect.height;
-    }
-
-    setImagePosition({ x: newX, y: newY });
-  };
-
-  useEffect(() => {
-    if (!isTouching && scale === 1) {
-      setImagePosition({ x: 0, y: 0 });
-    }
-  }, [isTouching, scale]);
+  const {
+    isTouching,
+    imagePosition,
+    scale,
+    containerRef,
+    imgRef,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+  } = usePinchZoom();
 
   const { showPromiseToast: showDownloadImageToast } = usePromiseToast();
 
@@ -191,7 +75,9 @@ const ImageView = ({ imgSrc, handleCancel }) => {
   };
 
   const downloadOriginalSizedImage = async () => {
+    setIsError(false);
     setIsLoading(true);
+
     const newController = new AbortController();
     setRequestCancelController(newController);
 
@@ -207,12 +93,13 @@ const ImageView = ({ imgSrc, handleCancel }) => {
         signal: newController.signal,
       });
       setImage(URL.createObjectURL(response.data));
+      setIsLoading(false);
     } catch (error) {
-      if (!error?.code === 'ERR_CANCELED') {
+      console.log(error);
+      if (!(error.code === 'ERR_CANCELED')) {
+        console.log('triggered');
         setIsError(true);
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -220,6 +107,7 @@ const ImageView = ({ imgSrc, handleCancel }) => {
     if (requestCancelController) {
       requestCancelController.abort();
       setRequestCancelController(null);
+      setIsLoading(false);
     }
   };
 
@@ -252,6 +140,7 @@ const ImageView = ({ imgSrc, handleCancel }) => {
           </div>
         </WrapButtons>
       )}
+
       <Background onClick={() => setShowButton((prev) => !prev)}>
         <WrapImage
           ref={containerRef}
@@ -259,39 +148,6 @@ const ImageView = ({ imgSrc, handleCancel }) => {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {isLoading && (
-            <Backdrop>
-              <Progress
-                value={
-                  (downloadProgress.loaded / downloadProgress.total) * 100 || 0
-                }
-                max={100}
-              />
-              {downloadProgress.loaded === downloadProgress.total ? (
-                <div>원본 크기로 변환 중</div>
-              ) : (
-                <div>
-                  {(downloadProgress.loaded / (1024 * 1024)).toFixed(2)} MB /{' '}
-                  {(downloadProgress.total / (1024 * 1024)).toFixed(2)} MB
-                </div>
-              )}
-
-              <RoundedButton onClick={cancelDownload}>취소</RoundedButton>
-            </Backdrop>
-          )}
-          {isError && (
-            <Backdrop>
-              <div>이미지를 불러오는 중 오류가 발생했습니다.</div>
-              <RoundedButton
-                onClick={() => {
-                  downloadOriginalSizedImage();
-                  setIsError(false);
-                }}
-              >
-                다시 시도
-              </RoundedButton>
-            </Backdrop>
-          )}
           <img
             ref={imgRef}
             src={image}
@@ -303,6 +159,63 @@ const ImageView = ({ imgSrc, handleCancel }) => {
           />
         </WrapImage>
       </Background>
+
+      <AnimatePresence>
+        {isLoading && (
+          <DownloadIndicator
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={variants}
+          >
+            <div className="upper-section">
+              <Progress
+                value={(
+                  (downloadProgress.loaded / downloadProgress.total) *
+                  100
+                ).toString()}
+                max={100}
+              />
+              {isError ? (
+                <img
+                  width={16}
+                  height={16}
+                  src="/assets/retry-button.svg"
+                  alt="retry"
+                  onClick={() => {
+                    downloadOriginalSizedImage();
+                    setIsError(false);
+                  }}
+                />
+              ) : (
+                <img
+                  width={16}
+                  height={16}
+                  src="/assets/cancel-button-gray.svg"
+                  alt="cancel"
+                  onClick={cancelDownload}
+                />
+              )}
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              {isError ? (
+                <div>이미지를 불러오는 중 오류가 발생했습니다.</div>
+              ) : (
+                <div>
+                  {downloadProgress.loaded === downloadProgress.total ? (
+                    <div>원본 크기로 변환 중</div>
+                  ) : (
+                    <div>
+                      {(downloadProgress.loaded / (1024 * 1024)).toFixed(2)} MB
+                      / {(downloadProgress.total / (1024 * 1024)).toFixed(2)} MB
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </DownloadIndicator>
+        )}
+      </AnimatePresence>
     </>
   );
 };
@@ -346,25 +259,8 @@ const WrapImage = styled.div`
   }
 `;
 
-const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  padding: 0.5rem;
-  font-size: 0.8rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-`;
-
 const Progress = styled.progress`
-  width: 80%;
+  width: 100%;
   height: 8px;
   appearance: none;
 
@@ -379,10 +275,26 @@ const Progress = styled.progress`
   }
 `;
 
-const RoundedButton = styled.div`
+const DownloadIndicator = styled(motion.div)`
+  background: rgba(50, 50, 50, 0.5);
+  color: white;
   padding: 0.5rem 1rem;
-  border: 1px solid white;
   border-radius: 1rem;
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .upper-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
 `;
 
 export default ImageView;
