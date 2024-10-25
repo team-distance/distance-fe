@@ -9,13 +9,37 @@ import { isLoggedInState } from '../../store/auth';
 import Badge from '../../components/common/Badge';
 import Loader from '../../components/common/Loader';
 import { useQuery } from '@tanstack/react-query';
+import useSse from '../../hooks/useSse';
 
 const ChatIndexPage = () => {
   const navigate = useNavigate();
   const [chatList, setChatList] = useState();
   const [loading, setLoading] = useState(false);
   const isLoggedIn = useRecoilValue(isLoggedInState);
-  const [waitingCount, setWaitingCount] = useState(0);
+  // const [waitingCount, setWaitingCount] = useState(0);
+  // const [eventSource, setEventSource] = useState(null);
+
+  // useSse({
+  //   url: `${process.env.REACT_APP_BASE_URL}/notify/subscribe/2`,
+  //   onopen: (event) => {},
+  //   onmessage: (event) => {},
+  //   onerror: (event) => {},
+  //   customEvents: {
+  //     waitingCount: (event) => {
+  //       const { waitingCount } = JSON.parse(event.data);
+  //       setWaitingCount(waitingCount);
+  //     },
+  //     message: (event) => {
+  //       const chatList = JSON.parse(event.data);
+  //       setChatList(chatList);
+  //     },
+  //   },
+  //   timeout: 3000,
+  // });
+
+  const waitingCount = useSse(
+    `${process.env.REACT_APP_BASE_URL}/notify/subscribe/2`
+  );
 
   const { data: authUniv } = useQuery({
     queryKey: ['authUniv'],
@@ -23,6 +47,59 @@ const ChatIndexPage = () => {
       instance.get('/member/check/university').then((res) => res.data),
     enabled: false,
   });
+
+  // useEffect(() => {
+  //   let reconnectTimeout = 3000;
+
+  //   const connectSSE = () => {
+  //     const source = new EventSource(
+  //       `${process.env.REACT_APP_BASE_URL}/notify/subscribe/2`
+  //     );
+
+  //     setEventSource(source);
+
+  //     const updateWaitingCount = (event) => {
+  //       const { waitingCount } = JSON.parse(event.data);
+  //       setWaitingCount(waitingCount);
+  //     };
+
+  //     source.onopen = (event) => {
+  //       console.log('EventSource connected:', event);
+  //     };
+
+  //     source.onmessage = (event) => {
+  //       console.log('EventSource message:', event);
+  //     };
+
+  //     source.addEventListener('waitingCount', updateWaitingCount);
+
+  //     source.onerror = (event) => {
+  //       console.error('EventSource failed:', event);
+  //       source.close();
+
+  //       reconnectTimeout = setTimeout(() => {
+  //         connectSSE();
+  //       }, 1000);
+  //     };
+
+  //     return () => {
+  //       source.removeEventListener('waitingCount', updateWaitingCount);
+  //       source.close();
+  //       clearTimeout(reconnectTimeout);
+  //     };
+  //   };
+
+  //   connectSSE();
+
+  //   // Cleanup function to properly close the connection when component unmounts
+  //   return () => {
+  //     if (eventSource) {
+  //       eventSource.close();
+  //     }
+
+  //     clearTimeout(reconnectTimeout);
+  //   };
+  // }, []);
 
   const fetchChatList = async () => {
     try {
@@ -46,18 +123,9 @@ const ChatIndexPage = () => {
     }
   };
 
-  const fetchChatWaiting = async () => {
-    try {
-      const res = await instance.get('/waiting').then((res) => res.data);
-      setWaitingCount(res.length);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     fetchChatList();
-    fetchChatWaiting();
+    // fetchChatWaiting();
   }, []);
 
   const formatTime = (time) => {
