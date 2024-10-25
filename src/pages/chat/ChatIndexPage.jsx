@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
-import { parseTime } from '../../utils/parseTime';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import { useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
@@ -11,6 +10,7 @@ import Loader from '../../components/common/Loader';
 import { useQuery } from '@tanstack/react-query';
 import useSse from '../../hooks/useSse';
 import { baseURL } from '../../constants/baseURL';
+import dayjs from 'dayjs';
 
 const ChatIndexPage = () => {
   const navigate = useNavigate();
@@ -86,26 +86,19 @@ const ChatIndexPage = () => {
     // fetchChatWaiting();
   }, []);
 
-  const formatTime = (time) => {
-    const today = new Date();
-    const date = new Date(time);
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+  // 시간을 포맷팅하는 함수 (카카오톡과 같은 형식)
+  // 오늘인 경우 "HH:mm", 어제인 경우 "어제", 그 외 "YYYY-MM-DD" 형식으로 반환
+  const formatTime = (date) => {
+    const today = dayjs();
+    const givenDate = dayjs(date);
 
-    // 오늘 날짜와 같은 경우
-    if (today.toDateString() === date.toDateString()) {
-      return parseTime(time);
-    }
-    // 어제 날짜와 같은 경우
-    else if (yesterday.toDateString() === date.toDateString()) {
-      return '어제';
-    }
-    // 그 외 (어제보다 이전의 날짜)
-    else {
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date.getDate().toString().padStart(2, '0');
-      return `${year}-${month}-${day}`;
+    switch (today.diff(givenDate, 'day')) {
+      case 0:
+        return givenDate.format('HH:mm');
+      case 1:
+        return '어제';
+      default:
+        return givenDate.format('YYYY-MM-DD');
     }
   };
 
