@@ -1,23 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import Badge from '../../components/common/Badge';
+import useSse from '../../hooks/useSse';
+import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
 import { CHARACTERS } from '../../constants/CHARACTERS';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
-import Badge from '../../components/common/Badge';
-import Loader from '../../components/common/Loader';
 import { useQuery } from '@tanstack/react-query';
-import useSse from '../../hooks/useSse';
 import { baseURL } from '../../constants/baseURL';
-import dayjs from 'dayjs';
+import { chatRoomListState } from '../../store/chatRoomListState';
+import { waitingCountState } from '../../store/waitingCountState';
 
+/**
+ * @todo 채팅방 나가기 기능 실행 시 Optimistic Update 적용
+ */
 const ChatIndexPage = () => {
   const navigate = useNavigate();
-  const [chatList, setChatList] = useState([]);
-  const [waitingCount, setWaitingCount] = useState(0);
-  const [loading, setLoading] = useState(false);
+
+  const [chatRoomList, setChatRoomList] = useRecoilState(chatRoomListState);
+  const [waitingCount, setWaitingCount] = useRecoilState(waitingCountState);
+
   const isLoggedIn = useRecoilValue(isLoggedInState);
+
   const [sseUrl, setSseUrl] = useState('');
 
   const { data: authUniv } = useQuery({
@@ -27,21 +33,11 @@ const ChatIndexPage = () => {
     enabled: false,
   });
 
-  useEffect(() => {
-    const fetchMemberId = async () => {
-      try {
-        const response = await instance.get('/member/id');
-
-        if (response) {
-          setSseUrl(`${baseURL}/notify/subscribe/${response.data}`);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchMemberId();
-  }, []);
+  const { data: memberId } = useQuery({
+    queryKey: ['memberId'],
+    queryFn: () => instance.get('/member/id').then((res) => res.data),
+    staleTime: 'Infinity',
+  });
 
   useSse({
     url: sseUrl,
@@ -53,38 +49,15 @@ const ChatIndexPage = () => {
       chatRoom: (event) => {
         const chatList = JSON.parse(event.data);
         chatList.sort((a, b) => new Date(b.modifyDt) - new Date(a.modifyDt));
-        setChatList(chatList);
+        setChatRoomList(chatList);
       },
     },
-    timeout: 3000,
+    timeout: 1000,
   });
 
-  const fetchChatList = async () => {
-    try {
-      setLoading(true);
-      const res = await instance
-        .get('/chatroom')
-        .then((res) => res.data)
-        .then((data) => {
-          const tempResponse = [...data];
-          tempResponse.sort(
-            (a, b) => new Date(b.modifyDt) - new Date(a.modifyDt)
-          );
-          return tempResponse;
-        });
-      setChatList(res);
-      // console.log(res);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    // fetchChatList();
-    // fetchChatWaiting();
-  }, []);
+    if (memberId) setSseUrl(`${baseURL}/notify/subscribe/${memberId}`);
+  }, [memberId]);
 
   // 시간을 포맷팅하는 함수 (카카오톡과 같은 형식)
   // 오늘인 경우 "HH:mm", 어제인 경우 "어제", 그 외 "YYYY-MM-DD" 형식으로 반환
@@ -108,11 +81,9 @@ const ChatIndexPage = () => {
     } else {
       if (chat.opponentMemberId === null) {
         const res = window.confirm('정말로 나가시겠습니까?');
-        console.log(res);
         if (!res) return;
         try {
           await instance.get(`/room-member/leave/${chat.chatRoomId}`);
-          fetchChatList();
         } catch (error) {
           console.log(error);
         }
@@ -122,124 +93,102 @@ const ChatIndexPage = () => {
     }
   };
 
-  return (
+  return isLoggedIn ? (
     <>
-      {isLoggedIn ? (
-        loading ? (
-          <Loader />
-        ) : (
-          <>
-            <WrapInboxButton>
-              <InboxButton
-                onClick={() => {
-                  navigate('/inbox');
-                }}
-              >
-                <div>
-                  {waitingCount > 0 && (
-                    <UnreadCount>{waitingCount}</UnreadCount>
-                  )}
-                  <div>요청함</div>
-                </div>
-                <img src="/assets/arrow-pink-right.svg" alt="화살표 아이콘" />
-              </InboxButton>
-            </WrapInboxButton>
-            {chatList && chatList.length === 0 ? (
-              <EmptyContainer>
-                <div className="wrap">
-                  <img src={'/assets/empty-icon.svg'} alt="empty icon" />
-                  <div>채팅을 시작해보세요!</div>
-                </div>
-              </EmptyContainer>
-            ) : (
-              <ChatListContainer>
-                {chatList &&
-                  chatList.map((chat) => {
-                    const timeDisplay = chat.modifyDt
-                      ? formatTime(chat.modifyDt)
-                      : '(알수없음)';
-
-                    return (
-                      // 탈퇴한 사용자의 경우 캐릭터가 "?"로 표시되어야 하나
-                      // 현재는 곰 캐릭터로 표시되도록 설정되어 있음
-                      // 추후 컴포넌트 분리할 때 이 부분도 같이 해결하겠슴다
-                      <ChatRoomContainer
-                        key={chat.chatRoomId}
-                        onClick={() => onClickChatroom(chat)}
-                      >
-                        {chat.memberCharacter === null ? (
-                          <CharacterBackground $backgroundColor={'#C3C3C3'}>
-                            <img
-                              src={'/assets/home/profile-null.png'}
-                              alt="탈퇴"
-                            />
-                          </CharacterBackground>
-                        ) : (
-                          <CharacterBackground
-                            $backgroundColor={
-                              CHARACTERS[chat.memberCharacter]?.color
-                            }
-                          >
-                            <StyledImage
-                              $xPos={
-                                CHARACTERS[chat.memberCharacter]?.position[0]
-                              }
-                              $yPos={
-                                CHARACTERS[chat.memberCharacter]?.position[1]
-                              }
-                            />
-                          </CharacterBackground>
-                        )}
-
-                        <div className="profile-section">
-                          <Profile>
-                            <div className="department">{chat.department}</div>
-                            <div>{chat.mbti && <Badge>{chat.mbti}</Badge>}</div>
-                          </Profile>
-                          {chat.lastMessage.includes('s3.ap-northeast') ? (
-                            <Message>사진을 전송하였습니다.</Message>
-                          ) : (
-                            <Message>{chat.lastMessage}</Message>
-                          )}
-                        </div>
-
-                        <div className="right-section">
-                          <Time>{timeDisplay}</Time>
-                          {chat.askedCount > 0 ? (
-                            <UnreadCount>{chat.askedCount}</UnreadCount>
-                          ) : (
-                            <br />
-                          )}
-                        </div>
-                      </ChatRoomContainer>
-                    );
-                  })}
-              </ChatListContainer>
-            )}
-            {/* <SurveyLinkContainer
-              onClick={() => window.open('https://forms.gle/6ZgZvLD2iSM5LVuEA')}
-            >
-              <SurveyContentBox>
-                <img src={'/assets/chicken.png'} alt="chicken" />
-                <div>
-                  <div className="big-font">
-                    <em>설문</em>하고 <br />
-                  </div>
-                  치킨받으러가기
-                </div>
-              </SurveyContentBox>
-            </SurveyLinkContainer> */}
-          </>
-        )
-      ) : (
+      <WrapInboxButton>
+        <InboxButton
+          onClick={() => {
+            navigate('/inbox');
+          }}
+        >
+          <div>
+            {waitingCount > 0 && <UnreadCount>{waitingCount}</UnreadCount>}
+            <div>요청함</div>
+          </div>
+          <img src="/assets/arrow-pink-right.svg" alt="화살표 아이콘" />
+        </InboxButton>
+      </WrapInboxButton>
+      {chatRoomList && chatRoomList.length === 0 ? (
         <EmptyContainer>
           <div className="wrap">
             <img src={'/assets/empty-icon.svg'} alt="empty icon" />
-            <div>로그인 후 채팅을 시작해보세요!</div>
+            <div>채팅을 시작해보세요!</div>
           </div>
         </EmptyContainer>
+      ) : (
+        <ChatListContainer>
+          {chatRoomList &&
+            chatRoomList.map((chat) => {
+              const timeDisplay = chat.modifyDt
+                ? formatTime(chat.modifyDt)
+                : '(알수없음)';
+
+              return (
+                <ChatRoomContainer
+                  key={chat.chatRoomId}
+                  onClick={() => onClickChatroom(chat)}
+                >
+                  {chat.memberCharacter === null ? (
+                    <CharacterBackground $backgroundColor={'#C3C3C3'}>
+                      <img src={'/assets/home/profile-null.png'} alt="탈퇴" />
+                    </CharacterBackground>
+                  ) : (
+                    <CharacterBackground
+                      $backgroundColor={CHARACTERS[chat.memberCharacter]?.color}
+                    >
+                      <StyledImage
+                        $xPos={CHARACTERS[chat.memberCharacter]?.position[0]}
+                        $yPos={CHARACTERS[chat.memberCharacter]?.position[1]}
+                      />
+                    </CharacterBackground>
+                  )}
+
+                  <div className="profile-section">
+                    <Profile>
+                      <div className="department">{chat.department}</div>
+                      <div>{chat.mbti && <Badge>{chat.mbti}</Badge>}</div>
+                    </Profile>
+                    {chat.lastMessage.includes('s3.ap-northeast') ? (
+                      <Message>사진을 전송하였습니다.</Message>
+                    ) : (
+                      <Message>{chat.lastMessage}</Message>
+                    )}
+                  </div>
+
+                  <div className="right-section">
+                    <Time>{timeDisplay}</Time>
+                    {chat.askedCount > 0 ? (
+                      <UnreadCount>{chat.askedCount}</UnreadCount>
+                    ) : (
+                      <br />
+                    )}
+                  </div>
+                </ChatRoomContainer>
+              );
+            })}
+        </ChatListContainer>
       )}
+      {/* <SurveyLinkContainer
+          onClick={() => window.open('https://forms.gle/6ZgZvLD2iSM5LVuEA')}
+        >
+          <SurveyContentBox>
+            <img src={'/assets/chicken.png'} alt="chicken" />
+            <div>
+              <div className="big-font">
+                <em>설문</em>하고 <br />
+              </div>
+              치킨받으러가기
+            </div>
+          </SurveyContentBox>
+        </SurveyLinkContainer> */}
     </>
+  ) : (
+    <EmptyContainer>
+      <div className="wrap">
+        <img src={'/assets/empty-icon.svg'} alt="empty icon" />
+        <div>로그인 후 채팅을 시작해보세요!</div>
+      </div>
+    </EmptyContainer>
   );
 };
 
