@@ -1,11 +1,30 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-const useSse = (url) => {
-  const [waitingCount, setWaitingCount] = useState(0);
+/**
+ * SSE(Server-Sent Events) 커스텀 훅
+ * @param {Object} object
+ * @param {string} object.url
+ * @param {function} object.onopen
+ * @param {function} object.onmessage
+ * @param {function} object.onerror
+ * @param {object} object.customEvents
+ * @param {number} object.timeout
+ * @returns {EventSource}
+ */
+const useSse = ({
+  url,
+  onopen,
+  onmessage,
+  onerror,
+  customEvents = {},
+  timeout = 1000,
+}) => {
   const eventSourceRef = useRef(null);
   let reconnectTimeout = useRef(null);
 
   useEffect(() => {
+    if (!url) return;
+
     const connect = () => {
       if (eventSourceRef.current) {
         eventSourceRef.current.close(); // 기존 연결 종료
@@ -14,40 +33,37 @@ const useSse = (url) => {
       const source = new EventSource(url);
       eventSourceRef.current = source;
 
-      const updateWaitingCount = (event) => {
-        const { waitingCount } = JSON.parse(event.data);
-        setWaitingCount(waitingCount);
-      };
-
-      const updateChatList = (event) => {
-        const chatList = JSON.parse(event.data);
-        console.log(chatList);
-      };
-
       source.onopen = (event) => {
-        console.log('EventSource connected');
-        console.log(event);
+        if (onopen) onopen(event);
+        console.log('SSE 연결 성공', event);
         clearTimeout(reconnectTimeout.current);
       };
 
-      source.addEventListener('waitingCount', updateWaitingCount);
-      source.addEventListener('message', updateChatList);
+      source.onmessage = (event) => {
+        if (onmessage) onmessage(event);
+      };
 
       source.onerror = (event) => {
-        console.error('EventSource failed');
-        console.error(event);
+        if (onerror) onerror(event);
+        console.log('SSE 연결 에러', event);
         source.close();
-
-        // 3초 후 재연결 시도
         reconnectTimeout.current = setTimeout(() => {
-          console.log('Reconnecting to EventSource...');
+          console.log('EventSource 재연결...');
           connect();
-        }, 3000);
+        }, timeout);
       };
+
+      // 커스텀 이벤트 리스너 등록
+      Object.entries(customEvents).forEach(([event, handler]) => {
+        source.addEventListener(event, handler);
+      });
 
       // 클린업 함수에서 이벤트 리스너 제거
       return () => {
-        source.removeEventListener('waitingCount', updateWaitingCount);
+        Object.entries(customEvents).forEach(([event, handler]) => {
+          source.removeEventListener(event, handler);
+        });
+
         source.close();
       };
     };
@@ -58,14 +74,15 @@ const useSse = (url) => {
     return () => {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
-        console.log('연결 끊기');
+        console.log('EventSource 연결 해제');
       }
+
       clearTimeout(reconnectTimeout.current);
       if (cleanup) cleanup();
     };
   }, [url]);
 
-  return waitingCount;
+  return eventSourceRef.current;
 };
 
 export default useSse;
