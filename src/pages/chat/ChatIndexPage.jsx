@@ -10,6 +10,7 @@ import Badge from '../../components/common/Badge';
 import Loader from '../../components/common/Loader';
 import { useQuery } from '@tanstack/react-query';
 import useSse from '../../hooks/useSse';
+import { baseURL } from '../../constants/baseURL';
 
 const ChatIndexPage = () => {
   const navigate = useNavigate();
@@ -17,9 +18,33 @@ const ChatIndexPage = () => {
   const [waitingCount, setWaitingCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const isLoggedIn = useRecoilValue(isLoggedInState);
+  const [sseUrl, setSseUrl] = useState('');
+
+  const { data: authUniv } = useQuery({
+    queryKey: ['authUniv'],
+    queryFn: () =>
+      instance.get('/member/check/university').then((res) => res.data),
+    enabled: false,
+  });
+
+  useEffect(() => {
+    const fetchMemberId = async () => {
+      try {
+        const response = await instance.get('/member/id');
+
+        if (response) {
+          setSseUrl(`${baseURL}/notify/subscribe/${response.data}`);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchMemberId();
+  }, []);
 
   useSse({
-    url: `${process.env.REACT_APP_BASE_URL}/notify/subscribe/2`,
+    url: sseUrl,
     customEvents: {
       waitingCount: (event) => {
         const { waitingCount } = JSON.parse(event.data);
@@ -32,13 +57,6 @@ const ChatIndexPage = () => {
       },
     },
     timeout: 3000,
-  });
-
-  const { data: authUniv } = useQuery({
-    queryKey: ['authUniv'],
-    queryFn: () =>
-      instance.get('/member/check/university').then((res) => res.data),
-    enabled: false,
   });
 
   const fetchChatList = async () => {
