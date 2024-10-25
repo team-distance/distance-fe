@@ -9,13 +9,30 @@ import { isLoggedInState } from '../../store/auth';
 import Badge from '../../components/common/Badge';
 import Loader from '../../components/common/Loader';
 import { useQuery } from '@tanstack/react-query';
+import useSse from '../../hooks/useSse';
 
 const ChatIndexPage = () => {
   const navigate = useNavigate();
-  const [chatList, setChatList] = useState();
+  const [chatList, setChatList] = useState([]);
+  const [waitingCount, setWaitingCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const isLoggedIn = useRecoilValue(isLoggedInState);
-  const [waitingCount, setWaitingCount] = useState(0);
+
+  useSse({
+    url: `${process.env.REACT_APP_BASE_URL}/notify/subscribe/2`,
+    customEvents: {
+      waitingCount: (event) => {
+        const { waitingCount } = JSON.parse(event.data);
+        setWaitingCount(waitingCount);
+      },
+      message: (event) => {
+        const chatList = JSON.parse(event.data);
+        chatList.sort((a, b) => new Date(b.modifyDt) - new Date(a.modifyDt));
+        setChatList(chatList);
+      },
+    },
+    timeout: 3000,
+  });
 
   const { data: authUniv } = useQuery({
     queryKey: ['authUniv'],
@@ -46,18 +63,9 @@ const ChatIndexPage = () => {
     }
   };
 
-  const fetchChatWaiting = async () => {
-    try {
-      const res = await instance.get('/waiting').then((res) => res.data);
-      setWaitingCount(res.length);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
-    fetchChatList();
-    fetchChatWaiting();
+    // fetchChatList();
+    // fetchChatWaiting();
   }, []);
 
   const formatTime = (time) => {
