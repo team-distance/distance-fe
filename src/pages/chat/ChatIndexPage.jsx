@@ -25,7 +25,7 @@ const ChatIndexPage = () => {
         const { waitingCount } = JSON.parse(event.data);
         setWaitingCount(waitingCount);
       },
-      message: (event) => {
+      chatRoom: (event) => {
         const chatList = JSON.parse(event.data);
         chatList.sort((a, b) => new Date(b.modifyDt) - new Date(a.modifyDt));
         setChatList(chatList);
