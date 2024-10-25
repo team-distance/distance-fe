@@ -1,23 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import useSse from '../../hooks/useSse';
 import { useNavigate } from 'react-router-dom';
 import { instance } from '../../api/instance';
-import { parseTime } from '../../utils/parseTime';
-import { CHARACTERS } from '../../constants/CHARACTERS';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isLoggedInState } from '../../store/auth';
-import Badge from '../../components/common/Badge';
-import Loader from '../../components/common/Loader';
 import { useQuery } from '@tanstack/react-query';
-import useSse from '../../hooks/useSse';
 import { baseURL } from '../../constants/baseURL';
+import { chatRoomListState } from '../../store/chatRoomListState';
+import { waitingCountState } from '../../store/waitingCountState';
+import ChatRoomListItem from '../../components/chat/ChatRoomListItem';
+import dayjs from 'dayjs';
 
+/**
+ * @todo 채팅방 나가기 기능 실행 시 Optimistic Update 적용
+ */
 const ChatIndexPage = () => {
   const navigate = useNavigate();
-  const [chatList, setChatList] = useState([]);
-  const [waitingCount, setWaitingCount] = useState(0);
-  const [loading, setLoading] = useState(false);
+
+  const [chatRoomList, setChatRoomList] = useRecoilState(chatRoomListState);
+  const [waitingCount, setWaitingCount] = useRecoilState(waitingCountState);
+
   const isLoggedIn = useRecoilValue(isLoggedInState);
+
   const [sseUrl, setSseUrl] = useState('');
 
   const { data: authUniv } = useQuery({
@@ -27,21 +32,11 @@ const ChatIndexPage = () => {
     enabled: false,
   });
 
-  useEffect(() => {
-    const fetchMemberId = async () => {
-      try {
-        const response = await instance.get('/member/id');
-
-        if (response) {
-          setSseUrl(`${baseURL}/notify/subscribe/${response.data}`);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchMemberId();
-  }, []);
+  const { data: memberId } = useQuery({
+    queryKey: ['memberId'],
+    queryFn: () => instance.get('/member/id').then((res) => res.data),
+    staleTime: 'Infinity',
+  });
 
   useSse({
     url: sseUrl,
@@ -52,62 +47,16 @@ const ChatIndexPage = () => {
       },
       chatRoom: (event) => {
         const chatList = JSON.parse(event.data);
-        chatList.sort((a, b) => new Date(b.modifyDt) - new Date(a.modifyDt));
-        setChatList(chatList);
+        chatList.sort((a, b) => dayjs(b.modifyDt) - dayjs(a.modifyDt));
+        setChatRoomList(chatList);
       },
     },
-    timeout: 3000,
+    timeout: 1000,
   });
 
-  const fetchChatList = async () => {
-    try {
-      setLoading(true);
-      const res = await instance
-        .get('/chatroom')
-        .then((res) => res.data)
-        .then((data) => {
-          const tempResponse = [...data];
-          tempResponse.sort(
-            (a, b) => new Date(b.modifyDt) - new Date(a.modifyDt)
-          );
-          return tempResponse;
-        });
-      setChatList(res);
-      // console.log(res);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    // fetchChatList();
-    // fetchChatWaiting();
-  }, []);
-
-  const formatTime = (time) => {
-    const today = new Date();
-    const date = new Date(time);
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    // 오늘 날짜와 같은 경우
-    if (today.toDateString() === date.toDateString()) {
-      return parseTime(time);
-    }
-    // 어제 날짜와 같은 경우
-    else if (yesterday.toDateString() === date.toDateString()) {
-      return '어제';
-    }
-    // 그 외 (어제보다 이전의 날짜)
-    else {
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date.getDate().toString().padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    }
-  };
+    if (memberId) setSseUrl(`${baseURL}/notify/subscribe/${memberId}`);
+  }, [memberId]);
 
   const onClickChatroom = async (chat) => {
     if (authUniv?.startsWith('FAILED')) {
@@ -115,11 +64,9 @@ const ChatIndexPage = () => {
     } else {
       if (chat.opponentMemberId === null) {
         const res = window.confirm('정말로 나가시겠습니까?');
-        console.log(res);
         if (!res) return;
         try {
           await instance.get(`/room-member/leave/${chat.chatRoomId}`);
-          fetchChatList();
         } catch (error) {
           console.log(error);
         }
@@ -129,218 +76,67 @@ const ChatIndexPage = () => {
     }
   };
 
-  return (
+  return isLoggedIn ? (
     <>
-      {isLoggedIn ? (
-        loading ? (
-          <Loader />
-        ) : (
-          <>
-            <WrapInboxButton>
-              <InboxButton
-                onClick={() => {
-                  navigate('/inbox');
-                }}
-              >
-                <div>
-                  {waitingCount > 0 && (
-                    <UnreadCount>{waitingCount}</UnreadCount>
-                  )}
-                  <div>요청함</div>
-                </div>
-                <img src="/assets/arrow-pink-right.svg" alt="화살표 아이콘" />
-              </InboxButton>
-            </WrapInboxButton>
-            {chatList && chatList.length === 0 ? (
-              <EmptyContainer>
-                <div className="wrap">
-                  <img src={'/assets/empty-icon.svg'} alt="empty icon" />
-                  <div>채팅을 시작해보세요!</div>
-                </div>
-              </EmptyContainer>
-            ) : (
-              <ChatListContainer>
-                {chatList &&
-                  chatList.map((chat) => {
-                    const timeDisplay = chat.modifyDt
-                      ? formatTime(chat.modifyDt)
-                      : '(알수없음)';
+      <WrapInboxButton>
+        <InboxButton onClick={() => navigate('/inbox')}>
+          <div>
+            {waitingCount > 0 && <UnreadCount>{waitingCount}</UnreadCount>}
+            <div>요청함</div>
+          </div>
+          <img src="/assets/arrow-pink-right.svg" alt="화살표 아이콘" />
+        </InboxButton>
+      </WrapInboxButton>
 
-                    return (
-                      // 탈퇴한 사용자의 경우 캐릭터가 "?"로 표시되어야 하나
-                      // 현재는 곰 캐릭터로 표시되도록 설정되어 있음
-                      // 추후 컴포넌트 분리할 때 이 부분도 같이 해결하겠슴다
-                      <ChatRoomContainer
-                        key={chat.chatRoomId}
-                        onClick={() => onClickChatroom(chat)}
-                      >
-                        {chat.memberCharacter === null ? (
-                          <CharacterBackground $backgroundColor={'#C3C3C3'}>
-                            <img
-                              src={'/assets/home/profile-null.png'}
-                              alt="탈퇴"
-                            />
-                          </CharacterBackground>
-                        ) : (
-                          <CharacterBackground
-                            $backgroundColor={
-                              CHARACTERS[chat.memberCharacter]?.color
-                            }
-                          >
-                            <StyledImage
-                              $xPos={
-                                CHARACTERS[chat.memberCharacter]?.position[0]
-                              }
-                              $yPos={
-                                CHARACTERS[chat.memberCharacter]?.position[1]
-                              }
-                            />
-                          </CharacterBackground>
-                        )}
-
-                        <div className="profile-section">
-                          <Profile>
-                            <div className="department">{chat.department}</div>
-                            <div>{chat.mbti && <Badge>{chat.mbti}</Badge>}</div>
-                          </Profile>
-                          {chat.lastMessage.includes('s3.ap-northeast') ? (
-                            <Message>사진을 전송하였습니다.</Message>
-                          ) : (
-                            <Message>{chat.lastMessage}</Message>
-                          )}
-                        </div>
-
-                        <div className="right-section">
-                          <Time>{timeDisplay}</Time>
-                          {chat.askedCount > 0 ? (
-                            <UnreadCount>{chat.askedCount}</UnreadCount>
-                          ) : (
-                            <br />
-                          )}
-                        </div>
-                      </ChatRoomContainer>
-                    );
-                  })}
-              </ChatListContainer>
-            )}
-            {/* <SurveyLinkContainer
-              onClick={() => window.open('https://forms.gle/6ZgZvLD2iSM5LVuEA')}
-            >
-              <SurveyContentBox>
-                <img src={'/assets/chicken.png'} alt="chicken" />
-                <div>
-                  <div className="big-font">
-                    <em>설문</em>하고 <br />
-                  </div>
-                  치킨받으러가기
-                </div>
-              </SurveyContentBox>
-            </SurveyLinkContainer> */}
-          </>
-        )
-      ) : (
+      {chatRoomList.length === 0 ? (
         <EmptyContainer>
           <div className="wrap">
-            <img src={'/assets/empty-icon.svg'} alt="empty icon" />
-            <div>로그인 후 채팅을 시작해보세요!</div>
+            <img src="/assets/empty-icon.svg" alt="empty icon" />
+            <div>채팅을 시작해보세요!</div>
           </div>
         </EmptyContainer>
+      ) : (
+        <ChatListContainer>
+          {chatRoomList.map((chat) => (
+            <ChatRoomListItem
+              key={chat.chatRoomId}
+              onClick={() => onClickChatroom(chat)}
+              memberCharacter={chat.memberCharacter}
+              department={chat.department}
+              mbti={chat.mbti}
+              lastMessage={chat.lastMessage}
+              modifyDt={chat.modifyDt}
+              askedCount={chat.askedCount}
+            />
+          ))}
+        </ChatListContainer>
       )}
+      {/* <SurveyLinkContainer
+        onClick={() => window.open('https://forms.gle/6ZgZvLD2iSM5LVuEA')}
+      >
+        <SurveyContentBox>
+          <img src="/assets/chicken.png" alt="chicken" />
+          <div>
+            <div className="big-font">
+              <em>설문</em>하고 <br />
+            </div>
+            치킨받으러가기
+          </div>
+        </SurveyContentBox>
+      </SurveyLinkContainer> */}
     </>
+  ) : (
+    <EmptyContainer>
+      <div className="wrap">
+        <img src="/assets/empty-icon.svg" alt="empty icon" />
+        <div>로그인 후 채팅을 시작해보세요!</div>
+      </div>
+    </EmptyContainer>
   );
 };
 
 const ChatListContainer = styled.div`
   margin-bottom: 10rem;
-`;
-
-const ChatRoomContainer = styled.div`
-  display: flex;
-  align-items: center;
-  text-decoration-line: none;
-  padding: 16px 0;
-
-  > .profile-section {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 0 16px;
-    min-width: 0;
-    flex-grow: 1;
-  }
-
-  > .right-section {
-    display: flex;
-    gap: 12px;
-    flex-direction: column;
-    flex-shrink: 0;
-    align-items: flex-end;
-  }
-`;
-
-const CharacterBackground = styled.div`
-  position: relative;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
-  background-color: ${(props) => props.$backgroundColor};
-  flex-shrink: 0;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  img {
-    width: 40%;
-  }
-`;
-
-const StyledImage = styled.div`
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-
-  background-image: url('/assets/sp_character.png');
-  background-position: ${(props) =>
-    `-${props.$xPos * 40}px -${props.$yPos * 40}px`};
-  background-size: calc(100% * 4);
-`;
-
-const Profile = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: #000000;
-  font-size: 18px;
-  font-weight: 700;
-  position: relative;
-
-  .department {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-`;
-
-const Message = styled.div`
-  color: #000000;
-  font-size: 14px;
-  font-weight: 400;
-  width: 170px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-`;
-
-const Time = styled.div`
-  color: #767676;
-  text-align: right;
-  font-size: 12px;
-  font-weight: 400;
 `;
 
 const WrapInboxButton = styled.div`

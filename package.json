@@ -12,6 +12,7 @@
     "aws-rum-react": "^2.0.0",
     "aws-rum-web": "^1.17.2",
     "axios": "^1.6.8",
+    "dayjs": "^1.11.13",
     "firebase": "^10.9.0",
     "framer-motion": "^11.3.19",
     "heic2any": "^0.0.4",

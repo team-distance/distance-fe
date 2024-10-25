@@ -230,7 +230,7 @@ const ChatPage = () => {
         localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
       }
 
-      navigate('/');
+      navigate('/chat');
     } catch (error) {
       showWaitToast();
     }
