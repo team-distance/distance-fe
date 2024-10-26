@@ -96,10 +96,10 @@ const DonePage = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  color: '#fff',
+                  color: '#ffffff',
                 }}
               >
-                <ClipLoader color={'#fff'} loading={true} size={16} />
+                <ClipLoader color="#ffffff" size={16} />
                 <div>로그인 중...</div>
               </div>
             ) : (
