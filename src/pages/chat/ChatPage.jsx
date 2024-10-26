@@ -208,6 +208,18 @@ const ChatPage = () => {
     setIsShowImage(true);
   };
 
+  // 대화 도중 상대방이 탈퇴하면 메시지를 보냈을 때 채팅방을 나가도록 함
+  // 대화중 상대방이 탈퇴했을 때 메시지를 보내면
+  // 마지막 메시지에 "존재하지 않는 유저입니다!"라는 문자열이 채워짐
+  // 이 문자열이 존재하면 채팅방을 나가도록 함
+  useEffect(() => {
+    const lastMessage = messages?.at(-1);
+
+    if (typeof lastMessage === 'string') {
+      navigate('/chat');
+    }
+  }, [messages]);
+
   // 방 나가기
   const handleLeaveRoom = () => {
     const res = window.confirm('정말로 나가시겠습니까?');
