@@ -291,6 +291,7 @@ const ChatPage = () => {
       setIsMemberIdsFetched(true);
     } catch (error) {
       showRoomInfoErrorToast();
+      navigate('/chat');
     }
   };
 
