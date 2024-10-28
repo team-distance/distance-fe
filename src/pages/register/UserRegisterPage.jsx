@@ -58,7 +58,6 @@ const UserRegisterPage = () => {
     register: registerTelNum,
     handleSubmit: submitTelNum,
     formState: { isValid: telNumValid },
-    setError: setErrorTelNum,
     watch: watchTelNum,
   } = useForm({
     mode: 'onChange',
@@ -110,7 +109,6 @@ const UserRegisterPage = () => {
       response,
       () => {
         setVerifyButtonLabel('재전송');
-        setErrorTelNum('telNum');
         setShowVerifyNum(true);
         setIsTelNumChanged(false);
 
