@@ -197,7 +197,7 @@ const Message = memo(
               </div>
               <img
                 src={imageViaCdn + `?w=${width}&f=${format}&q=${quality}`}
-                alt="message"
+                alt=""
                 loading="lazy"
                 onClick={() => viewImage(imageViaCdn)}
               />
@@ -217,7 +217,7 @@ const Message = memo(
                 <img
                   src={imageViaCdn + `?w=${width}&f=${format}&q=${quality}`}
                   loading="lazy"
-                  alt="message"
+                  alt=""
                   onClick={() => viewImage(imageViaCdn)}
                 />
                 <div className="wrapper">
