@@ -326,7 +326,7 @@ const ChatPage = () => {
   const handleReportUser = async (reportMessage) => {
     try {
       await instance.post('/report', {
-        declareContent: reportMessage,
+        reportContent: reportMessage,
         opponentId: opponentMemberId,
       });
       alert('신고가 완료되었어요!');
