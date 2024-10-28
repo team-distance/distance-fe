@@ -59,11 +59,9 @@ const ImageView = ({ imgSrc, handleCancel }) => {
           const date = parseDate(new Date());
 
           aTag.href = blobURL;
-          aTag.download = `distance/${date}.jpg`;
+          aTag.download = `distance/${date}`;
 
           aTag.click();
-
-          return '이미지가 저장되었습니다.';
         },
         (error) => {
           console.log(error);
