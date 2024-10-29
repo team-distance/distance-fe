@@ -14,11 +14,13 @@ import { useRecoilValue } from 'recoil';
 import { matchingConfigState } from '../../store/matchingConfig';
 import { useCreateChatRoom } from '../../hooks/useCreateChatRoom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { isLoggedInState } from '../../store/auth';
 
 const HomeIndexPage = () => {
   const [isProfileButtonClicked, setIsProfileButtonClicked] = useState(false);
   const queryClient = useQueryClient();
   const matchingConfig = useRecoilValue(matchingConfigState);
+  const isLoggedIn = useRecoilValue(isLoggedInState);
   const createChatRoom = useCreateChatRoom();
 
   const { data: matchingList, isLoading } = useQuery({
@@ -97,7 +99,7 @@ const HomeIndexPage = () => {
         </EmptyContainer>
       )}
 
-      <MatchingConfigButton onClick={openMatchingConfigModal} />
+      {isLoggedIn && <MatchingConfigButton onClick={openMatchingConfigModal} />}
 
       <ReloadButton
         onClick={() =>
