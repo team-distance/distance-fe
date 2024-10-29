@@ -21,6 +21,12 @@ const ChatIndexPage = () => {
   const [chatRoomList, setChatRoomList] = useRecoilState(chatRoomListState);
   const [waitingCount, setWaitingCount] = useRecoilState(waitingCountState);
 
+  const chatRoomCount = chatRoomList.filter(
+    (chatRoom) =>
+      chatRoom.opponentMemberId &&
+      !chatRoom.lastMessage.includes('님이 나갔습니다!')
+  ).length;
+
   const isLoggedIn = useRecoilValue(isLoggedInState);
 
   const [sseUrl, setSseUrl] = useState('');
@@ -36,6 +42,12 @@ const ChatIndexPage = () => {
     queryKey: ['memberId'],
     queryFn: () => instance.get('/member/id').then((res) => res.data),
     staleTime: 'Infinity',
+  });
+
+  const { data: availableChatRoomCount } = useQuery({
+    queryKey: ['availableChatRoomCount'],
+    queryFn: () =>
+      instance.get('/member/available/roomcount').then((res) => res.data),
   });
 
   useSse({
@@ -58,7 +70,7 @@ const ChatIndexPage = () => {
     if (memberId) setSseUrl(`${baseURL}/notify/subscribe/${memberId}`);
   }, [memberId]);
 
-  const onClickChatroom = async (chat) => {
+  const handleClickChatRoom = async (chat) => {
     if (authUniv?.startsWith('FAILED')) {
       window.confirm('학생 인증 후 이용해주세요.') && navigate('/verify/univ');
     } else {
@@ -76,6 +88,31 @@ const ChatIndexPage = () => {
     }
   };
 
+  const handleClickShareButton = async () => {
+    let myTelNum;
+
+    try {
+      myTelNum = await instance
+        .get('/member/own/telnum')
+        .then((res) => res.data);
+    } catch (error) {
+      console.log('전화번호를 가져오는데 실패했습니다.');
+    }
+
+    if (navigator.share) {
+      navigator
+        .share({
+          title: '💕 distance 디스턴스',
+          text: '축제를 200% 즐기는 방법, distance 💕',
+          url: 'https://dis-tance.com?referredTel=' + myTelNum,
+        })
+        .then(() => alert('공유가 성공적으로 완료되었습니다.'))
+        .catch((error) => console.log('공유에 실패했습니다.', error));
+    } else {
+      alert('이 브라우저에서는 공유 기능을 사용할 수 없습니다.');
+    }
+  };
+
   return isLoggedIn ? (
     <>
       <WrapInboxButton>
@@ -88,6 +125,13 @@ const ChatIndexPage = () => {
         </InboxButton>
       </WrapInboxButton>
 
+      <RoomCount>
+        <div>전체 채팅방 개수</div>
+        <div>
+          <strong>{chatRoomCount}</strong> / {availableChatRoomCount}
+        </div>
+      </RoomCount>
+
       {chatRoomList.length === 0 ? (
         <EmptyContainer>
           <div className="wrap">
@@ -96,11 +140,11 @@ const ChatIndexPage = () => {
           </div>
         </EmptyContainer>
       ) : (
-        <ChatListContainer>
+        <>
           {chatRoomList.map((chat) => (
             <ChatRoomListItem
               key={chat.chatRoomId}
-              onClick={() => onClickChatroom(chat)}
+              onClick={() => handleClickChatRoom(chat)}
               memberCharacter={chat.memberCharacter}
               department={chat.department}
               mbti={chat.mbti}
@@ -109,7 +153,25 @@ const ChatIndexPage = () => {
               askedCount={chat.askedCount}
             />
           ))}
-        </ChatListContainer>
+          {availableChatRoomCount < 5 && (
+            <ShareSection>
+              <img
+                src="/assets/icon-message.svg"
+                alt="share icon"
+                width={70}
+                height={70}
+              />
+              <div>
+                채팅방 개수가 부족하신가요?
+                <br />
+                친구에게 디스턴스를 추천해 채팅방을 늘려 보세요!
+              </div>
+              <ShareButton onClick={handleClickShareButton}>
+                친구에게 공유하기
+              </ShareButton>
+            </ShareSection>
+          )}
+        </>
       )}
       {/* <SurveyLinkContainer
         onClick={() => window.open('https://forms.gle/6ZgZvLD2iSM5LVuEA')}
@@ -135,13 +197,10 @@ const ChatIndexPage = () => {
   );
 };
 
-const ChatListContainer = styled.div`
-  margin-bottom: 10rem;
-`;
-
 const WrapInboxButton = styled.div`
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 12px;
 `;
 
 const InboxButton = styled.div`
@@ -185,6 +244,47 @@ const EmptyContainer = styled.div`
       font-size: 18px;
       font-weight: 700;
     }
+  }
+`;
+
+const ShareSection = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+  padding: 64px 24px;
+
+  color: rgba(0, 0, 0, 0.8);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 200;
+  line-height: 20px; /* 142.857% */
+`;
+
+const ShareButton = styled.div`
+  padding: 8px 26px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.08);
+`;
+
+const RoomCount = styled.div`
+  display: flex;
+  height: 32px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background: #fbfbfb;
+  box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.05);
+
+  text-align: center;
+  font-size: 14px;
+  font-weight: 200;
+  letter-spacing: -0.3px;
+
+  strong {
+    font-weight: 600;
   }
 `;
 

@@ -34,13 +34,23 @@ const MyIndexPage = () => {
     }
   };
 
-  const shareButtonHandler = () => {
+  const shareButtonHandler = async () => {
+    let myTelNum;
+
+    try {
+      myTelNum = await instance
+        .get('/member/own/telnum')
+        .then((res) => res.data);
+    } catch (error) {
+      console.log('전화번호를 가져오는데 실패했습니다.');
+    }
+
     if (navigator.share) {
       navigator
         .share({
           title: '💕 distance 디스턴스',
           text: '축제를 200% 즐기는 방법, distance 💕',
-          url: 'https://dis-tance.com',
+          url: 'https://dis-tance.com?referredTel=' + myTelNum,
         })
         .then(() => alert('공유가 성공적으로 완료되었습니다.'))
         .catch((error) => console.log('공유에 실패했습니다.', error));
