@@ -104,11 +104,8 @@ const ProfileRegisterPage = () => {
       memberCharacter: selectedAnimal,
       memberHobbyDto: registerData.memberHobbyDto,
       memberTagDto: registerData.memberTagDto,
+      referredTel: registerData.referredTel,
     };
-
-    if (registerData.referredTel) {
-      requestData.referredTel = registerData.referredTel;
-    }
 
     await instance
       .post('/member/signup', requestData)
