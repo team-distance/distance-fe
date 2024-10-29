@@ -22,6 +22,7 @@ const UserRegisterPage = () => {
   const [verifyButtonLabel, setVerifyButtonLabel] = useState('인증번호 전송');
   const [showVerifyNum, setShowVerifyNum] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isSmsButtonDisabled, setIsSmsButtonDisabled] = useState(true);
 
   const { openModal: openTermsModal, closeModal: closeTermsModal } = useModal(
     () => (
@@ -100,6 +101,14 @@ const UserRegisterPage = () => {
     }
   }, [telNumValue]);
 
+  useEffect(() => {
+    if (telNumValid) {
+      setIsSmsButtonDisabled(false);
+    } else {
+      setIsSmsButtonDisabled(true);
+    }
+  }, [telNumValid]);
+
   const handleSubmitTelNum = async (data) => {
     const response = instance.post('/member/send/sms', {
       telNum: data.telNum,
@@ -113,6 +122,7 @@ const UserRegisterPage = () => {
         setErrorTelNum('telNum');
         setShowVerifyNum(true);
         setIsTelNumChanged(false);
+        setIsSmsButtonDisabled(true);
 
         setRegisterData((prevData) => ({
           ...prevData,
@@ -147,8 +157,10 @@ const UserRegisterPage = () => {
         ...prevData,
         verifyNum: data.verifyNum,
       }));
+      setIsSmsButtonDisabled(true);
     } catch (error) {
       showVerifyNumErrorToast();
+      setIsSmsButtonDisabled(false);
     }
   };
 
@@ -176,7 +188,7 @@ const UserRegisterPage = () => {
           type="text"
           label="전화번호"
           placeholder="'-' 없이 입력"
-          buttonDisabled={!telNumValid}
+          buttonDisabled={isSmsButtonDisabled}
           buttonLabel={verifyButtonLabel}
           register={registerTelNum('telNum', {
             validate: (value) => value.length === 11 || '',
