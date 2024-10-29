@@ -12,8 +12,6 @@ import { useCheckAlarmActive } from '../hooks/useCheckAlarmActive';
 import { useToast } from '../hooks/useToast';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isLoggedInState } from '../store/auth';
-import useModal from '../hooks/useModal';
-import ReferredTelDetectedModal from '../components/modal/ReferredTelDetectedModal';
 import { registerDataState } from '../store/registerDataState';
 
 const NavLayout = () => {
@@ -25,13 +23,6 @@ const NavLayout = () => {
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const setRegisterData = useSetRecoilState(registerDataState);
 
-  const { openModal, closeModal } = useModal((referredTel) => (
-    <ReferredTelDetectedModal
-      closeModal={closeModal}
-      referredTel={referredTel}
-    />
-  ));
-
   useEffect(() => {
     const referredTel = searchParams.get('referredTel');
 
@@ -41,11 +32,6 @@ const NavLayout = () => {
         ...prev,
         referredTel,
       }));
-
-      // 최초 로그인 시에만 모달을 띄움
-      if (localStorage.getItem('isFirstLogin') !== 'true') {
-        openModal(referredTel);
-      }
     }
   }, []);
 
