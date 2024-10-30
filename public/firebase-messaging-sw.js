@@ -21,10 +21,6 @@ const firebaseConfig = {
 const FBapp = firebase.initializeApp(firebaseConfig);
 const messaging = FBapp.messaging();
 
-// let userAgent = '';
-
-let isIphone = false;
-
 // 대기 중인 서비스 워커를 강제로 활성화
 self.addEventListener('install', (event) => {
   event.waitUntil(self.skipWaiting());
@@ -35,40 +31,17 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener('message', (event) => {
-  if (event.data.type === 'USER_AGENT') {
-    console.log('USER_AGENT', event.data.payload.userAgent);
-    isIphone = event.data.payload.userAgent.includes('iPhone');
-  }
-});
-
 messaging.onBackgroundMessage((payload) => {
   console.log('BACKGROUND MESSAGE RECEIVED', payload);
 
-  if (isIphone) {
-    self.clients
-      .matchAll({ type: 'window', includeUncontrolled: true })
-      .then((clients) => {
-        clients.forEach((client) => {
-          if (client.focused) {
-            // 활성화된 클라이언트에만 전송
-            client.postMessage({
-              type: 'BACKGROUND_MESSAGE',
-              payload,
-            });
-          }
-        });
-      });
-  } else {
-    const title = payload.data.title;
+  const title = payload.data.title;
 
-    const notificationOptions = {
-      body: payload.data.body,
-      icon: payload.data.image,
-    };
+  const notificationOptions = {
+    body: payload.data.body,
+    icon: payload.data.image,
+  };
 
-    self.registration.showNotification(title, notificationOptions);
-  }
+  self.registration.showNotification(title, notificationOptions);
 });
 
 // self.addEventListener("notificationclick", function (event) {

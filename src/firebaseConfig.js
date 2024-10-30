@@ -12,13 +12,6 @@ export const registerServiceWorker = async () => {
   } catch (error) {
     console.log('서비스 워커 등록 실패', error);
   }
-
-  const userAgent = navigator.userAgent;
-
-  navigator.serviceWorker.controller.postMessage({
-    type: 'USER_AGENT',
-    payload: { userAgent },
-  });
 };
 
 const firebaseConfig = {
