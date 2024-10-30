@@ -88,6 +88,12 @@ const NavLayout = () => {
         const body = payload?.data?.body;
         const image = payload?.data?.image;
 
+        const imageViaCdn =
+          image?.replace(
+            'https://distance-buckets.s3.ap-northeast-2.amazonaws.com',
+            'https://cdn.dis-tance.com'
+          ) + '?w=120&h=120&f=webp&q=75';
+
         toast(
           (t) => (
             <ToastContainer
@@ -126,7 +132,7 @@ const NavLayout = () => {
                 </div>
               </ToastSectionLeft>
               <ToastSectionRight>
-                {image !== 'null' && <ToastImage src={image} alt="" />}
+                {image !== 'null' && <ToastImage src={imageViaCdn} alt="" />}
                 <ToastCloseButton
                   onClick={(e) => {
                     e.stopPropagation();
@@ -205,10 +211,11 @@ const ToastSectionRight = styled.div`
 `;
 
 const ToastImage = styled.img`
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
   margin-right: 16px;
+  border-radius: 8px;
 `;
 
 const ToastTitle = styled.div`
