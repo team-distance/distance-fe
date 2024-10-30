@@ -79,7 +79,7 @@ const NavLayout = () => {
   }, [isGpsActive, isAlarmActive]);
 
   useEffect(() => {
-    if (messaging) {
+    if (messaging && !isIphone) {
       onMessage(messaging, (payload) => {
         console.log('FOREGROUND MESSAGE RECEIVED', payload);
 
@@ -143,13 +143,80 @@ const NavLayout = () => {
             style: {
               width: '100%',
             },
-            duration: 50000,
+            duration: 5000,
             position: 'top-center',
           }
         );
       });
     }
   }, []);
+
+  if (isIphone) {
+    navigator.serviceWorker.addEventListener('message', (payload) => {
+      const title = payload?.data?.data?.title;
+      const icon = payload?.data?.data?.icon;
+      const body = payload?.data?.data?.body;
+      const image = payload?.data?.data?.image;
+
+      toast(
+        (t) => (
+          <ToastContainer
+            onClick={() => {
+              navigate('/chat');
+              toast.dismiss(t.id);
+            }}
+          >
+            <ToastSectionLeft>
+              {icon === 'DISTANCE' ? (
+                <img
+                  width={40}
+                  height={40}
+                  style={{ borderRadius: '8px' }}
+                  src="/icons/apple-touch-icon-60x60.png"
+                  alt="알림 아이콘"
+                />
+              ) : (
+                <CharacterBackground $backgroundColor={CHARACTERS[icon]?.color}>
+                  <StyledImage
+                    $xPos={CHARACTERS[icon]?.position[0]}
+                    $yPos={CHARACTERS[icon]?.position[1]}
+                  />
+                </CharacterBackground>
+              )}
+
+              <div>
+                <ToastTitle>{title}</ToastTitle>
+                <ToastBody>
+                  {body.includes('buckets.s3.ap-northeast-2.amazonaws.com')
+                    ? '사진을 전송하였습니다.'
+                    : body}
+                </ToastBody>
+              </div>
+            </ToastSectionLeft>
+            <ToastSectionRight>
+              {image !== 'null' && <ToastImage src={image} alt="" />}
+              <ToastCloseButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toast.dismiss(t.id);
+                }}
+              >
+                <img src="/assets/cancel-button-gray.svg" alt="닫기 아이콘" />
+              </ToastCloseButton>
+            </ToastSectionRight>
+          </ToastContainer>
+        ),
+        {
+          id: 'foreground-message',
+          style: {
+            width: '100%',
+          },
+          duration: 5000,
+          position: 'top-center',
+        }
+      );
+    });
+  }
 
   return (
     <>

@@ -79,7 +79,6 @@ function App() {
   }, [currentLocation]);
 
   useEffect(() => {
-    
     queryClient.invalidateQueries();
   }, [isLoggedIn]);
 
