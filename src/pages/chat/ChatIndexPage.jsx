@@ -22,9 +22,7 @@ const ChatIndexPage = () => {
   const [waitingCount, setWaitingCount] = useRecoilState(waitingCountState);
 
   const chatRoomCount = chatRoomList.filter(
-    (chatRoom) =>
-      chatRoom.opponentMemberId &&
-      !chatRoom.lastMessage.includes('님이 나갔습니다!')
+    (chatRoom) => chatRoom.roomStatus === 'ACTIVE'
   ).length;
 
   const isLoggedIn = useRecoilValue(isLoggedInState);
@@ -128,7 +126,7 @@ const ChatIndexPage = () => {
       <RoomCount>
         <div>전체 채팅방 개수</div>
         <div>
-          <strong>{chatRoomCount}</strong> / {availableChatRoomCount}
+          <strong>{chatRoomCount}</strong>/{availableChatRoomCount}
         </div>
       </RoomCount>
 
@@ -164,10 +162,12 @@ const ChatIndexPage = () => {
               <div>
                 채팅방 개수가 부족하신가요?
                 <br />
-                친구에게 디스턴스를 추천해 채팅방을 늘려 보세요!
+                친구에게 디스턴스를 추천해 채팅방을 늘려보세요!
+                <br />
+                해당 링크로 가입하면 채팅방 개수가 늘어납니다.
               </div>
               <ShareButton onClick={handleClickShareButton}>
-                친구에게 공유하기
+                친구에게 추천하기
               </ShareButton>
             </ShareSection>
           )}
@@ -253,7 +253,7 @@ const ShareSection = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 16px;
-  padding: 64px 24px;
+  padding: 80px 24px;
 
   color: rgba(0, 0, 0, 0.8);
   text-align: center;
