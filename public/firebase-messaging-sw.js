@@ -34,15 +34,16 @@ self.addEventListener('activate', (event) => {
 messaging.onBackgroundMessage((payload) => {
   console.log('BACKGROUND MESSAGE RECEIVED', payload);
 
-  // const notificationTitle = payload.data.nickName;
-  // const notificationOptions = {
-  //   body: payload.data.message,
-  //   icon: payload.data.iconLink,
-  // };
+  // 알림 제목 및 본문 설정
+  const title = payload.data.title;
 
-  // // 알림 표시
-  // // 백그라운드에서 자동으로 알림이 표시되어 주석 처리함.
-  // self.registration.showNotification(notificationTitle, notificationOptions);
+  const notificationOptions = {
+    body: payload.data.body,
+    icon: 'https://placehold.co/400',
+  };
+
+  // 알림 표시
+  self.registration.showNotification(title, notificationOptions);
 });
 
 // self.addEventListener("notificationclick", function (event) {

@@ -13,6 +13,7 @@ import { useToast } from '../hooks/useToast';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isLoggedInState } from '../store/auth';
 import { registerDataState } from '../store/registerDataState';
+import { CHARACTERS } from '../constants/CHARACTERS';
 
 const NavLayout = () => {
   const navigate = useNavigate();
@@ -81,9 +82,11 @@ const NavLayout = () => {
     if (messaging) {
       onMessage(messaging, (payload) => {
         console.log('FOREGROUND MESSAGE RECEIVED', payload);
-        const notificationTitle = payload.notification.title;
-        const notificationBody = payload.notification.body;
-        const notificationImage = payload.notification.image;
+
+        const title = payload?.data?.title;
+        const icon = payload?.data?.icon;
+        const body = payload?.data?.body;
+        const image = payload?.data?.image;
 
         toast(
           (t) => (
@@ -94,19 +97,36 @@ const NavLayout = () => {
               }}
             >
               <ToastSectionLeft>
-                <ToastIcon src={notificationImage} alt="디스턴스 아이콘" />
+                {icon === 'DISTANCE' ? (
+                  <img
+                    width={40}
+                    height={40}
+                    style={{ borderRadius: '8px' }}
+                    src="/icons/apple-touch-icon-60x60.png"
+                    alt="알림 아이콘"
+                  />
+                ) : (
+                  <CharacterBackground
+                    $backgroundColor={CHARACTERS[icon]?.color}
+                  >
+                    <StyledImage
+                      $xPos={CHARACTERS[icon]?.position[0]}
+                      $yPos={CHARACTERS[icon]?.position[1]}
+                    />
+                  </CharacterBackground>
+                )}
+
                 <div>
-                  <ToastTitle>{notificationTitle}</ToastTitle>
+                  <ToastTitle>{title}</ToastTitle>
                   <ToastBody>
-                    {notificationBody.includes(
-                      'buckets.s3.ap-northeast-2.amazonaws.com'
-                    )
+                    {body.includes('buckets.s3.ap-northeast-2.amazonaws.com')
                       ? '사진을 전송하였습니다.'
-                      : notificationBody}
+                      : body}
                   </ToastBody>
                 </div>
               </ToastSectionLeft>
               <ToastSectionRight>
+                {image !== 'null' && <ToastImage src={image} alt="" />}
                 <ToastCloseButton
                   onClick={(e) => {
                     e.stopPropagation();
@@ -123,7 +143,7 @@ const NavLayout = () => {
             style: {
               width: '100%',
             },
-            duration: 5000,
+            duration: 50000,
             position: 'top-center',
           }
         );
@@ -176,6 +196,7 @@ const ToastContainer = styled.div`
 const ToastSectionLeft = styled.div`
   display: flex;
   align-items: center;
+  gap: 8px;
 `;
 
 const ToastSectionRight = styled.div`
@@ -183,7 +204,7 @@ const ToastSectionRight = styled.div`
   align-items: center;
 `;
 
-const ToastIcon = styled.img`
+const ToastImage = styled.img`
   width: 36px;
   height: 36px;
   flex-shrink: 0;
@@ -220,6 +241,38 @@ const ToastBody = styled.div`
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   word-break: break-all; // 문단으로 끊어져서 줄바꿈 됨
+`;
+
+const CharacterBackground = styled.div`
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+  background-color: ${(props) => props.$backgroundColor};
+  flex-shrink: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    width: 40%;
+  }
+`;
+
+const StyledImage = styled.div`
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 32}px -${props.$yPos * 32}px`};
+  background-size: calc(100% * 4);
 `;
 
 export default NavLayout;
