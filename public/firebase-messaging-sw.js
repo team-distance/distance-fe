@@ -39,7 +39,7 @@ messaging.onBackgroundMessage((payload) => {
 
   const notificationOptions = {
     body: payload.data.body,
-    icon: 'https://placehold.co/400',
+    icon: payload.data.image,
   };
 
   // 알림 표시
