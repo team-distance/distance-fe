@@ -59,6 +59,10 @@ const NavLayout = () => {
 
     if (userAgent.includes('kakao')) {
       navigate('/kakaotalk-fallback');
+    } else if (userAgent.includes('naver')) {
+      navigate('/naver-fallback');
+    } else if (userAgent.includes('instagram')) {
+      navigate('/instagram-fallback');
     }
   }, []);
 
