@@ -480,13 +480,14 @@ const ChatPage = () => {
 };
 
 const Wrapper = styled.div`
+  height: 100%;
   position: relative;
   touch-action: none;
   overflow: hidden;
 `;
 
 const Container = styled.div`
-  height: 100dvh;
+  height: 100%;
   bottom: 0;
   display: flex;
   flex-direction: column;

@@ -7,6 +7,6 @@
  * collapsedHeight: 접혔을 때의 높이
  */
 export const BOTTOMSHEET_CONFIG = {
-  expandedHeight: 0.9,
+  expandedHeight: 0.8,
   collapsedHeight: 0.5,
 };

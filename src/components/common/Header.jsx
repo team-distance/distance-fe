@@ -29,7 +29,7 @@ const WrapHeader = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 2rem;
+  padding: 2rem 0;
 
   img {
     width: 8rem;

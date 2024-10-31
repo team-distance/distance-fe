@@ -84,7 +84,7 @@ const Sheet = styled.div`
   flex-direction: column;
 
   // 하단바 높이만큼 padding-bottom 추가
-  padding-bottom: ${(props) => (props.$isIphone ? '97px' : '75px')};
+  padding-bottom: env(safe-area-inset-bottom);
   box-sizing: border-box;
 `;
 
