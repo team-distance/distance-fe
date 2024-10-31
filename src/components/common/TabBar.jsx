@@ -98,7 +98,11 @@ const StyledNav = styled.nav`
   background-color: #fff;
   border-top: #ededed solid 1px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-  padding-bottom: env(safe-area-inset-bottom);
+
+  // env(safe-area-inset-bottom) : 대략 34px
+  // 기존 사용하던 padding-bottom 값은 22px
+  // 34px은 너무 높아서 22px로 조정
+  padding-bottom: calc(env(safe-area-inset-bottom) - 12px);
 `;
 
 const WrapItem = styled.div`

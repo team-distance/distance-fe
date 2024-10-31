@@ -164,7 +164,9 @@ const NavLayout = () => {
       ) : (
         <Padding>
           <Header />
-          <Outlet />
+          <WrapOutlet>
+            <Outlet />
+          </WrapOutlet>
         </Padding>
       )}
 
@@ -176,6 +178,10 @@ const NavLayout = () => {
 const Padding = styled.div`
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+`;
+
+const WrapOutlet = styled.div`
+  padding-bottom: calc(74px + env(safe-area-inset-bottom));
 `;
 
 const ToastContainer = styled.div`
