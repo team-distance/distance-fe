@@ -59,11 +59,12 @@ const HomeIndexPage = () => {
   );
 
   const alertTextList = [
-    // {
-    //   text1: '📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입',
-    //   em: '400건 돌파',
-    //   text2: '',
-    // },
+    {
+      index: 1,
+      text1: '📢 ',
+      em: '일주일 이내',
+      text2: ' 로그인한 유저만 홈화면에 표시됩니다.',
+    },
     {
       index: 2,
       text1: '📢 ',
