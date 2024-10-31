@@ -122,11 +122,14 @@ const InputContainer = styled.div`
   align-items: center;
   background: #ffffff;
   width: auto;
-  padding: 0.5rem 1rem 3rem 1rem;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 8px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
 
   @media (max-width: 500px) {
     &.focused {
-      padding: 0.5rem 1rem 1rem 1rem;
+      padding-bottom: 8px;
     }
   }
 `;

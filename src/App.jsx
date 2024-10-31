@@ -43,6 +43,7 @@ import FestivalIndexPage from './pages/festival/FestivalIndexPage';
 import Program from './components/festival/Program';
 import FoodTruck from './components/festival/FoodTruck';
 import { useQueryClient } from '@tanstack/react-query';
+import styled from 'styled-components';
 
 function App() {
   useRouteChangeTrack();
@@ -83,65 +84,73 @@ function App() {
   }, [isLoggedIn]);
 
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/password" element={<ResetPassword />} />
+    <Wrapper>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/password" element={<ResetPassword />} />
 
-      <Route path="/notification" element={<NotificationSolutionPage />} />
-      <Route path="/gps" element={<GPSSolutionPage />} />
+        <Route path="/notification" element={<NotificationSolutionPage />} />
+        <Route path="/gps" element={<GPSSolutionPage />} />
 
-      <Route path="/register/user" element={<UserRegisterPage />} />
-      <Route path="/register/univ" element={<UnivRegisterPage />} />
-      <Route path="/register/profile" element={<ProfileRegisterPage />} />
-      <Route path="/register/done" element={<DonePage />} />
+        <Route path="/register/user" element={<UserRegisterPage />} />
+        <Route path="/register/univ" element={<UnivRegisterPage />} />
+        <Route path="/register/profile" element={<ProfileRegisterPage />} />
+        <Route path="/register/done" element={<DonePage />} />
 
-      <Route path="/verify/univ" element={<VerifyOptionsPage />} />
-      <Route path="/verify/univ/mobileid" element={<VerifyMobileIdPage />} />
-      <Route path="/verify/univ/email" element={<VerifyEmailPage />} />
-      <Route path="/verify/univ/id" element={<VerifyIdPage />} />
+        <Route path="/verify/univ" element={<VerifyOptionsPage />} />
+        <Route path="/verify/univ/mobileid" element={<VerifyMobileIdPage />} />
+        <Route path="/verify/univ/email" element={<VerifyEmailPage />} />
+        <Route path="/verify/univ/id" element={<VerifyIdPage />} />
 
-      <Route element={<NavLayout />}>
-        <Route path="/" element={<HomeIndexPage />} />
+        <Route element={<NavLayout />}>
+          <Route path="/" element={<HomeIndexPage />} />
 
-        <Route path="/chat" element={<ChatIndexPage />} />
-        <Route path="/inbox" element={<ChatInboxPage />} />
+          <Route path="/chat" element={<ChatIndexPage />} />
+          <Route path="/inbox" element={<ChatInboxPage />} />
 
-        <Route element={<FestivalIndexPage />}>
-          <Route path="/festival/program" element={<Program />} />
-          <Route path="/festival/foodtruck" element={<FoodTruck />} />
+          <Route element={<FestivalIndexPage />}>
+            <Route path="/festival/program" element={<Program />} />
+            <Route path="/festival/foodtruck" element={<FoodTruck />} />
+          </Route>
+
+          <Route path="/event" element={<EventIndexPage />}>
+            <Route path="/event/" element={<EventListPage />} />
+            <Route
+              path="/event/:studentCouncilId"
+              element={<EventDetailPage />}
+            />
+          </Route>
+          <Route path="/mypage" element={<MyIndexPage />} />
         </Route>
 
-        <Route path="/event" element={<EventIndexPage />}>
-          <Route path="/event/" element={<EventListPage />} />
-          <Route
-            path="/event/:studentCouncilId"
-            element={<EventDetailPage />}
-          />
-        </Route>
-        <Route path="/mypage" element={<MyIndexPage />} />
-      </Route>
+        <Route path="/team-introduction" element={<TeamIntroductionPage />} />
 
-      <Route path="/team-introduction" element={<TeamIntroductionPage />} />
+        <Route path="/mypage/profile" element={<ProfileEditPage />} />
+        <Route path="/mypage/account" element={<AccountEditPage />} />
+        <Route path="/mypage/account/dropout" element={<DropoutPage />} />
 
-      <Route path="/mypage/profile" element={<ProfileEditPage />} />
-      <Route path="/mypage/account" element={<AccountEditPage />} />
-      <Route path="/mypage/account/dropout" element={<DropoutPage />} />
+        <Route path="/festival/foodtruck/:id" element={<FoodTruckPage />} />
 
-      <Route path="/festival/foodtruck/:id" element={<FoodTruckPage />} />
+        <Route path="/chat/:chatRoomId" element={<ChatPage />} />
 
-      <Route path="/chat/:chatRoomId" element={<ChatPage />} />
+        <Route path="/kakaotalk-fallback" element={<KakaotalkFallback />} />
 
-      <Route path="/kakaotalk-fallback" element={<KakaotalkFallback />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
 
-      <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="*" element={<NotFoundPage />} />
 
-      <Route path="*" element={<NotFoundPage />} />
-
-      <Route path="/event-matching" element={<EventLoginPage />} />
-      <Route path="/matching" element={<Matching />} />
-      <Route path="/matching/success" element={<MatchingSuccess />} />
-    </Routes>
+        <Route path="/event-matching" element={<EventLoginPage />} />
+        <Route path="/matching" element={<Matching />} />
+        <Route path="/matching/success" element={<MatchingSuccess />} />
+      </Routes>
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  height: 100vh;
+  padding-top: env(safe-area-inset-top);
+  box-sizing: border-box;
+`;
 
 export default App;

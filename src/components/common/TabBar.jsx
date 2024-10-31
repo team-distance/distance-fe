@@ -10,8 +10,6 @@ import { tabState } from '../../store/tabState';
 const BottomNavBar = () => {
   const [currentPage, setCurrentPage] = useState('/');
   const location = useLocation();
-  const userAgent = navigator.userAgent.toLowerCase();
-  const isIphone = userAgent.includes('iphone');
 
   const setTabMenuState = useSetRecoilState(tabState);
 
@@ -55,7 +53,7 @@ const BottomNavBar = () => {
   ];
 
   return (
-    <StyledNav $isPhone={isIphone}>
+    <StyledNav>
       <WrapItem>
         {menus.map((item) => (
           <NavItem
@@ -100,7 +98,7 @@ const StyledNav = styled.nav`
   background-color: #fff;
   border-top: #ededed solid 1px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-  padding-bottom: ${(props) => (props.$isPhone ? '22px' : '0')};
+  padding-bottom: env(safe-area-inset-bottom);
 `;
 
 const WrapItem = styled.div`

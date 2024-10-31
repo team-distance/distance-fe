@@ -17,8 +17,6 @@ import { CHARACTERS } from '../constants/CHARACTERS';
 
 const NavLayout = () => {
   const navigate = useNavigate();
-  const userAgent = navigator.userAgent.toLowerCase();
-  const isIphone = userAgent.includes('iphone');
   const { pathname } = useLocation();
   const searchParams = new URLSearchParams(useLocation().search);
   const isLoggedIn = useRecoilValue(isLoggedInState);
@@ -164,32 +162,20 @@ const NavLayout = () => {
       {pathname.includes('/event') ? (
         <Outlet />
       ) : (
-        <Padding $isIphone={isIphone}>
+        <Padding>
           <Header />
           <Outlet />
         </Padding>
       )}
 
       <TabBar />
-      {/* <Toaster
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-        containerStyle={{
-          bottom: isIphone ? '116px' : '96px',
-        }}
-      /> */}
     </>
   );
 };
 
 const Padding = styled.div`
-  padding-top: 2rem;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-  padding-bottom: ${(props) => (props.$isIphone ? '96px' : '74px')};
 `;
 
 const ToastContainer = styled.div`
