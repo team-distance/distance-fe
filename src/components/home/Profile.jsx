@@ -67,6 +67,11 @@ const CharacterBackground = styled.div`
   height: 100px;
   border-radius: 100%;
   background-color: ${(props) => props.$backgroundColor};
+
+  @media (max-height: 768px) {
+    width: 70px;
+    height: 70px;
+  }
 `;
 
 const StyledImage = styled.div`
@@ -81,6 +86,13 @@ const StyledImage = styled.div`
   background-position: ${(props) =>
     `-${props.$xPos * 60}px -${props.$yPos * 60}px`};
   background-size: calc(100% * 4);
+
+  @media (max-height: 768px) {
+    width: 40px;
+    height: 40px;
+    background-position: ${(props) =>
+      `-${props.$xPos * 40}px -${props.$yPos * 40}px`};
+  }
 `;
 
 const WrapText = styled.div`
