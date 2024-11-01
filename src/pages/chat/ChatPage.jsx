@@ -20,16 +20,14 @@ import { useFetchDistance } from '../../hooks/useFetchDistance';
 import CallActiveLottie from '../../components/chat/CallActiveLottie';
 import { useCallActive } from '../../hooks/useCallActive';
 import {
-  useFetchMessagesFromLocal,
-  useFetchMessagesFromServer,
-  useFetchUnreadMessagesFromServer,
+  useCountPages,
+  useFetchMessagesPerPage,
 } from '../../hooks/useFetchMessages';
 import TopBar from '../../components/chat/TopBar';
 import Loader from '../../components/common/Loader';
 import { useSendMessage } from '../../hooks/useSendMessage';
 import CallDistanceModal from '../../components/modal/CallDistanceModal';
 import { Client } from '@stomp/stompjs';
-import { useCheckComeIn } from '../../hooks/useCheckComeIn';
 import { stompBrokerURL } from '../../constants/baseURL';
 import { useQuery } from '@tanstack/react-query';
 
@@ -40,9 +38,6 @@ const ChatPage = () => {
 
   const distance = useFetchDistance(roomId);
   const [messages, setMessages] = useState([]);
-  const fetchLocalMessages = useFetchMessagesFromLocal(roomId);
-  const fetchServerMessages = useFetchMessagesFromServer(roomId);
-  const fetchServerUnreadMessages = useFetchUnreadMessagesFromServer(roomId);
   const groupedMessages = useGroupedMessages(messages);
   const { isCallActive, isShowLottie, tiKiTaKaCount } = useCallActive(
     messages,
@@ -70,6 +65,11 @@ const ChatPage = () => {
   });
   const [uploadingImagePreviewUrl, setUploadingImagePreviewUrl] = useState('');
   const [requestCancelController, setRequestCancelController] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(-1);
+
+  const fetchPagesNum = useCountPages(roomId);
+  const fetchPageMessages = useFetchMessagesPerPage(roomId);
 
   const { data: opponentProfile } = useQuery({
     queryKey: ['opponentProfile', { chatRoomId: roomId }],
@@ -152,35 +152,23 @@ const ChatPage = () => {
     setDraftMessage(e.target.value);
   };
 
-  // 로컬 스토리지에 메시지 저장
-  const saveMessagesToLocal = () => {
-    const staleMessages =
-      JSON.parse(localStorage.getItem('staleMessages')) || {};
-    staleMessages[roomId] = JSON.stringify(messages);
-    localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
-  };
-
   // 메시지 전송
-  const { sendImageMessage, sendTextMessage, sendComeInMessage } =
-    useSendMessage(
-      draftMessage,
-      setDraftMessage,
-      setFile,
-      file,
-      client,
-      roomId,
-      opponentMemberId,
-      myMemberId,
-      showWaitToast,
-      setIsUploadingImage,
-      setUploadProgress,
-      uploadingImagePreviewUrl,
-      setUploadingImagePreviewUrl,
-      setRequestCancelController
-    );
-
-  // 읽음 신호 확인
-  const { isOpponentComeIn } = useCheckComeIn(messages, myMemberId);
+  const { sendImageMessage, sendTextMessage } = useSendMessage(
+    draftMessage,
+    setDraftMessage,
+    setFile,
+    file,
+    client,
+    roomId,
+    opponentMemberId,
+    myMemberId,
+    showWaitToast,
+    setIsUploadingImage,
+    setUploadProgress,
+    uploadingImagePreviewUrl,
+    setUploadingImagePreviewUrl,
+    setRequestCancelController
+  );
 
   const sendMessage = async () => {
     if (!draftMessage.trim() && !file) return;
@@ -235,12 +223,6 @@ const ChatPage = () => {
           publishType: 'LEAVE',
         }),
       });
-
-      if (localStorage.getItem('staleMessages') !== null) {
-        const staleMessages = JSON.parse(localStorage.getItem('staleMessages'));
-        delete staleMessages[roomId];
-        localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
-      }
 
       navigate('/chat');
     } catch (error) {
@@ -390,14 +372,8 @@ const ChatPage = () => {
       newClient.activate();
       setClient(newClient);
 
-      //이전 메세지 목록 불러오기
-      const staleMessages = fetchLocalMessages(setMessages);
-      if (staleMessages.length === 0) fetchServerMessages(setMessages);
-      else fetchServerUnreadMessages(messages, setMessages);
-
-      //receiver !== lastMessageId 읽음 표시 신호 보내기
-      console.log('isOpponentComeIn', isOpponentComeIn);
-      if (isOpponentComeIn) sendComeInMessage();
+      // 페이지 수 가져오기
+      fetchPagesNum(setCurrentPage);
 
       return () => {
         newClient.deactivate();
@@ -412,8 +388,6 @@ const ChatPage = () => {
 
     if (lastMessage?.roomStatus === 'ACTIVE') setIsOpponentOut(false);
     else if (lastMessage?.roomStatus === 'INACTIVE') setIsOpponentOut(true);
-
-    if (messages.length > 0) saveMessagesToLocal();
   }, [messages]);
 
   // 메시지 길이 제한
@@ -423,6 +397,13 @@ const ChatPage = () => {
       setDraftMessage(draftMessage.slice(0, -1));
     }
   }, [draftMessage]);
+
+  const handleIntersect = () => {
+    console.log('handleIntersect currentPage', currentPage);
+    if (currentPage >= 0) {
+      fetchPageMessages(setMessages, setCurrentPage, currentPage, 10);
+    }
+  };
 
   return (
     <Wrapper>
@@ -457,6 +438,7 @@ const ChatPage = () => {
               uploadProgress={uploadProgress}
               uploadingImagePreviewUrl={uploadingImagePreviewUrl}
               requestCancelController={requestCancelController}
+              onIntersect={handleIntersect}
             />
             <MessageInputWrapper>
               <MessageInput
