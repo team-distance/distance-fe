@@ -44,7 +44,8 @@ export const useFetchMessagesPerPage = (roomId, page) => {
   useEffect(() => {
     if (
       query.data &&
-      query.data.every((message) => message.unreadCount === 0)
+      query.data.every((message) => message.unreadCount === 0) &&
+      query.data.length === 10
     ) {
       // console.log(
       //   'All messages have unreadCount of 0. Data will be persisted automatically.'
