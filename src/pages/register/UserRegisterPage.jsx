@@ -53,6 +53,11 @@ const UserRegisterPage = () => {
     'verifynum-error'
   );
 
+  const { showToast: showSameTelNumAndReferredTel } = useToast(
+    () => <span>추천인 전화번호에 내 번호를 입력할 수 없어요!</span>,
+    'same-telnum-and-referredtel'
+  );
+
   const { showPromiseToast: showSendMessageToast } = usePromiseToast();
 
   const {
@@ -165,6 +170,11 @@ const UserRegisterPage = () => {
   };
 
   const handleSubmitPassword = (data) => {
+    if (data.referredTel === registerData.telNum) {
+      showSameTelNumAndReferredTel();
+      return;
+    }
+
     setRegisterData((prevData) => ({
       ...prevData,
       password: data.password,

@@ -4,7 +4,7 @@ import { refresh } from '../store/auth';
 
 export const instance = axios.create({
   baseURL: baseURL,
-  timeout: 5000,
+  timeout: 10000,
 });
 
 instance.interceptors.request.use((config) => {
