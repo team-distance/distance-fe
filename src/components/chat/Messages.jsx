@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import Message from './Message';
 import styled from 'styled-components';
 
@@ -20,7 +20,9 @@ const Messages = memo(
     // 아이폰에서는 프로그레스 바에 파일 전체 크기를 표시하지 않기 위해 사용
     // (axios의 onUploadProgress 이벤트 핸들러에서 total 값이 제대로 전달되지 않음)
     const isIphone = navigator.userAgent.includes('iPhone');
+    const [isFetching, setIsFetching] = useState(false);
 
+    const messageRef = useRef();
     const observerRef = useRef(); // Observer를 위한 ref
 
     const cancelUpload = () => {
@@ -35,8 +37,10 @@ const Messages = memo(
     useEffect(() => {
       const observer = new IntersectionObserver(
         async ([entry]) => {
-          if (entry.isIntersecting) {
+          if (entry.isIntersecting && !isFetching) {
+            setIsFetching(true);
             await onIntersect();
+            setIsFetching(false);
           }
         },
         {
@@ -46,19 +50,58 @@ const Messages = memo(
         }
       );
 
-      if (observerRef.current) {
-        observer.observe(observerRef.current);
+      const currentObserverRef = observerRef.current;
+
+      if (currentObserverRef) {
+        observer.observe(currentObserverRef);
       }
 
       return () => {
-        if (observerRef.current) {
-          observer.disconnect();
+        if (currentObserverRef) {
+          observer.unobserve(currentObserverRef);
         }
       };
-    }, [onIntersect]);
+    }, [onIntersect, isFetching]);
+
+    // 새로운 메시지가 추가되었을 때 스크롤 위치 조정
+    // useEffect(() => {
+    //   if (messageRef.current && !isFetching) {
+    //     messageRef.current.scrollTo({
+    //       top: messageRef.current.scrollHeight,
+    //       behavior: 'smooth',
+    //     });
+    //   }
+    // }, [groupedMessages, isFetching]);
 
     return (
-      <MessagesWrapper $isOpen={isMenuOpen}>
+      <MessagesWrapper ref={messageRef} $isOpen={isMenuOpen}>
+        {Object.entries(groupedMessages)
+          .reverse()
+          .map(([date, messages]) => (
+            <WrapMessage key={date}>
+              <WrapDate>
+                <div className="content">
+                  {new Date(date).toLocaleDateString('ko-KR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </div>
+              </WrapDate>
+
+              {messages.map((message) => (
+                <Message
+                  key={message.messageId}
+                  message={message}
+                  isSentByMe={message.senderId !== Number(myId)}
+                  responseCall={responseCall}
+                  viewImage={viewImage}
+                  openProfileModal={openProfileModal}
+                  opponentMemberCharacter={opponentMemberCharacter}
+                />
+              ))}
+            </WrapMessage>
+          ))}
         {isUploadingImage && (
           <UploadingImagePreview>
             <div className="message-container">
@@ -82,51 +125,23 @@ const Messages = memo(
           </UploadingImagePreview>
         )}
 
-        {Object.entries(groupedMessages)
-          .reverse()
-          .map(([date, messages]) => (
-            <WrapMessage key={date}>
-              <Announcement>
-                <div className="content">
-                  {new Date(date).toLocaleDateString('ko-KR', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </div>
-              </Announcement>
-
-              {messages.map((message) => (
-                <Message
-                  key={message.messageId}
-                  message={message}
-                  isSentByMe={message.senderId !== Number(myId)}
-                  responseCall={responseCall}
-                  viewImage={viewImage}
-                  openProfileModal={openProfileModal}
-                  opponentMemberCharacter={opponentMemberCharacter}
-                />
-              ))}
-            </WrapMessage>
-          ))}
-
-        <Announcement className="notice">
+        <div className="observer" ref={observerRef} />
+        <Announcement>
           <div className="content">
             📢 잠깐만요! 채팅 상대는 소중한 학우입니다. 사이버 예절을 지켜
             주세요.
           </div>
         </Announcement>
-        <div className="observer" ref={observerRef} />
       </MessagesWrapper>
     );
   }
 );
 
 const MessagesWrapper = styled.div`
-  overflow: auto;
+  overflow-y: auto;
   flex: 1;
   min-height: 0;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
   z-index: ${({ $isOpen }) => ($isOpen ? '0' : '10')};
   transform: scaleY(-1); // 전체 스크롤 뷰를 뒤집기
 `;
@@ -135,13 +150,25 @@ const WrapMessage = styled.div`
   transform: scaleY(-1);
 `;
 
+const WrapDate = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 16px;
+
+  > .content {
+    font-size: 0.7rem;
+    background-color: #eee;
+    padding: 0.5rem;
+    text-align: center;
+    border-radius: 9999px;
+  }
+`;
+
 const Announcement = styled.div`
   display: flex;
   justify-content: center;
   margin: 16px;
-  &.notice {
-    transform: scaleY(-1);
-  }
+  transform: scaleY(-1);
 
   > .content {
     font-size: 0.7rem;
