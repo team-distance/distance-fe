@@ -253,7 +253,7 @@ const ShareSection = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 16px;
-  padding: 80px 24px;
+  padding: 80px 0;
 
   color: rgba(0, 0, 0, 0.8);
   text-align: center;
