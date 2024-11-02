@@ -143,7 +143,7 @@ const MessagesWrapper = styled.div`
   overflow-y: auto;
   flex: 1;
   min-height: 0;
-  margin-bottom: 3rem;
+  margin-bottom: calc(51px + env(safe-area-inset-bottom));
   z-index: ${({ $isOpen }) => ($isOpen ? '0' : '10')};
   transform: scaleY(-1); // 전체 스크롤 뷰를 뒤집기
 `;
