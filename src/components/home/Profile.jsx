@@ -68,7 +68,7 @@ const CharacterBackground = styled.div`
   border-radius: 100%;
   background-color: ${(props) => props.$backgroundColor};
 
-  @media (max-height: 768px) {
+  @media (max-height: 767px) {
     width: 70px;
     height: 70px;
   }
@@ -87,7 +87,7 @@ const StyledImage = styled.div`
     `-${props.$xPos * 60}px -${props.$yPos * 60}px`};
   background-size: calc(100% * 4);
 
-  @media (max-height: 768px) {
+  @media (max-height: 767px) {
     width: 40px;
     height: 40px;
     background-position: ${(props) =>
