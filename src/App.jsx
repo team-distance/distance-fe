@@ -44,6 +44,8 @@ import Program from './components/festival/Program';
 import FoodTruck from './components/festival/FoodTruck';
 import { useQueryClient } from '@tanstack/react-query';
 import styled from 'styled-components';
+import NaverFallback from './pages/root/NaverFallback';
+import InstagramFallback from './pages/root/InstagramFallback';
 
 function App() {
   useRouteChangeTrack();
@@ -134,6 +136,8 @@ function App() {
         <Route path="/chat/:chatRoomId" element={<ChatPage />} />
 
         <Route path="/kakaotalk-fallback" element={<KakaotalkFallback />} />
+        <Route path="/naver-fallback" element={<NaverFallback />} />
+        <Route path="/instagram-fallback" element={<InstagramFallback />} />
 
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
 

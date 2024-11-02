@@ -21,16 +21,16 @@ const KakaotalkFallback = () => {
   return (
     <Wrapper>
       <img src="/assets/logo-pink.png" alt="디스턴스 로고" width={100} />
-      <h2>
+      <Heading>
         아래의 방법으로
         <br />
         디스턴스에 접속해주세요!
-      </h2>
-      <small>
+      </Heading>
+      <Small>
         브라우저 호환성 이슈 때문에
         <br />
         카카오톡 인앱 브라우저에서는 사용할 수 없어요.
-      </small>
+      </Small>
 
       <br />
       <br />
@@ -79,9 +79,7 @@ const KakaotalkFallback = () => {
               src="/assets/kakaotalk-fallback/ios-step2.png"
               alt="이미지2"
             />
-            <p>
-              <strong>'Safari로 열기'</strong>를 터치합니다.
-            </p>
+            <p>'Safari로 열기' 를 터치합니다.</p>
           </Box>
         </WrapBox>
       ) : (
@@ -111,9 +109,7 @@ const KakaotalkFallback = () => {
               src="/assets/kakaotalk-fallback/android-step2.png"
               alt="이미지2"
             />
-            <p>
-              <strong>'다른 브라우저로 열기'</strong>를 터치합니다.
-            </p>
+            <p>'다른 브라우저로 열기' 를 터치합니다.</p>
           </Box>
         </WrapBox>
       )}
@@ -125,6 +121,18 @@ export default KakaotalkFallback;
 
 const Wrapper = styled.div`
   padding: 2rem 1rem;
+`;
+
+const Heading = styled.h2`
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+`;
+
+const Small = styled.small`
+  font-size: 12px;
+  color: #777;
 `;
 
 const WrapBox = styled.div`
@@ -146,6 +154,7 @@ const Box = styled.div`
 
   p {
     display: flex;
+    margin-top: 0.5rem;
     gap: 0.4rem;
     align-items: center;
     justify-content: center;
@@ -156,7 +165,10 @@ const Box = styled.div`
   }
 
   h3 {
+    font-weight: 600;
     color: #ff625d;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 `;
 
