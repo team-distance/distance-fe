@@ -30,7 +30,6 @@ import CallDistanceModal from '../../components/modal/CallDistanceModal';
 import { Client } from '@stomp/stompjs';
 import { stompBrokerURL } from '../../constants/baseURL';
 import { useQuery } from '@tanstack/react-query';
-import { useCheckComeIn } from '../../hooks/useCheckComeIn';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -157,25 +156,22 @@ const ChatPage = () => {
   };
 
   // 메시지 전송
-  const { sendImageMessage, sendTextMessage, sendComeInMessage } =
-    useSendMessage(
-      draftMessage,
-      setDraftMessage,
-      setFile,
-      file,
-      client,
-      roomId,
-      opponentMemberId,
-      myMemberId,
-      showWaitToast,
-      setIsUploadingImage,
-      setUploadProgress,
-      uploadingImagePreviewUrl,
-      setUploadingImagePreviewUrl,
-      setRequestCancelController
-    );
-
-  const { isOpponentComeIn } = useCheckComeIn(messages, myMemberId);
+  const { sendImageMessage, sendTextMessage } = useSendMessage(
+    draftMessage,
+    setDraftMessage,
+    setFile,
+    file,
+    client,
+    roomId,
+    opponentMemberId,
+    myMemberId,
+    showWaitToast,
+    setIsUploadingImage,
+    setUploadProgress,
+    uploadingImagePreviewUrl,
+    setUploadingImagePreviewUrl,
+    setRequestCancelController
+  );
 
   const sendMessage = async () => {
     if (!draftMessage.trim() && !file) return;
@@ -337,31 +333,37 @@ const ChatPage = () => {
 
   const subscritionCallback = (message) => {
     const parsedMessage = JSON.parse(message.body);
+    const { senderId, senderType } = parsedMessage.body;
+    console.log('parsedMessage', parsedMessage);
 
-    const { senderType, senderId } = parsedMessage.body;
-
-    if (senderType === 'COME' && senderId === myMemberId) {
+    if (senderType === 'COME' && senderId !== myMemberId) {
+      // COME 메시지를 보낸 사람이 '나'인 경우
       return;
-    } else if (senderType === 'COME' && senderId !== myMemberId) {
+    } else if (senderType === 'COME' && senderId === myMemberId) {
+      // COME 메시지를 보낸 사람이 '상대방'인 경우
       setMessages((prevMessages) => {
         const oldMessages = [...prevMessages];
-        oldMessages.forEach((message) => (message.unreadCount = 0));
+        oldMessages.forEach((message) => {
+          message.unreadCount = 0;
+        });
         return oldMessages;
       });
       return;
-    }
-
-    // messages 새로 set
-    setMessages((prevMessages) => {
-      const oldMessages = [...prevMessages];
-      // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
-      if (parsedMessage.body.senderId !== oldMessages.at(-1)?.senderId) {
-        for (let i = 0; i < oldMessages.length; i++) {
-          oldMessages[i].unreadCount = 0;
+    } else {
+      // 그 외의 메시지인 경우
+      setMessages((prevMessages) => {
+        const oldMessages = [...prevMessages];
+        // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
+        if (senderId !== oldMessages.at(-1)?.senderId) {
+          oldMessages.forEach((message) => {
+            message.unreadCount = 0;
+          });
         }
-      }
-      return [...oldMessages, parsedMessage.body];
-    });
+        return [...oldMessages, parsedMessage.body];
+      });
+
+      return;
+    }
   };
 
   useEffect(() => {
@@ -378,11 +380,19 @@ const ChatPage = () => {
         },
         onConnect: (frame) => {
           setIsLoading(false);
-          //receiver !== lastMessageId 읽음 표시 신호 보내기
-          console.log('isOpponentComeIn', isOpponentComeIn);
-
           console.log('Connected: ' + frame);
           newClient.subscribe(`/topic/chatroom/${roomId}`, subscritionCallback);
+
+          // STOMP 연결이 완료되면 채팅방 입장 메시지 전송
+          newClient.publish({
+            destination: `/app/chat/${roomId}`,
+            body: JSON.stringify({
+              chatMessage: '',
+              senderId: myMemberId,
+              receiverId: opponentMemberId,
+              publishType: 'COME',
+            }),
+          });
         },
         onStompError: (error) => {
           console.log(error);
@@ -404,17 +414,6 @@ const ChatPage = () => {
     }
   }, [isMemberIdsFetched]);
 
-  useEffect(() => {
-    let timeoutId;
-
-    if (client)
-      timeoutId = setTimeout(() => {
-        sendComeInMessage();
-      }, 1000);
-
-    return () => clearTimeout(timeoutId);
-  }, [client]);
-
   // 메시지가 업데이트 될 때마다 상대방이 나갔는지 확인
   // 메시지가 업데이트 될 때마다 로컬 스토리지에 저장
   useEffect(() => {
@@ -431,10 +430,6 @@ const ChatPage = () => {
       setDraftMessage(draftMessage.slice(0, -1));
     }
   }, [draftMessage]);
-
-  useEffect(() => {
-    console.log(groupedMessages);
-  }, [groupedMessages]);
 
   const handleIntersect = () => {
     console.log('handleIntersect currentPage', currentPage);
