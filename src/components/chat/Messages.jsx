@@ -74,10 +74,6 @@ const Messages = memo(
       };
     }, [onIntersect, isFetching]);
 
-    useEffect(() => {
-      console.log('isInputFocused', isInputFocused);
-    }, [isInputFocused]);
-
     return (
       <MessagesWrapper
         ref={messageRef}
