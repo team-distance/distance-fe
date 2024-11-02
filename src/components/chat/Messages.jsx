@@ -22,6 +22,7 @@ const Messages = memo(
     currentPage,
     setCurrentPage,
     setMessages,
+    isInputFocused,
   }) => {
     // 아이폰에서는 프로그레스 바에 파일 전체 크기를 표시하지 않기 위해 사용
     // (axios의 onUploadProgress 이벤트 핸들러에서 total 값이 제대로 전달되지 않음)
@@ -130,7 +131,11 @@ const Messages = memo(
     }, [onIntersect]);
 
     return (
-      <MessagesWrapper ref={messageRef} $isOpen={isMenuOpen}>
+      <MessagesWrapper
+        ref={messageRef}
+        $isOpen={isMenuOpen}
+        $isInputFocused={isInputFocused}
+      >
         {Object.entries(groupedMessages)
           .reverse()
           .map(([date, messages]) => (
@@ -199,7 +204,8 @@ const MessagesWrapper = styled.div`
   overflow-y: auto;
   flex: 1;
   min-height: 0;
-  margin-bottom: 3rem;
+  margin-bottom: ${({ $isInputFocused }) =>
+    $isInputFocused ? '51px' : 'calc(51px + env(safe-area-inset-bottom))'};
   z-index: ${({ $isOpen }) => ($isOpen ? '0' : '10')};
   transform: scaleY(-1); // 전체 스크롤 뷰를 뒤집기
 `;

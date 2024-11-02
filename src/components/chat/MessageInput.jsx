@@ -17,6 +17,7 @@ const MessageInput = ({
   isMenuOpen,
   setIsMenuOpen,
   setIsSend,
+  setIsInputFocused,
 }) => {
   const containerRef = useRef(null);
   const [isConvertingHeic, setIsConvertingHeic] = useState(false);
@@ -24,12 +25,14 @@ const MessageInput = ({
   const handleFocus = () => {
     if (containerRef.current) {
       containerRef.current.classList.add('focused');
+      setIsInputFocused(true);
     }
   };
 
   const handleBlur = () => {
     if (containerRef.current) {
       containerRef.current.classList.remove('focused');
+      setIsInputFocused(false);
     }
   };
 
@@ -66,6 +69,7 @@ const MessageInput = ({
           />
         )}
       </AnimatePresence>
+
       <InputContainer ref={containerRef}>
         <MenuToggle toggle={onClickPlusButton} isOpen={isMenuOpen} />
         <WrapInputForm onSubmit={handleSubmit}>

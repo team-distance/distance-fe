@@ -55,6 +55,8 @@ const ChatPage = () => {
   const [isShowImage, setIsShowImage] = useState(false);
   const [imgSrc, setImageSrc] = useState('');
 
+  const [isInputFocused, setIsInputFocused] = useState(false);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSend, setIsSend] = useState(false);
 
@@ -337,18 +339,37 @@ const ChatPage = () => {
 
   const subscritionCallback = (message) => {
     const parsedMessage = JSON.parse(message.body);
+    const { senderId, senderType } = parsedMessage.body;
+    console.log('parsedMessage', parsedMessage);
 
-    // messages 새로 set
-    setMessages((prevMessages) => {
-      const oldMessages = [...prevMessages];
-      // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
-      if (parsedMessage.body.senderId !== oldMessages.at(-1)?.senderId) {
-        for (let i = 0; i < oldMessages.length; i++) {
-          oldMessages[i].unreadCount = 0;
+    if (senderType === 'COME' && senderId === myMemberId) {
+      // COME 메시지를 보낸 사람이 '나'인 경우
+      return;
+    } else if (senderType === 'COME' && senderId !== myMemberId) {
+      // COME 메시지를 보낸 사람이 '상대방'인 경우
+      setMessages((prevMessages) => {
+        const oldMessages = [...prevMessages];
+        oldMessages.forEach((message) => {
+          message.unreadCount = 0;
+        });
+        return oldMessages;
+      });
+      return;
+    } else {
+      // 그 외의 메시지인 경우
+      setMessages((prevMessages) => {
+        const oldMessages = [...prevMessages];
+        // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
+        if (senderId !== oldMessages.at(-1)?.senderId) {
+          oldMessages.forEach((message) => {
+            message.unreadCount = 0;
+          });
         }
-      }
-      return [...oldMessages, parsedMessage.body];
-    });
+        return [...oldMessages, parsedMessage.body];
+      });
+
+      return;
+    }
   };
 
   useEffect(() => {
@@ -367,6 +388,17 @@ const ChatPage = () => {
           setIsLoading(false);
           console.log('Connected: ' + frame);
           newClient.subscribe(`/topic/chatroom/${roomId}`, subscritionCallback);
+
+          // STOMP 연결이 완료되면 채팅방 입장 메시지 전송
+          newClient.publish({
+            destination: `/app/chat/${roomId}`,
+            body: JSON.stringify({
+              chatMessage: '',
+              senderId: myMemberId,
+              receiverId: opponentMemberId,
+              publishType: 'COME',
+            }),
+          });
         },
         onStompError: (error) => {
           console.log(error);
@@ -444,6 +476,7 @@ const ChatPage = () => {
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}
               setMessages={setMessages}
+              isInputFocused={isInputFocused}
             />
             <MessageInputWrapper>
               <MessageInput
@@ -458,6 +491,7 @@ const ChatPage = () => {
                 isMenuOpen={isMenuOpen}
                 setIsMenuOpen={setIsMenuOpen}
                 setIsSend={setIsSend}
+                setIsInputFocused={setIsInputFocused}
               />
             </MessageInputWrapper>
           </>
