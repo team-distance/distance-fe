@@ -100,22 +100,5 @@ export const useSendMessage = (
     }
   };
 
-  // 읽음 신호 메세지
-  const sendComeInMessage = () => {
-    try {
-      client.publish({
-        destination: `/app/chat/${roomId}`,
-        body: JSON.stringify({
-          chatMessage: '',
-          senderId: opponentMemberId,
-          receiverId: myMemberId,
-          publishType: 'COME',
-        }),
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  return { sendImageMessage, sendTextMessage, sendComeInMessage };
+  return { sendImageMessage, sendTextMessage };
 };
