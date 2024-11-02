@@ -78,7 +78,21 @@ const Messages = memo(
         {Object.entries(groupedMessages)
           .reverse()
           .map(([date, messages]) => (
-            <WrapMessage key={date}>
+            <React.Fragment key={date}>
+              <WrapMessage>
+                {messages.map((message) => (
+                  <Message
+                    key={message.messageId}
+                    message={message}
+                    isSentByMe={message.senderId !== Number(myId)}
+                    responseCall={responseCall}
+                    viewImage={viewImage}
+                    openProfileModal={openProfileModal}
+                    opponentMemberCharacter={opponentMemberCharacter}
+                  />
+                ))}
+              </WrapMessage>
+
               <WrapDate>
                 <div className="content">
                   {new Date(date).toLocaleDateString('ko-KR', {
@@ -88,24 +102,12 @@ const Messages = memo(
                   })}
                 </div>
               </WrapDate>
-
-              {messages.map((message) => (
-                <Message
-                  key={message.messageId}
-                  message={message}
-                  isSentByMe={message.senderId !== Number(myId)}
-                  responseCall={responseCall}
-                  viewImage={viewImage}
-                  openProfileModal={openProfileModal}
-                  opponentMemberCharacter={opponentMemberCharacter}
-                />
-              ))}
-            </WrapMessage>
+            </React.Fragment>
           ))}
         {isUploadingImage && (
           <UploadingImagePreview>
             <div className="message-container">
-              <img src={uploadingImagePreviewUrl} alt="" />
+              <img src={uploadingImagePreviewUrl} alt="전송 이미지" />
               <div className="backdrop" />
               <div className="progress">
                 <Progress
@@ -154,6 +156,7 @@ const WrapDate = styled.div`
   display: flex;
   justify-content: center;
   margin: 16px;
+  transform: scaleY(-1);
 
   > .content {
     font-size: 0.7rem;

@@ -134,13 +134,14 @@ const BlurBackground = styled(motion.div)`
 
 const WrapMenu = styled.ul`
   position: absolute;
-  bottom: 100px;
+  bottom: 51px;
+  width: 100%;
 
   li {
     display: flex;
     align-items: center;
     font-weight: 200;
-    padding: 0.7rem 0 0.7rem 1rem;
+    padding: 0.7rem 1rem 0.7rem 1rem;
 
     img {
       padding-right: 1rem;
