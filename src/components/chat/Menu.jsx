@@ -134,7 +134,7 @@ const BlurBackground = styled(motion.div)`
 
 const WrapMenu = styled.ul`
   position: absolute;
-  bottom: 51px;
+  bottom: calc(51px + env(safe-area-inset-bottom));
   width: 100%;
 
   li {
