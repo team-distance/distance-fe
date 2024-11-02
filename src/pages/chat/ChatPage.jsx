@@ -336,10 +336,10 @@ const ChatPage = () => {
     const { senderId, senderType } = parsedMessage.body;
     console.log('parsedMessage', parsedMessage);
 
-    if (senderType === 'COME' && senderId !== myMemberId) {
+    if (senderType === 'COME' && senderId === myMemberId) {
       // COME 메시지를 보낸 사람이 '나'인 경우
       return;
-    } else if (senderType === 'COME' && senderId === myMemberId) {
+    } else if (senderType === 'COME' && senderId !== myMemberId) {
       // COME 메시지를 보낸 사람이 '상대방'인 경우
       setMessages((prevMessages) => {
         const oldMessages = [...prevMessages];
