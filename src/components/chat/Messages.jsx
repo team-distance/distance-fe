@@ -1,6 +1,7 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import Message from './Message';
 import styled from 'styled-components';
+import { useFetchMessagesPerPage } from '../../hooks/useFetchMessages';
 
 const Messages = memo(
   ({
@@ -15,17 +16,25 @@ const Messages = memo(
     uploadProgress,
     uploadingImagePreviewUrl,
     requestCancelController,
-    onIntersect,
     setIsSend,
     isSend,
+    roomId,
+    currentPage,
+    setCurrentPage,
+    setMessages,
   }) => {
     // 아이폰에서는 프로그레스 바에 파일 전체 크기를 표시하지 않기 위해 사용
     // (axios의 onUploadProgress 이벤트 핸들러에서 total 값이 제대로 전달되지 않음)
     const isIphone = navigator.userAgent.includes('iPhone');
-    const [isFetching, setIsFetching] = useState(false);
 
     const messageRef = useRef();
     const observerRef = useRef(); // Observer를 위한 ref
+
+    const { data, isSuccess } = useFetchMessagesPerPage(roomId, currentPage);
+
+    const onIntersect = () => {
+      setCurrentPage((prevPage) => prevPage - 1); // page 감소
+    };
 
     const cancelUpload = () => {
       if (requestCancelController) {
@@ -33,24 +42,41 @@ const Messages = memo(
       }
     };
 
-    // scrollTop : 메세지 전송 시, 메뉴 open 시
+    // messages 업데이트
     useEffect(() => {
-      if (isMenuOpen || isSend) {
+      if (isSuccess && data && currentPage === -1) {
+        setMessages(data); // 초기 페이지에서는 이전 메시지 없이 데이터 설정
+      } else if (isSuccess && data) {
+        setMessages((prevMessages) => {
+          const newMessages = data.filter(
+            (newMessage) =>
+              !prevMessages.some(
+                (prevMessage) => prevMessage.messageId === newMessage.messageId
+              )
+          );
+          return [...newMessages, ...prevMessages];
+        });
+      }
+    }, [data, isSuccess, currentPage]);
+
+    // scrollTop : 메세지 전송 시
+    useEffect(() => {
+      if (isSend) {
         messageRef.current.scrollTo({
           top: 0,
           behavior: 'smooth',
         });
         setIsSend(false);
       }
-    }, [isMenuOpen, isSend]);
+    }, [isSend]);
 
     useEffect(() => {
+      if (!isSuccess || !data) return; // 초기 데이터가 성공적으로 로드된 후에만 실행
+
       const observer = new IntersectionObserver(
         async ([entry]) => {
-          if (entry.isIntersecting && !isFetching) {
-            setIsFetching(true);
-            await onIntersect();
-            setIsFetching(false);
+          if (entry.isIntersecting) {
+            onIntersect();
           }
         },
         {
@@ -71,7 +97,7 @@ const Messages = memo(
           observer.unobserve(currentObserverRef);
         }
       };
-    }, [onIntersect, isFetching]);
+    }, [onIntersect]);
 
     return (
       <MessagesWrapper ref={messageRef} $isOpen={isMenuOpen}>

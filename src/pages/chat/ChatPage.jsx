@@ -21,7 +21,7 @@ import CallActiveLottie from '../../components/chat/CallActiveLottie';
 import { useCallActive } from '../../hooks/useCallActive';
 import {
   useCountPages,
-  useFetchMessagesPerPage,
+  // useFetchMessagesPerPage,
 } from '../../hooks/useFetchMessages';
 import TopBar from '../../components/chat/TopBar';
 import Loader from '../../components/common/Loader';
@@ -70,7 +70,6 @@ const ChatPage = () => {
   const [currentPage, setCurrentPage] = useState(-1);
 
   const fetchPagesNum = useCountPages(roomId);
-  const fetchPageMessages = useFetchMessagesPerPage(roomId);
 
   const { data: opponentProfile } = useQuery({
     queryKey: ['opponentProfile', { chatRoomId: roomId }],
@@ -399,13 +398,6 @@ const ChatPage = () => {
     }
   }, [draftMessage]);
 
-  const handleIntersect = () => {
-    console.log('handleIntersect currentPage', currentPage);
-    if (currentPage >= 0) {
-      fetchPageMessages(setMessages, setCurrentPage, currentPage, 10);
-    }
-  };
-
   return (
     <Wrapper>
       {isShowImage && (
@@ -439,9 +431,12 @@ const ChatPage = () => {
               uploadProgress={uploadProgress}
               uploadingImagePreviewUrl={uploadingImagePreviewUrl}
               requestCancelController={requestCancelController}
-              onIntersect={handleIntersect}
               setIsSend={setIsSend}
               isSend={isSend}
+              roomId={roomId}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              setMessages={setMessages}
             />
             <MessageInputWrapper>
               <MessageInput
