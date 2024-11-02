@@ -213,6 +213,13 @@ const ChatPage = () => {
     const res = window.confirm('정말로 나가시겠습니까?');
     if (!res) return;
 
+    // 현재 roomId에 해당하는 로컬 저장소 항목 모두 삭제
+    Object.keys(localStorage).forEach((key) => {
+      if (key.includes(`"messages",${roomId},`)) {
+        localStorage.removeItem(key);
+      }
+    });
+
     try {
       client.publish({
         destination: `/app/chat/${roomId}`,

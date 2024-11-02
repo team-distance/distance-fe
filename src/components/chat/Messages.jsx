@@ -27,10 +27,10 @@ const Messages = memo(
     // (axios의 onUploadProgress 이벤트 핸들러에서 total 값이 제대로 전달되지 않음)
     const isIphone = navigator.userAgent.includes('iPhone');
 
+    const { data, isSuccess } = useFetchMessagesPerPage(roomId, currentPage);
+
     const messageRef = useRef();
     const observerRef = useRef(); // Observer를 위한 ref
-
-    const { data, isSuccess } = useFetchMessagesPerPage(roomId, currentPage);
 
     const onIntersect = () => {
       setCurrentPage((prevPage) => prevPage - 1); // page 감소
@@ -44,18 +44,21 @@ const Messages = memo(
 
     // messages 업데이트
     useEffect(() => {
-      if (isSuccess && data && currentPage === -1) {
-        setMessages(data); // 초기 페이지에서는 이전 메시지 없이 데이터 설정
-      } else if (isSuccess && data) {
-        setMessages((prevMessages) => {
-          const newMessages = data.filter(
-            (newMessage) =>
-              !prevMessages.some(
-                (prevMessage) => prevMessage.messageId === newMessage.messageId
-              )
-          );
-          return [...newMessages, ...prevMessages];
-        });
+      if (isSuccess && data) {
+        if (currentPage === -1) {
+          setMessages(data); // 초기 페이지에서는 기존 메시지 없이 데이터 설정
+        } else {
+          setMessages((prevMessages) => {
+            const newMessages = data.filter(
+              (newMessage) =>
+                !prevMessages.some(
+                  (prevMessage) =>
+                    prevMessage.messageId === newMessage.messageId
+                )
+            );
+            return [...newMessages, ...prevMessages];
+          });
+        }
       }
     }, [data, isSuccess, currentPage]);
 
@@ -71,12 +74,39 @@ const Messages = memo(
     }, [isSend]);
 
     useEffect(() => {
-      if (!isSuccess || !data) return; // 초기 데이터가 성공적으로 로드된 후에만 실행
-
       const observer = new IntersectionObserver(
         async ([entry]) => {
           if (entry.isIntersecting) {
-            onIntersect();
+            const LOCAL_STORAGE_KEY = JSON.stringify([
+              'messages',
+              roomId,
+              currentPage,
+            ]);
+
+            // 로컬 저장소에서 해당 키의 데이터 불러오기
+            const storedData = JSON.parse(
+              localStorage.getItem(LOCAL_STORAGE_KEY)
+            );
+
+            if (storedData) {
+              // 로컬 저장소에 데이터가 있으면 messages에 추가
+              setMessages((prevMessages) => {
+                const newMessages = storedData.filter(
+                  (newMessage) =>
+                    !prevMessages.some(
+                      (prevMessage) =>
+                        prevMessage.messageId === newMessage.messageId
+                    )
+                );
+                return [...newMessages, ...prevMessages];
+              });
+              onIntersect();
+            } else {
+              if (!isSuccess || !data) return; // 초기 데이터가 성공적으로 로드된 후에만 실행
+
+              // 로컬 저장소에 데이터가 없으면 새로운 페이지로 이동
+              onIntersect();
+            }
           }
         },
         {
