@@ -136,6 +136,29 @@ const Messages = memo(
         $isOpen={isMenuOpen}
         $isInputFocused={isInputFocused}
       >
+        {isUploadingImage && (
+          <UploadingImagePreview>
+            <div className="message-container">
+              <img src={uploadingImagePreviewUrl} alt="전송 이미지" />
+              <div className="backdrop" />
+              <div className="progress">
+                <Progress
+                  value={Math.round(uploadProgress.progress * 100) || 0}
+                  max={100}
+                />
+                <div>
+                  {(uploadProgress.loaded / (1024 * 1024)).toFixed(2)} MB
+                  {!isIphone &&
+                    ` / ${(uploadProgress.total / (1024 * 1024)).toFixed(
+                      2
+                    )} MB`}
+                </div>
+                <RoundedButton onClick={cancelUpload}>취소</RoundedButton>
+              </div>
+            </div>
+          </UploadingImagePreview>
+        )}
+
         {Object.entries(groupedMessages)
           .reverse()
           .map(([date, messages]) => (
@@ -165,28 +188,6 @@ const Messages = memo(
               </WrapDate>
             </React.Fragment>
           ))}
-        {isUploadingImage && (
-          <UploadingImagePreview>
-            <div className="message-container">
-              <img src={uploadingImagePreviewUrl} alt="전송 이미지" />
-              <div className="backdrop" />
-              <div className="progress">
-                <Progress
-                  value={Math.round(uploadProgress.progress * 100) || 0}
-                  max={100}
-                />
-                <div>
-                  {(uploadProgress.loaded / (1024 * 1024)).toFixed(2)} MB
-                  {!isIphone &&
-                    ` / ${(uploadProgress.total / (1024 * 1024)).toFixed(
-                      2
-                    )} MB`}
-                </div>
-                <RoundedButton onClick={cancelUpload}>취소</RoundedButton>
-              </div>
-            </div>
-          </UploadingImagePreview>
-        )}
 
         <div className="observer" ref={observerRef} />
         <Announcement>
