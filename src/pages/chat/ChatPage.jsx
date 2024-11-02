@@ -345,13 +345,8 @@ const ChatPage = () => {
     } else if (senderType === 'COME' && senderId !== myMemberId) {
       setMessages((prevMessages) => {
         const oldMessages = [...prevMessages];
-        // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
-        if (parsedMessage.body.senderId !== oldMessages.at(-1)?.senderId) {
-          for (let i = 0; i < oldMessages.length; i++) {
-            oldMessages[i].unreadCount = 0;
-          }
-        }
-        return [...oldMessages, parsedMessage.body];
+        oldMessages.forEach((message) => (message.unreadCount = 0));
+        return oldMessages;
       });
       return;
     }
