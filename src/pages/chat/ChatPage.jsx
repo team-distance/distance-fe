@@ -56,6 +56,7 @@ const ChatPage = () => {
   const [imgSrc, setImageSrc] = useState('');
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSend, setIsSend] = useState(false);
 
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({
@@ -439,6 +440,8 @@ const ChatPage = () => {
               uploadingImagePreviewUrl={uploadingImagePreviewUrl}
               requestCancelController={requestCancelController}
               onIntersect={handleIntersect}
+              setIsSend={setIsSend}
+              isSend={isSend}
             />
             <MessageInputWrapper>
               <MessageInput
@@ -452,6 +455,7 @@ const ChatPage = () => {
                 isOpponentOut={isOpponentOut}
                 isMenuOpen={isMenuOpen}
                 setIsMenuOpen={setIsMenuOpen}
+                setIsSend={setIsSend}
               />
             </MessageInputWrapper>
           </>

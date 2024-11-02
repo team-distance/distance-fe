@@ -16,6 +16,8 @@ const Messages = memo(
     uploadingImagePreviewUrl,
     requestCancelController,
     onIntersect,
+    setIsSend,
+    isSend,
   }) => {
     // 아이폰에서는 프로그레스 바에 파일 전체 크기를 표시하지 않기 위해 사용
     // (axios의 onUploadProgress 이벤트 핸들러에서 total 값이 제대로 전달되지 않음)
@@ -31,8 +33,16 @@ const Messages = memo(
       }
     };
 
-    // messages > scrollTop 구현
-    // 방 처음 생성 시 상단 여백 해결
+    // scrollTop : 메세지 전송 시, 메뉴 open 시
+    useEffect(() => {
+      if (isMenuOpen || isSend) {
+        messageRef.current.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        });
+        setIsSend(false);
+      }
+    }, [isMenuOpen, isSend]);
 
     useEffect(() => {
       const observer = new IntersectionObserver(
@@ -62,16 +72,6 @@ const Messages = memo(
         }
       };
     }, [onIntersect, isFetching]);
-
-    // 새로운 메시지가 추가되었을 때 스크롤 위치 조정
-    // useEffect(() => {
-    //   if (messageRef.current && !isFetching) {
-    //     messageRef.current.scrollTo({
-    //       top: messageRef.current.scrollHeight,
-    //       behavior: 'smooth',
-    //     });
-    //   }
-    // }, [groupedMessages, isFetching]);
 
     return (
       <MessagesWrapper ref={messageRef} $isOpen={isMenuOpen}>

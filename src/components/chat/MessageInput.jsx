@@ -16,6 +16,7 @@ const MessageInput = ({
   isOpponentOut,
   isMenuOpen,
   setIsMenuOpen,
+  setIsSend,
 }) => {
   const containerRef = useRef(null);
   const [isConvertingHeic, setIsConvertingHeic] = useState(false);
@@ -39,6 +40,7 @@ const MessageInput = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     setFile(null);
+    setIsSend(true);
     submitHandler();
   };
 
