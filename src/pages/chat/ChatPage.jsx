@@ -55,6 +55,8 @@ const ChatPage = () => {
   const [isShowImage, setIsShowImage] = useState(false);
   const [imgSrc, setImageSrc] = useState('');
 
+  const [isInputFocused, setIsInputFocused] = useState(false);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSend, setIsSend] = useState(false);
 
@@ -442,6 +444,7 @@ const ChatPage = () => {
               onIntersect={handleIntersect}
               setIsSend={setIsSend}
               isSend={isSend}
+              isInputFocused={isInputFocused}
             />
             <MessageInputWrapper>
               <MessageInput
@@ -456,6 +459,7 @@ const ChatPage = () => {
                 isMenuOpen={isMenuOpen}
                 setIsMenuOpen={setIsMenuOpen}
                 setIsSend={setIsSend}
+                setIsInputFocused={setIsInputFocused}
               />
             </MessageInputWrapper>
           </>
