@@ -25,6 +25,7 @@ const queryClient = new QueryClient({
     },
   },
 });
+
 const rootElement = document.getElementById('root');
 
 const app = (
