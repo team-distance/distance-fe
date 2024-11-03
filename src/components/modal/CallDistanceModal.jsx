@@ -21,8 +21,8 @@ const CallDistanceModal = ({ closeModal, tikitakaCount }) => {
         <div className="filled" />
       </StatusBar>
       <Text>
-        대화를 통해 상대와의 거리를 좁혀 보세요 일정 대화 수를 충족하면 통화
-        버튼이 활성화됩니다
+        대화를 통해 상대와의 거리를 좁혀 보세요! 일정 대화 수를 충족하면 통화
+        버튼이 활성화됩니다.
       </Text>
     </Modal>
   );

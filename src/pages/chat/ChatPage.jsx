@@ -340,7 +340,6 @@ const ChatPage = () => {
   const subscritionCallback = (message) => {
     const parsedMessage = JSON.parse(message.body);
     const { senderId, senderType } = parsedMessage.body;
-    console.log('parsedMessage', parsedMessage);
 
     if (senderType === 'COME' && senderId === myMemberId) {
       // COME 메시지를 보낸 사람이 '나'인 경우
