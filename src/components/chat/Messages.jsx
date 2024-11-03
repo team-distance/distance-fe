@@ -63,6 +63,12 @@ const Messages = memo(
       }
     }, [data, isSuccess, currentPage]);
 
+    // 확인용
+    useEffect(() => {
+      console.log('currentPage', currentPage);
+      console.log('data', data);
+    }, [data]);
+
     // scrollTop : 메세지 전송 시
     useEffect(() => {
       if (isSend) {
@@ -103,8 +109,8 @@ const Messages = memo(
               });
               onIntersect();
             } else {
-              if (!isSuccess || !data) return; // 초기 데이터가 성공적으로 로드된 후에만 실행
-
+              if (!isSuccess || !data) return;
+              console.log('감지');
               // 로컬 저장소에 데이터가 없으면 새로운 페이지로 이동
               onIntersect();
             }
