@@ -46,28 +46,17 @@ const Messages = memo(
     // messages 업데이트
     useEffect(() => {
       if (isSuccess && data) {
-        if (currentPage === -1) {
-          setMessages(data); // 초기 페이지에서는 기존 메시지 없이 데이터 설정
-        } else {
-          setMessages((prevMessages) => {
-            const newMessages = data.filter(
-              (newMessage) =>
-                !prevMessages.some(
-                  (prevMessage) =>
-                    prevMessage.messageId === newMessage.messageId
-                )
-            );
-            return [...newMessages, ...prevMessages];
-          });
-        }
+        setMessages((prevMessages) => {
+          const newMessages = data.filter(
+            (newMessage) =>
+              !prevMessages.some(
+                (prevMessage) => prevMessage.messageId === newMessage.messageId
+              )
+          );
+          return [...newMessages, ...prevMessages];
+        });
       }
     }, [data, isSuccess, currentPage]);
-
-    // 확인용
-    useEffect(() => {
-      console.log('currentPage', currentPage);
-      console.log('data', data);
-    }, [data]);
 
     // scrollTop : 메세지 전송 시
     useEffect(() => {
@@ -127,6 +116,10 @@ const Messages = memo(
 
       if (currentObserverRef) {
         observer.observe(currentObserverRef);
+      }
+
+      if (currentPage < 0) {
+        observer.unobserve(currentObserverRef);
       }
 
       return () => {
