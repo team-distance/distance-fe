@@ -233,7 +233,7 @@ const ChatPage = () => {
         }),
       });
 
-      navigate('/chat');
+      navigate('/');
     } catch (error) {
       showWaitToast();
     }
