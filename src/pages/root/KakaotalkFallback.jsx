@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const KakaotalkFallback = () => {
   const [selectedTab, setSelectedTab] = useState('iOS');
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleClickTab = (e) => {
     setSelectedTab(e.target.id);
@@ -14,7 +15,7 @@ const KakaotalkFallback = () => {
     const userAgent = navigator.userAgent.toLowerCase();
 
     if (!userAgent.includes('kakao')) {
-      navigate('/');
+      navigate(location.search ? `/?${location.search}` : '/');
     }
   }, []);
 

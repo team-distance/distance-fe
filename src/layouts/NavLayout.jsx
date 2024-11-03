@@ -21,6 +21,7 @@ const NavLayout = () => {
   const searchParams = new URLSearchParams(useLocation().search);
   const isLoggedIn = useRecoilValue(isLoggedInState);
   const setRegisterData = useSetRecoilState(registerDataState);
+  const location = useLocation();
 
   useEffect(() => {
     const referredTel = searchParams.get('referredTel');
@@ -58,11 +59,13 @@ const NavLayout = () => {
     const userAgent = navigator.userAgent.toLowerCase();
 
     if (userAgent.includes('kakao')) {
-      navigate('/kakaotalk-fallback');
+      navigate(`/kakaotalk-fallback${location.search}`);
     } else if (userAgent.includes('naver')) {
-      navigate('/naver-fallback');
+      navigate(`/naver-fallback${location.search}`);
     } else if (userAgent.includes('instagram')) {
-      navigate('/instagram-fallback');
+      navigate(`/instagram-fallback${location.search}`);
+    } else if (userAgent.includes('everytime')) {
+      navigate(`/everytime-fallback${location.search}`);
     }
   }, []);
 
