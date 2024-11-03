@@ -127,6 +127,7 @@ const TagContainer = styled.div`
 const Major = styled.div`
   font-size: 24px;
   font-weight: 700;
+  line-height: 1;
 `;
 
 const MBTI = styled.div`

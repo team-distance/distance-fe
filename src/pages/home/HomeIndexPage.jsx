@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useState } from 'react';
 import { instance } from '../../api/instance';
@@ -13,14 +13,26 @@ import MatchingConfigBottomsheet from '../../components/modal/MatchingConfigBott
 import { useRecoilValue } from 'recoil';
 import { matchingConfigState } from '../../store/matchingConfig';
 import { useCreateChatRoom } from '../../hooks/useCreateChatRoom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { isLoggedInState } from '../../store/auth';
 
 const HomeIndexPage = () => {
-  const [memberState, setMemberState] = useState();
-  const [loading, setLoading] = useState(false);
   const [isProfileButtonClicked, setIsProfileButtonClicked] = useState(false);
-
+  const queryClient = useQueryClient();
   const matchingConfig = useRecoilValue(matchingConfigState);
+  const isLoggedIn = useRecoilValue(isLoggedInState);
   const createChatRoom = useCreateChatRoom();
+
+  const { data: matchingList, isLoading } = useQuery({
+    queryKey: ['matching', matchingConfig],
+    queryFn: () =>
+      instance
+        .get('/gps/matching', {
+          params: matchingConfig,
+        })
+        .then((res) => res.data.matchedUsers),
+    staleTime: Infinity,
+  });
 
   const { openModal: openProfileModal, closeModal: closeProfileModal } =
     useModal((profile) => (
@@ -46,24 +58,13 @@ const HomeIndexPage = () => {
     { backdrop: false }
   );
 
-  const fetchMembers = async () => {
-    try {
-      setLoading(true);
-      const res = await instance.post('/gps/matching', matchingConfig);
-      setMemberState(res.data.matchedUsers);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const alertTextList = [
-    // {
-    //   text1: '📢 distance는 이성만 매칭됩니다! 👥 현재 순천향대 학생 가입',
-    //   em: '400건 돌파',
-    //   text2: '',
-    // },
+    {
+      index: 1,
+      text1: '📢 ',
+      em: '일주일 이내',
+      text2: ' 로그인한 유저만 홈화면에 표시됩니다.',
+    },
     {
       index: 2,
       text1: '📢 ',
@@ -72,52 +73,42 @@ const HomeIndexPage = () => {
     },
   ];
 
-  useEffect(() => {
-    fetchMembers();
-  }, []);
-
-  useEffect(() => {
-    fetchMembers();
-  }, [matchingConfig]);
-
-  // return (
-  //   <div>
-  //     <div>유저수가 급증하여 서버가 일시 중단되었습니다.</div>
-  //     <div>8:00 ~ 8:30까지 최대한 복구하겠습니다.</div>
-  //   </div>
-  // );
-
   return (
     <>
       <Banner alertText={alertTextList} />
 
-      {memberState && memberState.length === 0 ? (
+      {isLoading ? (
+        <Loader />
+      ) : matchingList.length ? (
+        <ProfileContainer>
+          {matchingList.map((profile, index) => (
+            <Profile
+              key={index}
+              school={profile.school}
+              reportCount={profile.reportCount}
+              profile={profile}
+              onClick={() => openProfileModal(profile)}
+            />
+          ))}
+        </ProfileContainer>
+      ) : (
         <EmptyContainer>
           <div className="wrap">
-            <img src={'/assets/empty-home.svg'} alt="empty icon" />
+            <img src="/assets/empty-home.svg" alt="empty icon" />
             <div>현재 근처에 있는 사람이 없어요!</div>
           </div>
         </EmptyContainer>
-      ) : (
-        <ProfileContainer>
-          {loading ? (
-            <Loader />
-          ) : (
-            memberState &&
-            memberState.map((profile, index) => (
-              <Profile
-                key={index}
-                school={profile.school}
-                reportCount={profile.reportCount}
-                profile={profile}
-                onClick={() => openProfileModal(profile)}
-              />
-            ))
-          )}
-        </ProfileContainer>
       )}
-      <MatchingConfigButton onClick={openMatchingConfigModal} />
-      <ReloadButton onClick={fetchMembers} />
+
+      {isLoggedIn && <MatchingConfigButton onClick={openMatchingConfigModal} />}
+
+      <ReloadButton
+        onClick={() =>
+          queryClient.invalidateQueries({
+            queryKey: ['matching', matchingConfig],
+          })
+        }
+      />
     </>
   );
 };

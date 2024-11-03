@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
 import styled from 'styled-components';
-import { parseTime } from '../../utils/parseTime';
 import Button from '../common/Button';
 import { CHARACTERS } from '../../constants/CHARACTERS';
+import dayjs from 'dayjs';
 
 /**
  * Message 객체 속성
@@ -21,7 +21,18 @@ const Message = memo(
     viewImage,
     openProfileModal,
     opponentMemberCharacter,
+    bothAgreed,
   }) => {
+    const unreadCount = message.unreadCount !== 0 ? message.unreadCount : '';
+    const messageTime = dayjs(message.sendDt).format('HH:mm');
+
+    const characterXpos = CHARACTERS[opponentMemberCharacter]?.position[0];
+    const characterYpos = CHARACTERS[opponentMemberCharacter]?.position[1];
+    const characterColor = CHARACTERS[opponentMemberCharacter]?.color;
+
+    const S3_URL = 'https://distance-buckets.s3.ap-northeast-2.amazonaws.com';
+    const CDN_URL = 'https://cdn.dis-tance.com';
+
     switch (message.senderType) {
       case 'SYSTEM':
         return (
@@ -35,10 +46,8 @@ const Message = memo(
           <MessageByMe>
             <div className="message-container">
               <div className="wrapper">
-                <div className="read">
-                  {message.unreadCount !== 0 ? message.unreadCount : ''}
-                </div>
-                <div className="time">{parseTime(message.sendDt)}</div>
+                <div className="read">{unreadCount}</div>
+                <div className="time">{messageTime}</div>
               </div>
               <div className="tail"></div>
               <div className="message">
@@ -50,13 +59,10 @@ const Message = memo(
         ) : (
           <MessageByOther>
             <CharacterBackground
-              $backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
+              $backgroundColor={characterColor}
               onClick={openProfileModal}
             >
-              <Character
-                $xPos={CHARACTERS[opponentMemberCharacter]?.position[0]}
-                $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
-              />
+              <Character $xPos={characterXpos} $yPos={characterYpos} />
             </CharacterBackground>
             <div className="message-section">
               <div className="nickname">{message.senderName}</div>
@@ -67,19 +73,19 @@ const Message = memo(
                   <div style={{ marginBottom: '8px' }}>
                     요청을 수락하면 서로의 번호로 통화할 수 있어요.
                   </div>
-                  <Button
-                    size="medium"
-                    backgroundColor="#36CF00"
-                    onClick={responseCall}
-                  >
-                    수락하기
-                  </Button>
+                  {!bothAgreed && (
+                    <Button
+                      size="medium"
+                      backgroundColor="#36CF00"
+                      onClick={responseCall}
+                    >
+                      수락하기
+                    </Button>
+                  )}
                 </div>
                 <div className="wrapper">
-                  <div className="read">
-                    {message.unreadCount !== 0 ? message.unreadCount : ''}
-                  </div>
-                  <div className="time">{parseTime(message.sendDt)}</div>
+                  <div className="read">{unreadCount}</div>
+                  <div className="time">{messageTime}</div>
                 </div>
               </div>
             </div>
@@ -91,10 +97,8 @@ const Message = memo(
           <MessageByMe>
             <div className="message-container">
               <div className="wrapper">
-                <div className="read">
-                  {message.unreadCount !== 0 ? message.unreadCount : ''}
-                </div>
-                <div className="time">{parseTime(message.sendDt)}</div>
+                <div className="read">{unreadCount}</div>
+                <div className="time">{messageTime}</div>
               </div>
               <div className="tail"></div>
               <div className="message">
@@ -114,13 +118,10 @@ const Message = memo(
         ) : (
           <MessageByOther>
             <CharacterBackground
-              $backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
+              $backgroundColor={characterColor}
               onClick={openProfileModal}
             >
-              <Character
-                $xPos={CHARACTERS[opponentMemberCharacter]?.position[0]}
-                $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
-              />
+              <Character $xPos={characterXpos} $yPos={characterYpos} />
             </CharacterBackground>
             <div className="message-section">
               <div className="nickname">{message.senderName}</div>
@@ -139,10 +140,8 @@ const Message = memo(
                   </div>
                 </div>
                 <div className="wrapper">
-                  <div className="read">
-                    {message.unreadCount !== 0 ? message.unreadCount : ''}
-                  </div>
-                  <div className="time">{parseTime(message.sendDt)}</div>
+                  <div className="read">{unreadCount}</div>
+                  <div className="time">{messageTime}</div>
                 </div>
               </div>
             </div>
@@ -154,10 +153,8 @@ const Message = memo(
           <MessageByMe>
             <div className="message-container">
               <div className="wrapper">
-                <div className="read">
-                  {message.unreadCount !== 0 ? message.unreadCount : ''}
-                </div>
-                <div className="time">{parseTime(message.sendDt)}</div>
+                <div className="read">{unreadCount}</div>
+                <div className="time">{messageTime}</div>
               </div>
               <>
                 <div className="tail"></div>
@@ -168,13 +165,10 @@ const Message = memo(
         ) : (
           <MessageByOther>
             <CharacterBackground
-              $backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
+              $backgroundColor={characterColor}
               onClick={openProfileModal}
             >
-              <Character
-                $xPos={CHARACTERS[opponentMemberCharacter]?.position[0]}
-                $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
-              />
+              <Character $xPos={characterXpos} $yPos={characterYpos} />
             </CharacterBackground>
             <div className="message-section">
               <div className="nickname">{message.senderName}</div>
@@ -184,56 +178,54 @@ const Message = memo(
                   <div className="message">{message.chatMessage}</div>
                 </>
                 <div className="wrapper">
-                  <div className="read">
-                    {message.unreadCount !== 0 ? message.unreadCount : ''}
-                  </div>
-                  <div className="time">{parseTime(message.sendDt)}</div>
+                  <div className="read">{unreadCount}</div>
+                  <div className="time">{messageTime}</div>
                 </div>
               </div>
             </div>
           </MessageByOther>
         );
       case 'IMAGE':
+        const imageViaCdn = message.chatMessage.replace(S3_URL, CDN_URL);
+        const width = 600;
+        const format = 'webp';
+        const quality = 75;
+
         return isSentByMe ? (
           <MessageByMe>
             <div className="message-container">
               <div className="wrapper">
-                <div className="read">
-                  {message.unreadCount !== 0 ? message.unreadCount : ''}
-                </div>
-                <div className="time">{parseTime(message.sendDt)}</div>
+                <div className="read">{unreadCount}</div>
+                <div className="time">{messageTime}</div>
               </div>
               <img
-                src={message.chatMessage}
-                alt="message"
-                onClick={() => viewImage(message.chatMessage)}
+                src={imageViaCdn + `?w=${width}&f=${format}&q=${quality}`}
+                alt=""
+                loading="lazy"
+                onClick={() => viewImage(imageViaCdn)}
               />
             </div>
           </MessageByMe>
         ) : (
           <MessageByOther>
             <CharacterBackground
-              $backgroundColor={CHARACTERS[opponentMemberCharacter]?.color}
+              $backgroundColor={characterColor}
               onClick={openProfileModal}
             >
-              <Character
-                $xPos={CHARACTERS[opponentMemberCharacter]?.position[0]}
-                $yPos={CHARACTERS[opponentMemberCharacter]?.position[1]}
-              />
+              <Character $xPos={characterXpos} $yPos={characterYpos} />
             </CharacterBackground>
             <div className="message-section">
               <div className="nickname">{message.senderName}</div>
               <div className="message-container">
                 <img
-                  src={message.chatMessage}
-                  alt="message"
-                  onClick={() => viewImage(message.chatMessage)}
+                  src={imageViaCdn + `?w=${width}&f=${format}&q=${quality}`}
+                  loading="lazy"
+                  alt=""
+                  onClick={() => viewImage(imageViaCdn)}
                 />
                 <div className="wrapper">
-                  <div className="read">
-                    {message.unreadCount !== 0 ? message.unreadCount : ''}
-                  </div>
-                  <div className="time">{parseTime(message.sendDt)}</div>
+                  <div className="read">{unreadCount}</div>
+                  <div className="time">{messageTime}</div>
                 </div>
               </div>
             </div>
@@ -350,10 +342,10 @@ const MessageByOther = styled.div`
       }
 
       > img {
-        width: 9rem;
-        height: 13rem;
+        width: 200px;
+        height: 200px;
         object-fit: cover;
-        border-radius: 0.75rem;
+        border-radius: 1rem;
       }
 
       > .wrapper {
@@ -428,10 +420,10 @@ const MessageByMe = styled.div`
       }
     }
     > img {
-      width: 9rem;
-      height: 13rem;
+      width: 200px;
+      height: 200px;
       object-fit: cover;
-      border-radius: 0.75rem;
+      border-radius: 1rem;
     }
   }
 `;

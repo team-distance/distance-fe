@@ -10,15 +10,29 @@ import Header from '../components/common/Header';
 import { useCheckGpsActive } from '../hooks/useCheckGpsActive';
 import { useCheckAlarmActive } from '../hooks/useCheckAlarmActive';
 import { useToast } from '../hooks/useToast';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isLoggedInState } from '../store/auth';
+import { registerDataState } from '../store/registerDataState';
+import { CHARACTERS } from '../constants/CHARACTERS';
 
 const NavLayout = () => {
   const navigate = useNavigate();
-  const userAgent = navigator.userAgent.toLowerCase();
-  const isIphone = userAgent.includes('iphone');
   const { pathname } = useLocation();
+  const searchParams = new URLSearchParams(useLocation().search);
   const isLoggedIn = useRecoilValue(isLoggedInState);
+  const setRegisterData = useSetRecoilState(registerDataState);
+
+  useEffect(() => {
+    const referredTel = searchParams.get('referredTel');
+
+    // 추천인으로부터 전달받은 링크에서 접속했으며 로그인 상태가 아닌 경우 추천인 전화번호를 전역 상태에 저장
+    if (referredTel && !isLoggedIn) {
+      setRegisterData((prev) => ({
+        ...prev,
+        referredTel,
+      }));
+    }
+  }, []);
 
   const isGpsActive = useCheckGpsActive();
   const isAlarmActive = useCheckAlarmActive();
@@ -45,6 +59,10 @@ const NavLayout = () => {
 
     if (userAgent.includes('kakao')) {
       navigate('/kakaotalk-fallback');
+    } else if (userAgent.includes('naver')) {
+      navigate('/naver-fallback');
+    } else if (userAgent.includes('instagram')) {
+      navigate('/instagram-fallback');
     }
   }, []);
 
@@ -66,9 +84,17 @@ const NavLayout = () => {
     if (messaging) {
       onMessage(messaging, (payload) => {
         console.log('FOREGROUND MESSAGE RECEIVED', payload);
-        const notificationTitle = payload.notification.title;
-        const notificationBody = payload.notification.body;
-        const notificationImage = payload.notification.image;
+
+        const title = payload?.data?.title;
+        const icon = payload?.data?.icon;
+        const body = payload?.data?.body;
+        const image = payload?.data?.image;
+
+        const imageViaCdn =
+          image?.replace(
+            'https://distance-buckets.s3.ap-northeast-2.amazonaws.com',
+            'https://cdn.dis-tance.com'
+          ) + '?w=120&h=120&f=webp&q=75';
 
         toast(
           (t) => (
@@ -79,19 +105,36 @@ const NavLayout = () => {
               }}
             >
               <ToastSectionLeft>
-                <ToastIcon src={notificationImage} alt="디스턴스 아이콘" />
+                {icon === 'DISTANCE' ? (
+                  <img
+                    width={40}
+                    height={40}
+                    style={{ borderRadius: '8px' }}
+                    src="/icons/apple-touch-icon-60x60.png"
+                    alt="알림 아이콘"
+                  />
+                ) : (
+                  <CharacterBackground
+                    $backgroundColor={CHARACTERS[icon]?.color}
+                  >
+                    <StyledImage
+                      $xPos={CHARACTERS[icon]?.position[0]}
+                      $yPos={CHARACTERS[icon]?.position[1]}
+                    />
+                  </CharacterBackground>
+                )}
+
                 <div>
-                  <ToastTitle>{notificationTitle}</ToastTitle>
+                  <ToastTitle>{title}</ToastTitle>
                   <ToastBody>
-                    {notificationBody.includes(
-                      'buckets.s3.ap-northeast-2.amazonaws.com'
-                    )
+                    {body.includes('buckets.s3.ap-northeast-2.amazonaws.com')
                       ? '사진을 전송하였습니다.'
-                      : notificationBody}
+                      : body}
                   </ToastBody>
                 </div>
               </ToastSectionLeft>
               <ToastSectionRight>
+                {image !== 'null' && <ToastImage src={imageViaCdn} alt="" />}
                 <ToastCloseButton
                   onClick={(e) => {
                     e.stopPropagation();
@@ -123,32 +166,26 @@ const NavLayout = () => {
       {pathname.includes('/event') ? (
         <Outlet />
       ) : (
-        <Padding $isIphone={isIphone}>
+        <Padding>
           <Header />
-          <Outlet />
+          <WrapOutlet>
+            <Outlet />
+          </WrapOutlet>
         </Padding>
       )}
 
       <TabBar />
-      {/* <Toaster
-        toastOptions={{
-          style: {
-            fontSize: '14px',
-          },
-        }}
-        containerStyle={{
-          bottom: isIphone ? '116px' : '96px',
-        }}
-      /> */}
     </>
   );
 };
 
 const Padding = styled.div`
-  padding-top: 2rem;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-  padding-bottom: ${(props) => (props.$isIphone ? '96px' : '74px')};
+`;
+
+const WrapOutlet = styled.div`
+  padding-bottom: calc(74px + env(safe-area-inset-bottom));
 `;
 
 const ToastContainer = styled.div`
@@ -161,6 +198,7 @@ const ToastContainer = styled.div`
 const ToastSectionLeft = styled.div`
   display: flex;
   align-items: center;
+  gap: 8px;
 `;
 
 const ToastSectionRight = styled.div`
@@ -168,11 +206,12 @@ const ToastSectionRight = styled.div`
   align-items: center;
 `;
 
-const ToastIcon = styled.img`
-  width: 36px;
-  height: 36px;
+const ToastImage = styled.img`
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
   margin-right: 16px;
+  border-radius: 8px;
 `;
 
 const ToastTitle = styled.div`
@@ -205,6 +244,38 @@ const ToastBody = styled.div`
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   word-break: break-all; // 문단으로 끊어져서 줄바꿈 됨
+`;
+
+const CharacterBackground = styled.div`
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+  background-color: ${(props) => props.$backgroundColor};
+  flex-shrink: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    width: 40%;
+  }
+`;
+
+const StyledImage = styled.div`
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  background-image: url('/assets/sp_character.png');
+  background-position: ${(props) =>
+    `-${props.$xPos * 32}px -${props.$yPos * 32}px`};
+  background-size: calc(100% * 4);
 `;
 
 export default NavLayout;

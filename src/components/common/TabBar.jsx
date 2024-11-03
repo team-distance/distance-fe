@@ -10,8 +10,6 @@ import { tabState } from '../../store/tabState';
 const BottomNavBar = () => {
   const [currentPage, setCurrentPage] = useState('/');
   const location = useLocation();
-  const userAgent = navigator.userAgent.toLowerCase();
-  const isIphone = userAgent.includes('iphone');
 
   const setTabMenuState = useSetRecoilState(tabState);
 
@@ -33,6 +31,12 @@ const BottomNavBar = () => {
       icon: '/assets/icon/icon-chat-stroked.svg',
       iconActive: '/assets/icon/icon-chat-filled.svg',
     },
+    // {
+    //   name: '학교행사',
+    //   path: '/event',
+    //   icon: '/assets/icon/icon-festival-stroked.svg',
+    //   iconActive: '/assets/icon/icon-festival-filled.svg',
+    // },
     {
       name: '페스티벌',
       path: '/festival/program',
@@ -49,7 +53,7 @@ const BottomNavBar = () => {
   ];
 
   return (
-    <StyledNav $isPhone={isIphone}>
+    <StyledNav>
       <WrapItem>
         {menus.map((item) => (
           <NavItem
@@ -94,7 +98,11 @@ const StyledNav = styled.nav`
   background-color: #fff;
   border-top: #ededed solid 1px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-  padding-bottom: ${(props) => (props.$isPhone ? '22px' : '0')};
+
+  // env(safe-area-inset-bottom) : 대략 34px
+  // 기존 사용하던 padding-bottom 값은 22px
+  // 34px은 너무 높아서 22px로 조정
+  padding-bottom: calc(env(safe-area-inset-bottom) - 12px);
 `;
 
 const WrapItem = styled.div`

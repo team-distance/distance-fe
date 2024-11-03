@@ -1,13 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { MenuToggle } from './MenuToggle';
 import Menu from './Menu';
-import useMenuAnimation from '../../hooks/useMenuAnimation';
+import { AnimatePresence } from 'framer-motion';
+import { ClipLoader } from 'react-spinners';
 
 const MessageInput = ({
   value,
-  uploadedImage,
-  setUploadedImage,
   file,
   setFile,
   leaveButtonClickHandler,
@@ -17,20 +16,23 @@ const MessageInput = ({
   isOpponentOut,
   isMenuOpen,
   setIsMenuOpen,
+  setIsSend,
+  setIsInputFocused,
 }) => {
   const containerRef = useRef(null);
-
-  const scope = useMenuAnimation(isMenuOpen);
+  const [isConvertingHeic, setIsConvertingHeic] = useState(false);
 
   const handleFocus = () => {
     if (containerRef.current) {
       containerRef.current.classList.add('focused');
+      setIsInputFocused(true);
     }
   };
 
   const handleBlur = () => {
     if (containerRef.current) {
       containerRef.current.classList.remove('focused');
+      setIsInputFocused(false);
     }
   };
 
@@ -40,36 +42,34 @@ const MessageInput = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setFile(null);
+    setIsSend(true);
     submitHandler();
-    setUploadedImage(null);
   };
 
   const deleteImage = () => {
-    setUploadedImage(null);
     setFile(null);
   };
 
   useEffect(() => {
-    if (uploadedImage) setIsMenuOpen(false);
-  }, [uploadedImage]);
-
-  const isFirstRender = useRef(true);
-  useEffect(() => {
-    isFirstRender.current = false;
-  }, []);
+    if (file || isConvertingHeic) setIsMenuOpen(false);
+  }, [file, isConvertingHeic]);
 
   return (
-    <MeassageInputContainer ref={scope}>
-      <Menu
-        isOpen={isMenuOpen}
-        setIsOpen={setIsMenuOpen}
-        handleLeave={leaveButtonClickHandler}
-        handleReport={reportButtonClickHandler}
-        file={file}
-        setFile={setFile}
-        setUploadedImage={setUploadedImage}
-        isFirstRender={isFirstRender.current}
-      />
+    <MeassageInputContainer>
+      <AnimatePresence>
+        {isMenuOpen && (
+          <Menu
+            setIsOpen={setIsMenuOpen}
+            handleLeave={leaveButtonClickHandler}
+            handleReport={reportButtonClickHandler}
+            file={file}
+            setFile={setFile}
+            setIsConvertingHeic={setIsConvertingHeic}
+          />
+        )}
+      </AnimatePresence>
+
       <InputContainer ref={containerRef}>
         <MenuToggle toggle={onClickPlusButton} isOpen={isMenuOpen} />
         <WrapInputForm onSubmit={handleSubmit}>
@@ -80,20 +80,25 @@ const MessageInput = ({
               placeholder="상대방이 나갔습니다."
               disabled
             />
-          ) : uploadedImage ? (
+          ) : file || isConvertingHeic ? (
             <ImageInput>
               <WrapImage>
-                <img
-                  className="x-button"
-                  src="/assets/chat/x-button.svg"
-                  alt="cancel"
-                  onClick={deleteImage}
-                />
-                <img
-                  className="image-preview"
-                  src={uploadedImage}
-                  alt="preview"
-                />
+                {file && (
+                  <>
+                    <img
+                      className="x-button"
+                      src="/assets/chat/x-button.svg"
+                      alt="cancel"
+                      onClick={deleteImage}
+                    />
+                    <img
+                      className="image-preview"
+                      src={URL.createObjectURL(file)}
+                      alt="preview"
+                    />
+                  </>
+                )}
+                {isConvertingHeic && <ClipLoader size={16} color="#ff625d" />}
               </WrapImage>
             </ImageInput>
           ) : (
@@ -123,11 +128,14 @@ const InputContainer = styled.div`
   align-items: center;
   background: #ffffff;
   width: auto;
-  padding: 0.5rem 1rem 3rem 1rem;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 8px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
 
   @media (max-width: 500px) {
     &.focused {
-      padding: 0.5rem 1rem 1rem 1rem;
+      padding-bottom: 8px;
     }
   }
 `;

@@ -17,7 +17,7 @@ export default MatchingConfigButton;
 const StyledButton = styled.button`
   position: fixed;
   left: 1.5rem;
-  bottom: 7rem;
+  bottom: calc(74px + 10px + env(safe-area-inset-bottom));
   width: 50px;
   height: 50px;
   border-radius: 50%;

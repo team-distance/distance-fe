@@ -1,64 +1,64 @@
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { instance } from '../api/instance';
 
-// 로컬 스토리지에 저장된 메세지 불러오기
-export const useFetchMessagesFromLocal = (roomId) => {
-  const fetchLocalMessages = (setMessages) => {
-    const staleMessages = localStorage.getItem('staleMessages');
-    if (staleMessages) {
-      const parsedStaleMessages = JSON.parse(staleMessages);
-      if (parsedStaleMessages[roomId]) {
-        const localMessages = JSON.parse(parsedStaleMessages[roomId]);
-        setMessages(JSON.parse(parsedStaleMessages[roomId]));
-        return localMessages;
-      }
-    }
-    return [];
-  };
-  return fetchLocalMessages;
-};
-
-// 서버에 저장된 모든 메세지 불러오기
-export const useFetchMessagesFromServer = (roomId) => {
-  const navigate = useNavigate();
-  const fetchAllMessagesFromServer = async (setMessages) => {
+// 페이지 개수 세기
+export const useCountPages = (roomId) => {
+  const fetchPagesNum = async (setCurrentPage) => {
     try {
-      const msg = await instance.get(`/chatroom/${roomId}/allmessage`);
-      if (msg.data.length === 0) return;
-      setMessages(msg.data);
+      const res = await instance.get(`/chatroom/message/count/${roomId}`);
+      let pageCount = Math.ceil(res.data / 10);
+      setCurrentPage(pageCount - 1);
     } catch (error) {
-      window.confirm('학생 인증 후 이용해주세요.')
-        ? navigate('/verify/univ')
-        : navigate('/chat');
+      console.log(error);
     }
   };
 
-  return fetchAllMessagesFromServer;
+  return fetchPagesNum;
 };
 
-export const useFetchUnreadMessagesFromServer = (roomId) => {
-  // 읽지 않은 메세지 서버에서 가져오기
-  const fetchUnreadMessagesFromServer = async (messages, setMessages) => {
-    try {
-      const unreadMessages = await instance
-        .get(`/chatroom/${roomId}`)
-        .then((res) => res.data);
-      if (unreadMessages.length === 0) return;
+// 페이지 메세지 불러오기
+export const useFetchMessagesPerPage = (roomId, page) => {
+  const [data, setData] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const LOCAL_STORAGE_KEY = JSON.stringify(['messages', roomId, page]); // 각 쿼리 키에 대한 저장소 키 생성
 
-      // unreadMessages를 local에 저장된 stalesMessage에 추가
-      unreadMessages.forEach((unreadMessage) => {
-        if (
-          !messages.find(
-            (message) => message.messageId === unreadMessage.messageId
-          )
-        ) {
-          setMessages((messages) => [...messages, unreadMessage]);
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsSuccess(false);
+
+      try {
+        // 로컬 저장소에서 해당 쿼리 키의 데이터를 불러오기
+        const storedData = JSON.parse(
+          localStorage.getItem(LOCAL_STORAGE_KEY) || 'null'
+        );
+
+        if (storedData) {
+          // 로컬 저장소에 데이터가 있으면 그 데이터를 설정
+          setData(storedData);
+        } else if (page >= 0) {
+          // 로컬 저장소에 데이터가 없으면 API 호출
+          const res = await instance.get(
+            `/chatroom/${roomId}/message?page=${page}&size=10`
+          );
+          setData(res.data);
+
+          // API 응답 후 조건이 맞으면 로컬 저장소에 데이터를 저장
+          if (
+            res.data.every((message) => message.unreadCount === 0) &&
+            res.data.length === 10
+          ) {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(res.data));
+          }
         }
-      });
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
+      } catch (error) {
+        console.log('Error fetching messages:', error);
+      }
 
-  return fetchUnreadMessagesFromServer;
+      setIsSuccess(true);
+    };
+
+    fetchData();
+  }, [roomId, page]);
+
+  return { data, isSuccess };
 };

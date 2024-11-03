@@ -9,16 +9,28 @@ import { AwsRumProvider } from 'aws-rum-react';
 import ReactGA from 'react-ga4';
 import GlobalModalContainer from './providers/GlobalModalContainer';
 import GlobalToastContainer from './providers/GlobalToastContainer';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const gaTrackingId = process.env.REACT_APP_GA_TRACKING_ID;
 
 if (gaTrackingId) {
   ReactGA.initialize(gaTrackingId, { debug: true });
 }
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+    },
+  },
+});
+
 const rootElement = document.getElementById('root');
 
 const app = (
-  <React.StrictMode>
+  // <React.StrictMode>
+  <QueryClientProvider client={queryClient}>
     <AwsRumProvider
       allowCookies
       endpoint={process.env.REACT_APP_AWS_RUM_ENDPOINT}
@@ -37,7 +49,9 @@ const app = (
         </BrowserRouter>
       </RecoilRoot>
     </AwsRumProvider>
-  </React.StrictMode>
+    <ReactQueryDevtools initialIsOpen={false} />
+  </QueryClientProvider>
+  // </React.StrictMode>
 );
 const root = createRoot(rootElement);
 root.render(app);

@@ -20,9 +20,8 @@ import { useFetchDistance } from '../../hooks/useFetchDistance';
 import CallActiveLottie from '../../components/chat/CallActiveLottie';
 import { useCallActive } from '../../hooks/useCallActive';
 import {
-  useFetchMessagesFromLocal,
-  useFetchMessagesFromServer,
-  useFetchUnreadMessagesFromServer,
+  useCountPages,
+  // useFetchMessagesPerPage,
 } from '../../hooks/useFetchMessages';
 import TopBar from '../../components/chat/TopBar';
 import Loader from '../../components/common/Loader';
@@ -30,6 +29,7 @@ import { useSendMessage } from '../../hooks/useSendMessage';
 import CallDistanceModal from '../../components/modal/CallDistanceModal';
 import { Client } from '@stomp/stompjs';
 import { stompBrokerURL } from '../../constants/baseURL';
+import { useQuery } from '@tanstack/react-query';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -38,9 +38,6 @@ const ChatPage = () => {
 
   const distance = useFetchDistance(roomId);
   const [messages, setMessages] = useState([]);
-  const fetchLocalMessages = useFetchMessagesFromLocal(roomId);
-  const fetchServerMessages = useFetchMessagesFromServer(roomId);
-  const fetchServerUnreadMessages = useFetchUnreadMessagesFromServer(roomId);
   const groupedMessages = useGroupedMessages(messages);
   const { isCallActive, isShowLottie, tiKiTaKaCount } = useCallActive(
     messages,
@@ -52,15 +49,39 @@ const ChatPage = () => {
   const [draftMessage, setDraftMessage] = useState('');
   const [isOpponentOut, setIsOpponentOut] = useState(false);
   const [bothAgreed, setBothAgreed] = useState(false);
-  const [opponentProfile, setOpponentProfile] = useState(null);
   const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [uploadedImage, setUploadedImage] = useState(null);
   const [file, setFile] = useState(null);
   const [isShowImage, setIsShowImage] = useState(false);
   const [imgSrc, setImageSrc] = useState('');
 
+  const [isInputFocused, setIsInputFocused] = useState(false);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSend, setIsSend] = useState(false);
+
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({
+    loaded: 0,
+    total: 0,
+    progress: 0,
+  });
+  const [uploadingImagePreviewUrl, setUploadingImagePreviewUrl] = useState('');
+  const [requestCancelController, setRequestCancelController] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(-1);
+
+  const fetchPagesNum = useCountPages(roomId);
+
+  const { data: opponentProfile } = useQuery({
+    queryKey: ['opponentProfile', { chatRoomId: roomId }],
+    queryFn: () =>
+      instance
+        .get(`/member/profile/${opponentMemberId}`)
+        .then((res) => res.data),
+    enabled: isMemberIdsFetched,
+    staleTime: 1000 * 60 * 10,
+  });
 
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
@@ -133,14 +154,6 @@ const ChatPage = () => {
     setDraftMessage(e.target.value);
   };
 
-  // 로컬 스토리지에 메시지 저장
-  const saveMessagesToLocal = () => {
-    const staleMessages =
-      JSON.parse(localStorage.getItem('staleMessages')) || {};
-    staleMessages[roomId] = JSON.stringify(messages);
-    localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
-  };
-
   // 메시지 전송
   const { sendImageMessage, sendTextMessage } = useSendMessage(
     draftMessage,
@@ -151,8 +164,14 @@ const ChatPage = () => {
     roomId,
     opponentMemberId,
     myMemberId,
-    showWaitToast
+    showWaitToast,
+    setIsUploadingImage,
+    setUploadProgress,
+    uploadingImagePreviewUrl,
+    setUploadingImagePreviewUrl,
+    setRequestCancelController
   );
+
   const sendMessage = async () => {
     if (!draftMessage.trim() && !file) return;
 
@@ -173,16 +192,39 @@ const ChatPage = () => {
     }
   };
 
+  useEffect(() => {
+    console.log(bothAgreed);
+  }, [bothAgreed]);
+
   // 이미지 크게 보기
   const viewImage = (src) => {
     setImageSrc(src);
     setIsShowImage(true);
   };
 
+  // 대화 도중 상대방이 탈퇴하면 메시지를 보냈을 때 채팅방을 나가도록 함
+  // 대화중 상대방이 탈퇴했을 때 메시지를 보내면
+  // 마지막 메시지에 "존재하지 않는 유저입니다!"라는 문자열이 채워짐
+  // 이 문자열이 존재하면 채팅방을 나가도록 함
+  useEffect(() => {
+    const lastMessage = messages?.at(-1);
+
+    if (typeof lastMessage === 'string') {
+      navigate('/chat');
+    }
+  }, [messages]);
+
   // 방 나가기
   const handleLeaveRoom = () => {
     const res = window.confirm('정말로 나가시겠습니까?');
     if (!res) return;
+
+    // 현재 roomId에 해당하는 로컬 저장소 항목 모두 삭제
+    Object.keys(localStorage).forEach((key) => {
+      if (key.includes(`"messages",${roomId},`)) {
+        localStorage.removeItem(key);
+      }
+    });
 
     try {
       client.publish({
@@ -194,12 +236,6 @@ const ChatPage = () => {
           publishType: 'LEAVE',
         }),
       });
-
-      if (localStorage.getItem('staleMessages') !== null) {
-        const staleMessages = JSON.parse(localStorage.getItem('staleMessages'));
-        delete staleMessages[roomId];
-        localStorage.setItem('staleMessages', JSON.stringify(staleMessages));
-      }
 
       navigate('/');
     } catch (error) {
@@ -262,42 +298,32 @@ const ChatPage = () => {
       setIsMemberIdsFetched(true);
     } catch (error) {
       showRoomInfoErrorToast();
+      navigate('/chat');
     }
   };
 
   const checkBothAgreed = async () => {
     try {
       const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
-      console.log('둘다동의>>>>>>>>>>>>', response.data);
       setBothAgreed(response.data);
+      return response.data;
     } catch (error) {
       showRoomInfoErrorToast();
+      return false;
     }
   };
 
   // 전화 버튼 클릭 시
   const handleClickCallButton = async () => {
-    await checkBothAgreed();
+    const bothAgreed = await checkBothAgreed();
     bothAgreed ? openCallModal() : openCallRequestModal();
-  };
-
-  // 상대방 프로필 정보 불러오기
-  const fetchOpponentProfile = async () => {
-    try {
-      const opponentProfile = await instance
-        .get(`/member/profile/${opponentMemberId}`)
-        .then((res) => res.data);
-      setOpponentProfile(opponentProfile);
-    } catch (error) {
-      console.log('error', error);
-    }
   };
 
   // // 상대방 신고하기
   const handleReportUser = async (reportMessage) => {
     try {
       await instance.post('/report', {
-        declareContent: reportMessage,
+        reportContent: reportMessage,
         opponentId: opponentMemberId,
       });
       alert('신고가 완료되었어요!');
@@ -319,24 +345,40 @@ const ChatPage = () => {
 
   const subscritionCallback = (message) => {
     const parsedMessage = JSON.parse(message.body);
+    const { senderId, senderType } = parsedMessage.body;
 
-    // messages 새로 set
-    setMessages((prevMessages) => {
-      const oldMessages = [...prevMessages];
-      // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
-      if (parsedMessage.body.senderId !== oldMessages.at(-1)?.senderId) {
-        for (let i = 0; i < oldMessages.length; i++) {
-          oldMessages[i].unreadCount = 0;
+    if (senderType === 'COME' && senderId === myMemberId) {
+      // COME 메시지를 보낸 사람이 '나'인 경우
+      return;
+    } else if (senderType === 'COME' && senderId !== myMemberId) {
+      // COME 메시지를 보낸 사람이 '상대방'인 경우
+      setMessages((prevMessages) => {
+        const oldMessages = [...prevMessages];
+        oldMessages.forEach((message) => {
+          message.unreadCount = 0;
+        });
+        return oldMessages;
+      });
+      return;
+    } else {
+      // 그 외의 메시지인 경우
+      setMessages((prevMessages) => {
+        const oldMessages = [...prevMessages];
+        // 가장 최근 메시지가 상대방이 보낸 메시지인 경우 이전 메시지들은 모두 읽음 처리
+        if (senderId !== oldMessages.at(-1)?.senderId) {
+          oldMessages.forEach((message) => {
+            message.unreadCount = 0;
+          });
         }
-      }
-      return [...oldMessages, parsedMessage.body];
-    });
+        return [...oldMessages, parsedMessage.body];
+      });
+
+      return;
+    }
   };
 
   useEffect(() => {
     if (isMemberIdsFetched) {
-      //상대방 프로필 불러오기
-      fetchOpponentProfile();
       // STOMP 클라이언트 생성
       const newClient = new Client({
         brokerURL: stompBrokerURL,
@@ -351,6 +393,17 @@ const ChatPage = () => {
           setIsLoading(false);
           console.log('Connected: ' + frame);
           newClient.subscribe(`/topic/chatroom/${roomId}`, subscritionCallback);
+
+          // STOMP 연결이 완료되면 채팅방 입장 메시지 전송
+          newClient.publish({
+            destination: `/app/chat/${roomId}`,
+            body: JSON.stringify({
+              chatMessage: '',
+              senderId: myMemberId,
+              receiverId: opponentMemberId,
+              publishType: 'COME',
+            }),
+          });
         },
         onStompError: (error) => {
           console.log(error);
@@ -363,10 +416,8 @@ const ChatPage = () => {
       newClient.activate();
       setClient(newClient);
 
-      //이전 메세지 목록 불러오기
-      const staleMessages = fetchLocalMessages(setMessages);
-      if (staleMessages.length === 0) fetchServerMessages(setMessages);
-      else fetchServerUnreadMessages(messages, setMessages);
+      // 페이지 수 가져오기
+      fetchPagesNum(setCurrentPage);
 
       return () => {
         newClient.deactivate();
@@ -381,8 +432,6 @@ const ChatPage = () => {
 
     if (lastMessage?.roomStatus === 'ACTIVE') setIsOpponentOut(false);
     else if (lastMessage?.roomStatus === 'INACTIVE') setIsOpponentOut(true);
-
-    if (messages.length > 0) saveMessagesToLocal();
   }, [messages]);
 
   // 메시지 길이 제한
@@ -422,12 +471,22 @@ const ChatPage = () => {
                 opponentProfile && opponentProfile.memberCharacter
               }
               isMenuOpen={isMenuOpen}
+              isUploadingImage={isUploadingImage}
+              uploadProgress={uploadProgress}
+              uploadingImagePreviewUrl={uploadingImagePreviewUrl}
+              requestCancelController={requestCancelController}
+              setIsSend={setIsSend}
+              isSend={isSend}
+              roomId={roomId}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              setMessages={setMessages}
+              isInputFocused={isInputFocused}
+              bothAgreed={bothAgreed}
             />
             <MessageInputWrapper>
               <MessageInput
                 value={draftMessage}
-                uploadedImage={uploadedImage}
-                setUploadedImage={setUploadedImage}
                 file={file}
                 setFile={setFile}
                 leaveButtonClickHandler={handleLeaveRoom}
@@ -437,6 +496,8 @@ const ChatPage = () => {
                 isOpponentOut={isOpponentOut}
                 isMenuOpen={isMenuOpen}
                 setIsMenuOpen={setIsMenuOpen}
+                setIsSend={setIsSend}
+                setIsInputFocused={setIsInputFocused}
               />
             </MessageInputWrapper>
           </>
@@ -447,13 +508,14 @@ const ChatPage = () => {
 };
 
 const Wrapper = styled.div`
+  height: 100%;
   position: relative;
   touch-action: none;
   overflow: hidden;
 `;
 
 const Container = styled.div`
-  height: 100dvh;
+  height: 100%;
   bottom: 0;
   display: flex;
   flex-direction: column;

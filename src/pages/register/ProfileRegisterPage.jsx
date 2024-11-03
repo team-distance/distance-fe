@@ -13,6 +13,7 @@ import CharacterModal from '../../components/modal/CharacterModal';
 import AttractivenessModal from '../../components/modal/AttractivenessModal';
 import HobbyModal from '../../components/modal/HobbyModal';
 import useModal from '../../hooks/useModal';
+import { ClipLoader } from 'react-spinners';
 
 /**
  * @todo 코드 간소화를 위해 지역 상태를 제거하고 전역 상태를 직접 변이할지?
@@ -26,6 +27,7 @@ const ProfileRegisterPage = () => {
   const [hobby, setHobby] = useState([]);
   const [hashtagCount, setHashtagCount] = useState(0);
   const [toggleState, setToggleState] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { openModal: openCharacterModal, closeModal: closeCharacterModal } =
     useModal(() => (
@@ -89,19 +91,24 @@ const ProfileRegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setIsSubmitting(true);
+
+    const requestData = {
+      telNum: registerData.telNum,
+      password: registerData.password,
+      school: registerData.school,
+      college: registerData.college,
+      department: registerData.department,
+      gender: registerData.gender,
+      mbti: selectedMBTI,
+      memberCharacter: selectedAnimal,
+      memberHobbyDto: registerData.memberHobbyDto,
+      memberTagDto: registerData.memberTagDto,
+      referredTel: registerData.referredTel,
+    };
+
     await instance
-      .post('/member/signup', {
-        telNum: registerData.telNum,
-        password: registerData.password,
-        school: registerData.school,
-        college: registerData.college,
-        department: registerData.department,
-        gender: registerData.gender,
-        mbti: selectedMBTI,
-        memberCharacter: selectedAnimal,
-        memberHobbyDto: registerData.memberHobbyDto,
-        memberTagDto: registerData.memberTagDto,
-      })
+      .post('/member/signup', requestData)
       .then(() => {
         window.scrollTo(0, 0);
         navigate('/register/done', {
@@ -123,11 +130,14 @@ const ProfileRegisterPage = () => {
           memberCharacter: '',
           memberTagDto: [],
           memberHobbyDto: [],
+          referredTel: '',
         }));
       })
       .catch((error) => {
         alert('회원정보 등록에 실패했습니다.');
       });
+
+    setIsSubmitting(false);
   };
 
   const filterSelectedAttractiveness = (target) => {
@@ -229,8 +239,26 @@ const ProfileRegisterPage = () => {
           </BadgeContainer>
         </div>
 
-        <Button disabled={isDisabled} onClick={handleSubmit} size="large">
-          가입 완료하기
+        <Button
+          disabled={isDisabled || isSubmitting}
+          onClick={handleSubmit}
+          size="large"
+        >
+          {isSubmitting ? (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: '#ffffff',
+              }}
+            >
+              <ClipLoader color="#ffffff" size={16} />
+              <div>가입 중...</div>
+            </div>
+          ) : (
+            <div>가입 완료하기</div>
+          )}
         </Button>
       </WrapContent>
     </>

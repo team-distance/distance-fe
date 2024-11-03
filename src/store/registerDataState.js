@@ -16,5 +16,6 @@ export const registerDataState = atom({
     memberHobbyDto: [],
     agreeTerms: false,
     agreePrivacy: false,
+    referredTel: '',
   },
 });

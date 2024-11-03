@@ -67,6 +67,11 @@ const CharacterBackground = styled.div`
   height: 100px;
   border-radius: 100%;
   background-color: ${(props) => props.$backgroundColor};
+
+  @media (max-height: 767px) {
+    width: 70px;
+    height: 70px;
+  }
 `;
 
 const StyledImage = styled.div`
@@ -81,15 +86,21 @@ const StyledImage = styled.div`
   background-position: ${(props) =>
     `-${props.$xPos * 60}px -${props.$yPos * 60}px`};
   background-size: calc(100% * 4);
+
+  @media (max-height: 767px) {
+    width: 40px;
+    height: 40px;
+    background-position: ${(props) =>
+      `-${props.$xPos * 40}px -${props.$yPos * 40}px`};
+  }
 `;
 
 const WrapText = styled.div`
-  width: 90%;
+  width: 80%;
 `;
 
 const School = styled.div`
   color: #000;
-  text-align: center;
   font-family: Pretendard;
   font-size: 0.75rem;
   font-style: normal;
@@ -107,7 +118,6 @@ const Department = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 12ch; /* 최대 7글자까지 제한 (ch는 글자 수 기준 너비 단위) */
 `;
 
 const TagContainer = styled.div`
