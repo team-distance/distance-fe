@@ -192,6 +192,10 @@ const ChatPage = () => {
     }
   };
 
+  useEffect(() => {
+    console.log(bothAgreed);
+  }, [bothAgreed]);
+
   // 이미지 크게 보기
   const viewImage = (src) => {
     setImageSrc(src);
@@ -302,14 +306,16 @@ const ChatPage = () => {
     try {
       const response = await instance.get(`/chatroom/both-agreed/${roomId}`);
       setBothAgreed(response.data);
+      return response.data;
     } catch (error) {
       showRoomInfoErrorToast();
+      return false;
     }
   };
 
   // 전화 버튼 클릭 시
   const handleClickCallButton = async () => {
-    await checkBothAgreed();
+    const bothAgreed = await checkBothAgreed();
     bothAgreed ? openCallModal() : openCallRequestModal();
   };
 
