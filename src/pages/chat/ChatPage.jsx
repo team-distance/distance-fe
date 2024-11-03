@@ -476,6 +476,7 @@ const ChatPage = () => {
               setCurrentPage={setCurrentPage}
               setMessages={setMessages}
               isInputFocused={isInputFocused}
+              bothAgreed={bothAgreed}
             />
             <MessageInputWrapper>
               <MessageInput
