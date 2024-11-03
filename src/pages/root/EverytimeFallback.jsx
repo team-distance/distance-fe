@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-const NaverFallback = () => {
+const EverytimeFallback = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
 
-    if (!userAgent.includes('naver')) {
+    if (!userAgent.includes('everytime')) {
       navigate(location.search ? `/?${location.search}` : '/');
     }
   }, []);
@@ -25,7 +25,7 @@ const NaverFallback = () => {
       <Small>
         브라우저 호환성 이슈 때문에
         <br />
-        네이버 인앱 브라우저에서는 사용할 수 없어요.
+        에브리타임 인앱 브라우저에서는 사용할 수 없어요.
       </Small>
 
       <WrapBox>
@@ -33,20 +33,20 @@ const NaverFallback = () => {
           <h3>STEP 1</h3>
           <img
             className="screenshot"
-            src="/assets/naver-fallback/step1.png"
+            src="/assets/everytime-fallback/step1.png"
             alt="이미지1"
           />
-          <p>하단 메뉴 버튼을 터치합니다.</p>
+          <p>상단 메뉴 버튼을 터치합니다.</p>
         </Box>
 
         <Box>
           <h3>STEP 2</h3>
           <img
             className="screenshot"
-            src="/assets/naver-fallback/step2.png"
+            src="/assets/everytime-fallback/step2.png"
             alt="이미지2"
           />
-          <p>'기본 브라우저로 열기' 를 터치합니다.</p>
+          <p>'사파리에서 열기' 를 터치합니다.</p>
         </Box>
       </WrapBox>
     </Wrapper>
@@ -106,4 +106,4 @@ const Box = styled.div`
   }
 `;
 
-export default NaverFallback;
+export default EverytimeFallback;

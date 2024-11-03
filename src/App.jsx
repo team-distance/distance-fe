@@ -46,6 +46,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import styled from 'styled-components';
 import NaverFallback from './pages/root/NaverFallback';
 import InstagramFallback from './pages/root/InstagramFallback';
+import EverytimeFallback from './pages/root/EverytimeFallback';
 
 function App() {
   useRouteChangeTrack();
@@ -138,6 +139,7 @@ function App() {
         <Route path="/kakaotalk-fallback" element={<KakaotalkFallback />} />
         <Route path="/naver-fallback" element={<NaverFallback />} />
         <Route path="/instagram-fallback" element={<InstagramFallback />} />
+        <Route path="/everytime-fallback" element={<EverytimeFallback />} />
 
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
 

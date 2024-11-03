@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const InstagramFallback = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
 
     if (!userAgent.includes('instagram')) {
-      navigate('/');
+      navigate(location.search ? `/?${location.search}` : '/');
     }
   }, []);
 
