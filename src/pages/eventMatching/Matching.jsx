@@ -36,7 +36,27 @@ const Matching = () => {
       });
       navigate('/matching/success');
     } catch (error) {
-      toast.error('채팅방 생성에 실패했습니다.');
+      switch (error.response.data.code) {
+        case 'TOO_MANY_MY_CHATROOM':
+          toast.error(
+            '이미 생성 가능한 채팅방 개수를 초과했어요! 기존 채팅방을 지우고 다시 시도해주세요.'
+          );
+          break;
+        case 'TOO_MANY_OPPONENT_CHATROOM':
+          toast.error(
+            '상대방이 이미 생성 가능한 채팅방 개수를 초과했어요! 상대방이 수락하면 알려드릴게요.'
+          );
+          break;
+        case 'NOT_AUTHENTICATION_STUDENT':
+          toast.error('학생인증 후 이용해주세요!');
+          break;
+        case 'NOT_EXIST_GPS':
+          toast.error('상대방의 위치정보가 없어 채팅을 할 수 없어요!');
+          break;
+        default:
+          toast.error('채팅방 생성에 실패했습니다.');
+          break;
+      }
     }
   };
 

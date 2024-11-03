@@ -9,7 +9,7 @@ export const useCreateChatRoom = () => {
   const { showToast: showFullMyChatroomToast } = useToast(
     () => (
       <span>
-        이미 생성 가능한 채팅방 개수를 초과했어요!. 기존 채팅방을 지우고 다시
+        이미 생성 가능한 채팅방 개수를 초과했어요! 기존 채팅방을 지우고 다시
         시도해주세요.
       </span>
     ),
