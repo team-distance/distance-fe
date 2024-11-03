@@ -101,7 +101,6 @@ const WrapText = styled.div`
 
 const School = styled.div`
   color: #000;
-  font-family: Pretendard;
   font-size: 0.75rem;
   font-style: normal;
   font-weight: 400;
