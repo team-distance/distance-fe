@@ -21,6 +21,7 @@ const Message = memo(
     viewImage,
     openProfileModal,
     opponentMemberCharacter,
+    bothAgreed,
   }) => {
     const unreadCount = message.unreadCount !== 0 ? message.unreadCount : '';
     const messageTime = dayjs(message.sendDt).format('HH:mm');
@@ -72,13 +73,15 @@ const Message = memo(
                   <div style={{ marginBottom: '8px' }}>
                     요청을 수락하면 서로의 번호로 통화할 수 있어요.
                   </div>
-                  <Button
-                    size="medium"
-                    backgroundColor="#36CF00"
-                    onClick={responseCall}
-                  >
-                    수락하기
-                  </Button>
+                  {!bothAgreed && (
+                    <Button
+                      size="medium"
+                      backgroundColor="#36CF00"
+                      onClick={responseCall}
+                    >
+                      수락하기
+                    </Button>
+                  )}
                 </div>
                 <div className="wrapper">
                   <div className="read">{unreadCount}</div>
