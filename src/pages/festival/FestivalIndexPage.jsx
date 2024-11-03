@@ -71,7 +71,7 @@ const FestivalIndexPage = () => {
               $isSelected={tabMenuState === 1}
               onClick={handleClickFoodTruck}
             >
-              부스
+              푸드트럭
             </Tab>
           </TabMenu>
           <Outlet />
