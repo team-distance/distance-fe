@@ -139,7 +139,7 @@ const Messages = memo(
         {isUploadingImage && (
           <UploadingImagePreview>
             <div className="message-container">
-              <img src={uploadingImagePreviewUrl} alt="전송 이미지" />
+              <img src={uploadingImagePreviewUrl} alt="" />
               <div className="backdrop" />
               <div className="progress">
                 <Progress
