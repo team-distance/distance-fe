@@ -670,6 +670,10 @@ const JNU_COLLEGE_STATE = {
       college: '자율전공학부',
       department: ['자율전공학부'],
     },
+    {
+      college: '원예생명공학과',
+      department: ['원예학과'],
+    },
   ],
 };
 
