@@ -576,6 +576,7 @@ const JNU_COLLEGE_STATE = {
         '조경학과',
         '지역바이오시스템공학과',
         '융합바이오시스템기계공학과',
+        '원예학과',
       ],
     },
     {
@@ -669,10 +670,6 @@ const JNU_COLLEGE_STATE = {
     {
       college: '자율전공학부',
       department: ['자율전공학부'],
-    },
-    {
-      college: '원예생명공학과',
-      department: ['원예학과'],
     },
   ],
 };
