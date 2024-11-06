@@ -4,7 +4,7 @@ import { TiKiTaKa } from '../constants/TiKiTaKaCount';
 export const useCallActive = (messages, roomId) => {
   const [isCallActive, setIsCallActive] = useState(false);
   const [isShowLottie, setIsShowLottie] = useState(false);
-  const [tiKiTaKaCount, setTiKiTaKaCount] = useState(0);
+  const [tiKiTaKaCount, setTiKiTaKaCount] = useState(10);
 
   const lastMessage = messages?.at(-1);
 
