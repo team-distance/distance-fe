@@ -16,10 +16,10 @@ const Program = () => {
     const getDomain = async () => {
       try {
         const res = await instance.get('/univ/check/univ-domain');
-        if (Array.isArray(res.data)) setSchool('전남대학교');
+        if (res.data?.length > 1) setSchool('전남대학교');
         else {
           UNIV_STATE.forEach((univ) => {
-            if (res.data.includes(univ.id)) setSchool(univ.name);
+            if (res.data[0].includes(univ.id)) setSchool(univ.name);
           });
         }
       } catch (error) {
@@ -30,18 +30,17 @@ const Program = () => {
   }, []);
 
   useEffect(() => {
+    console.log(school);
     const fetchProgramInfo = async () => {
       if (school === '') return;
       try {
         setLoading(true);
         const res = await instance.get(`/performance?school=${school}`);
         setProgramList(res.data);
-        // console.log(res.data);
         res.data.forEach((date) => dateList.add(date.startAt.split('T')[0]));
         setSortedList(
           [...dateList].sort((a, b) => new window.Date(a) - new window.Date(b))
         );
-        // console.log(sortedList);
       } catch (error) {
         console.log(error);
       } finally {
@@ -50,6 +49,29 @@ const Program = () => {
     };
     fetchProgramInfo();
   }, [school]);
+
+  if (programList.length === 0)
+    return (
+      <div>
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+          }}
+        >
+          <img src="/assets/empty-festival.svg" alt="empty data" />
+          <div style={{ fontWeight: 600, fontSize: '20px' }}>
+            축제 기간이 아닙니다!
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <>
