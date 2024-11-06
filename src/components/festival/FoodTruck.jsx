@@ -16,10 +16,10 @@ const FoodTruck = () => {
     const getDomain = async () => {
       try {
         const res = await instance.get('/univ/check/univ-domain');
-        if (Array.isArray(res.data)) setSchool('전남대학교');
+        if (res.data?.length > 1) setSchool('전남대학교');
         else {
           UNIV_STATE.forEach((univ) => {
-            if (res.data.includes(univ.id)) setSchool(univ.name);
+            if (res.data[0].includes(univ.id)) setSchool(univ.name);
           });
         }
       } catch (error) {
