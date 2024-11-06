@@ -61,6 +61,29 @@ const FoodTruck = () => {
 
   // const dDay = calculateDDay('2024-05-22');
 
+  if (foodTruckList.length === 0)
+    return (
+      <div>
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+          }}
+        >
+          <img src="/assets/empty-festival.svg" alt="empty data" />
+          <div style={{ fontWeight: 600, fontSize: '20px' }}>
+            축제 기간이 아닙니다!
+          </div>
+        </div>
+      </div>
+    );
+
   return (
     <>
       {loading ? (
