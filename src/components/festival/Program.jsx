@@ -50,29 +50,6 @@ const Program = () => {
     fetchProgramInfo();
   }, [school]);
 
-  if (programList.length === 0)
-    return (
-      <div>
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            textAlign: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px',
-          }}
-        >
-          <img src="/assets/empty-festival.svg" alt="empty data" />
-          <div style={{ fontWeight: 600, fontSize: '20px' }}>
-            축제 기간이 아닙니다!
-          </div>
-        </div>
-      </div>
-    );
-
   return (
     <>
       {loading ? (
@@ -87,11 +64,39 @@ const Program = () => {
                   {date.split('-')[1]}월 {date.split('-')[2]}일
                 </Date>
                 <WrapCards>
-                  {programList.map(
-                    (program) =>
-                      program.startAt.startsWith(date) && (
-                        <ProgramCard key={program.artistId} content={program} />
-                      )
+                  {programList.length === 0 ? (
+                    <div>
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          textAlign: 'center',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '16px',
+                        }}
+                      >
+                        <img
+                          src="/assets/empty-festival.svg"
+                          alt="empty data"
+                        />
+                        <div style={{ fontWeight: 600, fontSize: '20px' }}>
+                          축제 기간이 아닙니다!
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    programList.map(
+                      (program) =>
+                        program.startAt.startsWith(date) && (
+                          <ProgramCard
+                            key={program.artistId}
+                            content={program}
+                          />
+                        )
+                    )
                   )}
                 </WrapCards>
               </div>
