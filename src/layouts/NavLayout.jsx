@@ -14,6 +14,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isLoggedInState } from '../store/auth';
 import { registerDataState } from '../store/registerDataState';
 import { CHARACTERS } from '../constants/CHARACTERS';
+import KakaoAdfit from '../components/common/KakaoAdfit';
 
 const NavLayout = () => {
   const navigate = useNavigate();
@@ -171,6 +172,7 @@ const NavLayout = () => {
       ) : (
         <Padding>
           <Header />
+          <KakaoAdfit />
           <WrapOutlet>
             <Outlet />
           </WrapOutlet>
