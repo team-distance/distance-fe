@@ -22,6 +22,8 @@ const Message = memo(
     openProfileModal,
     opponentMemberCharacter,
     bothAgreed,
+    openNewQuestionModal,
+    roomId,
   }) => {
     const unreadCount = message.unreadCount !== 0 ? message.unreadCount : '';
     const messageTime = dayjs(message.sendDt).format('HH:mm');
@@ -38,6 +40,29 @@ const Message = memo(
         return (
           <Announcement>
             <div className="content">{message.chatMessage}</div>
+          </Announcement>
+        );
+
+      case 'NEW_QUESTION':
+        return (
+          <Announcement>
+            <NewQuestionMessage>
+              <div className="title">산타의 질문이 도착했어요</div>
+              <div className="subtitle">질문에 답해 트리를 완성해보세요</div>
+
+              <Button
+                size="small"
+                onClick={() => {
+                  console.log('checkTiKiTaKa:', message.checkTiKiTaKa);
+                  openNewQuestionModal({
+                    chatRoomId: roomId,
+                    checkTiKiTaKa: message.checkTiKiTaKa,
+                  });
+                }}
+              >
+                질문보기
+              </Button>
+            </NewQuestionMessage>
           </Announcement>
         );
 
@@ -248,6 +273,29 @@ const Announcement = styled.div`
     padding: 0.5rem;
     text-align: center;
     border-radius: 9999px;
+  }
+`;
+
+const NewQuestionMessage = styled.div`
+  width: 60%;
+  background-color: #eee;
+  padding: 16px 42px;
+  text-align: center;
+  border-radius: 24px;
+
+  .title {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: -0.23px;
+  }
+
+  .subtitle {
+    font-size: 0.75rem;
+    font-weight: 300;
+    line-height: 20px;
+    letter-spacing: -0.23px;
+    margin-bottom: 12px;
   }
 `;
 

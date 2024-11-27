@@ -5,9 +5,10 @@ import Tooltip from '../common/Tooltip';
 
 const TopBar = ({
   distance,
-  isCallActive,
-  openCallDistanceModal,
-  handleClickCallButton,
+  // isCallActive,
+  // openCallDistanceModal,
+  // handleClickCallButton,
+  roomId,
 }) => {
   const navigate = useNavigate();
 
@@ -35,7 +36,10 @@ const TopBar = ({
       </WrapTitle>
       <div>
         <CallButton>
-          {isCallActive ? (
+          <div onClick={() => navigate(`/chat/${roomId}/christmas-event`)}>
+            <img src="/assets/tree-icon.svg" alt="트리버튼" />
+          </div>
+          {/* {isCallActive ? (
             <div onClick={handleClickCallButton}>
               <img src="/assets/callicon-active.svg" alt="전화버튼" />
             </div>
@@ -46,7 +50,7 @@ const TopBar = ({
             >
               <img src="/assets/callicon.svg" alt="전화버튼" />
             </div>
-          )}
+          )} */}
         </CallButton>
       </div>
     </TopBarWrapper>

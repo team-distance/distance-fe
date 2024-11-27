@@ -47,6 +47,7 @@ import styled from 'styled-components';
 import NaverFallback from './pages/root/NaverFallback';
 import InstagramFallback from './pages/root/InstagramFallback';
 import EverytimeFallback from './pages/root/EverytimeFallback';
+import ChristmasEventPage from './pages/christmasEvent/ChristmasEventPage';
 
 function App() {
   useRouteChangeTrack();
@@ -135,6 +136,10 @@ function App() {
         <Route path="/festival/foodtruck/:id" element={<FoodTruckPage />} />
 
         <Route path="/chat/:chatRoomId" element={<ChatPage />} />
+        <Route
+          path="/chat/:chatRoomId/christmas-event"
+          element={<ChristmasEventPage />}
+        />
 
         <Route path="/kakaotalk-fallback" element={<KakaotalkFallback />} />
         <Route path="/naver-fallback" element={<NaverFallback />} />
