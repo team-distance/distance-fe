@@ -30,6 +30,7 @@ import CallDistanceModal from '../../components/modal/CallDistanceModal';
 import { Client } from '@stomp/stompjs';
 import { stompBrokerURL } from '../../constants/baseURL';
 import { useQuery } from '@tanstack/react-query';
+import NewQuestionModal from '../../components/modal/NewQuestionModal';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -73,6 +74,10 @@ const ChatPage = () => {
 
   const fetchPagesNum = useCountPages(roomId);
 
+  useEffect(() => {
+    console.log(groupedMessages);
+  }, [groupedMessages]);
+
   const { data: opponentProfile } = useQuery({
     queryKey: ['opponentProfile', { chatRoomId: roomId }],
     queryFn: () =>
@@ -82,6 +87,15 @@ const ChatPage = () => {
     enabled: isMemberIdsFetched,
     staleTime: 1000 * 60 * 10,
   });
+
+  const { openModal: openNewQuestionModal, closeModal: closeNewQuestionModal } =
+    useModal(({ chatRoomId, checkTiKiTaKa }) => (
+      <NewQuestionModal
+        chatRoomId={chatRoomId}
+        checkTiKiTaKa={checkTiKiTaKa}
+        closeModal={closeNewQuestionModal}
+      />
+    ));
 
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
@@ -455,6 +469,7 @@ const ChatPage = () => {
           isCallActive={isCallActive}
           openCallDistanceModal={openCallDistanceModal}
           handleClickCallButton={handleClickCallButton}
+          roomId={roomId}
         />
 
         {isLoading ? (
@@ -483,6 +498,7 @@ const ChatPage = () => {
               setMessages={setMessages}
               isInputFocused={isInputFocused}
               bothAgreed={bothAgreed}
+              openNewQuestionModal={openNewQuestionModal}
             />
             <MessageInputWrapper>
               <MessageInput

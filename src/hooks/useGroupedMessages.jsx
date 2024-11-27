@@ -5,10 +5,35 @@ import { useMemo } from 'react';
 const useGroupedMessages = (messages) => {
   const groupedMessages = useMemo(() => {
     const groups = messages.reduce((acc, message) => {
-      // const date = message.sendDt.split('T')[0];
       const date = dayjs(message.sendDt).format('YYYY-MM-DD');
       acc[date] = acc[date] || [];
       acc[date].push(message);
+
+      const newQuestionMessage = {
+        chatMessage: '',
+        checkTiKiTaKa: message.checkTiKiTaKa,
+        messageId: 0,
+        roomStatus: '',
+        sendDt: '',
+        senderId: '',
+        senderName: '',
+        senderType: 'NEW_QUESTION',
+        unreadCount: 0,
+      };
+
+      // console.log('acc', acc[date]);
+
+      // 3의 배수마다 메시지 추가
+      if (
+        message.checkTiKiTaKa % 3 === 0 &&
+        !acc[date].find(
+          (m) =>
+            m.checkTiKiTaKa === message.checkTiKiTaKa &&
+            m.senderType === 'NEW_QUESTION'
+        )
+      ) {
+        acc[date].push(newQuestionMessage);
+      }
       return acc;
     }, {});
     return groups;
