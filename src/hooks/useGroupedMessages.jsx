@@ -12,7 +12,7 @@ const useGroupedMessages = (messages) => {
       const newQuestionMessage = {
         chatMessage: '',
         checkTiKiTaKa: message.checkTiKiTaKa,
-        messageId: 0,
+        messageId: `${message.messageId}_${message.checkTiKiTaKa}`,
         roomStatus: '',
         sendDt: '',
         senderId: '',
@@ -20,8 +20,6 @@ const useGroupedMessages = (messages) => {
         senderType: 'NEW_QUESTION',
         unreadCount: 0,
       };
-
-      // console.log('acc', acc[date]);
 
       // 3의 배수마다 메시지 추가
       if (

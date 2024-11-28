@@ -10,13 +10,13 @@ import { useToast } from '../../hooks/useToast';
 /**
  * @todo answer가 비어있으면 등록 버튼이 비활성화되어야 함
  * @todo 답변 최대 길이 제한
- * @todo 에러 처리
- * @todo 문제가 불러와지기 전 로딩 스피너
- * @todo 답변 등록 중 로딩 스피너
- * @todo 답변 등록 성공 시 토스트 메시지
+ * @todo [v] 에러 처리
+ * @todo [v] 문제가 불러와지기 전 로딩 스피너
+ * @todo [v] 답변 등록 중 로딩 스피너
+ * @todo [v] 답변 등록 성공 시 토스트 메시지
  * @returns
  */
-const NewQuestionModal = ({ chatRoomId, checkTiKiTaKa, closeModal }) => {
+const QueryQuestionModal = ({ chatRoomId, checkTiKiTaKa, closeModal }) => {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
 
@@ -93,30 +93,37 @@ const NewQuestionModal = ({ chatRoomId, checkTiKiTaKa, closeModal }) => {
 
   return (
     <Modal>
+      <CloseButton
+        src="/assets/cancel-button-gray.svg"
+        alt="닫기 버튼"
+        onClick={closeModal}
+      />
+
       {isLoadingQuestion ? (
         <Loader />
       ) : (
         <>
-          <CloseButton
-            src="/assets/cancel-button-gray.svg"
-            alt="닫기 버튼"
-            onClick={closeModal}
-          />
-
           {isLoadingQuestionError ? (
             <>
               <div style={{ textAlign: 'center' }}>
                 문제를 불러오는 데 실패했습니다.
               </div>
-              <Button size="medium" onClick={fetchNewQuestion}>
+              <ModalButton size="medium" onClick={fetchNewQuestion}>
                 다시 시도하기
-              </Button>
+              </ModalButton>
             </>
           ) : (
             <>
-              <Question>Q. {question.question}</Question>
+              <div
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '32px',
+                }}
+              >
+                <Question>Q. {question.question}</Question>
 
-              <BottomArea>
                 <TextArea
                   placeholder="답변을 입력하세요"
                   value={answer}
@@ -124,19 +131,19 @@ const NewQuestionModal = ({ chatRoomId, checkTiKiTaKa, closeModal }) => {
                   maxRows={4}
                   onChange={(e) => setAnswer(e.target.value)}
                 />
+              </div>
 
-                <Button
-                  size="medium"
-                  onClick={handleSubmitAnswer}
-                  disabled={answer.length === 0 || isSubmittingAnswer}
-                >
-                  {isSubmittingAnswer ? (
-                    <ClipLoader color="#ffffff" size={16} />
-                  ) : (
-                    '답변 등록하기'
-                  )}
-                </Button>
-              </BottomArea>
+              <ModalButton
+                size="medium"
+                onClick={handleSubmitAnswer}
+                disabled={answer.length === 0 || isSubmittingAnswer}
+              >
+                {isSubmittingAnswer ? (
+                  <ClipLoader color="#ffffff" size={16} />
+                ) : (
+                  '작성 완료'
+                )}
+              </ModalButton>
             </>
           )}
         </>
@@ -145,19 +152,24 @@ const NewQuestionModal = ({ chatRoomId, checkTiKiTaKa, closeModal }) => {
   );
 };
 
-export default NewQuestionModal;
+export default QueryQuestionModal;
+
+const ModalButton = styled(Button)`
+  width: 70%;
+`;
 
 const Modal = styled.div`
   position: fixed;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
   top: 50%;
   left: 50%;
-  gap: 24px;
+  gap: 32px;
   transform: translate(-50%, -50%);
+  justify-content: space-between;
   width: 90%;
-  height: 50%;
+  min-height: 451px;
   box-sizing: border-box;
   padding: 72px 32px 32px 32px;
   background: white;
@@ -173,17 +185,12 @@ const CloseButton = styled.img`
   right: 32px;
 `;
 
-const BottomArea = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  width: 100%;
-`;
-
 const Question = styled.div`
   text-align: center;
-  font-size: 1.375rem;
+  font-size: 1.125rem;
   font-weight: 600;
   line-height: 30px;
   letter-spacing: -0.7px;
+  text-wrap: balance;
+  word-break: keep-all;
 `;
