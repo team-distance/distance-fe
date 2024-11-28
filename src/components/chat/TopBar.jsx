@@ -9,6 +9,7 @@ const TopBar = ({
   // openCallDistanceModal,
   // handleClickCallButton,
   roomId,
+  opponentProfile,
 }) => {
   const navigate = useNavigate();
 
@@ -36,7 +37,15 @@ const TopBar = ({
       </WrapTitle>
       <div>
         <CallButton>
-          <div onClick={() => navigate(`/chat/${roomId}/christmas-event`)}>
+          <div
+            onClick={() =>
+              navigate(`/chat/${roomId}/christmas-event`, {
+                state: {
+                  opponentProfile,
+                },
+              })
+            }
+          >
             <img src="/assets/tree-icon.svg" alt="트리버튼" />
           </div>
           {/* {isCallActive ? (

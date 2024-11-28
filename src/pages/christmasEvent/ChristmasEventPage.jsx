@@ -1,18 +1,27 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { ORNAMENT_DATA } from '../../constants/ORNAMENT_DATA';
 import { instance } from '../../api/instance';
-import QuestionModal from '../../components/modal/QuestionModal';
+import QueryAnswerModal from '../../components/modal/QueryAnswerModal';
 import useModal from '../../hooks/useModal';
+import { useQuery } from '@tanstack/react-query';
 
 const ChristmasEventPage = () => {
   const param = useParams();
   const roomId = parseInt(param?.chatRoomId);
+  const opponentProfile = useLocation().state?.opponentProfile;
+
+  const { data: myProfile } = useQuery({
+    queryKey: ['myProfile'],
+    queryFn: () => instance.get('/member/profile').then((res) => res.data),
+    staleTime: Infinity,
+  });
 
   const navigate = useNavigate();
 
-  const [questionList, setQuestionList] = useState([]);
+  const [questions, setQuestions] = useState([]);
+  const questionsLeft = 10 - questions.length;
 
   const treeRef = useRef(null);
   const [treeRect, setTreeRect] = useState({
@@ -22,15 +31,24 @@ const ChristmasEventPage = () => {
     top: 0,
   });
 
+  if (!opponentProfile) {
+    navigate(`/chat/${roomId}`);
+  }
+
   const { openModal: openQuestionModal, closeModal: closeQuestionModal } =
     useModal((questionId) => (
-      <QuestionModal questionId={questionId} closeModal={closeQuestionModal} />
+      <QueryAnswerModal
+        questionId={questionId}
+        myProfile={myProfile}
+        opponentProfile={opponentProfile}
+        closeModal={closeQuestionModal}
+      />
     ));
 
   const fetchQuestionList = async () => {
     try {
       const res = await instance.get(`/question/${roomId}`);
-      setQuestionList(res.data);
+      setQuestions(res.data);
     } catch (error) {
       console.error(error);
     }
@@ -94,7 +112,7 @@ const ChristmasEventPage = () => {
       </TopBar>
 
       <Texts>
-        {questionList.length === 10 ? (
+        {questions.length === 10 ? (
           <>
             <Heading>트리가 모두 완성되었어요!</Heading>
             <SubHeading>
@@ -105,7 +123,9 @@ const ChristmasEventPage = () => {
           </>
         ) : (
           <>
-            <Heading>트리 완성까지 9개의 오너먼트가 더 필요해요</Heading>
+            <Heading>
+              트리 완성까지 {questionsLeft}개의 오너먼트가 더 필요해요
+            </Heading>
             <SubHeading>
               상대와 이야기를 더 나누다보면 산타의 질문이 도착할 거에요
             </SubHeading>
@@ -115,7 +135,7 @@ const ChristmasEventPage = () => {
 
       <TreeArea>
         <Tree ref={treeRef} src="/assets/tree.png" alt="트리" />
-        {questionList.map((question, index) => (
+        {questions.map((question, index) => (
           <ChristmasOrnament
             key={question.questionId}
             onClick={() => {
@@ -207,25 +227,23 @@ const Texts = styled.div`
 
 const Heading = styled.h2`
   width: 90%;
-  color: #000;
   text-align: center;
-  font-family: Pretendard;
-  font-size: 18px;
-  font-style: normal;
+  font-size: 1.125rem;
   font-weight: 600;
   line-height: 22px; /* 122.222% */
+  text-wrap: balance;
+  word-break: keep-all;
 `;
 
 const SubHeading = styled.h3`
-  max-width: 70%;
-  min-width: 200px;
-  color: #000;
+  width: 80%;
   text-align: center;
-  font-family: Pretendard;
-  font-size: 14px;
-  font-style: normal;
+  font-size: 0.875rem;
   font-weight: 200;
-  line-height: 22px; /* 157.143% */
+  line-height: 22px;
+  letter-spacing: -0.2px;
+  text-wrap: balance;
+  word-break: keep-all;
 `;
 
 const TreeArea = styled.div`
