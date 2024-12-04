@@ -200,6 +200,22 @@ const ChatPage = () => {
       //stomp 전송
       sendTextMessage();
     }
+
+    if (messages.at(-1).checkTiKiTaKa % 3 === 0) {
+      client.publish({
+        destination: `/app/chat/${roomId}`,
+        body: JSON.stringify({
+          chatMessage: JSON.stringify({
+            message: '새로운 질문이 도착했어요!',
+            chatRoomId: roomId,
+            tikiTakaCount: messages.at(-1).checkTiKiTaKa,
+          }),
+          senderId: myMemberId,
+          receiverId: opponentMemberId,
+          publishType: 'NEW_QUESTION',
+        }),
+      });
+    }
   };
 
   useEffect(() => {
