@@ -9,29 +9,30 @@ const useGroupedMessages = (messages) => {
       acc[date] = acc[date] || [];
       acc[date].push(message);
 
-      const newQuestionMessage = {
-        chatMessage: '',
-        checkTiKiTaKa: message.checkTiKiTaKa,
-        messageId: `${message.messageId}_${message.checkTiKiTaKa}`,
-        roomStatus: '',
-        sendDt: '',
-        senderId: '',
-        senderName: '',
-        senderType: 'NEW_QUESTION',
-        unreadCount: 0,
-      };
+      // const newQuestionMessage = {
+      //   chatMessage: '',
+      //   checkTiKiTaKa: message.checkTiKiTaKa,
+      //   messageId: `${message.messageId}_${message.checkTiKiTaKa}`,
+      //   roomStatus: '',
+      //   sendDt: '',
+      //   senderId: '',
+      //   senderName: '',
+      //   senderType: 'NEW_QUESTION',
+      //   unreadCount: 0,
+      // };
 
-      // 3의 배수마다 메시지 추가
-      if (
-        message.checkTiKiTaKa % 3 === 0 &&
-        !acc[date].find(
-          (m) =>
-            m.checkTiKiTaKa === message.checkTiKiTaKa &&
-            m.senderType === 'NEW_QUESTION'
-        )
-      ) {
-        acc[date].push(newQuestionMessage);
-      }
+      // // 3의 배수마다 메시지 추가
+      // if (
+      //   message.checkTiKiTaKa % 3 === 0 &&
+      //   !acc[date].find(
+      //     (m) =>
+      //       m.checkTiKiTaKa === message.checkTiKiTaKa &&
+      //       m.senderType === 'NEW_QUESTION'
+      //   )
+      // ) {
+      //   acc[date].push(newQuestionMessage);
+      // }
+
       return acc;
     }, {});
     return groups;
