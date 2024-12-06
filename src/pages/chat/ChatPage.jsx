@@ -200,22 +200,22 @@ const ChatPage = () => {
       //stomp 전송
       sendTextMessage();
     }
+  };
 
-    if (messages.at(-1).checkTiKiTaKa % 3 === 0) {
-      client.publish({
-        destination: `/app/chat/${roomId}`,
-        body: JSON.stringify({
-          chatMessage: JSON.stringify({
-            message: '새로운 질문이 도착했어요!',
-            chatRoomId: roomId,
-            tikiTakaCount: messages.at(-1).checkTiKiTaKa,
-          }),
-          senderId: myMemberId,
-          receiverId: opponentMemberId,
-          publishType: 'NEW_QUESTION',
+  const sendNewQuestionMessage = () => {
+    client.publish({
+      destination: `/app/chat/${roomId}`,
+      body: JSON.stringify({
+        chatMessage: JSON.stringify({
+          message: '새로운 질문이 도착했어요!',
+          chatRoomId: roomId,
+          tikiTakaCount: messages.at(-1).checkTiKiTaKa,
         }),
-      });
-    }
+        senderId: myMemberId,
+        receiverId: opponentMemberId,
+        publishType: 'NEW_QUESTION',
+      }),
+    });
   };
 
   useEffect(() => {
@@ -454,10 +454,18 @@ const ChatPage = () => {
   // 메시지가 업데이트 될 때마다 상대방이 나갔는지 확인
   // 메시지가 업데이트 될 때마다 로컬 스토리지에 저장
   useEffect(() => {
+    // messages 배열의 길이가 0이면 lastMessage === undefined
     const lastMessage = messages.at(-1);
 
     if (lastMessage?.roomStatus === 'ACTIVE') setIsOpponentOut(false);
     else if (lastMessage?.roomStatus === 'INACTIVE') setIsOpponentOut(true);
+
+    if (
+      lastMessage?.checkTiKiTaKa % 3 === 0 &&
+      lastMessage?.senderType !== 'NEW_QUESTION'
+    ) {
+      sendNewQuestionMessage();
+    }
   }, [messages]);
 
   // 메시지 길이 제한

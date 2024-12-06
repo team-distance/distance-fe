@@ -20,6 +20,17 @@ const ChatRoomListItem = ({
   const characterYpos = CHARACTERS[memberCharacter]?.position[1];
   const characterColor = CHARACTERS[memberCharacter]?.color;
 
+  const getMessageToDisplay = (lastMessage) => {
+    if (lastMessage.includes('s3.ap-northeast')) {
+      return '사진을 전송하였습니다.';
+    }
+    if (lastMessage.includes('새로운 질문이 도착했어요!')) {
+      return '새로운 질문이 도착했어요!';
+    }
+
+    return lastMessage;
+  };
+
   return (
     <ChatRoomContainer key={chatRoomId} onClick={onClick}>
       {memberCharacter ? (
@@ -38,11 +49,7 @@ const ChatRoomListItem = ({
           <div>{mbti && <Badge>{mbti}</Badge>}</div>
         </Profile>
 
-        {lastMessage.includes('s3.ap-northeast') ? (
-          <Message>사진을 전송하였습니다.</Message>
-        ) : (
-          <Message>{lastMessage}</Message>
-        )}
+        <Message>{getMessageToDisplay(lastMessage)}</Message>
       </div>
 
       <div className="right-section">
