@@ -462,7 +462,8 @@ const ChatPage = () => {
 
     if (
       lastMessage?.checkTiKiTaKa % 3 === 0 &&
-      lastMessage?.senderType !== 'NEW_QUESTION'
+      lastMessage?.senderType !== 'NEW_QUESTION' &&
+      lastMessage?.senderId === opponentMemberId
     ) {
       sendNewQuestionMessage();
     }
