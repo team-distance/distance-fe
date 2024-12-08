@@ -105,8 +105,28 @@ const QueryQuestionModal = ({ chatRoomId, checkTiKiTaKa, closeModal }) => {
         <>
           {isLoadingQuestionError ? (
             <>
-              <div style={{ textAlign: 'center' }}>
-                문제를 불러오는 데 실패했습니다.
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '24px',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                }}
+              >
+                <img src="/assets/error-icon.svg" alt="에러 아이콘" />
+                <div
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 300,
+                    lineHeight: '24px',
+                    letterSpacing: '-1px',
+                  }}
+                >
+                  문제를 불러오는 데 실패했습니다
+                  <br />
+                  다시 시도해 주십시오
+                </div>
               </div>
               <ModalButton size="medium" onClick={fetchNewQuestion}>
                 다시 시도하기
