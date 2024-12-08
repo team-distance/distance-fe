@@ -21,7 +21,10 @@ const ChristmasEventPage = () => {
   const navigate = useNavigate();
 
   const [questions, setQuestions] = useState([]);
-  const questionsLeft = 10 - questions.length;
+  const questionsLeft = questions.reduce(
+    (acc, question) => acc - question.isAnswer,
+    10
+  );
 
   const treeRef = useRef(null);
   const [treeRect, setTreeRect] = useState({
@@ -45,6 +48,8 @@ const ChristmasEventPage = () => {
       />
     ));
 
+  // 질문 목록을 가져오는 함수
+  // [{questionId: number, question: string, isAnswer: boolean}, ...]
   const fetchQuestionList = async () => {
     try {
       const res = await instance.get(`/question/${roomId}`);
@@ -112,7 +117,7 @@ const ChristmasEventPage = () => {
       </TopBar>
 
       <Texts>
-        {questions.length === 10 ? (
+        {questionsLeft <= 0 ? (
           <>
             <Heading>트리가 모두 완성되었어요!</Heading>
             <SubHeading>
@@ -189,8 +194,13 @@ const Wrapper = styled.div`
 const TopBar = styled.div`
   position: relative;
   width: 100%;
+  height: 72px;
   padding: 12px 16px;
   box-sizing: border-box;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const BackButton = styled.button`

@@ -6,25 +6,27 @@ import { useToast } from '../../hooks/useToast';
 import TextArea from '../common/TextArea';
 import { ClipLoader } from 'react-spinners';
 
-const ModifyAnswerModal = ({
-  question,
-  originalAnswer,
-  answerId,
-  closeModal,
-}) => {
-  const [answer, setAnswer] = useState(originalAnswer || '');
+const SubmitAnswerModal = ({ question, questionId, closeModal }) => {
+  const [answer, setAnswer] = useState('');
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
 
   const { showToast: showAnswerSubmitSuccessToast } = useToast(
-    () => <span>수정이 완료되었어요!</span>,
+    () => <span>등록이 완료되었어요!</span>,
     'answer-submitted',
     'bottom-center',
     'success'
   );
 
   const { showToast: showAnswerSubmitErrorToast } = useToast(
-    () => <span>수정에 실패했어요! 다시 시도해주세요.</span>,
+    () => <span>등록에 실패했어요! 다시 시도해주세요.</span>,
     'answer-submit-error',
+    'bottom-center',
+    'error'
+  );
+
+  const { showToast: showAlreadyAnweredToast } = useToast(
+    () => <span>이미 답변을 등록했어요!</span>,
+    'already-answered',
     'bottom-center',
     'error'
   );
@@ -32,12 +34,18 @@ const ModifyAnswerModal = ({
   const handleSubmitAnswer = async () => {
     try {
       setIsSubmittingAnswer(true);
-      await instance.patch(`/answer/${answerId}`, { answer });
+      await instance.post('/answer', {
+        questionId,
+        answer,
+      });
       showAnswerSubmitSuccessToast();
       closeModal();
     } catch (error) {
-      console.error(error);
-      showAnswerSubmitErrorToast();
+      if (error.response.data.code === 'ALREADY_EXIST_MEMBER') {
+        showAlreadyAnweredToast();
+      } else {
+        showAnswerSubmitErrorToast();
+      }
     } finally {
       setIsSubmittingAnswer(false);
     }
@@ -83,7 +91,7 @@ const ModifyAnswerModal = ({
   );
 };
 
-export default ModifyAnswerModal;
+export default SubmitAnswerModal;
 
 const ModalButton = styled(Button)`
   width: 70%;
