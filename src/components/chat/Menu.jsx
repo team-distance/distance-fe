@@ -38,7 +38,6 @@ const menuVariants = {
 const Menu = ({
   setIsOpen,
   handleReport,
-  handleLeave,
   file,
   setFile,
   setIsConvertingHeic,
@@ -104,10 +103,6 @@ const Menu = ({
         <motion.li onClick={handleReport} variants={menuVariants}>
           <img src="/assets/chat/report-icon.svg" alt="신고하기" />
           신고하기
-        </motion.li>
-        <motion.li onClick={handleLeave} variants={menuVariants}>
-          <img src="/assets/chat/leave-icon.svg" alt="나가기" />
-          나가기
         </motion.li>
       </WrapMenu>
     </BlurBackground>

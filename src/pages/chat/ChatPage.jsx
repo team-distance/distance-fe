@@ -507,6 +507,7 @@ const ChatPage = () => {
           opponentProfile={opponentProfile}
           roomId={roomId}
           ornamentLeft={ornamentLeft}
+          leaveButtonClickHandler={handleLeaveRoom}
         />
 
         {isLoading ? (
@@ -542,7 +543,6 @@ const ChatPage = () => {
                 value={draftMessage}
                 file={file}
                 setFile={setFile}
-                leaveButtonClickHandler={handleLeaveRoom}
                 reportButtonClickHandler={openReportModal}
                 changeHandler={handleChangeMessage}
                 submitHandler={sendMessage}
