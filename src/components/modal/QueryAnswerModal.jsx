@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import useModal from '../../hooks/useModal';
 import ModifyAnswerModal from './ModifyAnswerModal';
+import SubmitAnswerModal from './SubmitAnswerModal';
 
 const QueryAnswerModal = ({
   questionId,
@@ -14,8 +15,23 @@ const QueryAnswerModal = ({
   myProfile,
   closeModal,
 }) => {
-  const [questions, setQuestions] = useState([]);
-  const isBothAnswered = questions.length === 2;
+  const { data: memberId } = useQuery({
+    queryKey: ['memberId'],
+    queryFn: () => instance.get('/member/id').then((res) => res.data),
+    staleTime: 'Infinity',
+  });
+
+  const [data, setData] = useState({});
+
+  const isBothAnswered = data?.answers?.length === 2;
+  const question = data.question || '';
+
+  const myAnswer = data?.answers?.find(
+    (answer) => answer.memberId === memberId
+  );
+  const opponentAnswer = data?.answers?.find(
+    (answer) => answer.memberId !== memberId
+  );
 
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
   const [isLoadingQuestionError, setIsLoadingQuestionError] = useState(false);
@@ -32,20 +48,22 @@ const QueryAnswerModal = ({
     />
   ));
 
-  const { data: memberId } = useQuery({
-    queryKey: ['memberId'],
-    queryFn: () => instance.get('/member/id').then((res) => res.data),
-    staleTime: 'Infinity',
-  });
-
-  const myAnswer = questions.find((q) => q.memberId === memberId);
-  const opponentAnswer = questions.find((q) => q.memberId !== memberId);
+  const {
+    openModal: openSubmitAnswerModel,
+    closeModal: closeSubmitAnswerModal,
+  } = useModal(({ question, questionId }) => (
+    <SubmitAnswerModal
+      question={question}
+      questionId={questionId}
+      closeModal={closeSubmitAnswerModal}
+    />
+  ));
 
   const fetchQuestion = async () => {
     try {
       setIsLoadingQuestion(true);
       const res = await instance.get(`/answer/${questionId}`);
-      setQuestions(res.data);
+      setData(res.data);
     } catch (error) {
       setIsLoadingQuestionError(true);
       console.error(error);
@@ -59,7 +77,7 @@ const QueryAnswerModal = ({
   }, []);
 
   const renderAnswers = () => {
-    if (questions.length === 0) return null;
+    if (data.length === 0) return null;
 
     return (
       <>
@@ -75,7 +93,9 @@ const QueryAnswerModal = ({
 
           <AnswerArea>
             <Nickname>{myProfile?.nickName} (나)</Nickname>
-            <Answer>{myAnswer?.answer}</Answer>
+            <Answer>
+              {myAnswer ? myAnswer.answer : '아직 답변을 하지 않았어요!'}
+            </Answer>
           </AnswerArea>
         </WrapAnswer>
 
@@ -93,11 +113,16 @@ const QueryAnswerModal = ({
 
           <AnswerArea>
             <Nickname>{opponentProfile?.nickName} (상대방)</Nickname>
-            <Answer $isBlurred={!isBothAnswered && opponentAnswer}>
-              {opponentAnswer
-                ? opponentAnswer.answer
-                : '아직 답변을 하지 않았어요!'}
-            </Answer>
+            <AnswerWrapper>
+              <Answer $isBlurred={!isBothAnswered && opponentAnswer}>
+                {opponentAnswer
+                  ? opponentAnswer.answer
+                  : '아직 답변을 하지 않았어요!'}
+              </Answer>
+              {!isBothAnswered && opponentAnswer && (
+                <Blur>질문에 답변하면, 상대방의 답변을 볼 수 있어요!</Blur>
+              )}
+            </AnswerWrapper>
           </AnswerArea>
         </WrapAnswer>
       </>
@@ -118,8 +143,28 @@ const QueryAnswerModal = ({
 
           {isLoadingQuestionError ? (
             <>
-              <div style={{ textAlign: 'center' }}>
-                문제를 불러오는 데 실패했습니다.
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '24px',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                }}
+              >
+                <img src="/assets/error-icon.svg" alt="에러 아이콘" />
+                <div
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 300,
+                    lineHeight: '24px',
+                    letterSpacing: '-1px',
+                  }}
+                >
+                  문제를 불러오는 데 실패했습니다
+                  <br />
+                  다시 시도해 주십시오
+                </div>
               </div>
               <ModalButton size="medium" onClick={fetchQuestion}>
                 다시 시도하기
@@ -135,9 +180,7 @@ const QueryAnswerModal = ({
                   gap: '32px',
                 }}
               >
-                {questions.length !== 0 && (
-                  <Question>Q. {questions[0].question}</Question>
-                )}
+                {data.length !== 0 && <Question>Q. {question}</Question>}
                 <div
                   style={{
                     width: '100%',
@@ -151,13 +194,20 @@ const QueryAnswerModal = ({
               </div>
               <ModalButton
                 size="medium"
-                onClick={() =>
-                  openModifyAnswerModal({
-                    question: myAnswer.question,
-                    originalAnswer: myAnswer.answer,
-                    answerId: myAnswer.answerId,
-                  })
-                }
+                onClick={() => {
+                  // 아직 답변이 입력되지 않았다면 답변 입력 모달을 띄움
+                  // 이미 입력한 답변이 있다면 수정 모달을 띄움
+                  myAnswer
+                    ? openModifyAnswerModal({
+                        question: question,
+                        originalAnswer: myAnswer.answer,
+                        answerId: myAnswer.answerId,
+                      })
+                    : openSubmitAnswerModel({
+                        question,
+                        questionId,
+                      });
+                }}
               >
                 내 답변 수정하기
               </ModalButton>
@@ -242,6 +292,7 @@ const Character = styled.div`
 `;
 
 const AnswerArea = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -253,10 +304,33 @@ const Nickname = styled.div`
   font-weight: 400;
 `;
 
+const AnswerWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
 const Answer = styled.div`
+  position: relative;
+  width: 100%;
   color: #000;
   font-size: 0.75rem;
   font-weight: 400;
 
   filter: ${(props) => (props.$isBlurred ? 'blur(5px)' : 'none')};
+`;
+
+const Blur = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
 `;

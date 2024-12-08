@@ -55,6 +55,7 @@ const ChatPage = () => {
   const [file, setFile] = useState(null);
   const [isShowImage, setIsShowImage] = useState(false);
   const [imgSrc, setImageSrc] = useState('');
+  const [ornamentLeft, setOrnamentLeft] = useState(0);
 
   const [isInputFocused, setIsInputFocused] = useState(false);
 
@@ -181,6 +182,18 @@ const ChatPage = () => {
     setUploadingImagePreviewUrl,
     setRequestCancelController
   );
+
+  const fetchQuestionList = async () => {
+    try {
+      const res = await instance.get(`/question/${roomId}`);
+
+      setOrnamentLeft(
+        res.data?.reduce((acc, question) => acc - question.isAnswer, 10)
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const sendMessage = async () => {
     if (!draftMessage.trim() && !file) return;
@@ -367,6 +380,7 @@ const ChatPage = () => {
     };
 
     initializeChat();
+    fetchQuestionList();
   }, []);
 
   const subscritionCallback = (message) => {
@@ -492,6 +506,8 @@ const ChatPage = () => {
           handleClickCallButton={handleClickCallButton}
           opponentProfile={opponentProfile}
           roomId={roomId}
+          ornamentLeft={ornamentLeft}
+          leaveButtonClickHandler={handleLeaveRoom}
         />
 
         {isLoading ? (
@@ -527,7 +543,6 @@ const ChatPage = () => {
                 value={draftMessage}
                 file={file}
                 setFile={setFile}
-                leaveButtonClickHandler={handleLeaveRoom}
                 reportButtonClickHandler={openReportModal}
                 changeHandler={handleChangeMessage}
                 submitHandler={sendMessage}
