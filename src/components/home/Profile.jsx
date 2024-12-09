@@ -15,6 +15,7 @@ const Profile = ({ profile, school, reportCount, onClick }) => {
         <CharacterBackground
           $backgroundColor={CHARACTERS[memberCharacter]?.color}
         >
+          <img src="/assets/home/christmas-hat.png" alt="산타모자" />
           <StyledImage
             $xPos={CHARACTERS[memberCharacter]?.position[0]}
             $yPos={CHARACTERS[memberCharacter]?.position[1]}
@@ -60,7 +61,6 @@ const Wrapper = styled.div`
   padding: 0 6px;
   gap: 12px;
 `;
-
 const CharacterBackground = styled.div`
   position: relative;
   width: 100px;
@@ -71,6 +71,14 @@ const CharacterBackground = styled.div`
   @media (max-height: 767px) {
     width: 70px;
     height: 70px;
+  }
+
+  img {
+    width: 3rem;
+    position: absolute;
+    top: ${(props) => (props.$backgroundColor === '#D9EAD3' ? '5%' : '0%')};
+    left: ${(props) => (props.$backgroundColor === '#D9EAD3' ? '21%' : '20%')};
+    z-index: 99;
   }
 `;
 

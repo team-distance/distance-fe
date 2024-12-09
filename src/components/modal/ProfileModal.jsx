@@ -23,6 +23,7 @@ const ProfileModal = ({
             CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]?.color
           }
         >
+          <img src="/assets/home/christmas-hat.png" alt="산타모자" />
           <Character
             $xPos={
               CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
@@ -94,6 +95,14 @@ const CharacterBackground = styled.div`
   height: 100px;
   border-radius: 100%;
   background-color: ${(props) => props.$backgroundColor};
+
+  img {
+    width: 3rem;
+    position: absolute;
+    top: ${(props) => (props.$backgroundColor === '#D9EAD3' ? '5%' : '0%')};
+    left: ${(props) => (props.$backgroundColor === '#D9EAD3' ? '21%' : '20%')};
+    z-index: 99;
+  }
 `;
 
 const Character = styled.div`

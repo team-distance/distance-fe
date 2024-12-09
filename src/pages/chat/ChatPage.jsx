@@ -31,6 +31,7 @@ import { Client } from '@stomp/stompjs';
 import { stompBrokerURL } from '../../constants/baseURL';
 import { useQuery } from '@tanstack/react-query';
 import QueryQuestionModal from '../../components/modal/QueryQuestionModal';
+import SnowAnimation from '../../components/chat/SnowAnimation';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -510,6 +511,10 @@ const ChatPage = () => {
           leaveButtonClickHandler={handleLeaveRoom}
         />
 
+        <SnowAnimationWrapper>
+          <SnowAnimation />
+        </SnowAnimationWrapper>
+
         {isLoading ? (
           <Loader />
         ) : (
@@ -565,6 +570,16 @@ const Wrapper = styled.div`
   position: relative;
   touch-action: none;
   overflow: hidden;
+`;
+
+const SnowAnimationWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* TopBar 뒤로 이동 */
+  pointer-events: none; /* 클릭 이벤트 차단 */
 `;
 
 const Container = styled.div`

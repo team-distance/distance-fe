@@ -85,6 +85,7 @@ const TopBarWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   z-index: 11;
+  background-color: white;
 `;
 
 const BackButton = styled.button`
