@@ -152,6 +152,7 @@ const ChristmasEventPage = () => {
               y: ORNAMENT_DATA.at(index).y,
             }}
             $image={ORNAMENT_DATA.at(index).image}
+            $isAnswer={question.isAnswer}
           />
         ))}
       </TreeArea>
@@ -182,6 +183,7 @@ const ChristmasOrnament = styled.img.attrs((props) => {
   position: absolute;
   transform: translate(-50%, -50%);
   object-fit: contain;
+  opacity: ${({ $isAnswer }) => ($isAnswer ? 1 : 0.5)};
 `;
 
 const Wrapper = styled.div`
