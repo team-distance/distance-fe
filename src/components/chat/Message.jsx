@@ -44,6 +44,8 @@ const Message = memo(
         );
 
       case 'NEW_QUESTION':
+        const { tikiTakaCount } = JSON.parse(message.chatMessage);
+
         return (
           <Announcement>
             <NewQuestionMessage>
@@ -56,7 +58,7 @@ const Message = memo(
                   console.log('checkTiKiTaKa:', message.checkTiKiTaKa);
                   openNewQuestionModal({
                     chatRoomId: roomId,
-                    checkTiKiTaKa: message.checkTiKiTaKa,
+                    checkTiKiTaKa: tikiTakaCount,
                   });
                 }}
               >
