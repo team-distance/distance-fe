@@ -15,7 +15,7 @@ const Profile = ({ profile, school, reportCount, onClick }) => {
         <CharacterBackground
           $backgroundColor={CHARACTERS[memberCharacter]?.color}
         >
-          <img src="/assets/home/christmas-hat.png" alt="산타모자" />
+          <img src="/assets/christmas/christmas-hat.png" alt="산타모자" />
           <StyledImage
             $xPos={CHARACTERS[memberCharacter]?.position[0]}
             $yPos={CHARACTERS[memberCharacter]?.position[1]}

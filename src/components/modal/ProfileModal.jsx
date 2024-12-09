@@ -23,7 +23,7 @@ const ProfileModal = ({
             CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]?.color
           }
         >
-          <img src="/assets/home/christmas-hat.png" alt="산타모자" />
+          <img src="/assets/christmas/christmas-hat.png" alt="산타모자" />
           <Character
             $xPos={
               CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]

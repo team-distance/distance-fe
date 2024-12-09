@@ -4,7 +4,7 @@ import styled, { keyframes } from 'styled-components';
 const Snowflake = ({ num, style }) => {
   return (
     <SnowflakeImg
-      src={`/assets/chat/snow${num}.png`}
+      src={`/assets/christmas/snow${num}.png`}
       alt="눈송이"
       style={{
         ...style,
