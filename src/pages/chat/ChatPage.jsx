@@ -373,17 +373,6 @@ const ChatPage = () => {
     }
   };
 
-  // 자신/상대방의 memberId 불러오기
-  useEffect(() => {
-    const initializeChat = async () => {
-      await fetchMemberIds();
-      await checkBothAgreed();
-    };
-
-    initializeChat();
-    fetchQuestionList();
-  }, []);
-
   const subscritionCallback = (message) => {
     const parsedMessage = JSON.parse(message.body);
     const { senderId, senderType } = parsedMessage.body;
@@ -417,6 +406,17 @@ const ChatPage = () => {
       return;
     }
   };
+
+  // 자신/상대방의 memberId 불러오기
+  useEffect(() => {
+    const initializeChat = async () => {
+      await fetchMemberIds();
+      await checkBothAgreed();
+    };
+
+    initializeChat();
+    fetchQuestionList();
+  }, []);
 
   useEffect(() => {
     if (isMemberIdsFetched) {
@@ -466,6 +466,23 @@ const ChatPage = () => {
     }
   }, [isMemberIdsFetched]);
 
+  const createNewQuestion = async () => {
+    const res = await instance.post('/question', {
+      chatRoomId: roomId,
+      tikiTakaCount: messages.at(-1).checkTiKiTaKa,
+    });
+
+    // 에러 발생한 경우
+    // {
+    //   "code": "YET_ANSWER_BY_QUESTION",
+    //   "message": "아직 질문에 대답을 하지 않았습니다"
+    // }
+
+    if (res.status === 200) {
+      sendNewQuestionMessage();
+    }
+  };
+
   // 메시지가 업데이트 될 때마다 상대방이 나갔는지 확인
   // 메시지가 업데이트 될 때마다 로컬 스토리지에 저장
   useEffect(() => {
@@ -476,11 +493,13 @@ const ChatPage = () => {
     else if (lastMessage?.roomStatus === 'INACTIVE') setIsOpponentOut(true);
 
     if (
+      lastMessage?.checkTiKiTaKa !== 0 &&
       lastMessage?.checkTiKiTaKa % 3 === 0 &&
       lastMessage?.senderType !== 'NEW_QUESTION' &&
       lastMessage?.senderId === opponentMemberId
     ) {
-      sendNewQuestionMessage();
+      // 먼저 /api/question POST 요청을 보내고 오류가 없다면 sendNewQuestionMessage();
+      createNewQuestion();
     }
   }, [messages]);
 
@@ -497,6 +516,7 @@ const ChatPage = () => {
       {isShowImage && (
         <ImageView imgSrc={imgSrc} handleCancel={() => setIsShowImage(false)} />
       )}
+
       {isShowLottie && <CallActiveLottie />}
 
       <Container>
