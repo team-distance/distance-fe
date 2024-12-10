@@ -22,7 +22,7 @@ const Message = memo(
     openProfileModal,
     opponentMemberCharacter,
     bothAgreed,
-    openNewQuestionModal,
+    openQueryQuestionModal,
     roomId,
   }) => {
     const unreadCount = message.unreadCount !== 0 ? message.unreadCount : '';
@@ -52,14 +52,26 @@ const Message = memo(
               <div className="title">산타의 질문이 도착했어요</div>
               <div className="subtitle">질문에 답해 트리를 완성해보세요</div>
 
+              <div>질문</div>
+
               <Button
                 size="small"
                 onClick={() => {
-                  console.log('checkTiKiTaKa:', message.checkTiKiTaKa);
-                  openNewQuestionModal({
+                  openQueryQuestionModal({
                     chatRoomId: roomId,
                     checkTiKiTaKa: tikiTakaCount,
                   });
+
+                  // 클릭하면 로컬스토리지에 클릭한 질문 리스트 저장
+                  // const clickedNewQuestionList =
+                  //   JSON.parse(
+                  //     localStorage.getItem('clickedNewQuestionList')
+                  //   ) || [];
+
+                  // localStorage.setItem('clickedNewQuestionList', [
+                  //   ...clickedNewQuestionList,
+                  //   { chatRoomId: roomId, tikiTakaCount: tikiTakaCount },
+                  // ]);
                 }}
               >
                 질문보기

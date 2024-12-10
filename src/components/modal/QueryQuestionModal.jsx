@@ -51,10 +51,9 @@ const QueryQuestionModal = ({ chatRoomId, checkTiKiTaKa, closeModal }) => {
       setIsLoadingQuestionError(false);
       setIsLoadingQuestion(true);
 
-      const res = await instance.post('/question', {
-        chatRoomId,
-        tikiTakaCount: checkTiKiTaKa,
-      });
+      const res = await instance.get(
+        `/question?chatRoomId=${chatRoomId}&tikiTakaCount=${checkTiKiTaKa}`
+      );
 
       setQuestion(res.data);
     } catch (error) {
