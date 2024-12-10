@@ -502,7 +502,8 @@ const ChatPage = () => {
         <ImageView imgSrc={imgSrc} handleCancel={() => setIsShowImage(false)} />
       )}
 
-      {isShowLottie && <CallActiveLottie />}
+      {/* 크리스마스 이벤트 이후 주석 해제 */}
+      {/* {isShowLottie && <CallActiveLottie />} */}
 
       <Container>
         <TopBar
