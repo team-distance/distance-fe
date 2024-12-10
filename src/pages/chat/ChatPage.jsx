@@ -469,12 +469,6 @@ const ChatPage = () => {
   }, [isMemberIdsFetched]);
 
   const createNewQuestion = async () => {
-    // 에러 발생한 경우
-    // {
-    //   "code": "YET_ANSWER_BY_QUESTION",
-    //   "message": "아직 질문에 대답을 하지 않았습니다"
-    // }
-
     try {
       await instance.post('/question', {
         chatRoomId: roomId,
@@ -497,6 +491,7 @@ const ChatPage = () => {
     else if (lastMessage?.roomStatus === 'INACTIVE') setIsOpponentOut(true);
 
     if (
+      messages.length > 0 &&
       lastMessage?.checkTiKiTaKa !== 0 &&
       lastMessage?.checkTiKiTaKa % 3 === 0 &&
       lastMessage?.senderType !== 'NEW_QUESTION' &&
