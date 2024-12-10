@@ -467,19 +467,21 @@ const ChatPage = () => {
   }, [isMemberIdsFetched]);
 
   const createNewQuestion = async () => {
-    const res = await instance.post('/question', {
-      chatRoomId: roomId,
-      tikiTakaCount: messages.at(-1).checkTiKiTaKa,
-    });
-
     // 에러 발생한 경우
     // {
     //   "code": "YET_ANSWER_BY_QUESTION",
     //   "message": "아직 질문에 대답을 하지 않았습니다"
     // }
 
-    if (res.status === 200) {
+    try {
+      await instance.post('/question', {
+        chatRoomId: roomId,
+        tikiTakaCount: messages.at(-1).checkTiKiTaKa,
+      });
+
       sendNewQuestionMessage();
+    } catch (error) {
+      console.log(error);
     }
   };
 
