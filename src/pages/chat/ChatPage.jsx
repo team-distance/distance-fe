@@ -86,14 +86,16 @@ const ChatPage = () => {
     staleTime: 1000 * 60 * 10,
   });
 
-  const { openModal: openNewQuestionModal, closeModal: closeNewQuestionModal } =
-    useModal(({ chatRoomId, checkTiKiTaKa }) => (
-      <QueryQuestionModal
-        chatRoomId={chatRoomId}
-        checkTiKiTaKa={checkTiKiTaKa}
-        closeModal={closeNewQuestionModal}
-      />
-    ));
+  const {
+    openModal: openQueryQuestionModal,
+    closeModal: closeQueryQuestionModal,
+  } = useModal(({ chatRoomId, checkTiKiTaKa }) => (
+    <QueryQuestionModal
+      chatRoomId={chatRoomId}
+      checkTiKiTaKa={checkTiKiTaKa}
+      closeModal={closeQueryQuestionModal}
+    />
+  ));
 
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
@@ -563,7 +565,7 @@ const ChatPage = () => {
               setMessages={setMessages}
               isInputFocused={isInputFocused}
               bothAgreed={bothAgreed}
-              openNewQuestionModal={openNewQuestionModal}
+              openQueryQuestionModal={openQueryQuestionModal}
             />
             <MessageInputWrapper>
               <MessageInput

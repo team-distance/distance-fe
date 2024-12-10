@@ -24,7 +24,7 @@ const Messages = memo(
     setMessages,
     isInputFocused,
     bothAgreed,
-    openNewQuestionModal,
+    openQueryQuestionModal,
   }) => {
     // 아이폰에서는 프로그레스 바에 파일 전체 크기를 표시하지 않기 위해 사용
     // (axios의 onUploadProgress 이벤트 핸들러에서 total 값이 제대로 전달되지 않음)
@@ -176,7 +176,7 @@ const Messages = memo(
                       openProfileModal={openProfileModal}
                       opponentMemberCharacter={opponentMemberCharacter}
                       bothAgreed={bothAgreed}
-                      openNewQuestionModal={openNewQuestionModal}
+                      openQueryQuestionModal={openQueryQuestionModal}
                       roomId={roomId}
                     />
                   ))}
