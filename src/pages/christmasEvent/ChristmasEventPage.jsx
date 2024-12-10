@@ -38,13 +38,13 @@ const ChristmasEventPage = () => {
     navigate(`/chat/${roomId}`);
   }
 
-  const { openModal: openQuestionModal, closeModal: closeQuestionModal } =
+  const { openModal: openQueryAnswerModal, closeModal: closeQueryAnswerModal } =
     useModal((questionId) => (
       <QueryAnswerModal
         questionId={questionId}
         myProfile={myProfile}
         opponentProfile={opponentProfile}
-        closeModal={closeQuestionModal}
+        closeModal={closeQueryAnswerModal}
       />
     ));
 
@@ -144,7 +144,7 @@ const ChristmasEventPage = () => {
           <ChristmasOrnament
             key={question.questionId}
             onClick={() => {
-              openQuestionModal(question.questionId);
+              openQueryAnswerModal(question.questionId);
             }}
             $treeRect={treeRect}
             $position={{

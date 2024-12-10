@@ -23,7 +23,8 @@ const QueryAnswerModal = ({
 
   const [data, setData] = useState({});
 
-  const isBothAnswered = data?.answers?.length === 2;
+  const isBothAnswered = data?.answers?.every((answer) => answer.isAnswered);
+
   const question = data.question || '';
 
   const myAnswer = data?.answers?.find(
@@ -94,7 +95,9 @@ const QueryAnswerModal = ({
           <AnswerArea>
             <Nickname>{myProfile?.nickName} (나)</Nickname>
             <Answer>
-              {myAnswer ? myAnswer.answer : '아직 답변을 하지 않았어요!'}
+              {myAnswer?.isAnswered
+                ? myAnswer?.answer
+                : '아직 답변을 하지 않았어요!'}
             </Answer>
           </AnswerArea>
         </WrapAnswer>
@@ -114,12 +117,15 @@ const QueryAnswerModal = ({
           <AnswerArea>
             <Nickname>{opponentProfile?.nickName} (상대방)</Nickname>
             <AnswerWrapper>
-              <Answer $isBlurred={!isBothAnswered && opponentAnswer}>
-                {opponentAnswer
-                  ? opponentAnswer.answer
+              <Answer
+                $isBlurred={!isBothAnswered && opponentAnswer?.isAnswered}
+              >
+                {opponentAnswer?.isAnswered
+                  ? opponentAnswer?.answer
                   : '아직 답변을 하지 않았어요!'}
               </Answer>
-              {!isBothAnswered && opponentAnswer && (
+
+              {!isBothAnswered && opponentAnswer?.isAnswered && (
                 <Blur>질문에 답변하면, 상대방의 답변을 볼 수 있어요!</Blur>
               )}
             </AnswerWrapper>
