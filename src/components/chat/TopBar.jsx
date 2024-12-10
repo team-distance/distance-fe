@@ -10,7 +10,6 @@ const TopBar = ({
   // handleClickCallButton,
   roomId,
   opponentProfile,
-  ornamentLeft,
   leaveButtonClickHandler,
 }) => {
   const navigate = useNavigate();
@@ -48,11 +47,7 @@ const TopBar = ({
               })
             }
           >
-            {ornamentLeft > 0 ? (
-              <img src="/assets/tree-empty-icon.svg" alt="트리버튼" />
-            ) : (
-              <img src="/assets/tree-icon.svg" alt="트리버튼" />
-            )}
+            <img src="/assets/tree-icon.svg" alt="트리버튼" />
           </div>
           {/* {isCallActive ? (
             <div onClick={handleClickCallButton}>
