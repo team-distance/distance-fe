@@ -7,7 +7,6 @@ import { useQuery } from '@tanstack/react-query';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import useModal from '../../hooks/useModal';
 import ModifyAnswerModal from './ModifyAnswerModal';
-import SubmitAnswerModal from './SubmitAnswerModal';
 
 const QueryAnswerModal = ({
   questionId,
@@ -46,17 +45,6 @@ const QueryAnswerModal = ({
       originalAnswer={originalAnswer}
       answerId={answerId}
       closeModal={closeModifyAnswerModal}
-    />
-  ));
-
-  const {
-    openModal: openSubmitAnswerModel,
-    closeModal: closeSubmitAnswerModal,
-  } = useModal(({ question, questionId }) => (
-    <SubmitAnswerModal
-      question={question}
-      questionId={questionId}
-      closeModal={closeSubmitAnswerModal}
     />
   ));
 
@@ -201,18 +189,11 @@ const QueryAnswerModal = ({
               <ModalButton
                 size="medium"
                 onClick={() => {
-                  // 아직 답변이 입력되지 않았다면 답변 입력 모달을 띄움
-                  // 이미 입력한 답변이 있다면 수정 모달을 띄움
-                  myAnswer
-                    ? openModifyAnswerModal({
-                        question: question,
-                        originalAnswer: myAnswer.answer,
-                        answerId: myAnswer.answerId,
-                      })
-                    : openSubmitAnswerModel({
-                        question,
-                        questionId,
-                      });
+                  openModifyAnswerModal({
+                    question: question,
+                    originalAnswer: myAnswer.answer,
+                    answerId: myAnswer.answerId,
+                  });
                 }}
               >
                 내 답변 수정하기
