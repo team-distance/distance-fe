@@ -8,11 +8,7 @@ import { CHARACTERS } from '../../constants/CHARACTERS';
 import ModifyAnswerModal from '../modal/ModifyAnswerModal';
 import useModal from '../../hooks/useModal';
 
-const NewQuestionMessage = ({
-  chatRoomId,
-  tikiTakaCount,
-  openQueryQuestionModal,
-}) => {
+const NewQuestionMessage = ({ chatRoomId, tikiTakaCount }) => {
   const queryClient = useQueryClient();
 
   const { data: memberId } = useQuery({
@@ -36,7 +32,6 @@ const NewQuestionMessage = ({
       instance
         .get(`/answer?chatRoomId=${chatRoomId}&tikiTakaCount=${tikiTakaCount}`)
         .then((res) => res.data),
-    enabled: isClickedThisQuestion,
   });
 
   const isBothAnswered = answer?.answers?.every((answer) => answer.isAnswered);
@@ -163,9 +158,10 @@ const NewQuestionMessage = ({
         <Button
           size="small"
           onClick={() => {
-            openQueryQuestionModal({
-              chatRoomId: chatRoomId,
-              checkTiKiTaKa: tikiTakaCount,
+            openModifyAnswerModal({
+              question: question,
+              originalAnswer: myAnswer.answer,
+              answerId: myAnswer.answerId,
             });
 
             if (!isClickedThisQuestion) {

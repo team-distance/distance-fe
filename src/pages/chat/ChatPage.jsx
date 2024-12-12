@@ -30,7 +30,6 @@ import CallDistanceModal from '../../components/modal/CallDistanceModal';
 import { Client } from '@stomp/stompjs';
 import { stompBrokerURL } from '../../constants/baseURL';
 import { useQuery } from '@tanstack/react-query';
-import QueryQuestionModal from '../../components/modal/QueryQuestionModal';
 import SnowAnimation from '../../components/chat/SnowAnimation';
 import ChristmasEventAnnouncementModal from '../../components/modal/ChristmasEventAnnouncementModal';
 
@@ -91,17 +90,6 @@ const ChatPage = () => {
   } = useModal(() => (
     <ChristmasEventAnnouncementModal
       closeModal={closeChristmasEventAnnouncementModal}
-    />
-  ));
-
-  const {
-    openModal: openQueryQuestionModal,
-    closeModal: closeQueryQuestionModal,
-  } = useModal(({ chatRoomId, checkTiKiTaKa }) => (
-    <QueryQuestionModal
-      chatRoomId={chatRoomId}
-      checkTiKiTaKa={checkTiKiTaKa}
-      closeModal={closeQueryQuestionModal}
     />
   ));
 
@@ -212,22 +200,6 @@ const ChatPage = () => {
       //stomp 전송
       sendTextMessage();
     }
-  };
-
-  const sendNewQuestionMessage = () => {
-    client.publish({
-      destination: `/app/chat/${roomId}`,
-      body: JSON.stringify({
-        chatMessage: JSON.stringify({
-          message: '새로운 질문이 도착했어요!',
-          chatRoomId: roomId,
-          tikiTakaCount: messages.at(-1).checkTiKiTaKa,
-        }),
-        senderId: myMemberId,
-        receiverId: opponentMemberId,
-        publishType: 'NEW_QUESTION',
-      }),
-    });
   };
 
   // 이미지 크게 보기
@@ -485,6 +457,22 @@ const ChatPage = () => {
     }
   }, [isMemberIdsFetched]);
 
+  const sendNewQuestionMessage = () => {
+    client.publish({
+      destination: `/app/chat/${roomId}`,
+      body: JSON.stringify({
+        chatMessage: JSON.stringify({
+          message: '새로운 질문이 도착했어요!',
+          chatRoomId: roomId,
+          tikiTakaCount: messages.at(-1).checkTiKiTaKa,
+        }),
+        senderId: myMemberId,
+        receiverId: opponentMemberId,
+        publishType: 'NEW_QUESTION',
+      }),
+    });
+  };
+
   const createNewQuestion = async () => {
     try {
       await instance.post('/question', {
@@ -511,7 +499,7 @@ const ChatPage = () => {
       messages.length > 0 &&
       lastMessage?.checkTiKiTaKa !== 0 &&
       lastMessage?.checkTiKiTaKa % 3 === 0 &&
-      lastMessage?.senderType !== 'NEW_QUESTION' &&
+      messages.at(-2)?.senderType !== 'NEW_QUESTION' &&
       lastMessage?.senderId === opponentMemberId
     ) {
       // 먼저 /api/question POST 요청을 보내고 오류가 없다면 sendNewQuestionMessage();
@@ -577,7 +565,6 @@ const ChatPage = () => {
               setMessages={setMessages}
               isInputFocused={isInputFocused}
               bothAgreed={bothAgreed}
-              openQueryQuestionModal={openQueryQuestionModal}
             />
             <MessageInputWrapper>
               <MessageInput

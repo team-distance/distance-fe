@@ -13,6 +13,7 @@ const QueryAnswerModal = ({
   opponentProfile,
   myProfile,
   closeModal,
+  roomId,
 }) => {
   const queryClient = useQueryClient();
 
@@ -55,6 +56,9 @@ const QueryAnswerModal = ({
       closeModal={closeModifyAnswerModal}
       onComplete={() => {
         queryClient.invalidateQueries(['answer', questionId]);
+        if (roomId) {
+          queryClient.invalidateQueries(['question', roomId]);
+        }
       }}
     />
   ));
