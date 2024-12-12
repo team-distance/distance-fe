@@ -31,12 +31,11 @@ const QueryAnswerModal = ({
     queryKey: ['answer', questionId],
     queryFn: () =>
       instance.get(`/answer/${questionId}`).then((res) => res.data),
-    staleTime: Infinity,
   });
 
   const isBothAnswered = answer?.answers?.every((answer) => answer.isAnswered);
 
-  const question = answer.question || '';
+  const question = answer?.question || '';
 
   const myAnswer = answer?.answers?.find(
     (answer) => answer.memberId === memberId

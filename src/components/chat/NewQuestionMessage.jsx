@@ -37,7 +37,6 @@ const NewQuestionMessage = ({
         .get(`/answer?chatRoomId=${chatRoomId}&tikiTakaCount=${tikiTakaCount}`)
         .then((res) => res.data),
     enabled: isClickedThisQuestion,
-    staleTime: Infinity,
   });
 
   const isBothAnswered = answer?.answers?.every((answer) => answer.isAnswered);
