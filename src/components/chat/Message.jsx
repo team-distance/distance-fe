@@ -23,7 +23,6 @@ const Message = memo(
     openProfileModal,
     opponentMemberCharacter,
     bothAgreed,
-    openQueryQuestionModal,
     roomId,
   }) => {
     const unreadCount = message.unreadCount !== 0 ? message.unreadCount : '';
@@ -51,7 +50,6 @@ const Message = memo(
           <NewQuestionMessage
             chatRoomId={roomId}
             tikiTakaCount={tikiTakaCount}
-            openQueryQuestionModal={openQueryQuestionModal}
           />
         );
 

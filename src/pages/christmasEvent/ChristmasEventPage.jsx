@@ -11,6 +11,7 @@ const ChristmasEventPage = () => {
   const param = useParams();
   const roomId = parseInt(param?.chatRoomId);
   const opponentProfile = useLocation().state?.opponentProfile;
+  const navigate = useNavigate();
 
   const { data: myProfile } = useQuery({
     queryKey: ['myProfile'],
@@ -18,13 +19,13 @@ const ChristmasEventPage = () => {
     staleTime: Infinity,
   });
 
-  const navigate = useNavigate();
+  const { data: questions } = useQuery({
+    queryKey: ['question', roomId],
+    queryFn: () => instance.get(`/question/${roomId}`).then((res) => res.data),
+  });
 
-  const [questions, setQuestions] = useState([]);
-  const questionsLeft = questions.reduce(
-    (acc, question) => acc - question.isAnswer,
-    10
-  );
+  const questionsLeft =
+    questions?.reduce((acc, question) => acc - question.isAnswer, 10) || 10;
 
   const treeRef = useRef(null);
   const [treeRect, setTreeRect] = useState({
@@ -45,19 +46,9 @@ const ChristmasEventPage = () => {
         myProfile={myProfile}
         opponentProfile={opponentProfile}
         closeModal={closeQueryAnswerModal}
+        roomId={roomId}
       />
     ));
-
-  // 질문 목록을 가져오는 함수
-  // [{questionId: number, question: string, isAnswer: boolean}, ...]
-  const fetchQuestionList = async () => {
-    try {
-      const res = await instance.get(`/question/${roomId}`);
-      setQuestions(res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const updateTreeRect = () => {
     const img = treeRef.current;
@@ -90,8 +81,6 @@ const ChristmasEventPage = () => {
   };
 
   useEffect(() => {
-    fetchQuestionList();
-
     const img = treeRef.current;
     if (img && img.complete) {
       updateTreeRect();
@@ -140,7 +129,7 @@ const ChristmasEventPage = () => {
 
       <TreeArea>
         <Tree ref={treeRef} src="/assets/tree.png" alt="트리" />
-        {questions.map((question, index) => (
+        {questions?.map((question, index) => (
           <ChristmasOrnament
             key={question.questionId}
             onClick={() => {
@@ -163,7 +152,7 @@ const ChristmasEventPage = () => {
 export default ChristmasEventPage;
 
 const ChristmasOrnament = styled.img.attrs((props) => {
-  const { $treeRect, $position } = props;
+  const { $treeRect, $position, $image, $isAnswer } = props;
   // 트리 너비의 13%를 오너먼트 크기로 설정
   const ornamentSize = Math.round($treeRect.width * 0.13);
 
@@ -176,14 +165,13 @@ const ChristmasOrnament = styled.img.attrs((props) => {
       width: `${Math.max(ornamentSize, 48)}px`,
       height: `${Math.max(ornamentSize, 48)}px`,
     },
-    src: props.$image,
+    src: $isAnswer ? $image.filled : $image.blank,
     alt: 'ornament',
   };
 })`
   position: absolute;
   transform: translate(-50%, -50%);
   object-fit: contain;
-  opacity: ${({ $isAnswer }) => ($isAnswer ? 1 : 0.5)};
 `;
 
 const Wrapper = styled.div`
