@@ -17,7 +17,7 @@ import CallModal from '../../components/modal/CallModal';
 import CallRequestModal from '../../components/modal/CallRequestModal';
 import ImageView from '../../components/chat/ImageView';
 import { useFetchDistance } from '../../hooks/useFetchDistance';
-import CallActiveLottie from '../../components/chat/CallActiveLottie';
+// import CallActiveLottie from '../../components/chat/CallActiveLottie';
 import { useCallActive } from '../../hooks/useCallActive';
 import {
   useCountPages,
@@ -32,6 +32,7 @@ import { stompBrokerURL } from '../../constants/baseURL';
 import { useQuery } from '@tanstack/react-query';
 import QueryQuestionModal from '../../components/modal/QueryQuestionModal';
 import SnowAnimation from '../../components/chat/SnowAnimation';
+import ChristmasEventAnnouncementModal from '../../components/modal/ChristmasEventAnnouncementModal';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -41,10 +42,9 @@ const ChatPage = () => {
   const distance = useFetchDistance(roomId);
   const [messages, setMessages] = useState([]);
   const groupedMessages = useGroupedMessages(messages);
-  const { isCallActive, isShowLottie, tiKiTaKaCount } = useCallActive(
-    messages,
-    roomId
-  );
+
+  // 크리스마스 이벤트 동안 isCallActive 임시 제거
+  const { isCallActive, tiKiTaKaCount } = useCallActive(messages, roomId);
   const [client, setClient] = useState(null);
   const [myMemberId, setMyMemberId] = useState(0);
   const [opponentMemberId, setOpponentMemberId] = useState(0);
@@ -84,6 +84,15 @@ const ChatPage = () => {
     enabled: isMemberIdsFetched,
     staleTime: 1000 * 60 * 10,
   });
+
+  const {
+    openModal: openChristmasEventAnnouncementModal,
+    closeModal: closeChristmasEventAnnouncementModal,
+  } = useModal(() => (
+    <ChristmasEventAnnouncementModal
+      closeModal={closeChristmasEventAnnouncementModal}
+    />
+  ));
 
   const {
     openModal: openQueryQuestionModal,
@@ -221,10 +230,6 @@ const ChatPage = () => {
     });
   };
 
-  useEffect(() => {
-    console.log(bothAgreed);
-  }, [bothAgreed]);
-
   // 이미지 크게 보기
   const viewImage = (src) => {
     setImageSrc(src);
@@ -254,6 +259,18 @@ const ChatPage = () => {
         localStorage.removeItem(key);
       }
     });
+
+    // 이 방을 나가면 여기서 추가한 chatroomid, tikitakacount 삭제
+    // 크리스마스 이벤트 이후 삭제
+    const clickedNewQuestionList =
+      JSON.parse(localStorage.getItem('clickedNewQuestionList')) || [];
+    const filteredClickedNewQuestionList = clickedNewQuestionList.filter(
+      (item) => item.chatRoomId !== roomId
+    );
+    localStorage.setItem(
+      'clickedNewQuestionList',
+      JSON.stringify(filteredClickedNewQuestionList)
+    );
 
     try {
       client.publish({
@@ -404,6 +421,20 @@ const ChatPage = () => {
     };
 
     initializeChat();
+
+    // 크리스마스 이벤트 안내 모달 관련 코드
+    // 크리스마스 이벤트 이후 아래 코드 제거
+    const dismissedList =
+      JSON.parse(localStorage.getItem('dismissForever')) || [];
+
+    const isDismissed = dismissedList.some(
+      (item) =>
+        item.name === 'christmasEventAnnouncement' && item.type === 'modal'
+    );
+
+    if (!isDismissed) {
+      openChristmasEventAnnouncementModal();
+    }
   }, []);
 
   useEffect(() => {

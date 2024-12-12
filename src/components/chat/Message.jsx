@@ -1,8 +1,9 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../common/Button';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import dayjs from 'dayjs';
+import NewQuestionMessage from './NewQuestionMessage';
 
 /**
  * Message 객체 속성
@@ -47,37 +48,11 @@ const Message = memo(
         const { tikiTakaCount } = JSON.parse(message.chatMessage);
 
         return (
-          <Announcement>
-            <NewQuestionMessage>
-              <div className="title">산타의 질문이 도착했어요</div>
-              <div className="subtitle">질문에 답해 트리를 완성해보세요</div>
-
-              <div>질문</div>
-
-              <Button
-                size="small"
-                onClick={() => {
-                  openQueryQuestionModal({
-                    chatRoomId: roomId,
-                    checkTiKiTaKa: tikiTakaCount,
-                  });
-
-                  // 클릭하면 로컬스토리지에 클릭한 질문 리스트 저장
-                  // const clickedNewQuestionList =
-                  //   JSON.parse(
-                  //     localStorage.getItem('clickedNewQuestionList')
-                  //   ) || [];
-
-                  // localStorage.setItem('clickedNewQuestionList', [
-                  //   ...clickedNewQuestionList,
-                  //   { chatRoomId: roomId, tikiTakaCount: tikiTakaCount },
-                  // ]);
-                }}
-              >
-                질문보기
-              </Button>
-            </NewQuestionMessage>
-          </Announcement>
+          <NewQuestionMessage
+            chatRoomId={roomId}
+            tikiTakaCount={tikiTakaCount}
+            openQueryQuestionModal={openQueryQuestionModal}
+          />
         );
 
       case 'CALL_REQUEST':
@@ -287,29 +262,6 @@ const Announcement = styled.div`
     padding: 0.5rem;
     text-align: center;
     border-radius: 9999px;
-  }
-`;
-
-const NewQuestionMessage = styled.div`
-  width: 60%;
-  background-color: #eee;
-  padding: 16px 42px;
-  text-align: center;
-  border-radius: 24px;
-
-  .title {
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 20px;
-    letter-spacing: -0.23px;
-  }
-
-  .subtitle {
-    font-size: 0.75rem;
-    font-weight: 300;
-    line-height: 20px;
-    letter-spacing: -0.23px;
-    margin-bottom: 12px;
   }
 `;
 
