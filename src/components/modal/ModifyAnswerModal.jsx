@@ -11,6 +11,7 @@ const ModifyAnswerModal = ({
   originalAnswer,
   answerId,
   closeModal,
+  onComplete,
 }) => {
   const [answer, setAnswer] = useState(originalAnswer || '');
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
@@ -35,6 +36,10 @@ const ModifyAnswerModal = ({
       await instance.patch(`/answer/${answerId}`, { answer });
       showAnswerSubmitSuccessToast();
       closeModal();
+
+      if (onComplete) {
+        onComplete();
+      }
     } catch (error) {
       console.error(error);
       showAnswerSubmitErrorToast();
