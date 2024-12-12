@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components';
 import Button from '../common/Button';
 import { CHARACTERS } from '../../constants/CHARACTERS';

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from '../common/Button';
 import styled from 'styled-components';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { instance } from '../../api/instance';
 import { ClipLoader } from 'react-spinners';
 import { CHARACTERS } from '../../constants/CHARACTERS';
@@ -13,33 +13,43 @@ const NewQuestionMessage = ({
   tikiTakaCount,
   openQueryQuestionModal,
 }) => {
+  const queryClient = useQueryClient();
+
   const { data: memberId } = useQuery({
     queryKey: ['memberId'],
     queryFn: () => instance.get('/member/id').then((res) => res.data),
-    staleTime: 'Infinity',
+    staleTime: Infinity,
   });
 
   const [clickedNewQuestionList, setClickedNewQuestionList] = useState(
     JSON.parse(localStorage.getItem('clickedNewQuestionList')) || []
   );
-  const [answer, setAnswer] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [refresh, setRefresh] = useState(false);
-
-  const isBothAnswered = answer?.answers?.every((answer) => answer.isAnswered);
-
-  const question = answer.question || '';
-
-  const myAnswer = answer?.answers?.find(
-    (answer) => answer.memberId === memberId
-  );
-  const opponentAnswer = answer?.answers?.find(
-    (answer) => answer.memberId !== memberId
-  );
 
   const isClickedThisQuestion = clickedNewQuestionList.some(
     (item) =>
       item.chatRoomId === chatRoomId && item.tikiTakaCount === tikiTakaCount
+  );
+
+  const { data: answer, isLoading: isLoadingAnswer } = useQuery({
+    queryKey: ['answer', chatRoomId, tikiTakaCount],
+    queryFn: () =>
+      instance
+        .get(`/answer?chatRoomId=${chatRoomId}&tikiTakaCount=${tikiTakaCount}`)
+        .then((res) => res.data),
+    enabled: isClickedThisQuestion,
+    staleTime: Infinity,
+  });
+
+  const isBothAnswered = answer?.answers?.every((answer) => answer.isAnswered);
+
+  const question = answer?.question || '';
+
+  const myAnswer = answer?.answers?.find(
+    (answer) => answer.memberId === memberId
+  );
+
+  const opponentAnswer = answer?.answers?.find(
+    (answer) => answer.memberId !== memberId
   );
 
   const {
@@ -51,60 +61,18 @@ const NewQuestionMessage = ({
       originalAnswer={originalAnswer}
       answerId={answerId}
       closeModal={closeModifyAnswerModal}
-      onComplete={() => setRefresh((prev) => !prev)}
+      onComplete={() => {
+        queryClient.invalidateQueries({
+          queryKey: ['answer', chatRoomId, tikiTakaCount],
+        });
+      }}
     />
   ));
-
-  const fetchAnswer = async () => {
-    try {
-      setIsLoading(true);
-      // 백엔드 구현 완료되면 여기를 주석 해제
-      const response = await instance.get(
-        `/answer?chatRoomId=${chatRoomId}&tikiTakaCount=${tikiTakaCount}`
-      );
-      setAnswer(response.data);
-
-      // mock data
-      // setAnswer({
-      //   question: '당신만의 독특한 아침 루틴이 있다면 무엇인가요?',
-      //   answers: [
-      //     {
-      //       answerId: 111,
-      //       answer:
-      //         'ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ',
-      //       memberId: 44,
-      //       memberCharacter: 'CAT',
-      //       nickName: '지구환경과학부INFJ#44',
-      //       isAnswered: true,
-      //     },
-      //     {
-      //       answerId: 112,
-      //       answer:
-      //         'ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ',
-      //       memberId: 51,
-      //       memberCharacter: 'CAT',
-      //       nickName: '간호학과ISTJ#51',
-      //       isAnswered: false,
-      //     },
-      //   ],
-      // });
-      setIsLoading(false);
-    } catch (error) {
-      console.error(error);
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isClickedThisQuestion) {
-      fetchAnswer();
-    }
-  }, [isClickedThisQuestion, refresh]);
 
   if (isClickedThisQuestion) {
     return (
       <Announcement>
-        {isLoading ? (
+        {isLoadingAnswer ? (
           <Message>
             <ClipLoader color="#ff625d" size={16} />
           </Message>
