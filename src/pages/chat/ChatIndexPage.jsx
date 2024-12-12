@@ -39,7 +39,7 @@ const ChatIndexPage = () => {
   const { data: memberId } = useQuery({
     queryKey: ['memberId'],
     queryFn: () => instance.get('/member/id').then((res) => res.data),
-    staleTime: 'Infinity',
+    staleTime: Infinity,
   });
 
   const { data: availableChatRoomCount } = useQuery({

@@ -7,15 +7,6 @@ import Loader from '../common/Loader';
 import { ClipLoader } from 'react-spinners';
 import { useToast } from '../../hooks/useToast';
 
-/**
- * @todo answer가 비어있으면 등록 버튼이 비활성화되어야 함
- * @todo 답변 최대 길이 제한
- * @todo [v] 에러 처리
- * @todo [v] 문제가 불러와지기 전 로딩 스피너
- * @todo [v] 답변 등록 중 로딩 스피너
- * @todo [v] 답변 등록 성공 시 토스트 메시지
- * @returns
- */
 const QueryQuestionModal = ({ chatRoomId, checkTiKiTaKa, closeModal }) => {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
@@ -97,7 +88,6 @@ const QueryQuestionModal = ({ chatRoomId, checkTiKiTaKa, closeModal }) => {
         alt="닫기 버튼"
         onClick={closeModal}
       />
-
       {isLoadingQuestion ? (
         <Loader />
       ) : (

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { instance } from '../../api/instance';
 import Button from '../common/Button';
 import Loader from '../common/Loader';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import useModal from '../../hooks/useModal';
 import ModifyAnswerModal from './ModifyAnswerModal';
@@ -14,27 +14,36 @@ const QueryAnswerModal = ({
   myProfile,
   closeModal,
 }) => {
+  const queryClient = useQueryClient();
+
   const { data: memberId } = useQuery({
     queryKey: ['memberId'],
     queryFn: () => instance.get('/member/id').then((res) => res.data),
-    staleTime: 'Infinity',
+    staleTime: Infinity,
   });
 
-  const [data, setData] = useState({});
+  const {
+    data: answer,
+    isLoading: isLoadingAnswer,
+    isError: isLoadingAnswerError,
+    refetch: refetchAnswer,
+  } = useQuery({
+    queryKey: ['answer', questionId],
+    queryFn: () =>
+      instance.get(`/answer/${questionId}`).then((res) => res.data),
+    staleTime: Infinity,
+  });
 
-  const isBothAnswered = data?.answers?.every((answer) => answer.isAnswered);
+  const isBothAnswered = answer?.answers?.every((answer) => answer.isAnswered);
 
-  const question = data.question || '';
+  const question = answer.question || '';
 
-  const myAnswer = data?.answers?.find(
+  const myAnswer = answer?.answers?.find(
     (answer) => answer.memberId === memberId
   );
-  const opponentAnswer = data?.answers?.find(
+  const opponentAnswer = answer?.answers?.find(
     (answer) => answer.memberId !== memberId
   );
-
-  const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
-  const [isLoadingQuestionError, setIsLoadingQuestionError] = useState(false);
 
   const {
     openModal: openModifyAnswerModal,
@@ -45,29 +54,13 @@ const QueryAnswerModal = ({
       originalAnswer={originalAnswer}
       answerId={answerId}
       closeModal={closeModifyAnswerModal}
+      onComplete={() => {
+        queryClient.invalidateQueries(['answer', questionId]);
+      }}
     />
   ));
 
-  const fetchQuestion = async () => {
-    try {
-      setIsLoadingQuestion(true);
-      const res = await instance.get(`/answer/${questionId}`);
-      setData(res.data);
-    } catch (error) {
-      setIsLoadingQuestionError(true);
-      console.error(error);
-    } finally {
-      setIsLoadingQuestion(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchQuestion();
-  }, []);
-
   const renderAnswers = () => {
-    if (data.length === 0) return null;
-
     return (
       <>
         <WrapAnswer>
@@ -125,7 +118,7 @@ const QueryAnswerModal = ({
 
   return (
     <Modal>
-      {isLoadingQuestion ? (
+      {isLoadingAnswer ? (
         <Loader />
       ) : (
         <>
@@ -135,7 +128,7 @@ const QueryAnswerModal = ({
             onClick={closeModal}
           />
 
-          {isLoadingQuestionError ? (
+          {isLoadingAnswerError ? (
             <>
               <div
                 style={{
@@ -160,7 +153,7 @@ const QueryAnswerModal = ({
                   다시 시도해 주십시오
                 </div>
               </div>
-              <ModalButton size="medium" onClick={fetchQuestion}>
+              <ModalButton size="medium" onClick={refetchAnswer}>
                 다시 시도하기
               </ModalButton>
             </>
@@ -174,7 +167,7 @@ const QueryAnswerModal = ({
                   gap: '32px',
                 }}
               >
-                {data.length !== 0 && <Question>Q. {question}</Question>}
+                {answer.length !== 0 && <Question>Q. {question}</Question>}
                 <div
                   style={{
                     width: '100%',
