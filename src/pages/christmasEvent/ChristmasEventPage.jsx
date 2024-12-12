@@ -24,8 +24,12 @@ const ChristmasEventPage = () => {
     queryFn: () => instance.get(`/question/${roomId}`).then((res) => res.data),
   });
 
-  const questionsLeft =
-    questions?.reduce((acc, question) => acc - question.isAnswer, 10) || 10;
+  const displayedQuestions = questions?.slice(0, 10);
+
+  const questionsLeft = questions?.reduce(
+    (acc, question) => acc - question.isAnswer,
+    10
+  );
 
   const treeRef = useRef(null);
   const [treeRect, setTreeRect] = useState({
@@ -129,7 +133,7 @@ const ChristmasEventPage = () => {
 
       <TreeArea>
         <Tree ref={treeRef} src="/assets/tree.png" alt="트리" />
-        {questions?.map((question, index) => (
+        {displayedQuestions?.map((question, index) => (
           <ChristmasOrnament
             key={question.questionId}
             onClick={() => {
