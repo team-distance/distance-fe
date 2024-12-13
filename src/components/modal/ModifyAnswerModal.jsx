@@ -12,19 +12,20 @@ const ModifyAnswerModal = ({
   answerId,
   closeModal,
   onComplete,
+  questionId,
 }) => {
   const [answer, setAnswer] = useState(originalAnswer || '');
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
 
   const { showToast: showAnswerSubmitSuccessToast } = useToast(
-    () => <span>수정이 완료되었어요!</span>,
+    () => <span>등록이 완료되었어요!</span>,
     'answer-submitted',
     'bottom-center',
     'success'
   );
 
   const { showToast: showAnswerSubmitErrorToast } = useToast(
-    () => <span>수정에 실패했어요! 다시 시도해주세요.</span>,
+    () => <span>등록에 실패했어요! 다시 시도해주세요.</span>,
     'answer-submit-error',
     'bottom-center',
     'error'
@@ -33,7 +34,8 @@ const ModifyAnswerModal = ({
   const handleSubmitAnswer = async () => {
     try {
       setIsSubmittingAnswer(true);
-      await instance.patch(`/answer/${answerId}`, { answer });
+      await instance.patch(`/answer/${answerId}`, { answer, questionId });
+
       showAnswerSubmitSuccessToast();
       closeModal();
 
