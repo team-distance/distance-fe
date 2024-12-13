@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useState } from 'react';
 import { instance } from '../../api/instance';
 import Profile from '../../components/home/Profile';
 import Banner from '../../components/common/Banner';
@@ -12,18 +11,15 @@ import MatchingConfigButton from '../../components/home/MatchingConfigButton';
 import MatchingConfigBottomsheet from '../../components/modal/MatchingConfigBottomsheet';
 import { useRecoilValue } from 'recoil';
 import { matchingConfigState } from '../../store/matchingConfig';
-import { useCreateChatRoom } from '../../hooks/useCreateChatRoom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { isLoggedInState } from '../../store/auth';
 
 const HomeIndexPage = () => {
-  const [isProfileButtonClicked, setIsProfileButtonClicked] = useState(false);
   const queryClient = useQueryClient();
   const matchingConfig = useRecoilValue(matchingConfigState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
-  const createChatRoom = useCreateChatRoom();
 
-  const { data: matchingList, isLoading } = useQuery({
+  const { data: matchingList, isLoading: isLoadingMatchingList } = useQuery({
     queryKey: ['matching', matchingConfig],
     queryFn: () =>
       instance
@@ -36,18 +32,7 @@ const HomeIndexPage = () => {
 
   const { openModal: openProfileModal, closeModal: closeProfileModal } =
     useModal((profile) => (
-      <ProfileModal
-        closeModal={closeProfileModal}
-        isButtonClicked={isProfileButtonClicked}
-        onClick={() => {
-          createChatRoom(
-            profile.memberId,
-            closeProfileModal,
-            setIsProfileButtonClicked
-          );
-        }}
-        selectedProfile={profile}
-      />
+      <ProfileModal closeModal={closeProfileModal} selectedProfile={profile} />
     ));
 
   const {
@@ -77,7 +62,7 @@ const HomeIndexPage = () => {
     <>
       <Banner alertText={alertTextList} />
 
-      {isLoading ? (
+      {isLoadingMatchingList ? (
         <Loader />
       ) : matchingList.length ? (
         <ProfileContainer>
