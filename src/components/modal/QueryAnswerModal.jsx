@@ -8,6 +8,9 @@ import { CHARACTERS } from '../../constants/CHARACTERS';
 import useModal from '../../hooks/useModal';
 import ModifyAnswerModal from './ModifyAnswerModal';
 
+/**
+ * @todo roomId를 useLoadtion()을 통해서 가져오기
+ */
 const QueryAnswerModal = ({
   questionId,
   opponentProfile,
@@ -63,6 +66,7 @@ const QueryAnswerModal = ({
           queryClient.invalidateQueries(['question', roomId]);
         }
       }}
+      questionId={questionId}
     />
   ));
 

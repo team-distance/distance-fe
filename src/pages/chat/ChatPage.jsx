@@ -459,31 +459,35 @@ const ChatPage = () => {
     }
   }, [isMemberIdsFetched]);
 
-  const sendNewQuestionMessage = () => {
-    client.publish({
-      destination: `/app/chat/${roomId}`,
-      body: JSON.stringify({
-        chatMessage: JSON.stringify({
-          message: '새로운 질문이 도착했어요!',
-          chatRoomId: roomId,
-          tikiTakaCount: messages.at(-1).checkTiKiTaKa,
+  const sendNewQuestionMessage = (questionId) => {
+    try {
+      client.publish({
+        destination: `/app/chat/${roomId}`,
+        body: JSON.stringify({
+          chatMessage: JSON.stringify({
+            message: '새로운 질문이 도착했어요!',
+            chatRoomId: roomId,
+            tikiTakaCount: messages.at(-1).checkTiKiTaKa,
+            questionId: questionId,
+          }),
+          senderId: opponentMemberId,
+          receiverId: myMemberId,
+          publishType: 'NEW_QUESTION',
         }),
-        senderId: opponentMemberId,
-        receiverId: myMemberId,
-        publishType: 'NEW_QUESTION',
-      }),
-    });
+      });
+    } catch (error) {
+      showWaitToast();
+    }
   };
 
   const createNewQuestion = async () => {
-    console.log('called!', messages);
     try {
-      await instance.post('/question', {
+      const response = await instance.post('/question', {
         chatRoomId: roomId,
         tikiTakaCount: messages.at(-1).checkTiKiTaKa,
       });
 
-      sendNewQuestionMessage();
+      sendNewQuestionMessage(response.data.questionId);
     } catch (error) {
       console.log(error);
     }

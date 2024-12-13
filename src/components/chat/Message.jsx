@@ -23,7 +23,6 @@ const Message = memo(
     openProfileModal,
     opponentMemberCharacter,
     bothAgreed,
-    roomId,
   }) => {
     const unreadCount = message.unreadCount !== 0 ? message.unreadCount : '';
     const messageTime = dayjs(message.sendDt).format('HH:mm');
@@ -44,12 +43,15 @@ const Message = memo(
         );
 
       case 'NEW_QUESTION':
-        const { tikiTakaCount } = JSON.parse(message.chatMessage);
+        const { chatRoomId, tikiTakaCount, questionId } = JSON.parse(
+          message.chatMessage
+        );
 
         return (
           <NewQuestionMessage
-            chatRoomId={roomId}
+            chatRoomId={chatRoomId}
             tikiTakaCount={tikiTakaCount}
+            questionId={questionId}
           />
         );
 

@@ -12,6 +12,7 @@ const ModifyAnswerModal = ({
   answerId,
   closeModal,
   onComplete,
+  questionId,
 }) => {
   const [answer, setAnswer] = useState(originalAnswer || '');
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
@@ -33,7 +34,8 @@ const ModifyAnswerModal = ({
   const handleSubmitAnswer = async () => {
     try {
       setIsSubmittingAnswer(true);
-      await instance.patch(`/answer/${answerId}`, { answer });
+      await instance.patch(`/answer/${answerId}`, { answer, questionId });
+
       showAnswerSubmitSuccessToast();
       closeModal();
 

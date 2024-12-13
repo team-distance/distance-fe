@@ -8,7 +8,7 @@ import { CHARACTERS } from '../../constants/CHARACTERS';
 import ModifyAnswerModal from '../modal/ModifyAnswerModal';
 import useModal from '../../hooks/useModal';
 
-const NewQuestionMessage = ({ chatRoomId, tikiTakaCount }) => {
+const NewQuestionMessage = ({ chatRoomId, tikiTakaCount, questionId }) => {
   const queryClient = useQueryClient();
 
   const { data: memberId } = useQuery({
@@ -27,11 +27,9 @@ const NewQuestionMessage = ({ chatRoomId, tikiTakaCount }) => {
   );
 
   const { data: answer, isLoading: isLoadingAnswer } = useQuery({
-    queryKey: ['answer', chatRoomId, tikiTakaCount],
+    queryKey: ['answer', questionId],
     queryFn: () =>
-      instance
-        .get(`/answer?chatRoomId=${chatRoomId}&tikiTakaCount=${tikiTakaCount}`)
-        .then((res) => res.data),
+      instance.get(`/answer/${questionId}`).then((res) => res.data),
   });
 
   const isBothAnswered = answer?.answers?.every((answer) => answer.isAnswered);
@@ -56,10 +54,9 @@ const NewQuestionMessage = ({ chatRoomId, tikiTakaCount }) => {
       answerId={answerId}
       closeModal={closeModifyAnswerModal}
       onComplete={() => {
-        queryClient.invalidateQueries({
-          queryKey: ['answer', chatRoomId, tikiTakaCount],
-        });
+        queryClient.invalidateQueries(['answer', questionId]);
       }}
+      questionId={questionId}
     />
   ));
 
