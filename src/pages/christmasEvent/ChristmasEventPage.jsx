@@ -9,7 +9,8 @@ import { useQuery } from '@tanstack/react-query';
 
 const ChristmasEventPage = () => {
   const param = useParams();
-  const roomId = parseInt(param?.chatRoomId);
+  const chatRoomId = parseInt(param?.chatRoomId);
+
   const opponentProfile = useLocation().state?.opponentProfile;
   const navigate = useNavigate();
 
@@ -20,8 +21,9 @@ const ChristmasEventPage = () => {
   });
 
   const { data: questions } = useQuery({
-    queryKey: ['question', roomId],
-    queryFn: () => instance.get(`/question/${roomId}`).then((res) => res.data),
+    queryKey: ['question', chatRoomId],
+    queryFn: () =>
+      instance.get(`/question/${chatRoomId}`).then((res) => res.data),
   });
 
   const displayedQuestions = questions?.slice(0, 10);
@@ -40,7 +42,7 @@ const ChristmasEventPage = () => {
   });
 
   if (!opponentProfile) {
-    navigate(`/chat/${roomId}`);
+    navigate(`/chat/${chatRoomId}`);
   }
 
   const { openModal: openQueryAnswerModal, closeModal: closeQueryAnswerModal } =
@@ -50,7 +52,7 @@ const ChristmasEventPage = () => {
         myProfile={myProfile}
         opponentProfile={opponentProfile}
         closeModal={closeQueryAnswerModal}
-        roomId={roomId}
+        chatRoomId={chatRoomId}
       />
     ));
 
@@ -101,7 +103,7 @@ const ChristmasEventPage = () => {
       <TopBar>
         <BackButton
           onClick={() => {
-            navigate(`/chat/${roomId}`);
+            navigate(`/chat/${chatRoomId}`);
           }}
         >
           <img src="/assets/arrow-pink-button.png" alt="뒤로가기" />

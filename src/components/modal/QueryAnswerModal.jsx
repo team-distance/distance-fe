@@ -8,15 +8,12 @@ import { CHARACTERS } from '../../constants/CHARACTERS';
 import useModal from '../../hooks/useModal';
 import ModifyAnswerModal from './ModifyAnswerModal';
 
-/**
- * @todo roomId를 useLoadtion()을 통해서 가져오기
- */
 const QueryAnswerModal = ({
   questionId,
   opponentProfile,
   myProfile,
   closeModal,
-  roomId,
+  chatRoomId,
 }) => {
   const queryClient = useQueryClient();
 
@@ -62,9 +59,21 @@ const QueryAnswerModal = ({
         queryClient.invalidateQueries(['answer', questionId]);
 
         // 트리 페이지에 오너먼트 상태를 업데이트 하기 위해 캐시를 무효화
-        if (roomId) {
-          queryClient.invalidateQueries(['question', roomId]);
+        if (chatRoomId) {
+          queryClient.invalidateQueries(['question', chatRoomId]);
         }
+
+        // 질문에 답변을 완료하면 채팅방에서 "질문 보기" 버튼을 누르지 않아도 바로 질문이 보이도록 하기 위해 로컬스토리지에 저장
+        const clickedNewQuestionList =
+          JSON.parse(localStorage.getItem('clickedNewQuestionList')) || [];
+
+        localStorage.setItem(
+          'clickedNewQuestionList',
+          JSON.stringify([
+            ...clickedNewQuestionList,
+            { chatRoomId, questionId },
+          ])
+        );
       }}
       questionId={questionId}
     />
