@@ -487,7 +487,17 @@ const ChatPage = () => {
         tikiTakaCount: messages.at(-1).checkTiKiTaKa,
       });
 
-      sendNewQuestionMessage(response.data.questionId);
+      // 이전에 같은 questionId로 NEW_QUESTION 메시지를 보낸 적이 없을 때만 메시지 전송
+      if (
+        !messages.find(
+          (message) =>
+            message.senderType === 'NEW_QUESTION' &&
+            JSON.parse(message.chatMessage).questionId ===
+              response.data.questionId
+        )
+      ) {
+        sendNewQuestionMessage(response.data.questionId);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -500,6 +510,8 @@ const ChatPage = () => {
 
     if (lastMessage?.roomStatus === 'ACTIVE') setIsOpponentOut(false);
     else if (lastMessage?.roomStatus === 'INACTIVE') setIsOpponentOut(true);
+
+    console.log(messages);
 
     if (
       lastMessage &&
