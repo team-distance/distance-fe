@@ -52,6 +52,7 @@ const ChristmasEventPage = () => {
         myProfile={myProfile}
         opponentProfile={opponentProfile}
         closeModal={closeQueryAnswerModal}
+        chatRoomId={chatRoomId}
       />
     ));
 

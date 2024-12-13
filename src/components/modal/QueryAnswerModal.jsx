@@ -7,20 +7,15 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import useModal from '../../hooks/useModal';
 import ModifyAnswerModal from './ModifyAnswerModal';
-import { useParams } from 'react-router-dom';
 
-/**
- * @todo roomId를 useParams()을 통해서 가져오기
- */
 const QueryAnswerModal = ({
   questionId,
   opponentProfile,
   myProfile,
   closeModal,
+  chatRoomId,
 }) => {
   const queryClient = useQueryClient();
-  const param = useParams();
-  const chatRoomId = parseInt(param?.chatRoomId);
 
   const { data: memberId } = useQuery({
     queryKey: ['memberId'],
@@ -67,6 +62,18 @@ const QueryAnswerModal = ({
         if (chatRoomId) {
           queryClient.invalidateQueries(['question', chatRoomId]);
         }
+
+        // 질문에 답변을 완료하면 채팅방에서 "질문 보기" 버튼을 누르지 않아도 바로 질문이 보이도록 하기 위해 로컬스토리지에 저장
+        const clickedNewQuestionList =
+          JSON.parse(localStorage.getItem('clickedNewQuestionList')) || [];
+
+        localStorage.setItem(
+          'clickedNewQuestionList',
+          JSON.stringify([
+            ...clickedNewQuestionList,
+            { chatRoomId, questionId },
+          ])
+        );
       }}
       questionId={questionId}
     />

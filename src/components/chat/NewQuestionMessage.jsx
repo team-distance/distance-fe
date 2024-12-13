@@ -8,7 +8,7 @@ import { CHARACTERS } from '../../constants/CHARACTERS';
 import ModifyAnswerModal from '../modal/ModifyAnswerModal';
 import useModal from '../../hooks/useModal';
 
-const NewQuestionMessage = ({ chatRoomId, tikiTakaCount, questionId }) => {
+const NewQuestionMessage = ({ chatRoomId, questionId }) => {
   const queryClient = useQueryClient();
 
   const { data: memberId } = useQuery({
@@ -22,8 +22,7 @@ const NewQuestionMessage = ({ chatRoomId, tikiTakaCount, questionId }) => {
   );
 
   const isClickedThisQuestion = clickedNewQuestionList.some(
-    (item) =>
-      item.chatRoomId === chatRoomId && item.tikiTakaCount === tikiTakaCount
+    (item) => item.chatRoomId === chatRoomId && item.questionId === questionId
   );
 
   const { data: answer, isLoading: isLoadingAnswer } = useQuery({
@@ -55,6 +54,17 @@ const NewQuestionMessage = ({ chatRoomId, tikiTakaCount, questionId }) => {
       closeModal={closeModifyAnswerModal}
       onComplete={() => {
         queryClient.invalidateQueries(['answer', questionId]);
+
+        // // 새로운 질문을 클릭했을 때, 새로운 질문을 클릭했다는 정보를 로컬스토리지에 저장
+        if (!isClickedThisQuestion) {
+          localStorage.setItem(
+            'clickedNewQuestionList',
+            JSON.stringify([
+              ...clickedNewQuestionList,
+              { chatRoomId, questionId },
+            ])
+          );
+        }
       }}
       questionId={questionId}
     />
@@ -161,12 +171,13 @@ const NewQuestionMessage = ({ chatRoomId, tikiTakaCount, questionId }) => {
               answerId: myAnswer?.answerId,
             });
 
+            // 새로운 질문을 클릭했을 때, 새로운 질문을 클릭했다는 정보를 로컬스토리지에 저장
             if (!isClickedThisQuestion) {
               localStorage.setItem(
                 'clickedNewQuestionList',
                 JSON.stringify([
                   ...clickedNewQuestionList,
-                  { chatRoomId, tikiTakaCount },
+                  { chatRoomId, questionId },
                 ])
               );
             }

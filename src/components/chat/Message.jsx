@@ -43,16 +43,10 @@ const Message = memo(
         );
 
       case 'NEW_QUESTION':
-        const { chatRoomId, tikiTakaCount, questionId } = JSON.parse(
-          message.chatMessage
-        );
+        const { chatRoomId, questionId } = JSON.parse(message.chatMessage);
 
         return (
-          <NewQuestionMessage
-            chatRoomId={chatRoomId}
-            tikiTakaCount={tikiTakaCount}
-            questionId={questionId}
-          />
+          <NewQuestionMessage chatRoomId={chatRoomId} questionId={questionId} />
         );
 
       case 'CALL_REQUEST':
