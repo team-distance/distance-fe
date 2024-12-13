@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-// import HomeIndexPage from './pages/home/HomeIndexPage';
+import HomeIndexPage from './pages/home/HomeIndexPage';
 import ChatIndexPage from './pages/chat/ChatIndexPage';
 import EventIndexPage from './pages/event/EventIndexPage';
 import MyIndexPage from './pages/mypage/MyIndexPage';
@@ -48,7 +48,7 @@ import NaverFallback from './pages/root/NaverFallback';
 import InstagramFallback from './pages/root/InstagramFallback';
 import EverytimeFallback from './pages/root/EverytimeFallback';
 import ChristmasEventPage from './pages/christmasEvent/ChristmasEventPage';
-import ConstructionPage from './pages/root/ConstructionPage';
+// import ConstructionPage from './pages/root/ConstructionPage';
 
 function App() {
   useRouteChangeTrack();
@@ -105,10 +105,10 @@ function App() {
         <Route path="/verify/univ/id" element={<VerifyIdPage />} />
 
         {/* 점검 페이지 */}
-        <Route path="/" element={<ConstructionPage />} />
+        {/* <Route path="/" element={<ConstructionPage />} /> */}
 
         <Route element={<NavLayout />}>
-          {/* <Route path="/" element={<HomeIndexPage />} /> */}
+          <Route path="/" element={<HomeIndexPage />} />
 
           <Route path="/chat" element={<ChatIndexPage />} />
           <Route path="/inbox" element={<ChatInboxPage />} />
