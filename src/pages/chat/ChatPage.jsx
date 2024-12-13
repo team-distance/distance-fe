@@ -42,6 +42,8 @@ const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const groupedMessages = useGroupedMessages(messages);
 
+  const [lastProcessedMessageId, setLastProcessedMessageId] = useState(null);
+
   // 크리스마스 이벤트 동안 isCallActive 임시 제거
   const { isCallActive, tiKiTaKaCount } = useCallActive(messages, roomId);
   const [client, setClient] = useState(null);
@@ -466,14 +468,15 @@ const ChatPage = () => {
           chatRoomId: roomId,
           tikiTakaCount: messages.at(-1).checkTiKiTaKa,
         }),
-        senderId: myMemberId,
-        receiverId: opponentMemberId,
+        senderId: opponentMemberId,
+        receiverId: myMemberId,
         publishType: 'NEW_QUESTION',
       }),
     });
   };
 
   const createNewQuestion = async () => {
+    console.log('called!', messages);
     try {
       await instance.post('/question', {
         chatRoomId: roomId,
@@ -489,20 +492,20 @@ const ChatPage = () => {
   // 메시지가 업데이트 될 때마다 상대방이 나갔는지 확인
   // 메시지가 업데이트 될 때마다 로컬 스토리지에 저장
   useEffect(() => {
-    // messages 배열의 길이가 0이면 lastMessage === undefined
     const lastMessage = messages.at(-1);
 
     if (lastMessage?.roomStatus === 'ACTIVE') setIsOpponentOut(false);
     else if (lastMessage?.roomStatus === 'INACTIVE') setIsOpponentOut(true);
 
     if (
-      messages.length > 0 &&
+      lastMessage &&
+      lastMessage?.messageId !== lastProcessedMessageId &&
       lastMessage?.checkTiKiTaKa !== 0 &&
       lastMessage?.checkTiKiTaKa % 3 === 0 &&
-      messages.at(-2)?.senderType !== 'NEW_QUESTION' &&
+      lastMessage?.senderType !== 'NEW_QUESTION' &&
       lastMessage?.senderId === opponentMemberId
     ) {
-      // 먼저 /api/question POST 요청을 보내고 오류가 없다면 sendNewQuestionMessage();
+      setLastProcessedMessageId(lastMessage.messageId);
       createNewQuestion();
     }
   }, [messages]);

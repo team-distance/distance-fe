@@ -100,7 +100,7 @@ const Messages = memo(
               onIntersect();
             } else {
               if (!isSuccess || !data) return;
-              console.log('감지');
+
               // 로컬 저장소에 데이터가 없으면 새로운 페이지로 이동
               onIntersect();
             }

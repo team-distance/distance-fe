@@ -160,8 +160,8 @@ const NewQuestionMessage = ({ chatRoomId, tikiTakaCount }) => {
           onClick={() => {
             openModifyAnswerModal({
               question: question,
-              originalAnswer: myAnswer.answer,
-              answerId: myAnswer.answerId,
+              originalAnswer: myAnswer?.answer,
+              answerId: myAnswer?.answerId,
             });
 
             if (!isClickedThisQuestion) {
