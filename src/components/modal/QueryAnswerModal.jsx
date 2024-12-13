@@ -55,7 +55,10 @@ const QueryAnswerModal = ({
       answerId={answerId}
       closeModal={closeModifyAnswerModal}
       onComplete={() => {
+        // 답변 수정이 완료되면 해당 오너먼트를 다시 클릭했을 때 새로운 답변을 불러오기 위해 캐시를 무효화
         queryClient.invalidateQueries(['answer', questionId]);
+
+        // 트리 페이지에 오너먼트 상태를 업데이트 하기 위해 캐시를 무효화
         if (roomId) {
           queryClient.invalidateQueries(['question', roomId]);
         }
