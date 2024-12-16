@@ -6,30 +6,25 @@ const ChristmasEventAnnouncementModal = ({ closeModal }) => {
   const dismissForever = () => {
     const dismissedList = localStorage.getItem('dismissForever') || [];
     dismissedList.push({ name: 'christmasEventAnnouncement', type: 'modal' });
-    console.log(dismissedList);
     localStorage.setItem('dismissForever', JSON.stringify(dismissedList));
   };
 
   return (
     <Modal>
-      <CloseButton
-        src="/assets/cancel-button-gray.svg"
-        alt="닫기 버튼"
-        onClick={closeModal}
-      />
-
       <Heading1>크리스마스 이벤트</Heading1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <Heading2>메시지를 3번 보낼 때마다 새로운 질문이 생성돼요!</Heading2>
         <Paragraph>
-          서로 질문에 답변하면 크리스마스 트리에 장식품이 하나씩 생성돼요
+          서로 질문에 답변하면 크리스마스 트리에 장식품이 하나씩 생성됩니다.
           <br />
-          장식품을 10개를 모을 시 이벤트에 자동 응모됩니다
+          장식품을 10개를 모으면 이벤트에 자동으로 응모됩니다.
         </Paragraph>
       </div>
 
-      <Paragraph>화면 오른쪽 위 트리를 눌러서 현황을 확인해보세요</Paragraph>
+      <Paragraph>
+        화면 오른쪽 위 트리를 눌러 현황을 확인할 수 있습니다.
+      </Paragraph>
 
       <Small>경품: CGV 영화티켓 (3팀)</Small>
 
@@ -79,12 +74,8 @@ const Modal = styled.div`
   z-index: 100;
   overflow: hidden;
   text-align: center;
-`;
-
-const CloseButton = styled.img`
-  position: absolute;
-  top: 25px;
-  right: 32px;
+  text-wrap: balance;
+  word-break: keep-all;
 `;
 
 const Heading1 = styled.h1`
