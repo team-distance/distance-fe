@@ -126,11 +126,8 @@ const ChristmasEventPage = () => {
   const subscriptionCallback = (message) => {
     const parsedMessage = JSON.parse(message.body);
     const { senderId, senderType } = parsedMessage.body;
-    console.log('FIRST!', chatRoomId);
 
     if (senderType === 'ANSWER' && senderId === myMemberId) {
-      console.log('SECOND!', chatRoomId);
-
       queryClient.invalidateQueries(['question', chatRoomId]);
     }
   };
