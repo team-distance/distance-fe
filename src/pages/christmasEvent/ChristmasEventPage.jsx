@@ -8,6 +8,7 @@ import useModal from '../../hooks/useModal';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Client } from '@stomp/stompjs';
 import { stompBrokerURL } from '../../constants/baseURL';
+import ReactConfetti from 'react-confetti';
 
 const ChristmasEventPage = () => {
   const param = useParams();
@@ -126,11 +127,8 @@ const ChristmasEventPage = () => {
   const subscriptionCallback = (message) => {
     const parsedMessage = JSON.parse(message.body);
     const { senderId, senderType } = parsedMessage.body;
-    console.log('FIRST!', chatRoomId);
 
     if (senderType === 'ANSWER' && senderId === myMemberId) {
-      console.log('SECOND!', chatRoomId);
-
       queryClient.invalidateQueries(['question', chatRoomId]);
     }
   };
@@ -172,6 +170,7 @@ const ChristmasEventPage = () => {
 
   return (
     <Wrapper>
+      <ReactConfetti run={questionsLeft <= 0} recycle={false} />
       <TopBar>
         <BackButton
           onClick={() => {
@@ -188,18 +187,23 @@ const ChristmasEventPage = () => {
           <>
             <Heading>트리가 모두 완성되었어요!</Heading>
             <SubHeading>
-              이벤트에 자동 응모되었어요
+              상대방과 함께 이벤트에 자동 응모되었습니다.
               <br />
-              당첨 시 가입된 전화번호로 경품 증정됩니다
+              당첨 시 등록된 전화번호로 문자가 발송됩니다.
+              <br />
+              <strong style={{ fontWeight: '600' }}>
+                추첨일까지 채팅방을 유지
+              </strong>
+              하셔야 추첨 대상에 포함됩니다.
             </SubHeading>
           </>
         ) : (
           <>
             <Heading>
-              트리 완성까지 {questionsLeft}개의 오너먼트가 더 필요해요
+              트리 완성까지 {questionsLeft}개의 오너먼트가 더 필요해요!
             </Heading>
             <SubHeading>
-              상대와 이야기를 더 나누다보면 산타의 질문이 도착할 거에요
+              상대와 이야기를 더 나누다보면 산타의 질문이 도착합니다.
             </SubHeading>
           </>
         )}

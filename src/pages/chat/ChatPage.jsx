@@ -521,8 +521,6 @@ const ChatPage = () => {
     if (lastMessage?.roomStatus === 'ACTIVE') setIsOpponentOut(false);
     else if (lastMessage?.roomStatus === 'INACTIVE') setIsOpponentOut(true);
 
-    console.log(messages);
-
     if (
       lastMessage &&
       lastMessage?.messageId !== lastProcessedMessageId &&
