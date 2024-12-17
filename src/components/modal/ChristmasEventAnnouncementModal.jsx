@@ -18,7 +18,7 @@ const ChristmasEventAnnouncementModal = ({ closeModal }) => {
         <Paragraph>
           서로 질문에 답변하면 크리스마스 트리에 장식품이 하나씩 생성됩니다.
           <br />
-          장식품을 10개를 모으면 이벤트에 자동으로 응모됩니다.
+          장식품을 10개를 완성하면 상대방과 함께 자동으로 응모됩니다.
         </Paragraph>
       </div>
 
@@ -26,7 +26,10 @@ const ChristmasEventAnnouncementModal = ({ closeModal }) => {
         화면 오른쪽 위 트리를 눌러 현황을 확인할 수 있습니다.
       </Paragraph>
 
-      <Small>경품: CGV 영화티켓 (3팀)</Small>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <Small>경품: CGV 영화티켓 (3팀)</Small>
+        <Small>추첨일: 2024년 12월 25일(수)</Small>
+      </div>
 
       <div
         style={{
