@@ -5,13 +5,15 @@ import { ORNAMENT_DATA } from '../../constants/ORNAMENT_DATA';
 import { instance } from '../../api/instance';
 import QueryAnswerModal from '../../components/modal/QueryAnswerModal';
 import useModal from '../../hooks/useModal';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Client } from '@stomp/stompjs';
 import { stompBrokerURL } from '../../constants/baseURL';
 
 const ChristmasEventPage = () => {
   const param = useParams();
   const chatRoomId = parseInt(param?.chatRoomId);
+
+  const queryClient = useQueryClient();
 
   const [client, setClient] = useState(null);
   const [myMemberId, setMyMemberId] = useState(0);
@@ -121,6 +123,18 @@ const ChristmasEventPage = () => {
     fetchMemberIds();
   }, []);
 
+  const subscriptionCallback = (message) => {
+    const parsedMessage = JSON.parse(message.body);
+    const { senderId, senderType } = parsedMessage.body;
+    console.log('FIRST!', chatRoomId);
+
+    if (senderType === 'ANSWER' && senderId === myMemberId) {
+      console.log('SECOND!', chatRoomId);
+
+      queryClient.invalidateQueries(['question', chatRoomId]);
+    }
+  };
+
   useEffect(() => {
     if (isMemberIdsFetched) {
       const newClient = new Client({
@@ -134,7 +148,10 @@ const ChristmasEventPage = () => {
         },
         onConnect: (frame) => {
           console.log('Connected: ' + frame);
-          newClient.subscribe(`/topic/chatroom/${chatRoomId}`, () => {});
+          newClient.subscribe(
+            `/topic/chatroom/${chatRoomId}`,
+            subscriptionCallback
+          );
         },
         onStompError: (error) => {
           console.log(error);
