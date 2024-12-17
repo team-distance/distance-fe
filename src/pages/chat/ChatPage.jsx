@@ -372,10 +372,13 @@ const ChatPage = () => {
         return oldMessages;
       });
       return;
-    } else if (senderType === 'ANSWER' && senderId !== myMemberId) {
+    } else if (senderType === 'ANSWER' && senderId === myMemberId) {
       // ANSWER 메시지를 보낸 사람이 '상대방'인 경우
       const questionId = parsedMessage.body.questionId;
       queryClient.invalidateQueries(['answer', questionId]);
+      return;
+    } else if (senderType === 'ANSWER' && senderId !== myMemberId) {
+      // ANSWER 메시지를 보낸 사람이 '나'인 경우
       return;
     } else {
       // 그 외의 메시지인 경우
