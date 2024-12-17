@@ -8,7 +8,7 @@ import { CHARACTERS } from '../../constants/CHARACTERS';
 import ModifyAnswerModal from '../modal/ModifyAnswerModal';
 import useModal from '../../hooks/useModal';
 
-const NewQuestionMessage = ({ chatRoomId, questionId }) => {
+const NewQuestionMessage = ({ chatRoomId, questionId, client }) => {
   const queryClient = useQueryClient();
 
   const { data: memberId } = useQuery({
@@ -65,6 +65,18 @@ const NewQuestionMessage = ({ chatRoomId, questionId }) => {
             ])
           );
         }
+
+        client.publish({
+          destination: `/app/chat/${chatRoomId}`,
+          body: JSON.stringify({
+            chatMessage: JSON.stringify({
+              questionId: questionId,
+            }),
+            senderId: opponentAnswer?.memberId,
+            receiverId: myAnswer?.memberId,
+            publishType: 'ANSWER',
+          }),
+        });
       }}
       questionId={questionId}
     />

@@ -6,10 +6,16 @@ import { instance } from '../../api/instance';
 import QueryAnswerModal from '../../components/modal/QueryAnswerModal';
 import useModal from '../../hooks/useModal';
 import { useQuery } from '@tanstack/react-query';
+import { Client } from '@stomp/stompjs';
+import { stompBrokerURL } from '../../constants/baseURL';
 
 const ChristmasEventPage = () => {
   const param = useParams();
   const chatRoomId = parseInt(param?.chatRoomId);
+
+  const [client, setClient] = useState(null);
+  const [myMemberId, setMyMemberId] = useState(0);
+  const [isMemberIdsFetched, setIsMemberIdsFetched] = useState(false);
 
   const opponentProfile = useLocation().state?.opponentProfile;
   const navigate = useNavigate();
@@ -53,6 +59,7 @@ const ChristmasEventPage = () => {
         opponentProfile={opponentProfile}
         closeModal={closeQueryAnswerModal}
         chatRoomId={chatRoomId}
+        client={client}
       />
     ));
 
@@ -86,8 +93,20 @@ const ChristmasEventPage = () => {
     });
   };
 
+  const fetchMemberIds = async () => {
+    try {
+      const response = await instance.get(`/room-member/${chatRoomId}`);
+      const { memberId } = response.data;
+      setMyMemberId(memberId);
+      setIsMemberIdsFetched(true);
+    } catch (error) {
+      navigate('/chat');
+    }
+  };
+
   useEffect(() => {
     const img = treeRef.current;
+
     if (img && img.complete) {
       updateTreeRect();
     } else if (img) {
@@ -97,6 +116,42 @@ const ChristmasEventPage = () => {
     window.addEventListener('resize', updateTreeRect);
     return () => window.removeEventListener('resize', updateTreeRect);
   }, []);
+
+  useEffect(() => {
+    fetchMemberIds();
+  }, []);
+
+  useEffect(() => {
+    if (isMemberIdsFetched) {
+      const newClient = new Client({
+        brokerURL: stompBrokerURL,
+        connectHeaders: {
+          chatRoomId: chatRoomId,
+          memberId: myMemberId,
+        },
+        debug: function (str) {
+          console.log(str);
+        },
+        onConnect: (frame) => {
+          console.log('Connected: ' + frame);
+          newClient.subscribe(`/topic/chatroom/${chatRoomId}`, () => {});
+        },
+        onStompError: (error) => {
+          console.log(error);
+        },
+        reconnectDelay: 50,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+      });
+
+      newClient.activate();
+      setClient(newClient);
+
+      return () => {
+        newClient.deactivate();
+      };
+    }
+  }, [isMemberIdsFetched]);
 
   return (
     <Wrapper>
