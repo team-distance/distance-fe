@@ -29,7 +29,7 @@ import { useSendMessage } from '../../hooks/useSendMessage';
 import CallDistanceModal from '../../components/modal/CallDistanceModal';
 import { Client } from '@stomp/stompjs';
 import { stompBrokerURL } from '../../constants/baseURL';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import SnowAnimation from '../../components/chat/SnowAnimation';
 import ChristmasEventAnnouncementModal from '../../components/modal/ChristmasEventAnnouncementModal';
 
@@ -41,6 +41,8 @@ const ChatPage = () => {
   const distance = useFetchDistance(roomId);
   const [messages, setMessages] = useState([]);
   const groupedMessages = useGroupedMessages(messages);
+
+  const queryClient = useQueryClient();
 
   const [lastProcessedMessageId, setLastProcessedMessageId] = useState(null);
 
@@ -370,6 +372,11 @@ const ChatPage = () => {
         return oldMessages;
       });
       return;
+    } else if (senderType === 'ANSWER' && senderId !== myMemberId) {
+      // ANSWER 메시지를 보낸 사람이 '상대방'인 경우
+      const questionId = parsedMessage.body.questionId;
+      queryClient.invalidateQueries(['answer', questionId]);
+      return;
     } else {
       // 그 외의 메시지인 경우
       setMessages((prevMessages) => {
@@ -584,6 +591,7 @@ const ChatPage = () => {
               setMessages={setMessages}
               isInputFocused={isInputFocused}
               bothAgreed={bothAgreed}
+              client={client}
             />
             <MessageInputWrapper>
               <MessageInput

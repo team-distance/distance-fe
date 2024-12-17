@@ -23,6 +23,7 @@ const Message = memo(
     openProfileModal,
     opponentMemberCharacter,
     bothAgreed,
+    client,
   }) => {
     const unreadCount = message.unreadCount !== 0 ? message.unreadCount : '';
     const messageTime = dayjs(message.sendDt).format('HH:mm');
@@ -46,7 +47,11 @@ const Message = memo(
         const { chatRoomId, questionId } = JSON.parse(message.chatMessage);
 
         return (
-          <NewQuestionMessage chatRoomId={chatRoomId} questionId={questionId} />
+          <NewQuestionMessage
+            chatRoomId={chatRoomId}
+            questionId={questionId}
+            client={client}
+          />
         );
 
       case 'CALL_REQUEST':

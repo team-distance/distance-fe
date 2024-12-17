@@ -14,6 +14,7 @@ const QueryAnswerModal = ({
   myProfile,
   closeModal,
   chatRoomId,
+  client,
 }) => {
   const queryClient = useQueryClient();
 
@@ -74,6 +75,18 @@ const QueryAnswerModal = ({
             { chatRoomId, questionId },
           ])
         );
+
+        client.publish({
+          destination: `/app/chat/${chatRoomId}`,
+          body: JSON.stringify({
+            chatMessage: JSON.stringify({
+              questionId: questionId,
+            }),
+            senderId: opponentAnswer?.memberId,
+            receiverId: myAnswer?.memberId,
+            publishType: 'ANSWER',
+          }),
+        });
       }}
       questionId={questionId}
     />
