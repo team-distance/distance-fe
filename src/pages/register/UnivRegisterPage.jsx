@@ -59,7 +59,7 @@ const UnivRegisterPage = () => {
           label="대학교"
           name="school"
           placeholder={UNIVERSITY_PLACEHOLDER}
-          types={UNIV_STATE.map((item) => item.name)}
+          types={UNIV_STATE.map((item) => item.name).sort()}
           value={school}
           setValue={setSchool}
         />
@@ -67,9 +67,9 @@ const UnivRegisterPage = () => {
           label="단과대학"
           name="college"
           placeholder={COLLEGE_PLACEHOLDER}
-          types={UNIV_STATE.filter(({ name }) => name === school).flatMap(
-            ({ state }) => state.map(({ college }) => college)
-          )}
+          types={UNIV_STATE.filter(({ name }) => name === school)
+            .flatMap(({ state }) => state.map(({ college }) => college))
+            .sort()}
           value={college}
           setValue={setCollege}
         />
@@ -81,7 +81,8 @@ const UnivRegisterPage = () => {
             ({ state, name }) => name === school && state
           )
             .filter(({ college: c }) => c === college)
-            .flatMap(({ department }) => department)}
+            .flatMap(({ department }) => department)
+            .sort()}
           value={department}
           setValue={setDepartment}
         />
