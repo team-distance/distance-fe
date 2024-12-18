@@ -107,6 +107,10 @@ const ProfileRegisterPage = () => {
       referredTel: registerData.referredTel,
     };
 
+    // requestData.school에 대학교 이름이 들어가야 함
+    // 만약, "상명대학교(천안캠퍼스)"와 같이 괄호가 들어간다면, 괄호 이후를 제거하고 대학교명만 넣어야 함
+    requestData.school = requestData.school.split('(')[0];
+
     await instance
       .post('/member/signup', requestData)
       .then(() => {
