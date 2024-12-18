@@ -1402,7 +1402,7 @@ const CAU_COLLEGE_STATE = {
 
 const HANYANG_ERICA_COLLEGE_STATE = {
   id: 'hanyang_erica',
-  name: '한양대학교(에리카)',
+  name: '한양대학교(ERICA)',
   webMail: 'https://gmail.com',
   state: [
     {
