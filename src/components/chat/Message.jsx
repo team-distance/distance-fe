@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Button from '../common/Button';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import dayjs from 'dayjs';
+import NewQuestionMessage from './NewQuestionMessage';
 
 /**
  * Message 객체 속성
@@ -22,6 +23,7 @@ const Message = memo(
     openProfileModal,
     opponentMemberCharacter,
     bothAgreed,
+    client,
   }) => {
     const unreadCount = message.unreadCount !== 0 ? message.unreadCount : '';
     const messageTime = dayjs(message.sendDt).format('HH:mm');
@@ -39,6 +41,17 @@ const Message = memo(
           <Announcement>
             <div className="content">{message.chatMessage}</div>
           </Announcement>
+        );
+
+      case 'NEW_QUESTION':
+        const { chatRoomId, questionId } = JSON.parse(message.chatMessage);
+
+        return (
+          <NewQuestionMessage
+            chatRoomId={chatRoomId}
+            questionId={questionId}
+            client={client}
+          />
         );
 
       case 'CALL_REQUEST':

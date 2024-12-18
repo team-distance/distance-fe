@@ -11,7 +11,7 @@ const Header = () => {
   return (
     <>
       <WrapHeader>
-        <img src="/assets/logo-pink.png" alt="디스턴스 로고" />
+        <img className="logo" src="/assets/logo-pink.png" alt="디스턴스 로고" />
         {isLoggedIn ? (
           <ProfileWrapper>
             <AuthUnivState />
@@ -31,7 +31,7 @@ const WrapHeader = styled.header`
   align-items: center;
   padding: 2rem 0;
 
-  img {
+  .logo {
     width: 8rem;
   }
 `;

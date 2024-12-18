@@ -5,9 +5,12 @@ import Tooltip from '../common/Tooltip';
 
 const TopBar = ({
   distance,
-  isCallActive,
-  openCallDistanceModal,
-  handleClickCallButton,
+  // isCallActive,
+  // openCallDistanceModal,
+  // handleClickCallButton,
+  roomId,
+  opponentProfile,
+  leaveButtonClickHandler,
 }) => {
   const navigate = useNavigate();
 
@@ -35,7 +38,18 @@ const TopBar = ({
       </WrapTitle>
       <div>
         <CallButton>
-          {isCallActive ? (
+          <div
+            onClick={() =>
+              navigate(`/chat/${roomId}/christmas-event`, {
+                state: {
+                  opponentProfile,
+                },
+              })
+            }
+          >
+            <img src="/assets/tree-icon.svg" alt="트리버튼" />
+          </div>
+          {/* {isCallActive ? (
             <div onClick={handleClickCallButton}>
               <img src="/assets/callicon-active.svg" alt="전화버튼" />
             </div>
@@ -46,8 +60,13 @@ const TopBar = ({
             >
               <img src="/assets/callicon.svg" alt="전화버튼" />
             </div>
-          )}
+          )} */}
         </CallButton>
+        <LeaveButton>
+          <div onClick={leaveButtonClickHandler}>
+            <img src="/assets/leave-button.svg" alt="나가기 버튼" />
+          </div>
+        </LeaveButton>
       </div>
     </TopBarWrapper>
   );
@@ -61,6 +80,7 @@ const TopBarWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   z-index: 11;
+  background-color: white;
 `;
 
 const BackButton = styled.button`
@@ -75,6 +95,25 @@ const BackButton = styled.button`
 const CallButton = styled.button`
   background: none;
   border: none;
+
+  div {
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+`;
+
+const LeaveButton = styled.button`
+  background: none;
+  border: none;
+
+  div {
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
 `;
 
 const WrapTitle = styled.div`

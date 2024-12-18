@@ -47,6 +47,8 @@ import styled from 'styled-components';
 import NaverFallback from './pages/root/NaverFallback';
 import InstagramFallback from './pages/root/InstagramFallback';
 import EverytimeFallback from './pages/root/EverytimeFallback';
+import ChristmasEventPage from './pages/christmasEvent/ChristmasEventPage';
+// import ConstructionPage from './pages/root/ConstructionPage';
 
 function App() {
   useRouteChangeTrack();
@@ -91,19 +93,19 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/password" element={<ResetPassword />} />
-
         <Route path="/notification" element={<NotificationSolutionPage />} />
         <Route path="/gps" element={<GPSSolutionPage />} />
-
         <Route path="/register/user" element={<UserRegisterPage />} />
         <Route path="/register/univ" element={<UnivRegisterPage />} />
         <Route path="/register/profile" element={<ProfileRegisterPage />} />
         <Route path="/register/done" element={<DonePage />} />
-
         <Route path="/verify/univ" element={<VerifyOptionsPage />} />
         <Route path="/verify/univ/mobileid" element={<VerifyMobileIdPage />} />
         <Route path="/verify/univ/email" element={<VerifyEmailPage />} />
         <Route path="/verify/univ/id" element={<VerifyIdPage />} />
+
+        {/* 점검 페이지 */}
+        {/* <Route path="/" element={<ConstructionPage />} /> */}
 
         <Route element={<NavLayout />}>
           <Route path="/" element={<HomeIndexPage />} />
@@ -125,26 +127,22 @@ function App() {
           </Route>
           <Route path="/mypage" element={<MyIndexPage />} />
         </Route>
-
         <Route path="/team-introduction" element={<TeamIntroductionPage />} />
-
         <Route path="/mypage/profile" element={<ProfileEditPage />} />
         <Route path="/mypage/account" element={<AccountEditPage />} />
         <Route path="/mypage/account/dropout" element={<DropoutPage />} />
-
         <Route path="/festival/foodtruck/:id" element={<FoodTruckPage />} />
-
         <Route path="/chat/:chatRoomId" element={<ChatPage />} />
-
+        <Route
+          path="/chat/:chatRoomId/christmas-event"
+          element={<ChristmasEventPage />}
+        />
         <Route path="/kakaotalk-fallback" element={<KakaotalkFallback />} />
         <Route path="/naver-fallback" element={<NaverFallback />} />
         <Route path="/instagram-fallback" element={<InstagramFallback />} />
         <Route path="/everytime-fallback" element={<EverytimeFallback />} />
-
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
-
         <Route path="*" element={<NotFoundPage />} />
-
         <Route path="/event-matching" element={<EventLoginPage />} />
         <Route path="/matching" element={<Matching />} />
         <Route path="/matching/success" element={<MatchingSuccess />} />

@@ -9,7 +9,6 @@ const MessageInput = ({
   value,
   file,
   setFile,
-  leaveButtonClickHandler,
   reportButtonClickHandler,
   changeHandler,
   submitHandler,
@@ -61,7 +60,6 @@ const MessageInput = ({
         {isMenuOpen && (
           <Menu
             setIsOpen={setIsMenuOpen}
-            handleLeave={leaveButtonClickHandler}
             handleReport={reportButtonClickHandler}
             file={file}
             setFile={setFile}

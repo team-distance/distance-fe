@@ -3,13 +3,75 @@ import styled from 'styled-components';
 import { CHARACTERS } from '../../constants/CHARACTERS';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
+import { useMutation } from '@tanstack/react-query';
+import { instance } from '../../api/instance';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '../../hooks/useToast';
+import { ClipLoader } from 'react-spinners';
 
-const ProfileModal = ({
-  closeModal,
-  onClick,
-  isButtonClicked,
-  selectedProfile,
-}) => {
+const ProfileModal = ({ closeModal, selectedProfile }) => {
+  const navigate = useNavigate();
+
+  const { showToast: showFullMyChatroomToast } = useToast(
+    () => (
+      <span>
+        이미 생성 가능한 채팅방 개수를 초과했어요! 기존 채팅방을 지우고 다시
+        시도해주세요.
+      </span>
+    ),
+    'too-many-my-chatroom'
+  );
+
+  const { showToast: showFullOppoChatroomToast } = useToast(
+    () => (
+      <span>
+        상대방이 이미 생성 가능한 채팅방 개수를 초과했어요! 상대방이 수락하면
+        알려드릴게요.
+      </span>
+    ),
+    'too-many-opponent-chatroom'
+  );
+
+  const { showToast: showGpsErrorToast } = useToast(
+    () => <span>상대방의 위치정보가 없어 채팅을 할 수 없어요!</span>,
+    'not-exist-gps'
+  );
+
+  const { showToast: showLoginErrorToast } = useToast(
+    () => <span>로그인 후 이용해주세요.</span>,
+    'login-required'
+  );
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: () =>
+      instance.post('/chatroom/create', { memberId: selectedProfile.memberId }),
+    onSuccess: (res) => {
+      console.log(res.data);
+      navigate(`/chat/${res.data}`);
+      closeModal();
+    },
+    onError: (error) => {
+      switch (error.response.data.code) {
+        case 'TOO_MANY_MY_CHATROOM':
+          showFullMyChatroomToast();
+          break;
+        case 'TOO_MANY_OPPONENT_CHATROOM':
+          showFullOppoChatroomToast();
+          break;
+        case 'NOT_AUTHENTICATION_STUDENT':
+          window.confirm('학생 인증 후 이용해주세요.') &&
+            navigate('/verify/univ');
+          break;
+        case 'NOT_EXIST_GPS':
+          showGpsErrorToast();
+          break;
+        default:
+          showLoginErrorToast();
+          break;
+      }
+    },
+  });
+
   return (
     <Modal>
       <CloseButton
@@ -23,6 +85,7 @@ const ProfileModal = ({
             CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]?.color
           }
         >
+          <img src="/assets/christmas/christmas-hat.png" alt="산타모자" />
           <Character
             $xPos={
               CHARACTERS[selectedProfile.memberProfileDto.memberCharacter]
@@ -49,8 +112,8 @@ const ProfileModal = ({
           ))}
         </TagContainer>
       </WrapContent>
-      <Button size="medium" onClick={onClick} disabled={isButtonClicked}>
-        메시지 보내기
+      <Button size="medium" onClick={mutate} disabled={isPending}>
+        {isPending ? <ClipLoader color="#ffffff" size={16} /> : '메시지 보내기'}
       </Button>
     </Modal>
   );
@@ -94,6 +157,14 @@ const CharacterBackground = styled.div`
   height: 100px;
   border-radius: 100%;
   background-color: ${(props) => props.$backgroundColor};
+
+  img {
+    width: 3rem;
+    position: absolute;
+    top: ${(props) => (props.$backgroundColor === '#D9EAD3' ? '5%' : '0%')};
+    left: ${(props) => (props.$backgroundColor === '#D9EAD3' ? '21%' : '20%')};
+    z-index: 99;
+  }
 `;
 
 const Character = styled.div`

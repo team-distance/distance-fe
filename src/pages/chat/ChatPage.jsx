@@ -17,7 +17,7 @@ import CallModal from '../../components/modal/CallModal';
 import CallRequestModal from '../../components/modal/CallRequestModal';
 import ImageView from '../../components/chat/ImageView';
 import { useFetchDistance } from '../../hooks/useFetchDistance';
-import CallActiveLottie from '../../components/chat/CallActiveLottie';
+// import CallActiveLottie from '../../components/chat/CallActiveLottie';
 import { useCallActive } from '../../hooks/useCallActive';
 import {
   useCountPages,
@@ -29,7 +29,9 @@ import { useSendMessage } from '../../hooks/useSendMessage';
 import CallDistanceModal from '../../components/modal/CallDistanceModal';
 import { Client } from '@stomp/stompjs';
 import { stompBrokerURL } from '../../constants/baseURL';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import SnowAnimation from '../../components/chat/SnowAnimation';
+import ChristmasEventAnnouncementModal from '../../components/modal/ChristmasEventAnnouncementModal';
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -39,10 +41,13 @@ const ChatPage = () => {
   const distance = useFetchDistance(roomId);
   const [messages, setMessages] = useState([]);
   const groupedMessages = useGroupedMessages(messages);
-  const { isCallActive, isShowLottie, tiKiTaKaCount } = useCallActive(
-    messages,
-    roomId
-  );
+
+  const queryClient = useQueryClient();
+
+  const [lastProcessedMessageId, setLastProcessedMessageId] = useState(null);
+
+  // 크리스마스 이벤트 동안 isCallActive 임시 제거
+  const { isCallActive, tiKiTaKaCount } = useCallActive(messages, roomId);
   const [client, setClient] = useState(null);
   const [myMemberId, setMyMemberId] = useState(0);
   const [opponentMemberId, setOpponentMemberId] = useState(0);
@@ -82,6 +87,15 @@ const ChatPage = () => {
     enabled: isMemberIdsFetched,
     staleTime: 1000 * 60 * 10,
   });
+
+  const {
+    openModal: openChristmasEventAnnouncementModal,
+    closeModal: closeChristmasEventAnnouncementModal,
+  } = useModal(() => (
+    <ChristmasEventAnnouncementModal
+      closeModal={closeChristmasEventAnnouncementModal}
+    />
+  ));
 
   const { openModal: openReportModal, closeModal: closeReportModal } = useModal(
     () => (
@@ -192,10 +206,6 @@ const ChatPage = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(bothAgreed);
-  }, [bothAgreed]);
-
   // 이미지 크게 보기
   const viewImage = (src) => {
     setImageSrc(src);
@@ -225,6 +235,18 @@ const ChatPage = () => {
         localStorage.removeItem(key);
       }
     });
+
+    // 이 방을 나가면 여기서 추가한 chatroomid, tikitakacount 삭제
+    // 크리스마스 이벤트 이후 삭제
+    const clickedNewQuestionList =
+      JSON.parse(localStorage.getItem('clickedNewQuestionList')) || [];
+    const filteredClickedNewQuestionList = clickedNewQuestionList.filter(
+      (item) => item.chatRoomId !== roomId
+    );
+    localStorage.setItem(
+      'clickedNewQuestionList',
+      JSON.stringify(filteredClickedNewQuestionList)
+    );
 
     try {
       client.publish({
@@ -319,7 +341,7 @@ const ChatPage = () => {
     bothAgreed ? openCallModal() : openCallRequestModal();
   };
 
-  // // 상대방 신고하기
+  // 상대방 신고하기
   const handleReportUser = async (reportMessage) => {
     try {
       await instance.post('/report', {
@@ -332,16 +354,6 @@ const ChatPage = () => {
       alert('이미 신고한 사용자예요! 신고는 한 번만 가능해요.');
     }
   };
-
-  // 자신/상대방의 memberId 불러오기
-  useEffect(() => {
-    const initializeChat = async () => {
-      await fetchMemberIds();
-      await checkBothAgreed();
-    };
-
-    initializeChat();
-  }, []);
 
   const subscritionCallback = (message) => {
     const parsedMessage = JSON.parse(message.body);
@@ -360,6 +372,14 @@ const ChatPage = () => {
         return oldMessages;
       });
       return;
+    } else if (senderType === 'ANSWER' && senderId === myMemberId) {
+      // ANSWER 메시지를 보낸 사람이 '상대방'인 경우
+      const questionId = parsedMessage.body.questionId;
+      queryClient.invalidateQueries(['answer', questionId]);
+      return;
+    } else if (senderType === 'ANSWER' && senderId !== myMemberId) {
+      // ANSWER 메시지를 보낸 사람이 '나'인 경우
+      return;
     } else {
       // 그 외의 메시지인 경우
       setMessages((prevMessages) => {
@@ -376,6 +396,30 @@ const ChatPage = () => {
       return;
     }
   };
+
+  // 자신/상대방의 memberId 불러오기
+  useEffect(() => {
+    const initializeChat = async () => {
+      await fetchMemberIds();
+      await checkBothAgreed();
+    };
+
+    initializeChat();
+
+    // 크리스마스 이벤트 안내 모달 관련 코드
+    // 크리스마스 이벤트 이후 아래 코드 제거
+    const dismissedList =
+      JSON.parse(localStorage.getItem('dismissForever')) || [];
+
+    const isDismissed = dismissedList.some(
+      (item) =>
+        item.name === 'christmasEventAnnouncement' && item.type === 'modal'
+    );
+
+    if (!isDismissed) {
+      openChristmasEventAnnouncementModal();
+    }
+  }, []);
 
   useEffect(() => {
     if (isMemberIdsFetched) {
@@ -425,6 +469,50 @@ const ChatPage = () => {
     }
   }, [isMemberIdsFetched]);
 
+  const sendNewQuestionMessage = (questionId) => {
+    try {
+      client.publish({
+        destination: `/app/chat/${roomId}`,
+        body: JSON.stringify({
+          chatMessage: JSON.stringify({
+            message: '새로운 질문이 도착했어요!',
+            chatRoomId: roomId,
+            tikiTakaCount: messages.at(-1).checkTiKiTaKa,
+            questionId: questionId,
+          }),
+          senderId: opponentMemberId,
+          receiverId: myMemberId,
+          publishType: 'NEW_QUESTION',
+        }),
+      });
+    } catch (error) {
+      showWaitToast();
+    }
+  };
+
+  const createNewQuestion = async () => {
+    try {
+      const response = await instance.post('/question', {
+        chatRoomId: roomId,
+        tikiTakaCount: messages.at(-1).checkTiKiTaKa,
+      });
+
+      // 이전에 같은 questionId로 NEW_QUESTION 메시지를 보낸 적이 없을 때만 메시지 전송
+      if (
+        !messages.find(
+          (message) =>
+            message.senderType === 'NEW_QUESTION' &&
+            JSON.parse(message.chatMessage).questionId ===
+              response.data.questionId
+        )
+      ) {
+        sendNewQuestionMessage(response.data.questionId);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // 메시지가 업데이트 될 때마다 상대방이 나갔는지 확인
   // 메시지가 업데이트 될 때마다 로컬 스토리지에 저장
   useEffect(() => {
@@ -432,6 +520,18 @@ const ChatPage = () => {
 
     if (lastMessage?.roomStatus === 'ACTIVE') setIsOpponentOut(false);
     else if (lastMessage?.roomStatus === 'INACTIVE') setIsOpponentOut(true);
+
+    if (
+      lastMessage &&
+      lastMessage?.messageId !== lastProcessedMessageId &&
+      lastMessage?.checkTiKiTaKa !== 0 &&
+      lastMessage?.checkTiKiTaKa % 3 === 0 &&
+      lastMessage?.senderType !== 'NEW_QUESTION' &&
+      lastMessage?.senderId === opponentMemberId
+    ) {
+      setLastProcessedMessageId(lastMessage.messageId);
+      createNewQuestion();
+    }
   }, [messages]);
 
   // 메시지 길이 제한
@@ -447,7 +547,9 @@ const ChatPage = () => {
       {isShowImage && (
         <ImageView imgSrc={imgSrc} handleCancel={() => setIsShowImage(false)} />
       )}
-      {isShowLottie && <CallActiveLottie />}
+
+      {/* 크리스마스 이벤트 이후 주석 해제 */}
+      {/* {isShowLottie && <CallActiveLottie />} */}
 
       <Container>
         <TopBar
@@ -455,7 +557,14 @@ const ChatPage = () => {
           isCallActive={isCallActive}
           openCallDistanceModal={openCallDistanceModal}
           handleClickCallButton={handleClickCallButton}
+          opponentProfile={opponentProfile}
+          roomId={roomId}
+          leaveButtonClickHandler={handleLeaveRoom}
         />
+
+        <SnowAnimationWrapper>
+          <SnowAnimation />
+        </SnowAnimationWrapper>
 
         {isLoading ? (
           <Loader />
@@ -483,13 +592,13 @@ const ChatPage = () => {
               setMessages={setMessages}
               isInputFocused={isInputFocused}
               bothAgreed={bothAgreed}
+              client={client}
             />
             <MessageInputWrapper>
               <MessageInput
                 value={draftMessage}
                 file={file}
                 setFile={setFile}
-                leaveButtonClickHandler={handleLeaveRoom}
                 reportButtonClickHandler={openReportModal}
                 changeHandler={handleChangeMessage}
                 submitHandler={sendMessage}
@@ -512,6 +621,16 @@ const Wrapper = styled.div`
   position: relative;
   touch-action: none;
   overflow: hidden;
+`;
+
+const SnowAnimationWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* TopBar 뒤로 이동 */
+  pointer-events: none; /* 클릭 이벤트 차단 */
 `;
 
 const Container = styled.div`

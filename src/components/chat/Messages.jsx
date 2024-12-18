@@ -24,6 +24,7 @@ const Messages = memo(
     setMessages,
     isInputFocused,
     bothAgreed,
+    client,
   }) => {
     // 아이폰에서는 프로그레스 바에 파일 전체 크기를 표시하지 않기 위해 사용
     // (axios의 onUploadProgress 이벤트 핸들러에서 total 값이 제대로 전달되지 않음)
@@ -100,7 +101,7 @@ const Messages = memo(
               onIntersect();
             } else {
               if (!isSuccess || !data) return;
-              console.log('감지');
+
               // 로컬 저장소에 데이터가 없으면 새로운 페이지로 이동
               onIntersect();
             }
@@ -131,73 +132,77 @@ const Messages = memo(
     }, [onIntersect]);
 
     return (
-      <MessagesWrapper
-        ref={messageRef}
-        $isOpen={isMenuOpen}
-        $isInputFocused={isInputFocused}
-      >
-        {isUploadingImage && (
-          <UploadingImagePreview>
-            <div className="message-container">
-              <img src={uploadingImagePreviewUrl} alt="" />
-              <div className="backdrop" />
-              <div className="progress">
-                <Progress
-                  value={Math.round(uploadProgress.progress * 100) || 0}
-                  max={100}
-                />
-                <div>
-                  {(uploadProgress.loaded / (1024 * 1024)).toFixed(2)} MB
-                  {!isIphone &&
-                    ` / ${(uploadProgress.total / (1024 * 1024)).toFixed(
-                      2
-                    )} MB`}
-                </div>
-                <RoundedButton onClick={cancelUpload}>취소</RoundedButton>
-              </div>
-            </div>
-          </UploadingImagePreview>
-        )}
-
-        {Object.entries(groupedMessages)
-          .reverse()
-          .map(([date, messages]) => (
-            <React.Fragment key={date}>
-              <WrapMessage>
-                {messages.map((message) => (
-                  <Message
-                    key={message.messageId}
-                    message={message}
-                    isSentByMe={message.senderId !== Number(myId)}
-                    responseCall={responseCall}
-                    viewImage={viewImage}
-                    openProfileModal={openProfileModal}
-                    opponentMemberCharacter={opponentMemberCharacter}
-                    bothAgreed={bothAgreed}
+      <>
+        <MessagesWrapper
+          ref={messageRef}
+          $isOpen={isMenuOpen}
+          $isInputFocused={isInputFocused}
+        >
+          {isUploadingImage && (
+            <UploadingImagePreview>
+              <div className="message-container">
+                <img src={uploadingImagePreviewUrl} alt="" />
+                <div className="backdrop" />
+                <div className="progress">
+                  <Progress
+                    value={Math.round(uploadProgress.progress * 100) || 0}
+                    max={100}
                   />
-                ))}
-              </WrapMessage>
-
-              <WrapDate>
-                <div className="content">
-                  {new Date(date).toLocaleDateString('ko-KR', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
+                  <div>
+                    {(uploadProgress.loaded / (1024 * 1024)).toFixed(2)} MB
+                    {!isIphone &&
+                      ` / ${(uploadProgress.total / (1024 * 1024)).toFixed(
+                        2
+                      )} MB`}
+                  </div>
+                  <RoundedButton onClick={cancelUpload}>취소</RoundedButton>
                 </div>
-              </WrapDate>
-            </React.Fragment>
-          ))}
+              </div>
+            </UploadingImagePreview>
+          )}
 
-        <div className="observer" ref={observerRef} />
-        <Announcement>
-          <div className="content">
-            📢 잠깐만요! 채팅 상대는 소중한 학우입니다. 사이버 예절을 지켜
-            주세요.
-          </div>
-        </Announcement>
-      </MessagesWrapper>
+          {Object.entries(groupedMessages)
+            .reverse()
+            .map(([date, messages]) => (
+              <React.Fragment key={date}>
+                <WrapMessage>
+                  {messages.map((message) => (
+                    <Message
+                      key={message.messageId}
+                      message={message}
+                      isSentByMe={message.senderId !== Number(myId)}
+                      responseCall={responseCall}
+                      viewImage={viewImage}
+                      openProfileModal={openProfileModal}
+                      opponentMemberCharacter={opponentMemberCharacter}
+                      bothAgreed={bothAgreed}
+                      roomId={roomId}
+                      client={client}
+                    />
+                  ))}
+                </WrapMessage>
+
+                <WrapDate>
+                  <div className="content">
+                    {new Date(date).toLocaleDateString('ko-KR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </div>
+                </WrapDate>
+              </React.Fragment>
+            ))}
+
+          <div className="observer" ref={observerRef} />
+          <Announcement>
+            <div className="content">
+              📢 잠깐만요! 채팅 상대는 소중한 학우입니다. 사이버 예절을 지켜
+              주세요.
+            </div>
+          </Announcement>
+        </MessagesWrapper>
+      </>
     );
   }
 );

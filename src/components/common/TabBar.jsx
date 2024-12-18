@@ -37,13 +37,13 @@ const BottomNavBar = () => {
     //   icon: '/assets/icon/icon-festival-stroked.svg',
     //   iconActive: '/assets/icon/icon-festival-filled.svg',
     // },
-    {
-      name: '페스티벌',
-      path: '/festival/program',
-      alternative: '/festival/foodtruck',
-      icon: '/assets/icon/icon-festival-stroked.svg',
-      iconActive: '/assets/icon/icon-festival-filled.svg',
-    },
+    // {
+    //   name: '페스티벌',
+    //   path: '/festival/program',
+    //   alternative: '/festival/foodtruck',
+    //   icon: '/assets/icon/icon-festival-stroked.svg',
+    //   iconActive: '/assets/icon/icon-festival-filled.svg',
+    // },
     {
       name: '마이페이지',
       path: '/mypage',
