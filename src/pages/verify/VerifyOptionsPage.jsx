@@ -7,8 +7,6 @@ import { UNIV_STATE } from '../../constants/collegeState';
 const VerifyOptionsPage = () => {
   const navigate = useNavigate();
   const [authUnivState, setAuthUnivState] = useState('');
-  const [university, setUniversity] = useState('');
-  const [universityLogo, setUniversityLogo] = useState('');
 
   const checkVerified = async () => {
     try {
@@ -33,8 +31,8 @@ const VerifyOptionsPage = () => {
       const res = await instance.get('/univ/check/univ-domain');
       UNIV_STATE.forEach((univ) => {
         if (res.data.join('').includes(univ.id)) {
-          setUniversity(univ.name);
-          setUniversityLogo(univ.logo);
+          // setUniversity(univ.name);
+          // setUniversityLogo(univ.logo);
         }
       });
     } catch (error) {}
@@ -49,7 +47,7 @@ const VerifyOptionsPage = () => {
     <WrapContent>
       <Heading>
         교내 학생임을 인증해주세요
-        <LogoImage src={universityLogo} alt={university} />
+        {/* <LogoImage src={universityLogo} alt={university} /> */}
       </Heading>
       <Paragraph>
         세 가지 방법 중 하나를 택해 인증해주세요
@@ -136,14 +134,14 @@ const Paragraph = styled.p`
   line-height: 16px;
 `;
 
-const LogoImage = styled.img`
-  position: absolute;
-  bottom: 1rem;
-  left: 0;
-  z-index: -1;
-  height: 250%;
-  opacity: 0.2;
-`;
+// const LogoImage = styled.img`
+//   position: absolute;
+//   bottom: 1rem;
+//   left: 0;
+//   z-index: -1;
+//   height: 250%;
+//   opacity: 0.2;
+// `;
 
 const WrapButton = styled.div`
   display: flex;

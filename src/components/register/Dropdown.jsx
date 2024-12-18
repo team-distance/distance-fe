@@ -23,10 +23,8 @@ const Dropdown = ({ label, placeholder, types, value, setValue }) => {
                   $type={type}
                   key={type}
                   onClick={() => {
-                    if (!type.includes('(')) {
-                      setValue(type);
-                      setIsOpen(false);
-                    }
+                    setValue(type);
+                    setIsOpen(false);
                   }}
                 >
                   {type}
@@ -90,7 +88,6 @@ const WrapItems = styled.div`
 
 const DropdownItem = styled.div`
   padding: 0.75rem 1.25rem;
-  color: ${({ $type }) => ($type.includes('(') ? '#b7b7b7' : 'black')};
   &:hover {
     background-color: #f1f1f1;
   }
