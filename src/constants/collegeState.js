@@ -3617,6 +3617,187 @@ const DANKOOK_COLLEGE_STATE = {
   ],
 };
 
+const JOONGBU_COLLEGE_STATE = {
+  id: 'joongbu',
+  name: '중부대학교',
+  webMail: 'https://cloud.jungbu.ac.kr',
+  state: [
+    {
+      college: '경찰경호학부',
+      department: [
+        '경찰행정학전공',
+        '경찰법학전공',
+        '경찰경호학전공',
+        '경찰탐정수사학전공',
+      ],
+    },
+    {
+      college: '항공관광학부',
+      department: [
+        '항공서비스학전공',
+        '항공관광&카지노학전공',
+        '호텔비즈니스전공',
+      ],
+    },
+    {
+      college: '보건복지학부',
+      department: [
+        '보건행정학과',
+        '간호학과',
+        '물리치료학과',
+        '한방보건제약학과',
+        '사회복지학전공',
+        '바이오식품학전공',
+        '바이오화장품학전공',
+      ],
+    },
+    {
+      college: '공연예술체육학부',
+      department: [
+        '뷰티케어학전공',
+        '레저스포츠학전공',
+        '골프학전공',
+        '스포츠건강관리학전공',
+      ],
+    },
+    {
+      college: '문화콘텐츠학부',
+      department: ['문헌정보학전공'],
+    },
+    {
+      college: '건축토목공학부',
+      department: ['환경조경학전공'],
+    },
+    {
+      college: '반려동물학부',
+      department: ['반려동물학부', '동물행동복지학전공', '동물보건학과'],
+    },
+    {
+      college: '글로벌인재학부',
+      department: ['자율설계전공', '글로벌K-POP전공'],
+    },
+    {
+      college: '인문사회학부',
+      department: ['경찰행정학전공', '경찰법학전공', '경찰경호학전공'],
+    },
+    {
+      college: '보건의료학부',
+      department: [
+        '보건행정학과',
+        '간호학과',
+        '물리치료학과',
+        '작업치료학과',
+        '응급구조학과',
+        '반려동물행동복지학전공',
+        '반려동물사육학전공',
+      ],
+    },
+    {
+      college: '문화예술체육학부',
+      department: ['스포츠재활복지학전공', '스포츠건강관리학전공'],
+    },
+  ],
+};
+
+const JOONGBU_GOYANG_COLLEGE_STATE = {
+  id: 'joongbu_goyang',
+  name: '중부대학교(고양)',
+  webMail: 'https://cloud.jungbu.ac.kr',
+  state: [
+    {
+      college: '글로벌비즈니스학부',
+      department: ['경영학전공', '국제통상학전공', '토탈패션산업학과'],
+    },
+    {
+      college: '사범학부',
+      department: [
+        '유아교육과',
+        '유아특수교육과',
+        '초등특수교육과',
+        '중등특수교육과',
+        '특수체육교육과',
+      ],
+    },
+    {
+      college: '건축토목공학부',
+      department: ['건축학전공', '토목공학전공'],
+    },
+    {
+      college: '소프트웨어공학부',
+      department: ['게임소프트웨어전공', '정보보호학전공', '인공지능전공'],
+    },
+    {
+      college: '전기전자자동차공학부',
+      department: ['전기전자공학전공', '스마트모빌리티공학전공'],
+    },
+    {
+      college: '문화콘텐츠학부',
+      department: [
+        '산업디자인학전공',
+        '만화애니메이션학전공',
+        '사진영상학전공',
+        '미디어커뮤니케이션학전공',
+      ],
+    },
+    {
+      college: '공연예술체육학부',
+      department: [
+        '연극영화학전공',
+        '실용음악학전공',
+        '엔터테인먼트학전공',
+        '뷰티패션비즈니스학전공',
+      ],
+    },
+    {
+      college: '글로벌인재학부',
+      department: ['공공안전학전공', '국제통상학전공'],
+    },
+    {
+      college: '인문사회학부',
+      department: [
+        '경영학전공',
+        '국제통상학전공',
+        '미디어커뮤니케이션학전공',
+        '문헌정보학전공',
+        '공공안전학전공',
+        '항공서비스학전공',
+      ],
+    },
+    {
+      college: '보건의료학부',
+      department: ['반려동물보건학과'],
+    },
+    {
+      college: '미래융합공학부',
+      department: [
+        '건축학전공',
+        '토목공학전공',
+        '게임소프트웨어학전공',
+        '정보보호학전공',
+        '인공지능전공',
+        '전기전자공학전공',
+        '스마트모빌리티공학전공',
+      ],
+    },
+    {
+      college: '문화예술체육학부',
+      department: [
+        '산업디자인학전공',
+        '만화애니메이션학전공',
+        '사진영상학전공',
+        '연극영화학전공',
+        '실용음악학전공',
+        '엔터테인먼트학전공',
+        '뷰티패션비즈니스학전공',
+      ],
+    },
+    {
+      college: '자율설계전공학부',
+      department: ['자율설계전공학부'],
+    },
+  ],
+};
+
 export const UNIV_STATE = [
   DGU_COLLEGE_STATE,
   SCH_COLLEGE_STATE,
@@ -3659,4 +3840,6 @@ export const UNIV_STATE = [
   PCU_COLLEGE_STATE,
   DSU_COLLEGE_STATE,
   DANKOOK_COLLEGE_STATE,
+  JOONGBU_COLLEGE_STATE,
+  JOONGBU_GOYANG_COLLEGE_STATE,
 ];
