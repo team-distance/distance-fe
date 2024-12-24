@@ -77,24 +77,10 @@ const Heading1 = styled.h1`
   letter-spacing: -0.7px;
 `;
 
-const Heading2 = styled.h2`
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 18px;
-  letter-spacing: -0.7px;
-`;
-
 const Paragraph = styled.p`
   font-size: 0.75rem;
   font-weight: 400;
   line-height: 18px;
-  letter-spacing: -0.7px;
-`;
-
-const Small = styled.small`
-  font-size: 0.75rem;
-  font-weight: 200;
-  line-height: 24px;
   letter-spacing: -0.7px;
 `;
 
