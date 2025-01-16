@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { instance } from '../../api/instance';
 import Profile from '../../components/home/Profile';
@@ -13,32 +13,31 @@ import { useRecoilValue } from 'recoil';
 import { matchingConfigState } from '../../store/matchingConfig';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { isLoggedInState } from '../../store/auth';
-import ServiceClosingModal from '../../components/modal/ServiceClosingModal';
 
 const HomeIndexPage = () => {
   const queryClient = useQueryClient();
   const matchingConfig = useRecoilValue(matchingConfigState);
   const isLoggedIn = useRecoilValue(isLoggedInState);
 
-  const {
-    openModal: openServiceClosingModal,
-    closeModal: closeServiceClosingModal,
-  } = useModal(() => (
-    <ServiceClosingModal closeModal={closeServiceClosingModal} />
-  ));
+  // const {
+  //   openModal: openServiceClosingModal,
+  //   closeModal: closeServiceClosingModal,
+  // } = useModal(() => (
+  //   <ServiceClosingModal closeModal={closeServiceClosingModal} />
+  // ));
 
-  useEffect(() => {
-    const dismissedList =
-      JSON.parse(localStorage.getItem('dismissForever')) || [];
+  // useEffect(() => {
+  //   const dismissedList =
+  //     JSON.parse(localStorage.getItem('dismissForever')) || [];
 
-    const isDismissed = dismissedList.some(
-      (item) => item.name === 'serviceClosing' && item.type === 'modal'
-    );
+  //   const isDismissed = dismissedList.some(
+  //     (item) => item.name === 'serviceClosing' && item.type === 'modal'
+  //   );
 
-    if (!isDismissed) {
-      openServiceClosingModal();
-    }
-  }, []);
+  //   if (!isDismissed) {
+  //     openServiceClosingModal();
+  //   }
+  // }, []);
 
   const { data: matchingList, isLoading: isLoadingMatchingList } = useQuery({
     queryKey: ['matching', matchingConfig],

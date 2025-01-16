@@ -88,6 +88,11 @@ const ChatPage = () => {
     staleTime: 1000 * 60 * 10,
   });
 
+  useEffect(() => {
+    console.log(messages);
+    console.log(groupedMessages);
+  }, []);
+
   const {
     openModal: openChristmasEventAnnouncementModal,
     closeModal: closeChristmasEventAnnouncementModal,
