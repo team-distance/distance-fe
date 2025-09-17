@@ -31,7 +31,7 @@ const rootElement = document.getElementById('root');
 const app = (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AwsRumProvider
+      {/* <AwsRumProvider
         allowCookies
         endpoint={process.env.REACT_APP_AWS_RUM_ENDPOINT}
         id={process.env.REACT_APP_AWS_RUM_ID}
@@ -40,15 +40,15 @@ const app = (
         sessionSampleRate={1}
         telemetries={['performance', 'errors', 'http']}
         version="1.0.0"
-      >
-        <RecoilRoot>
-          <BrowserRouter>
-            <GlobalToastContainer />
-            <App />
-            <GlobalModalContainer />
-          </BrowserRouter>
-        </RecoilRoot>
-      </AwsRumProvider>
+      > */}
+      <RecoilRoot>
+        <BrowserRouter>
+          <GlobalToastContainer />
+          <App />
+          <GlobalModalContainer />
+        </BrowserRouter>
+      </RecoilRoot>
+      {/* </AwsRumProvider> */}
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </React.StrictMode>

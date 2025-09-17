@@ -76,7 +76,7 @@ const NavLayout = () => {
 
     if (isFirstLogin === 'true') {
       if (!isGpsActive || !isAlarmActive) {
-        console.log('알림, 위치 권한을 허용해주세요!');
+        // console.log('알림, 위치 권한을 허용해주세요!');
         showAlarmGPSErrorToast();
         localStorage.setItem('isFirstLogin', 'false');
       }
